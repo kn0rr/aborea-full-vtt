@@ -1,0 +1,19 @@
+{
+  "name": "Zweihand-Axt",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "aexte",
+    "minStrength": 6,
+    "damage": 6,
+    "initiative": -1,
+    "range": "lang",
+    "price": "4 GF",
+    "weight": null,
+    "attrChoices": [
+      "st"
+    ],
+    "hands": 1
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Leben",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Spendet eine Stufe/1 MP Leben für eine Person, die nicht länger als Tag/1 MP tot ist.",
+    "list": "Wilde Magie",
+    "rank": 10,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "nicht länger als Tag/1 MP tot ist",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "leben",
+    "externalId": "wilde-magie--leben--10",
+    "school": "Wilde Magie"
+  }
+}

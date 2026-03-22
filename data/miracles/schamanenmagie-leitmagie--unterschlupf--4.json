@@ -1,0 +1,24 @@
+{
+  "name": "Unterschlupf",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erschafft einen Unterschlupf (eine Höhle in einem großen Baum, einem Felsen oder im Boden) für drei Stunden/1 MP und vier Personen/1 MP.",
+    "list": "Schamanenmagie (Leitmagie)",
+    "rank": 4,
+    "cost": 1,
+    "costOptions": [
+      1,
+      3,
+      4
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "drei Stunden/1 MP und vier Personen/1 MP",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "unterschlupf",
+    "externalId": "schamanenmagie-leitmagie--unterschlupf--4",
+    "domain": "Schamanenmagie (Leitmagie)"
+  }
+}

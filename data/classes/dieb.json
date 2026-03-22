@@ -1,0 +1,12 @@
+{
+  "name": "Dieb",
+  "type": "class",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Fokus auf List, Heimlichkeit und Waffen.",
+    "hitPointsBase": 6,
+    "magicAttribute": "in",
+    "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
+    "special": "Fokus auf List, Heimlichkeit und Waffen."
+  }
+}

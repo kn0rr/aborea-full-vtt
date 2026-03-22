@@ -1,0 +1,61 @@
+{
+  "name": "Troll",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": { "value": 8 },
+      "ge": { "value": 3 },
+      "ko": { "value": 8 },
+      "in": { "value": 2 },
+      "ch": { "value": 2 }
+    },
+    "resources": {
+      "hp": { "value": 30, "max": 30 },
+      "mp": { "value": 0, "max": 0 }
+    },
+    "combat": {
+      "combatBonus": 2,
+      "offensiveBonus": 2,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5
+    },
+    "details": {
+      "level": 1,
+      "xp": 0,
+      "race": "",
+      "class": "",
+      "notes": "Regeneration; Angst vor Feuer. Beispiel-Kreatur basierend auf dem Spielerheft."
+    },
+    "skills": {
+      "waffenlos": { "rank": 0, "attribute": "st" }
+    },
+    "creature": {
+      "kind": "Troll",
+      "size": "groß",
+      "threat": 3,
+      "regeneration": 2,
+      "resistances": "zäh",
+      "vulnerabilities": "Feuer"
+    }
+  },
+  "items": [
+    {
+      "name": "Keule",
+      "type": "weapon",
+      "img": "icons/svg/sword.svg",
+      "system": {
+        "skill": "waffenlos",
+        "attribute": "st",
+        "damage": 2,
+        "range": "kurz",
+        "initiativeMod": 0,
+        "maneuverMod": 0,
+        "minStrength": 0,
+        "equipped": true
+      }
+    }
+  ]
+}

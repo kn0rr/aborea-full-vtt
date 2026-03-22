@@ -1,0 +1,22 @@
+{
+  "name": "Heilen",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Durch das Auflegen seiner Hände kann der Schamane eine Person heilen (1 TP/1 MP).",
+    "list": "Schamanenmagie (Leitmagie)",
+    "rank": 1,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "heilen",
+    "externalId": "schamanenmagie-leitmagie--heilen--1",
+    "domain": "Schamanenmagie (Leitmagie)"
+  }
+}

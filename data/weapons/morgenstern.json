@@ -1,0 +1,20 @@
+{
+  "name": "Morgenstern",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "Im Spielerheft als Wuchtwaffe geführt; hier als Platzhalter einer Nahkampffertigkeit zugeordnet.",
+    "skill": "stangenwaffe",
+    "minStrength": 0,
+    "damage": 4,
+    "initiative": 0,
+    "range": "mittel",
+    "price": "24 TT",
+    "weight": null,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
+  }
+}

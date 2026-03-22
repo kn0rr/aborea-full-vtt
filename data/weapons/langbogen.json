@@ -1,0 +1,20 @@
+{
+  "name": "Langbogen",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "boegen",
+    "minStrength": 6,
+    "damage": 2,
+    "initiative": 0,
+    "range": "lang",
+    "price": "2 GF",
+    "weight": null,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
+  }
+}

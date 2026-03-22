@@ -1,0 +1,24 @@
+{
+  "name": "Licht und Dunkelheit",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erschafft magisches Licht oder Dunkelheit in einem Umkreis von 3 m/1 MP (max. 10) um einen Gegenstand oder Kreatur.",
+    "list": "Freie Magie",
+    "rank": 3,
+    "cost": 1,
+    "costOptions": [
+      1,
+      3,
+      10
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "licht-und-dunkelheit",
+    "externalId": "freie-magie--licht-und-dunkelheit--3",
+    "school": "Freie Magie"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "Stab",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "stangenwaffe",
+    "minStrength": 0,
+    "damage": 3,
+    "initiative": 1,
+    "range": "lang",
+    "price": "1 KL",
+    "weight": null,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
+  }
+}

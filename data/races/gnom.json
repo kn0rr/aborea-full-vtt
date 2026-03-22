@@ -1,0 +1,17 @@
+{
+  "name": "Gnom",
+  "type": "race",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "description": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
+    "mods": {
+      "st": 0,
+      "ge": 1,
+      "ko": -2,
+      "in": 1,
+      "ch": 0
+    },
+    "special": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
+    "restrictions": ""
+  }
+}

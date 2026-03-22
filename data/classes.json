@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Barde",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Leitmagie-Beruf.",
+      "hitPointsBase": 6,
+      "magicAttribute": "ch",
+      "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Leitmagie-Beruf."
+    }
+  },
+  {
+    "name": "Dieb",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Fokus auf List, Heimlichkeit und Waffen.",
+      "hitPointsBase": 6,
+      "magicAttribute": "in",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Fokus auf List, Heimlichkeit und Waffen."
+    }
+  },
+  {
+    "name": "Krieger",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Fokus auf Waffen und Kampf.",
+      "hitPointsBase": 10,
+      "magicAttribute": "in",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Fokus auf Waffen und Kampf."
+    }
+  },
+  {
+    "name": "Priester",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Leitmagie-Beruf.",
+      "hitPointsBase": 8,
+      "magicAttribute": "ch",
+      "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Leitmagie-Beruf."
+    }
+  },
+  {
+    "name": "Schamane",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Leitmagie-Beruf.",
+      "hitPointsBase": 6,
+      "magicAttribute": "ch",
+      "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Leitmagie-Beruf."
+    }
+  },
+  {
+    "name": "Waldläufer",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Fokus auf Natur, Bogen und Bewegung.",
+      "hitPointsBase": 8,
+      "magicAttribute": "in",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Fokus auf Natur, Bogen und Bewegung."
+    }
+  },
+  {
+    "name": "Zauberer",
+    "type": "class",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Arkaner Magieberuf.",
+      "hitPointsBase": 4,
+      "magicAttribute": "in",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
+      "special": "Arkaner Magieberuf."
+    }
+  }
+]

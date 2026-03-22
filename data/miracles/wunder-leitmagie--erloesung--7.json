@@ -1,0 +1,22 @@
+{
+  "name": "Erlösung",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Vernichtet eine beschworene oder untote Kreatur von einer Stufe/1 MP dauerhaft.",
+    "list": "Wunder (Leitmagie)",
+    "rank": 7,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "erloesung",
+    "externalId": "wunder-leitmagie--erloesung--7",
+    "domain": "Wunder (Leitmagie)"
+  }
+}

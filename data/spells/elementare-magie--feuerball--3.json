@@ -1,0 +1,23 @@
+{
+  "name": "Feuerball",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Schafft einen Ball aus Feuer, der wie ein Geschoss verwendet wird; Schaden/1 MP - max. +5.",
+    "list": "Elementare Magie",
+    "rank": 3,
+    "cost": 1,
+    "costOptions": [
+      1,
+      5
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "feuerball",
+    "externalId": "elementare-magie--feuerball--3",
+    "school": "Elementare Magie"
+  }
+}

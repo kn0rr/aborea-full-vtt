@@ -1,0 +1,23 @@
+{
+  "name": "Elemente",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Kann ein Element in einem Angriff als Waffe einsetzen (Schaden +2, Schaden wirkt 1 Runde/1 MP fort). Wirkung nur möglich, sofern das Element vorhanden ist. Fortwirkung nur möglich, wenn keine Gegenmaßnahmen erfolgreich waren.",
+    "list": "Bardenmagie (Leitmagie)",
+    "rank": 7,
+    "cost": 1,
+    "costOptions": [
+      1,
+      2
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "1 Runde/1 MP fort",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "elemente",
+    "externalId": "bardenmagie-leitmagie--elemente--7",
+    "domain": "Bardenmagie (Leitmagie)"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Lederrüstung",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 3,
+    "armor": 6,
+    "maneuverMod": 0,
+    "price": "9 TT",
+    "weight": 10
+  }
+}

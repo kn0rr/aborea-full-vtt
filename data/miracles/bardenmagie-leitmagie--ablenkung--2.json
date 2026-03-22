@@ -1,0 +1,22 @@
+{
+  "name": "Ablenkung",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Für die Dauer des Auftritts ist jeder in Hör- oder Sichtweite (je nach Art des Auftritts) wie gebannt. Alle anderen Geschehnisse werden um einen Tarnpunkt/1 MP getarnt.",
+    "list": "Bardenmagie (Leitmagie)",
+    "rank": 2,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Hörweite",
+    "targeted": false,
+    "duration": "Dauer des Auftritts",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "ablenkung",
+    "externalId": "bardenmagie-leitmagie--ablenkung--2",
+    "domain": "Bardenmagie (Leitmagie)"
+  }
+}

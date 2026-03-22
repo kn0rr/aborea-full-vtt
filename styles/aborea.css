@@ -1,0 +1,110 @@
+.aborea-sheet {
+  color: #1f1f1f;
+}
+
+.aborea-sheet .sheet-header {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.aborea-sheet .profile-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid #666;
+  border-radius: 6px;
+}
+
+.aborea-sheet .header-grid,
+.aborea-sheet .combat-grid,
+.aborea-sheet .attributes-grid,
+.aborea-sheet .skill-list {
+  display: grid;
+  gap: 8px;
+}
+
+.aborea-sheet .header-grid,
+.aborea-sheet .combat-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.aborea-sheet .attributes-grid,
+.aborea-sheet .skill-list {
+  grid-template-columns: 1fr;
+}
+
+.aborea-sheet .panel {
+  border: 1px solid #8b7d6b;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  background: rgba(250, 246, 236, 0.7);
+}
+
+.aborea-sheet .panel-header,
+.aborea-sheet .attribute-row,
+.aborea-sheet .resource-row,
+.aborea-sheet .item-row,
+.aborea-sheet .skill-row {
+  display: grid;
+  gap: 8px;
+  align-items: center;
+}
+
+.aborea-sheet .panel-header {
+  grid-template-columns: 1fr auto;
+}
+
+.aborea-sheet .attribute-row {
+  grid-template-columns: 140px 80px 1fr;
+}
+
+.aborea-sheet .resource-row {
+  grid-template-columns: 40px 90px 20px 90px auto;
+  margin-bottom: 8px;
+}
+
+.aborea-sheet .item-row {
+  grid-template-columns: 1fr auto auto auto auto;
+  margin-bottom: 6px;
+}
+
+.aborea-sheet .skill-row {
+  grid-template-columns: 1fr 160px 70px 100px;
+}
+
+.aborea-sheet .tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.aborea-sheet .tabs .item {
+  border-bottom: 2px solid transparent;
+  padding-bottom: 4px;
+}
+
+.aborea-sheet .tabs .item.active {
+  border-color: #7a1010;
+}
+
+.aborea-sheet input[type="text"],
+.aborea-sheet input[type="number"],
+.aborea-sheet select,
+.aborea-sheet textarea {
+  width: 100%;
+}
+
+.aborea-sheet textarea {
+  min-height: 120px;
+}
+
+.aborea-chat-card {
+  border: 1px solid #8b7d6b;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #f7f0e0;
+}

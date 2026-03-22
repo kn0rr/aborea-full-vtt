@@ -1,0 +1,22 @@
+{
+  "name": "Unglaube",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erkennt in einem Radius von 3 m/Stufe jeden Ungläubigen.",
+    "list": "Zeichen (Leitmagie)",
+    "rank": 1,
+    "cost": 3,
+    "costOptions": [
+      3
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "unglaube",
+    "externalId": "zeichen-leitmagie--unglaube--1",
+    "domain": "Zeichen (Leitmagie)"
+  }
+}

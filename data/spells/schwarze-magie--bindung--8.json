@@ -1,0 +1,22 @@
+{
+  "name": "Bindung",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Bindet eine beschworene Kreatur oder einen Zauber an einen Ort oder Person (Stufe/1 MP).",
+    "list": "Schwarze Magie",
+    "rank": 8,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "bindung",
+    "externalId": "schwarze-magie--bindung--8",
+    "school": "Schwarze Magie"
+  }
+}

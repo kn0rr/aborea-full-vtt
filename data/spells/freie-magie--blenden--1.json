@@ -1,0 +1,23 @@
+{
+  "name": "Blenden",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erzeugt einen grellen Blitz, der eine Kreatur blenden kann (3 Runden/1 MP).",
+    "list": "Freie Magie",
+    "rank": 1,
+    "cost": 1,
+    "costOptions": [
+      1,
+      3
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "3 Runden/1 MP",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "blenden",
+    "externalId": "freie-magie--blenden--1",
+    "school": "Freie Magie"
+  }
+}

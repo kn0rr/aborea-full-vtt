@@ -1,0 +1,22 @@
+{
+  "name": "Elemente",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Ein Elementar der Stufe/1 MP steht für eine Stunde bei.",
+    "list": "Wilde Magie",
+    "rank": 9,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "eine Stunde",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "elemente",
+    "externalId": "wilde-magie--elemente--9",
+    "school": "Wilde Magie"
+  }
+}

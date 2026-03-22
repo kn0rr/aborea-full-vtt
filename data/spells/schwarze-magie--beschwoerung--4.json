@@ -1,0 +1,22 @@
+{
+  "name": "Beschwörung",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Beschwört eine Kreatur mit einer Stufe/1 MP für eine Stunde/1 MP. Die Stufe wird bei Monstern durch den Schwierigkeitsgrad (SG) angegeben.",
+    "list": "Schwarze Magie",
+    "rank": 4,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "eine Stunde/1 MP",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "beschwoerung",
+    "externalId": "schwarze-magie--beschwoerung--4",
+    "school": "Schwarze Magie"
+  }
+}

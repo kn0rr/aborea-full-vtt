@@ -1,0 +1,13 @@
+{
+  "name": "Schild",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "Benötigt eine freie Hand.",
+    "minStrength": 3,
+    "armor": 1,
+    "maneuverMod": 0,
+    "price": "11 TT",
+    "weight": 5
+  }
+}

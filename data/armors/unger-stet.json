@@ -1,0 +1,13 @@
+{
+  "name": "Ungerüstet",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 0,
+    "armor": 5,
+    "maneuverMod": 0,
+    "price": "0",
+    "weight": 0
+  }
+}

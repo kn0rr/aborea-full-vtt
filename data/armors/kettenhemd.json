@@ -1,0 +1,13 @@
+{
+  "name": "Kettenhemd",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 4,
+    "armor": 7,
+    "maneuverMod": -1,
+    "price": "13 GF",
+    "weight": 15
+  }
+}

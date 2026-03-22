@@ -1,0 +1,239 @@
+{
+  "Actor": {
+    "types": [
+      "character",
+      "npc",
+      "creature"
+    ],
+    "templates": {
+      "common": {
+        "attributes": {
+          "st": {
+            "value": 5,
+            "bonus": 0
+          },
+          "ge": {
+            "value": 5,
+            "bonus": 0
+          },
+          "ko": {
+            "value": 5,
+            "bonus": 0
+          },
+          "in": {
+            "value": 5,
+            "bonus": 0
+          },
+          "ch": {
+            "value": 5,
+            "bonus": 0
+          }
+        },
+        "resources": {
+          "hp": {
+            "value": 5,
+            "max": 5
+          },
+          "mp": {
+            "value": 0,
+            "max": 0
+          },
+          "xp": 0,
+          "level": 1
+        },
+        "combat": {
+          "initiative": 0,
+          "combatBonus": 0,
+          "offensiveBonus": 0,
+          "defensiveBonus": 0,
+          "defenseValue": 5,
+          "armorValue": 5
+        },
+        "details": {
+          "race": "",
+          "class": "",
+          "size": "mittel",
+          "notes": ""
+        }
+      }
+    },
+    "character": {
+      "templates": [
+        "common"
+      ],
+      "skills": {
+        "athletik": {
+          "rank": 0,
+          "attr": "st"
+        },
+        "heimlichkeit": {
+          "rank": 0,
+          "attr": "ge"
+        },
+        "natur": {
+          "rank": 0,
+          "attr": "in"
+        },
+        "wissen": {
+          "rank": 0,
+          "attr": "in"
+        },
+        "ueberreden": {
+          "rank": 0,
+          "attr": "ch"
+        },
+        "waffenlos": {
+          "rank": 0,
+          "attr": "st"
+        },
+        "klingenwaffen": {
+          "rank": 0,
+          "attr": "st"
+        },
+        "bogen": {
+          "rank": 0,
+          "attr": "ge"
+        }
+      },
+      "currency": {
+        "goldfalken": 0,
+        "trionthaler": 0,
+        "kupferlinge": 0
+      }
+    },
+    "npc": {
+      "templates": [
+        "common"
+      ],
+      "role": "",
+      "faction": ""
+    },
+    "creature": {
+      "templates": [
+        "common"
+      ],
+      "creature": {
+        "kind": "",
+        "threat": 1,
+        "regeneration": 0,
+        "vulnerability": "",
+        "special": ""
+      }
+    }
+  },
+  "Item": {
+    "types": [
+      "race",
+      "class",
+      "skill",
+      "weapon",
+      "armor",
+      "spell",
+      "miracle",
+      "gear"
+    ],
+    "templates": {
+      "common": {
+        "description": ""
+      }
+    },
+    "race": {
+      "templates": [
+        "common"
+      ],
+      "mods": {
+        "st": 0,
+        "ge": 0,
+        "ko": 0,
+        "in": 0,
+        "ch": 0
+      },
+      "special": "",
+      "restrictions": ""
+    },
+    "class": {
+      "templates": [
+        "common"
+      ],
+      "hitPointsBase": 5,
+      "magicAttribute": "",
+      "special": "",
+      "magicFormula": ""
+    },
+    "skill": {
+      "templates": [
+        "common"
+      ],
+      "linkedAttribute": "",
+      "rank": 0
+    },
+    "weapon": {
+      "templates": [
+        "common"
+      ],
+      "skill": "",
+      "minStrength": 0,
+      "damage": 0,
+      "initiative": 0,
+      "range": "kurz",
+      "attrChoices": [
+        "st"
+      ],
+      "hands": 1,
+      "price": "",
+      "weight": 0
+    },
+    "armor": {
+      "templates": [
+        "common"
+      ],
+      "minStrength": 0,
+      "armor": 5,
+      "maneuverMod": 0,
+      "price": "",
+      "weight": 0
+    },
+    "spell": {
+      "templates": [
+        "common"
+      ],
+      "rank": 1,
+      "cost": 1,
+      "school": "weiße Magie",
+      "list": "",
+      "costOptions": [],
+      "range": "",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 0,
+      "sourcePdf": "",
+      "slug": "",
+      "externalId": ""
+    },
+    "miracle": {
+      "templates": [
+        "common"
+      ],
+      "rank": 1,
+      "cost": 1,
+      "domain": "",
+      "list": "",
+      "costOptions": [],
+      "range": "",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 0,
+      "sourcePdf": "",
+      "slug": "",
+      "externalId": ""
+    },
+    "gear": {
+      "templates": [
+        "common"
+      ],
+      "quantity": 1,
+      "weight": 0,
+      "price": ""
+    }
+  }
+}

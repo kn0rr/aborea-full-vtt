@@ -1,0 +1,12 @@
+{
+  "name": "Zauberer",
+  "type": "class",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Arkaner Magieberuf.",
+    "hitPointsBase": 4,
+    "magicAttribute": "in",
+    "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
+    "special": "Arkaner Magieberuf."
+  }
+}

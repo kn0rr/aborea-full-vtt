@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Ungerüstet",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "",
+      "minStrength": 0,
+      "armor": 5,
+      "maneuverMod": 0,
+      "price": "0",
+      "weight": 0
+    }
+  },
+  {
+    "name": "Lederrüstung",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "",
+      "minStrength": 3,
+      "armor": 6,
+      "maneuverMod": 0,
+      "price": "9 TT",
+      "weight": 10
+    }
+  },
+  {
+    "name": "Kettenhemd",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "",
+      "minStrength": 4,
+      "armor": 7,
+      "maneuverMod": -1,
+      "price": "13 GF",
+      "weight": 15
+    }
+  },
+  {
+    "name": "Halbe-Platte",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "",
+      "minStrength": 5,
+      "armor": 8,
+      "maneuverMod": -2,
+      "price": "20 GF",
+      "weight": 18
+    }
+  },
+  {
+    "name": "Plattenpanzer",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "",
+      "minStrength": 6,
+      "armor": 9,
+      "maneuverMod": -3,
+      "price": "40 GF",
+      "weight": 30
+    }
+  },
+  {
+    "name": "Ritterrüstung",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "",
+      "minStrength": 7,
+      "armor": 10,
+      "maneuverMod": -4,
+      "price": "80 GF",
+      "weight": 40
+    }
+  },
+  {
+    "name": "Schild",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "Benötigt eine freie Hand.",
+      "minStrength": 3,
+      "armor": 1,
+      "maneuverMod": 0,
+      "price": "11 TT",
+      "weight": 5
+    }
+  },
+  {
+    "name": "Turmschild",
+    "type": "armor",
+    "img": "icons/svg/shield.svg",
+    "system": {
+      "description": "Benötigt eine freie Hand.",
+      "minStrength": 4,
+      "armor": 2,
+      "maneuverMod": -1,
+      "price": "18 TT",
+      "weight": 10
+    }
+  }
+]

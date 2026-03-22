@@ -1,0 +1,173 @@
+<form class="aborea-sheet {{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+    <div class="header-fields">
+      <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+      <div class="header-grid">
+        <label>{{localize "ABOREA.Level"}} <input type="number" name="system.details.level" value="{{system.details.level}}" /></label>
+        <label>{{localize "ABOREA.XP"}} <input type="number" name="system.details.xp" value="{{system.details.xp}}" /></label>
+        <label>{{localize "ABOREA.Race"}} <input type="text" name="system.details.race" value="{{system.details.race}}" /></label>
+        <label>{{localize "ABOREA.Class"}} <input type="text" name="system.details.class" value="{{system.details.class}}" /></label>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">{{localize "ABOREA.TabStats"}}</a>
+    <a class="item" data-tab="skills">{{localize "ABOREA.TabSkills"}}</a>
+    <a class="item" data-tab="inventory">{{localize "ABOREA.TabInventory"}}</a>
+    <a class="item" data-tab="special">{{localize "ABOREA.TabSpecial"}}</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="stats">
+      <section class="grid grid-2col">
+        <div class="panel">
+          <h2>{{localize "ABOREA.Attributes"}}</h2>
+          <div class="attributes-grid">
+            {{#each system.attributes as |attr key|}}
+            <div class="attribute-row">
+              <label>{{localize attr.label}}</label>
+              <input type="number" name="system.attributes.{{key}}.value" value="{{attr.value}}" />
+              <span>{{localize "ABOREA.Bonus"}} {{attr.bonus}}</span>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>{{localize "ABOREA.Resources"}}</h2>
+          <div class="resource-row">
+            <label>HP</label>
+            <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" />
+            <span>/</span>
+            <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" />
+            <button type="button" class="rest-heal">{{localize "ABOREA.RestHeal"}}</button>
+          </div>
+          <div class="resource-row">
+            <label>MP</label>
+            <input type="number" name="system.resources.mp.value" value="{{system.resources.mp.value}}" />
+            <span>/</span>
+            <input type="number" name="system.resources.mp.max" value="{{system.resources.mp.max}}" />
+            <button type="button" class="rest-mp">{{localize "ABOREA.RestMP"}}</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>{{localize "ABOREA.Combat"}}</h2>
+        <div class="combat-grid">
+          <label>{{localize "ABOREA.CombatBonus"}} <input type="number" name="system.combat.combatBonus" value="{{system.combat.combatBonus}}" /></label>
+          <label>{{localize "ABOREA.OffensiveBonus"}} <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" /></label>
+          <label>{{localize "ABOREA.DefensiveBonus"}} <input type="number" name="system.combat.defensiveBonus" value="{{system.combat.defensiveBonus}}" /></label>
+          <label>{{localize "ABOREA.ArmorValue"}} <input type="number" name="system.combat.armorValue" value="{{system.combat.armorValue}}" /></label>
+          <label>{{localize "ABOREA.DefenseValue"}} <input type="number" name="system.combat.defenseValue" value="{{system.combat.defenseValue}}" disabled /></label>
+          <label>{{localize "ABOREA.TargetDefense"}} <input type="number" name="system.combat.targetDefense" value="{{system.combat.targetDefense}}" /></label>
+          <label>{{localize "ABOREA.Initiative"}} <input type="number" value="{{system.combat.initiative}}" disabled /></label>
+          <button type="button" class="roll-initiative">{{localize "ABOREA.RollInitiative"}}</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="skills">
+      <section class="panel">
+        <h2>{{localize "ABOREA.Skills"}}</h2>
+        <div class="skill-list">
+          {{#each system.skills as |skill key|}}
+          <div class="skill-row">
+            <span>{{localize skill.label}}</span>
+            <select name="system.skills.{{key}}.attribute">
+              {{#each ../config.attributes as |attrLabel attrKey|}}
+              <option value="{{attrKey}}" {{#if (aboreaEq attrKey skill.attribute)}}selected{{/if}}>{{localize attrLabel}}</option>
+              {{/each}}
+            </select>
+            <input type="number" name="system.skills.{{key}}.rank" value="{{skill.rank}}" />
+            <button type="button" class="roll-skill" data-skill="{{key}}">{{localize "ABOREA.Roll"}}</button>
+          </div>
+          {{/each}}
+        </div>
+      </section>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="inventory">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>{{localize "ABOREA.Weapons"}}</h2>
+          <button type="button" class="item-create" data-type="weapon">+</button>
+        </div>
+        {{#each itemsByType.weapons as |item|}}
+        <div class="item-row" data-item-id="{{item.id}}">
+          <span>{{item.name}}</span>
+          <span>{{localize "ABOREA.Damage"}} {{item.system.damage}}</span>
+          <button type="button" class="roll-attack">{{localize "ABOREA.Attack"}}</button>
+          <button type="button" class="item-edit">✎</button>
+          <button type="button" class="item-delete">🗑</button>
+        </div>
+        {{/each}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>{{localize "ABOREA.Armors"}}</h2>
+          <button type="button" class="item-create" data-type="armor">+</button>
+        </div>
+        {{#each itemsByType.armors as |item|}}
+        <div class="item-row" data-item-id="{{item.id}}">
+          <span>{{item.name}}</span>
+          <span>{{localize "ABOREA.ArmorValue"}} {{item.system.armor}}</span>
+          <button type="button" class="item-edit">✎</button>
+          <button type="button" class="item-delete">🗑</button>
+        </div>
+        {{/each}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>{{localize "ABOREA.SpellsAndMiracles"}}</h2>
+          <div>
+            <button type="button" class="item-create" data-type="spell">{{localize "ABOREA.Spell"}}</button>
+            <button type="button" class="item-create" data-type="miracle">{{localize "ABOREA.Miracle"}}</button>
+          </div>
+        </div>
+        {{#each itemsByType.spells as |item|}}
+        <div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>
+        {{/each}}
+        {{#each itemsByType.miracles as |item|}}
+        <div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>
+        {{/each}}
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>{{localize "ABOREA.Gear"}}</h2>
+          <button type="button" class="item-create" data-type="gear">+</button>
+        </div>
+        {{#each itemsByType.gear as |item|}}
+        <div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>
+        {{/each}}
+      </section>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="special">
+      <section class="panel">
+        <h2>{{localize "ABOREA.Special"}}</h2>
+        <label>{{localize "ABOREA.Notes"}}</label>
+        <textarea name="system.details.notes">{{system.details.notes}}</textarea>
+      </section>
+
+      {{#if (aboreaEq actor.type "creature")}}
+      <section class="panel">
+        <h2>{{localize "ABOREA.CreatureData"}}</h2>
+        <div class="combat-grid">
+          <label>{{localize "ABOREA.CreatureKind"}} <input type="text" name="system.creature.kind" value="{{system.creature.kind}}" /></label>
+          <label>{{localize "ABOREA.Size"}} <input type="text" name="system.creature.size" value="{{system.creature.size}}" /></label>
+          <label>{{localize "ABOREA.Threat"}} <input type="number" name="system.creature.threat" value="{{system.creature.threat}}" /></label>
+          <label>{{localize "ABOREA.Regeneration"}} <input type="number" name="system.creature.regeneration" value="{{system.creature.regeneration}}" /></label>
+          <label>{{localize "ABOREA.Resistances"}} <input type="text" name="system.creature.resistances" value="{{system.creature.resistances}}" /></label>
+          <label>{{localize "ABOREA.Vulnerabilities"}} <input type="text" name="system.creature.vulnerabilities" value="{{system.creature.vulnerabilities}}" /></label>
+        </div>
+      </section>
+      {{/if}}
+    </div>
+  </section>
+</form>

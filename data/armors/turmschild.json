@@ -1,0 +1,13 @@
+{
+  "name": "Turmschild",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "Benötigt eine freie Hand.",
+    "minStrength": 4,
+    "armor": 2,
+    "maneuverMod": -1,
+    "price": "18 TT",
+    "weight": 10
+  }
+}

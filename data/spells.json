@@ -1,0 +1,916 @@
+[
+  {
+    "name": "Tarnung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ein Feld von 3 m2/1 MP mit einem Tarnpunkt/1 MP verstecken.",
+      "list": "Schwarze Magie",
+      "rank": 1,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        3
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "tarnung",
+      "externalId": "schwarze-magie--tarnung--1",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Trübung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Trübt den Geist anderer um einen Malus von 1/1 MP.",
+      "list": "Schwarze Magie",
+      "rank": 2,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "truebung",
+      "externalId": "schwarze-magie--truebung--2",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Feuer",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erschafft magisches Feuer auf einem 3 m2/1 MP Feld für Runde/1 MP. Dieses Feuer kann nichts anderes entzünden oder entflammen. Jeder im Feuer erhält aber Hitzeschaden: Schaden/1 MP - max. +5.",
+      "list": "Schwarze Magie",
+      "rank": 3,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "Runde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "feuer",
+      "externalId": "schwarze-magie--feuer--3",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Beschwörung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Beschwört eine Kreatur mit einer Stufe/1 MP für eine Stunde/1 MP. Die Stufe wird bei Monstern durch den Schwierigkeitsgrad (SG) angegeben.",
+      "list": "Schwarze Magie",
+      "rank": 4,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "eine Stunde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "beschwoerung",
+      "externalId": "schwarze-magie--beschwoerung--4",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Bannung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Verbannt eine beschworene Kreatur für ein Jahr/1 MP und Stufe/1 MP der Kreatur.",
+      "list": "Schwarze Magie",
+      "rank": 5,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "ein Jahr/1 MP und Stufe/1 MP der Kreatur",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "bannung",
+      "externalId": "schwarze-magie--bannung--5",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Beherrschung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Beherrscht eine beschworene Kreatur eine Stunde/1 MP für eine Stufe/1 MP.",
+      "list": "Schwarze Magie",
+      "rank": 6,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "eine Stunde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "beherrschung",
+      "externalId": "schwarze-magie--beherrschung--6",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Zerstörung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Zerstört eine Stufe/4 MP einer Kreatur oder eines Zaubers.",
+      "list": "Schwarze Magie",
+      "rank": 7,
+      "cost": 4,
+      "costOptions": [
+        4
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "zerstoerung",
+      "externalId": "schwarze-magie--zerstoerung--7",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Bindung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Bindet eine beschworene Kreatur oder einen Zauber an einen Ort oder Person (Stufe/1 MP).",
+      "list": "Schwarze Magie",
+      "rank": 8,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "bindung",
+      "externalId": "schwarze-magie--bindung--8",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Belebung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Belebt einen Gegenstand für eine Stunde/1 MP und Stufe/1 MP (Untot).",
+      "list": "Schwarze Magie",
+      "rank": 9,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "eine Stunde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "belebung",
+      "externalId": "schwarze-magie--belebung--9",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Dauerhafte Belebung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erschafft dauerhaft Untote/2 MP auf Stufe/2 MP.",
+      "list": "Schwarze Magie",
+      "rank": 10,
+      "cost": 2,
+      "costOptions": [
+        2
+      ],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "dauerhafte-belebung",
+      "externalId": "schwarze-magie--dauerhafte-belebung--10",
+      "school": "Schwarze Magie"
+    }
+  },
+  {
+    "name": "Pfadfinder",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Führt zu einer Pflanze oder einem bekannten Ort innerhalb von einem km/1 MP.",
+      "list": "Wilde Magie",
+      "rank": 1,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "-",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "pfadfinder",
+      "externalId": "wilde-magie--pfadfinder--1",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Helfer",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ein Tier oder eine belebte Pflanze mit einer Stufe/1 MP steht dem Magier für eine Stunde/1 MP bei. 1 km pro Stufe.",
+      "list": "Wilde Magie",
+      "rank": 2,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Stufe",
+      "targeted": false,
+      "duration": "eine Stunde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "helfer",
+      "externalId": "wilde-magie--helfer--2",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Animation",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Animiert eine Pflanze von einer Stufe/1 MP und für eine Stunde/1 MP.",
+      "list": "Wilde Magie",
+      "rank": 3,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "eine Stunde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "animation",
+      "externalId": "wilde-magie--animation--3",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Animalie",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Verleiht das Wissen eines Tieres der Stufe/1 MP für eine Runde/1 MP.",
+      "list": "Wilde Magie",
+      "rank": 4,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "eine Runde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "animalie",
+      "externalId": "wilde-magie--animalie--4",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Tierfreund",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Findet einen dauerhaften Tierfreund einer Stufe/3 MP. 1 km pro Stufe.",
+      "list": "Wilde Magie",
+      "rank": 5,
+      "cost": 1,
+      "costOptions": [
+        1,
+        3
+      ],
+      "range": "Stufe",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "tierfreund",
+      "externalId": "wilde-magie--tierfreund--5",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Wandlung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Verwandelt in ein Tier der Stufe/1 MP für einen Tag.",
+      "list": "Wilde Magie",
+      "rank": 6,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "einen Tag",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "wandlung",
+      "externalId": "wilde-magie--wandlung--6",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Tier",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Gewährt die Eigenschaft eines Tieres (Stufe/1 MP) für eine Stunde/1 MP.",
+      "list": "Wilde Magie",
+      "rank": 7,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "eine Stunde/1 MP",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "tier",
+      "externalId": "wilde-magie--tier--7",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Erde",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ein Erdelementar der Stufe/1 MP steht für eine Stunde bei.",
+      "list": "Wilde Magie",
+      "rank": 8,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "eine Stunde",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "erde",
+      "externalId": "wilde-magie--erde--8",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Elemente",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ein Elementar der Stufe/1 MP steht für eine Stunde bei.",
+      "list": "Wilde Magie",
+      "rank": 9,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "eine Stunde",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "elemente",
+      "externalId": "wilde-magie--elemente--9",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Leben",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Spendet eine Stufe/1 MP Leben für eine Person, die nicht länger als Tag/1 MP tot ist.",
+      "list": "Wilde Magie",
+      "rank": 10,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "nicht länger als Tag/1 MP tot ist",
+      "sourcePage": 43,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "leben",
+      "externalId": "wilde-magie--leben--10",
+      "school": "Wilde Magie"
+    }
+  },
+  {
+    "name": "Wasserfreund",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erlaubt das Atmen unter Wasser für 10 Min./1 MP und Person/1 MP.",
+      "list": "Elementare Magie",
+      "rank": 1,
+      "cost": 1,
+      "costOptions": [
+        1,
+        10
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "10 Min./1 MP und Person/1 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "wasserfreund",
+      "externalId": "elementare-magie--wasserfreund--1",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Entzünden",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Entzündet etwas Brennbares in 10 m/1 MP.",
+      "list": "Elementare Magie",
+      "rank": 2,
+      "cost": 1,
+      "costOptions": [
+        1,
+        10
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "entzuenden",
+      "externalId": "elementare-magie--entzuenden--2",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Feuerball",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Schafft einen Ball aus Feuer, der wie ein Geschoss verwendet wird; Schaden/1 MP - max. +5.",
+      "list": "Elementare Magie",
+      "rank": 3,
+      "cost": 1,
+      "costOptions": [
+        1,
+        5
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "feuerball",
+      "externalId": "elementare-magie--feuerball--3",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Blitz",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Von dem Zauberer aus schießt ein Blitz; mehrere Ziele in einer Reihe möglich: Schaden/1 MP und Person/1 MP.",
+      "list": "Elementare Magie",
+      "rank": 4,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "blitz",
+      "externalId": "elementare-magie--blitz--4",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Wall",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Schafft einen Wall aus Luft/Erde/Wasser/Feuer für 1 Min./1 MP und Meter/1 MP lang (4 m hoch).",
+      "list": "Elementare Magie",
+      "rank": 5,
+      "cost": 1,
+      "costOptions": [
+        1,
+        4
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "1 Min./1 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "wall",
+      "externalId": "elementare-magie--wall--5",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Sturm",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Entfesselt einen Sturm der Windstärke 10 für Stunde/1 MP in einem Umkreis von 1 km; dauert eine Minute, bis er sich zusammengezogen hat. Die typischen Anzeichen für ein Unwetter passieren zuvor.",
+      "list": "Elementare Magie",
+      "rank": 6,
+      "cost": 1,
+      "costOptions": [
+        1,
+        10
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "Stunde/1 MP in einem Umkreis von 1 km",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "sturm",
+      "externalId": "elementare-magie--sturm--6",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Elementar",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Animiert einen Elementar zu erscheinen (Element muss vorhanden sein) und einem eine Stunde beizustehen (Stufe/1 MP).",
+      "list": "Elementare Magie",
+      "rank": 7,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "eine Stunde beizustehen (Stufe/1 MP)",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "elementar",
+      "externalId": "elementare-magie--elementar--7",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Flutwelle",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Lässt ein Gewässer so unruhig werden, dass eine Flutwelle entsteht. 10 m/1 MP lang und 2 m/1 MP hoch (max. 20 m). Es dauert bis zu 10 Minuten, bevor die Welle kommt. Zuvor zieht sich das Wasser deutlich zurück.",
+      "list": "Elementare Magie",
+      "rank": 8,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        10,
+        20
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "bis zu 10 Minuten, bevor die Welle kommt",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "flutwelle",
+      "externalId": "elementare-magie--flutwelle--8",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Erdbeben",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Lässt die Erde im Umkreis von 10 m/2 MP erzittern. Das Beben erreicht Stärke/10 MP (höchstens Stärke 8) und kündigt sich 10 Minuten lang durch kleinere Vorbeben an. Die Stärke ist äquivalent zur Richterskala zu sehen.",
+      "list": "Elementare Magie",
+      "rank": 9,
+      "cost": 2,
+      "costOptions": [
+        2,
+        8,
+        10
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "10 Minuten lang durch kleinere Vorbeben angekündigt",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "erdbeben",
+      "externalId": "elementare-magie--erdbeben--9",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Feuerregen",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Der Himmel zieht sich innerhalb von 5 Minuten zu. Die meisten Tiere flüchten. Es regnet heiße Lava im Umkreis von 10 m/5 MP für 1 Min./5 MP. Sie richtet einen Würfel geteilt durch 2 Schaden an und entzündet alles Brennbare. Funktioniert nicht innerhalb von Räumen.",
+      "list": "Elementare Magie",
+      "rank": 10,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        5,
+        10
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "1 Min./5 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "feuerregen",
+      "externalId": "elementare-magie--feuerregen--10",
+      "school": "Elementare Magie"
+    }
+  },
+  {
+    "name": "Blenden",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erzeugt einen grellen Blitz, der eine Kreatur blenden kann (3 Runden/1 MP).",
+      "list": "Freie Magie",
+      "rank": 1,
+      "cost": 1,
+      "costOptions": [
+        1,
+        3
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "3 Runden/1 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "blenden",
+      "externalId": "freie-magie--blenden--1",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Illusion",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Schafft eine einfache Illusion für Minute/1 MP (Routine Wahrnehmungs-Manöver zum Entlarven).",
+      "list": "Freie Magie",
+      "rank": 2,
+      "cost": 1,
+      "costOptions": [
+        1
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "Minute/1 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "illusion",
+      "externalId": "freie-magie--illusion--2",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Licht und Dunkelheit",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erschafft magisches Licht oder Dunkelheit in einem Umkreis von 3 m/1 MP (max. 10) um einen Gegenstand oder Kreatur.",
+      "list": "Freie Magie",
+      "rank": 3,
+      "cost": 1,
+      "costOptions": [
+        1,
+        3,
+        10
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "licht-und-dunkelheit",
+      "externalId": "freie-magie--licht-und-dunkelheit--3",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Explosion",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Eine Explosion aus Licht und Schall verletzt alle Kreaturen im Umkreis von 5 m: Schaden/1 MP.",
+      "list": "Freie Magie",
+      "rank": 4,
+      "cost": 1,
+      "costOptions": [
+        1,
+        5
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "explosion",
+      "externalId": "freie-magie--explosion--4",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Große Illusion",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Wie Rang 2, aber erschwert das Wahrnehmungs-Manöver um 1/1 MP.",
+      "list": "Freie Magie",
+      "rank": 5,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2
+      ],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "grosse-illusion",
+      "externalId": "freie-magie--grosse-illusion--5",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Schlaf",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Lässt Person/2 MP der Stufe/2 MP für Stunde/1 MP einschlafen. Die Opfer können sich mit einem einfachen KO-Manöver für 5 Minuten wachhalten (wiederholbar).",
+      "list": "Freie Magie",
+      "rank": 6,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        5
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "Stunde/1 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "schlaf",
+      "externalId": "freie-magie--schlaf--6",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Unsichtbarkeit",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Lässt eine Person/3 MP oder einen Gegenstand von gleicher Größe/2 MP für eine Stunde/2 MP unsichtbar werden. Unsichtbare erhalten auf alle Manöver einen Malus von -1.",
+      "list": "Freie Magie",
+      "rank": 7,
+      "cost": 2,
+      "costOptions": [
+        2,
+        3
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "eine Stunde/2 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "unsichtbarkeit",
+      "externalId": "freie-magie--unsichtbarkeit--7",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Sprung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erlaubt einen Sprung bis zu 2 m/1 MP (max. 4 m) aus dem Stand oder einen Fall ohne Schaden aus bis zu 10 m Höhe/4 MP.",
+      "list": "Freie Magie",
+      "rank": 8,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        4,
+        10
+      ],
+      "range": "Speziell",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "sprung",
+      "externalId": "freie-magie--sprung--8",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Stoßwelle",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Mit den Händen kann eine Druckwelle ausgesandt werden, die alle auf einer Linie von 2 m/1 MP umreißt. Sie erhalten 1 Schaden/2 MP (max. 5).",
+      "list": "Freie Magie",
+      "rank": 9,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        5
+      ],
+      "range": "Sichtweite",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "stosswelle",
+      "externalId": "freie-magie--stosswelle--9",
+      "school": "Freie Magie"
+    }
+  },
+  {
+    "name": "Flammenschwert",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Verzaubert ein Schwert so, dass der Zauberer es führen kann (Fertigkeitsrang entsprechend der Fertigkeit Gezielte Sprüche). Das Schwert ist entflammt und richtet zusätzlich Schaden/2 MP an (max. 5). Dauer: 1 Runde/1 MP.",
+      "list": "Freie Magie",
+      "rank": 10,
+      "cost": 1,
+      "costOptions": [
+        1,
+        2,
+        5
+      ],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "1 Runde/1 MP",
+      "sourcePage": 44,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "flammenschwert",
+      "externalId": "freie-magie--flammenschwert--10",
+      "school": "Freie Magie"
+    }
+  }
+]

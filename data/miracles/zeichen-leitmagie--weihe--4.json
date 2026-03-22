@@ -1,0 +1,22 @@
+{
+  "name": "Weihe",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Weiht (für 1 Tag pro Stufe) MP/Quadratmeter: +1 Manöverbonus, -1 für Feinde.",
+    "list": "Zeichen (Leitmagie)",
+    "rank": 4,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "1 Tag pro Stufe",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "weihe",
+    "externalId": "zeichen-leitmagie--weihe--4",
+    "domain": "Zeichen (Leitmagie)"
+  }
+}

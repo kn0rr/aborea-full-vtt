@@ -1,0 +1,13 @@
+{
+  "name": "Halbe-Platte",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 5,
+    "armor": 8,
+    "maneuverMod": -2,
+    "price": "20 GF",
+    "weight": 18
+  }
+}

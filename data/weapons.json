@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Kurzschwert",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "kurzeKlingenwaffe",
+      "minStrength": 2,
+      "damage": 1,
+      "initiative": 1,
+      "range": "kurz",
+      "price": "14 TT",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Langbogen",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "boegen",
+      "minStrength": 6,
+      "damage": 2,
+      "initiative": 0,
+      "range": "lang",
+      "price": "2 GF",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Langschwert",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "langeKlingenwaffe",
+      "minStrength": 5,
+      "damage": 4,
+      "initiative": 0,
+      "range": "mittel",
+      "price": "26 TT",
+      "weight": null,
+      "attrChoices": [
+        "st"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Morgenstern",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "Im Spielerheft als Wuchtwaffe geführt; hier als Platzhalter einer Nahkampffertigkeit zugeordnet.",
+      "skill": "stangenwaffe",
+      "minStrength": 0,
+      "damage": 4,
+      "initiative": 0,
+      "range": "mittel",
+      "price": "24 TT",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Rapier",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "kurzeKlingenwaffe",
+      "minStrength": 0,
+      "damage": 1.5,
+      "initiative": 1,
+      "range": "mittel",
+      "price": "44 TT",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Schleuder",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "wurfwaffe",
+      "minStrength": 0,
+      "damage": 0,
+      "initiative": 1,
+      "range": "lang",
+      "price": "2 MU",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Speer",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "stangenwaffe",
+      "minStrength": 0,
+      "damage": 4,
+      "initiative": 0,
+      "range": "lang",
+      "price": "46 KL",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Stab",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "stangenwaffe",
+      "minStrength": 0,
+      "damage": 3,
+      "initiative": 1,
+      "range": "lang",
+      "price": "1 KL",
+      "weight": null,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Waffenlos",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "waffenlos",
+      "minStrength": 0,
+      "damage": 0,
+      "initiative": 1,
+      "range": "kurz",
+      "price": "0",
+      "weight": 0,
+      "attrChoices": [
+        "st"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Zweihand-Axt",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "aexte",
+      "minStrength": 6,
+      "damage": 6,
+      "initiative": -1,
+      "range": "lang",
+      "price": "4 GF",
+      "weight": null,
+      "attrChoices": [
+        "st"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "name": "Zweihänder",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "langeKlingenwaffe",
+      "minStrength": 6,
+      "damage": 4,
+      "initiative": 0,
+      "range": "lang",
+      "price": "4 GF",
+      "weight": null,
+      "attrChoices": [
+        "st"
+      ],
+      "hands": 1
+    }
+  }
+]

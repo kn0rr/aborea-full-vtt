@@ -1,0 +1,19 @@
+{
+  "name": "Waffenlos",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "waffenlos",
+    "minStrength": 0,
+    "damage": 0,
+    "initiative": 1,
+    "range": "kurz",
+    "price": "0",
+    "weight": 0,
+    "attrChoices": [
+      "st"
+    ],
+    "hands": 1
+  }
+}

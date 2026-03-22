@@ -1,0 +1,58 @@
+{
+  "id": "aborea-v7",
+  "title": "ABOREA V7 (inoffiziell)",
+  "description": "Inoffizielles ABOREA-System für Foundry VTT auf Basis des Spielerhefts mit Datenpaket für Völker, Berufe, Zauber, Wunder, Waffen und Rüstungen.",
+  "version": "0.2.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13.350"
+  },
+  "authors": [
+    {
+      "name": "OpenAI"
+    }
+  ],
+  "esmodules": [
+    "module/aborea.mjs"
+  ],
+  "styles": [
+    "styles/aborea.css"
+  ],
+  "languages": [
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "npc": {},
+      "creature": {}
+    },
+    "Item": {
+      "race": {},
+      "class": {},
+      "skill": {},
+      "weapon": {},
+      "armor": {},
+      "spell": {},
+      "miracle": {},
+      "gear": {}
+    }
+  },
+  "grid": {
+    "distance": 1,
+    "units": "m"
+  },
+  "primaryTokenAttribute": "hp",
+  "secondaryTokenAttribute": "mp",
+  "manifest": "",
+  "download": ""
+}

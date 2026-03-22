@@ -1,0 +1,23 @@
+{
+  "name": "Wiedererweckung",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erweckt eine Kreatur, die nicht länger als einen Tag/3 MP tot ist, wieder zum Leben.",
+    "list": "Wunder (Leitmagie)",
+    "rank": 10,
+    "cost": 1,
+    "costOptions": [
+      1,
+      3
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "nicht länger als einen Tag/3 MP tot",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "wiedererweckung",
+    "externalId": "wunder-leitmagie--wiedererweckung--10",
+    "domain": "Wunder (Leitmagie)"
+  }
+}

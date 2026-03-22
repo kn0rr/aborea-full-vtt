@@ -1,0 +1,22 @@
+{
+  "name": "Animalie",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Verleiht das Wissen eines Tieres der Stufe/1 MP für eine Runde/1 MP.",
+    "list": "Wilde Magie",
+    "rank": 4,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "eine Runde/1 MP",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "animalie",
+    "externalId": "wilde-magie--animalie--4",
+    "school": "Wilde Magie"
+  }
+}

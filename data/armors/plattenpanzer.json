@@ -1,0 +1,13 @@
+{
+  "name": "Plattenpanzer",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 6,
+    "armor": 9,
+    "maneuverMod": -3,
+    "price": "40 GF",
+    "weight": 30
+  }
+}
