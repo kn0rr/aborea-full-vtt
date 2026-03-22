@@ -82,5 +82,7 @@
   "ABOREA.Description": "Beschreibung",
   "ABOREA.Quantity": "Menge",
   "ABOREA.Weight": "Gewicht",
-  "ABOREA.Cost": "Kosten"
+  "ABOREA.Cost": "Kosten",
+  "ABOREA.Apply": "Übernehmen",
+  "ABOREA.ImportStarterData": "Daten auf Actor importieren"
 }

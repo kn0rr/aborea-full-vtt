@@ -1,12 +1,16 @@
 import { ABOREA } from "./config.mjs";
 import { AboreaActorSheet } from "./actor-sheet.mjs";
 import { AboreaItemSheet } from "./item-sheet.mjs";
+import { loadSystemData } from "./data-loader.mjs";
 
 Hooks.once("init", async function () {
   console.log("ABOREA V7 | Initialisiere System");
 
+  const referenceData = await loadSystemData();
+
   game.aborea = {
-    config: ABOREA
+    config: ABOREA,
+    data: referenceData
   };
 
   CONFIG.ABOREA = ABOREA;

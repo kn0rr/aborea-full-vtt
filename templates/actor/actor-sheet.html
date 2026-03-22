@@ -4,10 +4,31 @@
     <div class="header-fields">
       <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
       <div class="header-grid">
-        <label>{{localize "ABOREA.Level"}} <input type="number" name="system.details.level" value="{{system.details.level}}" /></label>
-        <label>{{localize "ABOREA.XP"}} <input type="number" name="system.details.xp" value="{{system.details.xp}}" /></label>
-        <label>{{localize "ABOREA.Race"}} <input type="text" name="system.details.race" value="{{system.details.race}}" /></label>
-        <label>{{localize "ABOREA.Class"}} <input type="text" name="system.details.class" value="{{system.details.class}}" /></label>
+        <label>{{localize "ABOREA.Level"}} <input type="number" name="system.resources.level" value="{{system.resources.level}}" /></label>
+        <label>{{localize "ABOREA.XP"}} <input type="number" name="system.resources.xp" value="{{system.resources.xp}}" /></label>
+        <div class="select-with-button">
+          <label>{{localize "ABOREA.Race"}}</label>
+          <select name="system.details.race">
+            <option value=""></option>
+            {{#each referenceData.races as |entry|}}
+            <option value="{{entry.name}}" {{#if (aboreaEq entry.name ../selectedRace)}}selected{{/if}}>{{entry.name}}</option>
+            {{/each}}
+          </select>
+          <button type="button" class="apply-race">{{localize "ABOREA.Apply"}}</button>
+        </div>
+        <div class="select-with-button">
+          <label>{{localize "ABOREA.Class"}}</label>
+          <select name="system.details.class">
+            <option value=""></option>
+            {{#each referenceData.classes as |entry|}}
+            <option value="{{entry.name}}" {{#if (aboreaEq entry.name ../selectedClass)}}selected{{/if}}>{{entry.name}}</option>
+            {{/each}}
+          </select>
+          <button type="button" class="apply-class">{{localize "ABOREA.Apply"}}</button>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="seed-items">{{localize "ABOREA.ImportStarterData"}}</button>
       </div>
     </div>
   </header>
