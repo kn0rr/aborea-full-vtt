@@ -1,0 +1,23 @@
+{
+  "name": "Halbling",
+  "type": "race",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "description": "Besonderer Schutz gegen Zauber (Zauberresistenz), +1 Rüstungsbonus.",
+    "mods": {
+      "st": -2,
+      "ge": 1,
+      "ko": 0,
+      "in": 0,
+      "ch": 1
+    },
+    "special": "Besonderer Schutz gegen Zauber (Zauberresistenz), +1 Rüstungsbonus.",
+    "restrictions": ""
+  },
+  "_id": "9344360e81104cc8",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

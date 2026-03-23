@@ -1,0 +1,12 @@
+{
+  "package": "aborea-v7",
+  "name": "spells",
+  "label": "Spells",
+  "type": "Item",
+  "system": "aborea-v7",
+  "path": "packs/spells",
+  "ownership": {
+    "PLAYER": "OBSERVER",
+    "ASSISTANT": "OWNER"
+  }
+}

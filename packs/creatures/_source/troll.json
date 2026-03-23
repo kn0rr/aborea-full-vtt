@@ -1,0 +1,65 @@
+{
+  "name": "Troll",
+  "type": "creature",
+  "img": "icons/svg/monster.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 8
+      },
+      "ge": {
+        "value": 3
+      },
+      "ko": {
+        "value": 8
+      },
+      "in": {
+        "value": 2
+      },
+      "ch": {
+        "value": 2
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 30,
+        "max": 30
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      },
+      "xp": 0,
+      "level": 1
+    },
+    "combat": {
+      "initiative": 0,
+      "combatBonus": 0,
+      "offensiveBonus": 2,
+      "defensiveBonus": 0,
+      "defenseValue": 5,
+      "armorValue": 5,
+      "targetDefense": 5
+    },
+    "details": {
+      "race": "",
+      "class": "",
+      "size": "groß",
+      "notes": "Regeneriert schnell; fürchtet Feuer."
+    },
+    "creature": {
+      "kind": "Troll",
+      "threat": 3,
+      "regeneration": 2,
+      "vulnerability": "Feuer",
+      "special": "Regeneration; große Keule"
+    }
+  },
+  "_id": "390d40d4d41f4fff",
+  "prototypeToken": {},
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

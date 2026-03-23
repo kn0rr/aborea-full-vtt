@@ -1,3 +1,4 @@
+
 <form class="aborea-sheet {{cssClass}}" autocomplete="off">
   <header class="sheet-header item-header">
     <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
@@ -10,11 +11,9 @@
   <section class="panel">
     {{#if (aboreaEq item.type "weapon")}}
       <label>{{localize "ABOREA.WeaponSkill"}} <input type="text" name="system.skill" value="{{system.skill}}" /></label>
-      <label>{{localize "ABOREA.WeaponAttribute"}} <input type="text" name="system.attribute" value="{{system.attribute}}" /></label>
       <label>{{localize "ABOREA.Damage"}} <input type="number" name="system.damage" value="{{system.damage}}" /></label>
       <label>{{localize "ABOREA.Range"}} <input type="text" name="system.range" value="{{system.range}}" /></label>
-      <label>{{localize "ABOREA.InitiativeMod"}} <input type="number" name="system.initiativeMod" value="{{system.initiativeMod}}" /></label>
-      <label>{{localize "ABOREA.ManeuverMod"}} <input type="number" name="system.maneuverMod" value="{{system.maneuverMod}}" /></label>
+      <label>{{localize "ABOREA.InitiativeMod"}} <input type="number" name="system.initiative" value="{{system.initiative}}" /></label>
       <label>{{localize "ABOREA.MinStrength"}} <input type="number" name="system.minStrength" value="{{system.minStrength}}" /></label>
       <label><input type="checkbox" name="system.equipped" {{checked system.equipped}} /> {{localize "ABOREA.Equipped"}}</label>
     {{/if}}
@@ -27,31 +26,43 @@
     {{/if}}
 
     {{#if (aboreaEq item.type "spell")}}
+      <label>{{localize "ABOREA.List"}} <input type="text" name="system.list" value="{{system.list}}" /></label>
       <label>{{localize "ABOREA.Rank"}} <input type="number" name="system.rank" value="{{system.rank}}" /></label>
-      <label>{{localize "ABOREA.MPCost"}} <input type="number" name="system.mpCost" value="{{system.mpCost}}" /></label>
-      <label>{{localize "ABOREA.Target"}} <input type="text" name="system.target" value="{{system.target}}" /></label>
+      <label>{{localize "ABOREA.MPCost"}} <input type="number" name="system.cost" value="{{system.cost}}" /></label>
+      <label>{{localize "ABOREA.Range"}} <input type="text" name="system.range" value="{{system.range}}" /></label>
       <label>{{localize "ABOREA.Duration"}} <input type="text" name="system.duration" value="{{system.duration}}" /></label>
       <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
     {{/if}}
 
     {{#if (aboreaEq item.type "miracle")}}
+      <label>{{localize "ABOREA.List"}} <input type="text" name="system.list" value="{{system.list}}" /></label>
       <label>{{localize "ABOREA.Rank"}} <input type="number" name="system.rank" value="{{system.rank}}" /></label>
-      <label>{{localize "ABOREA.MPCost"}} <input type="number" name="system.mpCost" value="{{system.mpCost}}" /></label>
+      <label>{{localize "ABOREA.MPCost"}} <input type="number" name="system.cost" value="{{system.cost}}" /></label>
+      <label>{{localize "ABOREA.Range"}} <input type="text" name="system.range" value="{{system.range}}" /></label>
+      <label>{{localize "ABOREA.Duration"}} <input type="text" name="system.duration" value="{{system.duration}}" /></label>
+      <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
+    {{/if}}
+
+    {{#if (aboreaEq item.type "race")}}
+      <label>{{localize "ABOREA.Special"}} <textarea name="system.special">{{system.special}}</textarea></label>
+      <label>{{localize "ABOREA.Restrictions"}} <input type="text" name="system.restrictions" value="{{system.restrictions}}" /></label>
+      <div class="combat-grid">
+        {{#each system.mods as |value key|}}
+        <label>{{key}} <input type="number" name="system.mods.{{key}}" value="{{value}}" /></label>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if (aboreaEq item.type "class")}}
+      <label>{{localize "ABOREA.HPBase"}} <input type="number" name="system.hitPointsBase" value="{{system.hitPointsBase}}" /></label>
+      <label>{{localize "ABOREA.MagicAttribute"}} <input type="text" name="system.magicAttribute" value="{{system.magicAttribute}}" /></label>
       <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
     {{/if}}
 
     {{#if (aboreaEq item.type "gear")}}
       <label>{{localize "ABOREA.Quantity"}} <input type="number" name="system.quantity" value="{{system.quantity}}" /></label>
       <label>{{localize "ABOREA.Weight"}} <input type="number" step="0.1" name="system.weight" value="{{system.weight}}" /></label>
-      <label>{{localize "ABOREA.Cost"}} <input type="text" name="system.cost" value="{{system.cost}}" /></label>
-      <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
-    {{/if}}
-
-    {{#if (aboreaEq item.type "race")}}
-      <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
-    {{/if}}
-
-    {{#if (aboreaEq item.type "class")}}
+      <label>{{localize "ABOREA.Cost"}} <input type="text" name="system.price" value="{{system.price}}" /></label>
       <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
     {{/if}}
   </section>

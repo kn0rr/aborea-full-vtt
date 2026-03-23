@@ -84,5 +84,18 @@
   "ABOREA.Weight": "Gewicht",
   "ABOREA.Cost": "Kosten",
   "ABOREA.Apply": "Übernehmen",
-  "ABOREA.ImportStarterData": "Daten auf Actor importieren"
+  "ABOREA.ApplyRace": "Volk anwenden",
+  "ABOREA.ApplyClass": "Beruf anwenden",
+  "ABOREA.TotalArmorValue": "Gesamt-Rüstung",
+  "ABOREA.EmbeddedRaceClass": "Verknüpfte Herkunft",
+  "ABOREA.DropHint": "Du kannst Völker, Berufe, Waffen, Rüstungen, Zauber und Wunder direkt aus den Packs auf den Actor ziehen.",
+  "ABOREA.Role": "Rolle",
+  "ABOREA.Faction": "Fraktion",
+  "ABOREA.List": "Liste",
+  "ABOREA.Restrictions": "Einschränkungen",
+  "ABOREA.HPBase": "HP-Basis",
+  "ABOREA.MagicAttribute": "Magie-Attribut",
+  "ABOREA.CharacterSheet": "Charakterbogen",
+  "ABOREA.NpcSheet": "NSC-Bogen",
+  "ABOREA.CreatureSheet": "Kreaturenbogen"
 }

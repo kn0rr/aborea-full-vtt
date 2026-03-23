@@ -1,0 +1,51 @@
+
+<form class="aborea-sheet {{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+    <div class="header-fields">
+      <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+      <div class="header-grid">
+        <label>{{localize "ABOREA.Role"}} <input type="text" name="system.role" value="{{system.role}}" /></label>
+        <label>{{localize "ABOREA.Faction"}} <input type="text" name="system.faction" value="{{system.faction}}" /></label>
+        <label>{{localize "ABOREA.Size"}} <input type="text" name="system.details.size" value="{{system.details.size}}" /></label>
+        <label>{{localize "ABOREA.Class"}} <input type="text" name="system.details.class" value="{{system.details.class}}" /></label>
+      </div>
+    </div>
+  </header>
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">{{localize "ABOREA.TabStats"}}</a>
+    <a class="item" data-tab="inventory">{{localize "ABOREA.TabInventory"}}</a>
+    <a class="item" data-tab="special">{{localize "ABOREA.TabSpecial"}}</a>
+  </nav>
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="stats">
+      <section class="grid grid-2col">
+        <div class="panel">
+          <h2>{{localize "ABOREA.Attributes"}}</h2>
+          <div class="attributes-grid">
+            {{#each system.attributes as |attr key|}}
+            <div class="attribute-row"><label>{{localize attr.label}}</label><input type="number" name="system.attributes.{{key}}.value" value="{{attr.value}}" /><span>{{localize "ABOREA.Bonus"}} {{attr.bonus}}</span></div>
+            {{/each}}
+          </div>
+        </div>
+        <div class="panel">
+          <h2>{{localize "ABOREA.Resources"}}</h2>
+          <div class="resource-row"><label>HP</label><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" /><span>/</span><input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" /></div>
+          <div class="resource-row"><label>MP</label><input type="number" name="system.resources.mp.value" value="{{system.resources.mp.value}}" /><span>/</span><input type="number" name="system.resources.mp.max" value="{{system.resources.mp.max}}" /></div>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>{{localize "ABOREA.Combat"}}</h2>
+        <div class="combat-grid">
+          <label>{{localize "ABOREA.CombatBonus"}} <input type="number" name="system.combat.combatBonus" value="{{system.combat.combatBonus}}" /></label>
+          <label>{{localize "ABOREA.OffensiveBonus"}} <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" /></label>
+          <label>{{localize "ABOREA.DefensiveBonus"}} <input type="number" name="system.combat.defensiveBonus" value="{{system.combat.defensiveBonus}}" /></label>
+          <label>{{localize "ABOREA.DefenseValue"}} <input type="number" value="{{system.combat.defenseValue}}" disabled /></label>
+          <button type="button" class="roll-initiative">{{localize "ABOREA.RollInitiative"}}</button>
+        </div>
+      </section>
+    </div>
+    <div class="tab" data-group="primary" data-tab="inventory">{{> "systems/aborea-v7/templates/actor/partials/inventory.html"}}</div>
+    <div class="tab" data-group="primary" data-tab="special"><section class="panel"><textarea name="system.details.notes">{{system.details.notes}}</textarea></section></div>
+  </section>
+</form>

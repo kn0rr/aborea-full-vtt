@@ -84,5 +84,18 @@
   "ABOREA.Weight": "Weight",
   "ABOREA.Cost": "Cost",
   "ABOREA.Apply": "Apply",
-  "ABOREA.ImportStarterData": "Import data to actor"
+  "ABOREA.ApplyRace": "Apply race",
+  "ABOREA.ApplyClass": "Apply class",
+  "ABOREA.TotalArmorValue": "Total armor",
+  "ABOREA.EmbeddedRaceClass": "Linked origin",
+  "ABOREA.DropHint": "You can drag races, classes, weapons, armor, spells, and miracles from packs onto the actor.",
+  "ABOREA.Role": "Role",
+  "ABOREA.Faction": "Faction",
+  "ABOREA.List": "List",
+  "ABOREA.Restrictions": "Restrictions",
+  "ABOREA.HPBase": "HP base",
+  "ABOREA.MagicAttribute": "Magic attribute",
+  "ABOREA.CharacterSheet": "Character sheet",
+  "ABOREA.NpcSheet": "NPC sheet",
+  "ABOREA.CreatureSheet": "Creature sheet"
 }

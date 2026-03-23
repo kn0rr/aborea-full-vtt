@@ -1,0 +1,28 @@
+{
+  "name": "Illusion",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Schafft eine einfache Illusion für Minute/1 MP (Routine Wahrnehmungs-Manöver zum Entlarven).",
+    "list": "Freie Magie",
+    "rank": 2,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "Minute/1 MP",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "illusion",
+    "externalId": "freie-magie--illusion--2",
+    "school": "Freie Magie"
+  },
+  "_id": "9eb67c4edae04dbe",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

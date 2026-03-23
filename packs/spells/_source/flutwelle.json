@@ -1,0 +1,31 @@
+{
+  "name": "Flutwelle",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Lässt ein Gewässer so unruhig werden, dass eine Flutwelle entsteht. 10 m/1 MP lang und 2 m/1 MP hoch (max. 20 m). Es dauert bis zu 10 Minuten, bevor die Welle kommt. Zuvor zieht sich das Wasser deutlich zurück.",
+    "list": "Elementare Magie",
+    "rank": 8,
+    "cost": 1,
+    "costOptions": [
+      1,
+      2,
+      10,
+      20
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "bis zu 10 Minuten, bevor die Welle kommt",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "flutwelle",
+    "externalId": "elementare-magie--flutwelle--8",
+    "school": "Elementare Magie"
+  },
+  "_id": "b2d2e11cae444610",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

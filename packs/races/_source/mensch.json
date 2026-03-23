@@ -1,0 +1,23 @@
+{
+  "name": "Mensch",
+  "type": "race",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "description": "Einmalig zwei Ausbildungspunkte mehr auf der ersten Stufe.",
+    "mods": {
+      "st": 0,
+      "ge": 0,
+      "ko": 0,
+      "in": 0,
+      "ch": 0
+    },
+    "special": "Einmalig zwei Ausbildungspunkte mehr auf der ersten Stufe.",
+    "restrictions": ""
+  },
+  "_id": "1d7c980897f7406a",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Rapier",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "kurzeKlingenwaffe",
+    "minStrength": 0,
+    "damage": 1.5,
+    "initiative": 1,
+    "range": "mittel",
+    "price": "44 TT",
+    "weight": null,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
+  },
+  "_id": "12f95855d1524a50",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

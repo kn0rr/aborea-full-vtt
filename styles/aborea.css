@@ -109,4 +109,7 @@
   background: #f7f0e0;
 }
 
-.select-with-button{display:grid;grid-template-columns:1fr auto;gap:.35rem;align-items:end}.select-with-button label{grid-column:1 / -1}.header-actions{margin-top:.5rem;display:flex;justify-content:flex-end}
+.sheet-header .header-grid.compact { grid-template-columns: 1fr auto 1fr auto; margin-top: .5rem; }
+.pill-list { display:flex; gap:.4rem; flex-wrap: wrap; }
+.pill { background:#ddd; border-radius:999px; padding:.15rem .5rem; }
+.aborea-sheet .panel { margin-bottom: .75rem; }

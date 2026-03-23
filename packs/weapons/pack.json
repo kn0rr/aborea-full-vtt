@@ -1,0 +1,12 @@
+{
+  "package": "aborea-v7",
+  "name": "weapons",
+  "label": "Weapons",
+  "type": "Item",
+  "system": "aborea-v7",
+  "path": "packs/weapons",
+  "ownership": {
+    "PLAYER": "OBSERVER",
+    "ASSISTANT": "OWNER"
+  }
+}

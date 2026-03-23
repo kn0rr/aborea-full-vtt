@@ -9,24 +9,19 @@
       "common": {
         "attributes": {
           "st": {
-            "value": 5,
-            "bonus": 0
+            "value": 5
           },
           "ge": {
-            "value": 5,
-            "bonus": 0
+            "value": 5
           },
           "ko": {
-            "value": 5,
-            "bonus": 0
+            "value": 5
           },
           "in": {
-            "value": 5,
-            "bonus": 0
+            "value": 5
           },
           "ch": {
-            "value": 5,
-            "bonus": 0
+            "value": 5
           }
         },
         "resources": {
@@ -47,7 +42,8 @@
           "offensiveBonus": 0,
           "defensiveBonus": 0,
           "defenseValue": 5,
-          "armorValue": 5
+          "armorValue": 5,
+          "targetDefense": 5
         },
         "details": {
           "race": "",
@@ -64,35 +60,59 @@
       "skills": {
         "athletik": {
           "rank": 0,
-          "attr": "st"
-        },
-        "heimlichkeit": {
-          "rank": 0,
-          "attr": "ge"
+          "attribute": "st"
         },
         "natur": {
           "rank": 0,
-          "attr": "in"
+          "attribute": "in"
         },
-        "wissen": {
+        "heilkunst": {
           "rank": 0,
-          "attr": "in"
+          "attribute": "in"
+        },
+        "heimlichkeit": {
+          "rank": 0,
+          "attribute": "ge"
+        },
+        "wahrnehmung": {
+          "rank": 0,
+          "attribute": "in"
         },
         "ueberreden": {
           "rank": 0,
-          "attr": "ch"
+          "attribute": "ch"
+        },
+        "mechanik": {
+          "rank": 0,
+          "attribute": "in"
         },
         "waffenlos": {
           "rank": 0,
-          "attr": "st"
+          "attribute": "st"
         },
-        "klingenwaffen": {
+        "boegen": {
           "rank": 0,
-          "attr": "st"
+          "attribute": "ge"
         },
-        "bogen": {
+        "aexte": {
           "rank": 0,
-          "attr": "ge"
+          "attribute": "st"
+        },
+        "langeKlingenwaffe": {
+          "rank": 0,
+          "attribute": "st"
+        },
+        "kurzeKlingenwaffe": {
+          "rank": 0,
+          "attribute": "ge"
+        },
+        "stangenwaffe": {
+          "rank": 0,
+          "attribute": "st"
+        },
+        "wurfwaffe": {
+          "rank": 0,
+          "attribute": "ge"
         }
       },
       "currency": {
@@ -116,6 +136,7 @@
         "kind": "",
         "threat": 1,
         "regeneration": 0,
+        "resistances": "",
         "vulnerability": "",
         "special": ""
       }
@@ -134,7 +155,8 @@
     ],
     "templates": {
       "common": {
-        "description": ""
+        "description": "",
+        "equipped": false
       }
     },
     "race": {
@@ -199,7 +221,7 @@
       ],
       "rank": 1,
       "cost": 1,
-      "school": "weiße Magie",
+      "school": "",
       "list": "",
       "costOptions": [],
       "range": "",

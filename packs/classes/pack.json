@@ -1,0 +1,12 @@
+{
+  "package": "aborea-v7",
+  "name": "classes",
+  "label": "Classes",
+  "type": "Item",
+  "system": "aborea-v7",
+  "path": "packs/classes",
+  "ownership": {
+    "PLAYER": "OBSERVER",
+    "ASSISTANT": "OWNER"
+  }
+}

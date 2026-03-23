@@ -1,0 +1,26 @@
+{
+  "name": "Kurzschwert",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "kurzeKlingenwaffe",
+    "minStrength": 2,
+    "damage": 1,
+    "initiative": 1,
+    "range": "kurz",
+    "price": "14 TT",
+    "weight": null,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
+  },
+  "_id": "b0fbf9de853048a7",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

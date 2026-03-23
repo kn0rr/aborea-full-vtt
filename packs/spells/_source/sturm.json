@@ -1,0 +1,29 @@
+{
+  "name": "Sturm",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Entfesselt einen Sturm der Windstärke 10 für Stunde/1 MP in einem Umkreis von 1 km; dauert eine Minute, bis er sich zusammengezogen hat. Die typischen Anzeichen für ein Unwetter passieren zuvor.",
+    "list": "Elementare Magie",
+    "rank": 6,
+    "cost": 1,
+    "costOptions": [
+      1,
+      10
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "Stunde/1 MP in einem Umkreis von 1 km",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "sturm",
+    "externalId": "elementare-magie--sturm--6",
+    "school": "Elementare Magie"
+  },
+  "_id": "487b9b9df9b84aa2",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

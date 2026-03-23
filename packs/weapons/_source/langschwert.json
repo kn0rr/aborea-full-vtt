@@ -1,0 +1,25 @@
+{
+  "name": "Langschwert",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "langeKlingenwaffe",
+    "minStrength": 5,
+    "damage": 4,
+    "initiative": 0,
+    "range": "mittel",
+    "price": "26 TT",
+    "weight": null,
+    "attrChoices": [
+      "st"
+    ],
+    "hands": 1
+  },
+  "_id": "1b13308e5fb040e1",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

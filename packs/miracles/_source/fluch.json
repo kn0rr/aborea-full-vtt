@@ -1,0 +1,28 @@
+{
+  "name": "Fluch",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Verflucht eine bekannte Person für einen Tag/1 MP.",
+    "list": "Wunder (Leitmagie)",
+    "rank": 6,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Speziell",
+    "targeted": false,
+    "duration": "einen Tag/1 MP",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "fluch",
+    "externalId": "wunder-leitmagie--fluch--6",
+    "domain": "Wunder (Leitmagie)"
+  },
+  "_id": "f03d364ee266415d",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

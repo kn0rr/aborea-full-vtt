@@ -1,20 +1,35 @@
+
 import { ABOREA } from "./config.mjs";
 import { rollAttack, rollInitiative, rollSkill } from "./dice.mjs";
+
+function duplicateItemObject(item) {
+  const obj = item.toObject();
+  delete obj._id;
+  return obj;
+}
+
+async function findPackDocumentByTypeAndName(type, name) {
+  const matchingPacks = game.packs.filter(p => p.documentName === (type === "creature" ? "Actor" : "Item"));
+  for (const pack of matchingPacks) {
+    const index = await pack.getIndex({ fields: ["name", "type"] });
+    const hit = index.find(e => e.name === name && (type === "creature" || e.type === type));
+    if (hit) return pack.getDocument(hit._id);
+  }
+  return null;
+}
 
 export class AboreaActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["aborea", "sheet", "actor"],
-      width: 860,
+      width: 900,
       height: 760,
       resizable: true,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }]
     });
   }
 
-  get template() {
-    return "systems/aborea-v7/templates/actor/actor-sheet.html";
-  }
+  get template() { return "systems/aborea-v7/templates/actor/character-sheet.html"; }
 
   async getData(options = {}) {
     const context = await super.getData(options);
@@ -26,27 +41,27 @@ export class AboreaActorSheet extends ActorSheet {
       data.label = ABOREA.attributes[key];
     }
 
-    system.skills = system.skills || {};
-    for (const [key, cfg] of Object.entries(ABOREA.skills)) {
-      const current = system.skills[key] ?? { rank: 0, attribute: cfg.attribute };
-      current.key = key;
-      current.label = cfg.label;
-      current.attribute = current.attribute || cfg.attribute;
-      system.skills[key] = current;
+    if (actor.type === "character") {
+      system.skills = system.skills || {};
+      for (const [key, cfg] of Object.entries(ABOREA.skills)) {
+        const current = system.skills[key] ?? { rank: 0, attribute: cfg.attribute };
+        current.key = key;
+        current.label = cfg.label;
+        current.attribute = current.attribute || cfg.attribute;
+        system.skills[key] = current;
+      }
     }
 
     const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-    const armorBonus = armorItems.reduce((sum, item) => sum + Number(item.system.armor ?? 0), 0);
-    system.combat.armorValue = Number(system.combat.armorValue ?? 5) + armorBonus;
-    system.combat.defenseValue = ABOREA.defenseValue(system.combat.armorValue, system.combat.defensiveBonus ?? 0);
+    const armorBonus = armorItems.reduce((sum, item) => sum + Number(item.system.armor ?? 0) - 5, 0);
+    const baseArmorValue = Number(system.combat.armorValue ?? 5);
+    system.combat.totalArmorValue = baseArmorValue + armorBonus;
+    system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat.defensiveBonus ?? 0);
     system.combat.initiative = ABOREA.initiativeBonus(actor);
 
     context.system = system;
     context.config = ABOREA;
-    context.referenceData = game.aborea?.data ?? {};
-    context.selectedRace = system.details?.race ?? "";
-    context.selectedClass = system.details?.class ?? "";
-    context.itemsByType = {
+    context.itemLists = {
       races: actor.items.filter(i => i.type === "race"),
       classes: actor.items.filter(i => i.type === "class"),
       weapons: actor.items.filter(i => i.type === "weapon"),
@@ -56,7 +71,20 @@ export class AboreaActorSheet extends ActorSheet {
       gear: actor.items.filter(i => i.type === "gear"),
       skills: actor.items.filter(i => i.type === "skill")
     };
+    context.availablePacks = {
+      races: await this._packChoices("race"),
+      classes: await this._packChoices("class")
+    };
     return context;
+  }
+
+  async _packChoices(type) {
+    const docs = [];
+    for (const pack of game.packs.filter(p => p.documentName === "Item")) {
+      const index = await pack.getIndex({ fields: ["name", "type"] });
+      docs.push(...index.filter(e => e.type === type).map(e => ({ name: e.name })));
+    }
+    return docs.sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
   }
 
   activateListeners(html) {
@@ -64,134 +92,122 @@ export class AboreaActorSheet extends ActorSheet {
     if (!this.isEditable) return;
 
     html.find(".roll-initiative").on("click", () => rollInitiative(this.actor));
-    html.find(".roll-skill").on("click", ev => {
-      const key = ev.currentTarget.dataset.skill;
-      rollSkill(this.actor, key);
-    });
+    html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
     html.find(".roll-attack").on("click", ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       const weapon = this.actor.items.get(itemId);
       rollAttack(this.actor, weapon, { targetDefense: this.actor.system.combat?.targetDefense ?? 5 });
     });
+
     html.find(".item-create").on("click", this._onItemCreate.bind(this));
-    html.find(".apply-race").on("click", this._onApplyRace.bind(this));
-    html.find(".apply-class").on("click", this._onApplyClass.bind(this));
-    html.find(".seed-items").on("click", this._onSeedItems.bind(this));
-    html.find(".item-edit").on("click", ev => {
-      const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
-      const item = this.actor.items.get(itemId);
-      if (item) item.sheet.render(true);
-    });
+    html.find(".item-edit").on("click", ev => this.actor.items.get(ev.currentTarget.closest("[data-item-id]")?.dataset.itemId)?.sheet?.render(true));
     html.find(".item-delete").on("click", async ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       if (itemId) await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
     });
-    html.find(".combat-balance").on("change", async () => {
-      const offensive = Number(html.find('[name="system.combat.offensiveBonus"]').val() ?? 0);
-      const combatBonus = Number(html.find('[name="system.combat.combatBonus"]').val() ?? 0);
-      const defensive = combatBonus - offensive;
-      await this.actor.update({
-        "system.combat.offensiveBonus": offensive,
-        "system.combat.defensiveBonus": defensive
-      });
+
+    html.find(".combat-balance").on("change", async ev => {
+      const offensive = Number(ev.currentTarget.value ?? 0);
+      const combatBonus = Number(this.actor.system.combat?.combatBonus ?? 0);
+      await this.actor.update({ "system.combat.offensiveBonus": offensive, "system.combat.defensiveBonus": combatBonus - offensive });
     });
+
     html.find(".rest-heal").on("click", async () => {
       const conBonus = ABOREA.attributeBonus(this.actor.system.attributes.ko.value);
-      const healed = ABOREA.naturalHealingPerDay(conBonus);
+      const healed = Math.max(0, ABOREA.naturalHealingPerDay(conBonus));
       const current = Number(this.actor.system.resources.hp.value ?? 0);
       const max = Number(this.actor.system.resources.hp.max ?? current);
       await this.actor.update({ "system.resources.hp.value": Math.min(max, current + healed) });
       ui.notifications.info(`${this.actor.name}: +${healed} HP`);
     });
+
     html.find(".rest-mp").on("click", async () => {
-      const cls = this.actor.system.details.class ?? "";
-      const attrKey = ["priester", "schamane"].includes(String(cls).toLowerCase()) ? "ch" : "in";
+      const cls = String(this.actor.system.details.class ?? "").toLowerCase();
+      const attrKey = ["priester", "schamane", "barde"].includes(cls) ? "ch" : "in";
       const attrBonus = ABOREA.attributeBonus(this.actor.system.attributes[attrKey].value);
-      const regen = ABOREA.mpRegenPerHour(attrBonus);
+      const regen = Math.max(0, ABOREA.mpRegenPerHour(attrBonus));
       const current = Number(this.actor.system.resources.mp.value ?? 0);
       const max = Number(this.actor.system.resources.mp.max ?? current);
       await this.actor.update({ "system.resources.mp.value": Math.min(max, current + regen) });
       ui.notifications.info(`${this.actor.name}: +${regen} MP`);
     });
+
+    html.find(".apply-race").on("click", async () => {
+      const selected = html.find('[name="selectedRace"]').val();
+      if (!selected) return;
+      const item = await findPackDocumentByTypeAndName("race", selected);
+      if (item) await this._applyRace(item);
+    });
+
+    html.find(".apply-class").on("click", async () => {
+      const selected = html.find('[name="selectedClass"]').val();
+      if (!selected) return;
+      const item = await findPackDocumentByTypeAndName("class", selected);
+      if (item) await this._applyClass(item);
+    });
   }
 
+  async _onDropItem(event, data) {
+    const item = await Item.implementation.fromDropData(data);
+    if (!item) return super._onDropItem(event, data);
 
-  async _onApplyRace(event) {
-    event.preventDefault();
-    const raceName = this.form?.querySelector('[name="system.details.race"]')?.value;
-    const race = (game.aborea?.data?.races ?? []).find(r => r.name === raceName);
-    if (!race) return ui.notifications.warn("Keine passende Rasse gefunden.");
+    if (item.type === "race") return this._applyRace(item);
+    if (item.type === "class") return this._applyClass(item);
 
-    const oldRaceItem = this.actor.items.find(i => i.type === "race");
-    if (oldRaceItem) {
-      const mods = oldRaceItem.system?.mods ?? {};
-      const update = {};
-      for (const key of ["st", "ge", "ko", "in", "ch"]) {
-        const current = Number(this.actor.system.attributes?.[key]?.value ?? 5);
-        update[`system.attributes.${key}.value`] = Math.max(1, current - Number(mods[key] ?? 0));
-      }
-      await this.actor.update(update);
-      await this.actor.deleteEmbeddedDocuments("Item", [oldRaceItem.id]);
-    }
-
-    const mods = race.system?.mods ?? {};
-    const update = {"system.details.race": race.name};
-    for (const key of ["st", "ge", "ko", "in", "ch"]) {
-      const current = Number(this.actor.system.attributes?.[key]?.value ?? 5);
-      update[`system.attributes.${key}.value`] = Math.max(1, current + Number(mods[key] ?? 0));
-    }
-    await this.actor.update(update);
-    await this.actor.createEmbeddedDocuments("Item", [foundry.utils.deepClone(race)]);
-    ui.notifications.info(`Rasse ${race.name} auf ${this.actor.name} angewendet.`);
+    const obj = duplicateItemObject(item);
+    return this.actor.createEmbeddedDocuments("Item", [obj]);
   }
 
-  async _onApplyClass(event) {
-    event.preventDefault();
-    const className = this.form?.querySelector('[name="system.details.class"]')?.value;
-    const cls = (game.aborea?.data?.classes ?? []).find(c => c.name === className);
-    if (!cls) return ui.notifications.warn("Kein passender Beruf gefunden.");
+  async _applyRace(raceItem) {
+    const race = duplicateItemObject(raceItem);
+    const existing = this.actor.items.filter(i => i.type === "race");
+    if (existing.length) await this.actor.deleteEmbeddedDocuments("Item", existing.map(i => i.id));
 
-    const oldClassItem = this.actor.items.find(i => i.type === "class");
-    if (oldClassItem) await this.actor.deleteEmbeddedDocuments("Item", [oldClassItem.id]);
+    const updates = { "system.details.race": race.name };
+    for (const [attr, mod] of Object.entries(race.system.mods ?? {})) {
+      const current = Number(this.actor.system.attributes?.[attr]?.value ?? 5);
+      updates[`system.attributes.${attr}.value`] = Math.max(1, current + Number(mod || 0));
+    }
+    await this.actor.update(updates);
+    await this.actor.createEmbeddedDocuments("Item", [race]);
+    ui.notifications.info(`${race.name} auf ${this.actor.name} angewendet.`);
+  }
 
-    const koBonus = ABOREA.attributeBonus(this.actor.system.attributes?.ko?.value ?? 5);
-    const hpMax = Math.max(1, Number(cls.system?.hitPointsBase ?? 5) + koBonus);
-    const magicAttr = String(cls.system?.magicAttribute ?? "").toLowerCase();
-    const attrBonus = magicAttr && this.actor.system.attributes?.[magicAttr] ? ABOREA.attributeBonus(this.actor.system.attributes[magicAttr].value) : 0;
-    const mpMax = ["in", "ch"].includes(magicAttr) ? Math.max(0, attrBonus + 3) : 0;
+  async _applyClass(classItem) {
+    const cls = duplicateItemObject(classItem);
+    const existing = this.actor.items.filter(i => i.type === "class");
+    if (existing.length) await this.actor.deleteEmbeddedDocuments("Item", existing.map(i => i.id));
+
+    const hpBase = Number(cls.system.hitPointsBase ?? 5);
+    const hpMax = hpBase + ABOREA.attributeBonus(this.actor.system.attributes.ko.value);
+    const magicAttribute = cls.system.magicAttribute || "in";
+    const mpBase = Math.max(0, ABOREA.attributeBonus(this.actor.system.attributes?.[magicAttribute]?.value ?? 5) + 3);
 
     await this.actor.update({
       "system.details.class": cls.name,
       "system.resources.hp.max": hpMax,
       "system.resources.hp.value": Math.min(Number(this.actor.system.resources.hp.value ?? hpMax), hpMax),
-      "system.resources.mp.max": mpMax,
-      "system.resources.mp.value": Math.min(Number(this.actor.system.resources.mp.value ?? mpMax), mpMax)
+      "system.resources.mp.max": mpBase,
+      "system.resources.mp.value": Math.min(Number(this.actor.system.resources.mp.value ?? mpBase), mpBase)
     });
-    await this.actor.createEmbeddedDocuments("Item", [foundry.utils.deepClone(cls)]);
-    ui.notifications.info(`Beruf ${cls.name} auf ${this.actor.name} angewendet.`);
-  }
-
-  async _onSeedItems(event) {
-    event.preventDefault();
-    const existingKeys = new Set(this.actor.items.map(i => `${i.type}::${i.name}`));
-    const payload = [];
-    for (const [typeKey, targetType] of [["weapons", "weapon"], ["armors", "armor"], ["spells", "spell"], ["miracles", "miracle"]]) {
-      for (const entry of (game.aborea?.data?.[typeKey] ?? [])) {
-        if (entry.type !== targetType) continue;
-        const key = `${entry.type}::${entry.name}`;
-        if (!existingKeys.has(key)) payload.push(foundry.utils.deepClone(entry));
-      }
-    }
-    if (!payload.length) return ui.notifications.info("Keine neuen Daten zum Importieren.");
-    await this.actor.createEmbeddedDocuments("Item", payload);
-    ui.notifications.info(`${payload.length} Einträge auf ${this.actor.name} importiert.`);
+    await this.actor.createEmbeddedDocuments("Item", [cls]);
+    ui.notifications.info(`${cls.name} auf ${this.actor.name} angewendet.`);
   }
 
   async _onItemCreate(event) {
     event.preventDefault();
     const type = event.currentTarget.dataset.type;
     const name = game.i18n.format("ABOREA.NewItem", { type });
-    const itemData = { name, type, system: {} };
-    return this.actor.createEmbeddedDocuments("Item", [itemData]);
+    return this.actor.createEmbeddedDocuments("Item", [{ name, type, system: {} }]);
   }
+}
+
+export class AboreaCharacterSheet extends AboreaActorSheet {
+  get template() { return "systems/aborea-v7/templates/actor/character-sheet.html"; }
+}
+export class AboreaNpcSheet extends AboreaActorSheet {
+  get template() { return "systems/aborea-v7/templates/actor/npc-sheet.html"; }
+}
+export class AboreaCreatureSheet extends AboreaActorSheet {
+  get template() { return "systems/aborea-v7/templates/actor/creature-sheet.html"; }
 }

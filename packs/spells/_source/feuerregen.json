@@ -1,0 +1,31 @@
+{
+  "name": "Feuerregen",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der Himmel zieht sich innerhalb von 5 Minuten zu. Die meisten Tiere flüchten. Es regnet heiße Lava im Umkreis von 10 m/5 MP für 1 Min./5 MP. Sie richtet einen Würfel geteilt durch 2 Schaden an und entzündet alles Brennbare. Funktioniert nicht innerhalb von Räumen.",
+    "list": "Elementare Magie",
+    "rank": 10,
+    "cost": 1,
+    "costOptions": [
+      1,
+      2,
+      5,
+      10
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "1 Min./5 MP",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "feuerregen",
+    "externalId": "elementare-magie--feuerregen--10",
+    "school": "Elementare Magie"
+  },
+  "_id": "56b18ad4eaf14b9b",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

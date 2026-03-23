@@ -1,8 +1,8 @@
 {
   "id": "aborea-v7",
   "title": "ABOREA V7 (inoffiziell)",
-  "description": "Inoffizielles ABOREA-System für Foundry VTT auf Basis des Spielerhefts mit Datenpaket für Völker, Berufe, Zauber, Wunder, Waffen und Rüstungen.",
-  "version": "0.2.0",
+  "description": "Inoffizielles ABOREA-System für Foundry VTT mit Actor-/Item-Sheets, Compendium-_source und Beispielkreaturen.",
+  "version": "0.4.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13.350"
@@ -51,8 +51,87 @@
     "distance": 1,
     "units": "m"
   },
-  "primaryTokenAttribute": "hp",
-  "secondaryTokenAttribute": "mp",
-  "manifest": "https://github.com/kn0rr/aborea-full-vtt/releases/latest/download/system.json",
-  "download": "https://github.com/kn0rr/aborea-full-vtt/releases/download/v0.1/aborea-full-vtt-main.zip"
+  "primaryTokenAttribute": "resources.hp",
+  "secondaryTokenAttribute": "resources.mp",
+  "packs": [
+    {
+      "name": "races",
+      "label": "Völker",
+      "type": "Item",
+      "path": "packs/races",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "classes",
+      "label": "Berufe",
+      "type": "Item",
+      "path": "packs/classes",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "weapons",
+      "label": "Waffen",
+      "type": "Item",
+      "path": "packs/weapons",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "armors",
+      "label": "Rüstungen",
+      "type": "Item",
+      "path": "packs/armors",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "spells",
+      "label": "Zauber",
+      "type": "Item",
+      "path": "packs/spells",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "miracles",
+      "label": "Wunder & Leitmagie",
+      "type": "Item",
+      "path": "packs/miracles",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "creatures",
+      "label": "Kreaturen",
+      "type": "Actor",
+      "path": "packs/creatures",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "manifest": "",
+  "download": ""
 }

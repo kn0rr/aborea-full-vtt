@@ -1,0 +1,28 @@
+{
+  "name": "Elementar",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Animiert einen Elementar zu erscheinen (Element muss vorhanden sein) und einem eine Stunde beizustehen (Stufe/1 MP).",
+    "list": "Elementare Magie",
+    "rank": 7,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "eine Stunde beizustehen (Stufe/1 MP)",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "elementar",
+    "externalId": "elementare-magie--elementar--7",
+    "school": "Elementare Magie"
+  },
+  "_id": "de50f13e6f9a43de",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}

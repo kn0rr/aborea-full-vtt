@@ -1,0 +1,26 @@
+{
+  "name": "Schleuder",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "wurfwaffe",
+    "minStrength": 0,
+    "damage": 0,
+    "initiative": 1,
+    "range": "lang",
+    "price": "2 MU",
+    "weight": null,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
+  },
+  "_id": "4e608be6dd3b4cd0",
+  "folder": null,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  }
+}
