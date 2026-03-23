@@ -10,10 +10,16 @@
     "price": "11 TT",
     "weight": 5
   },
-  "_id": "dac021eabc8d42e9",
-  "folder": null,
-  "flags": {},
+  "_id": "32d68b1952c21660",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schild",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/schild.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

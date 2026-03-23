@@ -1,0 +1,34 @@
+{
+  "name": "Trance",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der Schamane kann sich in einen Trancezustand versetzen, um die wahre Natur eines berührten Objektes um einen Erkenntnispunkt/1 MP zu erhellen. Die Dauer der Trance ist abhängig von der Zahl der eingesetzten MP.",
+    "list": "Schamanenmagie (Leitmagie)",
+    "rank": 2,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "1 Runde je MP",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "trance",
+    "externalId": "schamanenmagie-leitmagie--trance--2",
+    "domain": "Schamanenmagie (Leitmagie)"
+  },
+  "_id": "0d269419d796fde6",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schamanenmagie-leitmagie--trance--2",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/schamanenmagie-leitmagie--trance--2.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

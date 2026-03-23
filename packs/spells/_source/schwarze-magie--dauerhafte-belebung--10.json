@@ -1,0 +1,34 @@
+{
+  "name": "Dauerhafte Belebung",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erschafft dauerhaft Untote/2 MP auf Stufe/2 MP.",
+    "list": "Schwarze Magie",
+    "rank": 10,
+    "cost": 2,
+    "costOptions": [
+      2
+    ],
+    "range": "Berührung",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "dauerhafte-belebung",
+    "externalId": "schwarze-magie--dauerhafte-belebung--10",
+    "school": "Schwarze Magie"
+  },
+  "_id": "a5abad3bd8709cb8",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schwarze-magie--dauerhafte-belebung--10",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/schwarze-magie--dauerhafte-belebung--10.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

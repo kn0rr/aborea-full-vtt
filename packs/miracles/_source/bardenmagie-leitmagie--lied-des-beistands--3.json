@@ -1,0 +1,36 @@
+{
+  "name": "Lied des Beistands",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "3 Hörer/1 MP erhalten jeweils einen TP/1 MP zurück oder einen Bonus von +1/1 MP (max. +5) auf deren nächstes Manöver (nach Wahl des Barden).",
+    "list": "Bardenmagie (Leitmagie)",
+    "rank": 3,
+    "cost": 1,
+    "costOptions": [
+      1,
+      3,
+      5
+    ],
+    "range": "Hörweite",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "lied-des-beistands",
+    "externalId": "bardenmagie-leitmagie--lied-des-beistands--3",
+    "domain": "Bardenmagie (Leitmagie)"
+  },
+  "_id": "ab99dd790c01dba5",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "bardenmagie-leitmagie--lied-des-beistands--3",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/bardenmagie-leitmagie--lied-des-beistands--3.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

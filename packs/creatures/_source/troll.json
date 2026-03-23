@@ -1,7 +1,7 @@
 {
   "name": "Troll",
   "type": "creature",
-  "img": "icons/svg/monster.svg",
+  "img": "icons/svg/mystery-man.svg",
   "system": {
     "attributes": {
       "st": {
@@ -28,38 +28,65 @@
       "mp": {
         "value": 0,
         "max": 0
-      },
-      "xp": 0,
-      "level": 1
+      }
     },
     "combat": {
-      "initiative": 0,
-      "combatBonus": 0,
+      "combatBonus": 2,
       "offensiveBonus": 2,
       "defensiveBonus": 0,
-      "defenseValue": 5,
       "armorValue": 5,
+      "defenseValue": 5,
       "targetDefense": 5
     },
     "details": {
+      "level": 1,
+      "xp": 0,
       "race": "",
       "class": "",
-      "size": "groß",
-      "notes": "Regeneriert schnell; fürchtet Feuer."
+      "notes": "Regeneration; Angst vor Feuer. Beispiel-Kreatur basierend auf dem Spielerheft."
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
     },
     "creature": {
       "kind": "Troll",
+      "size": "groß",
       "threat": 3,
       "regeneration": 2,
-      "vulnerability": "Feuer",
-      "special": "Regeneration; große Keule"
+      "resistances": "zäh",
+      "vulnerabilities": "Feuer"
     }
   },
-  "_id": "390d40d4d41f4fff",
-  "prototypeToken": {},
-  "folder": null,
-  "flags": {},
+  "items": [
+    {
+      "name": "Keule",
+      "type": "weapon",
+      "img": "icons/svg/sword.svg",
+      "system": {
+        "skill": "waffenlos",
+        "attribute": "st",
+        "damage": 2,
+        "range": "kurz",
+        "initiativeMod": 0,
+        "maneuverMod": 0,
+        "minStrength": 0,
+        "equipped": true
+      }
+    }
+  ],
+  "_id": "b5c397072d9e1dac",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "troll",
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/troll.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

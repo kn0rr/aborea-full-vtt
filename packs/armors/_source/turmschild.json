@@ -10,10 +10,16 @@
     "price": "18 TT",
     "weight": 10
   },
-  "_id": "b17529a009624d8b",
-  "folder": null,
-  "flags": {},
+  "_id": "4f619d8f6cc77c55",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "turmschild",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/turmschild.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

@@ -1,0 +1,34 @@
+{
+  "name": "Belebung",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Belebt einen Gegenstand für eine Stunde/1 MP und Stufe/1 MP (Untot).",
+    "list": "Schwarze Magie",
+    "rank": 9,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": true,
+    "duration": "eine Stunde/1 MP",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "belebung",
+    "externalId": "schwarze-magie--belebung--9",
+    "school": "Schwarze Magie"
+  },
+  "_id": "13091aefc499c258",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schwarze-magie--belebung--9",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/schwarze-magie--belebung--9.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

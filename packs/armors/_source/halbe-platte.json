@@ -10,10 +10,16 @@
     "price": "20 GF",
     "weight": 18
   },
-  "_id": "2de3f97a83f3420a",
-  "folder": null,
-  "flags": {},
+  "_id": "4f94ddbc119fe28e",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "halbe-platte",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/halbe-platte.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

@@ -1,0 +1,34 @@
+{
+  "name": "Helfer",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Ein Tier oder eine belebte Pflanze mit einer Stufe/1 MP steht dem Magier für eine Stunde/1 MP bei. 1 km pro Stufe.",
+    "list": "Wilde Magie",
+    "rank": 2,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Stufe",
+    "targeted": false,
+    "duration": "eine Stunde/1 MP",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "helfer",
+    "externalId": "wilde-magie--helfer--2",
+    "school": "Wilde Magie"
+  },
+  "_id": "6362225cea347bac",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "wilde-magie--helfer--2",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/wilde-magie--helfer--2.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

@@ -1,0 +1,34 @@
+{
+  "name": "Wunder der Natur",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Erschafft/Verändert im Umkreis von 1 m/1 MP Vegetation (nach Wahl des Schamanen).",
+    "list": "Schamanenmagie (Leitmagie)",
+    "rank": 10,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "wunder-der-natur",
+    "externalId": "schamanenmagie-leitmagie--wunder-der-natur--10",
+    "domain": "Schamanenmagie (Leitmagie)"
+  },
+  "_id": "1027144c788c19a3",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schamanenmagie-leitmagie--wunder-der-natur--10",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/schamanenmagie-leitmagie--wunder-der-natur--10.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

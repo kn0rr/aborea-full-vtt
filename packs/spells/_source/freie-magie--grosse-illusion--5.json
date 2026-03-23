@@ -1,0 +1,35 @@
+{
+  "name": "Große Illusion",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Wie Rang 2, aber erschwert das Wahrnehmungs-Manöver um 1/1 MP.",
+    "list": "Freie Magie",
+    "rank": 5,
+    "cost": 1,
+    "costOptions": [
+      1,
+      2
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "grosse-illusion",
+    "externalId": "freie-magie--grosse-illusion--5",
+    "school": "Freie Magie"
+  },
+  "_id": "3141e0553bfb2c3d",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "freie-magie--grosse-illusion--5",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/freie-magie--grosse-illusion--5.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

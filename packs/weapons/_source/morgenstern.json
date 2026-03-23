@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "1cd07cba77cf4f96",
-  "folder": null,
-  "flags": {},
+  "_id": "9fcaf463af19adb6",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "morgenstern",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/morgenstern.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

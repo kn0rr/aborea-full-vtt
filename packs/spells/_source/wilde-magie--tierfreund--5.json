@@ -1,0 +1,35 @@
+{
+  "name": "Tierfreund",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Findet einen dauerhaften Tierfreund einer Stufe/3 MP. 1 km pro Stufe.",
+    "list": "Wilde Magie",
+    "rank": 5,
+    "cost": 1,
+    "costOptions": [
+      1,
+      3
+    ],
+    "range": "Stufe",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "tierfreund",
+    "externalId": "wilde-magie--tierfreund--5",
+    "school": "Wilde Magie"
+  },
+  "_id": "dc40070ca8367489",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "wilde-magie--tierfreund--5",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/wilde-magie--tierfreund--5.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

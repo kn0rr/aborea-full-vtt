@@ -1,0 +1,35 @@
+{
+  "name": "Explosion",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Eine Explosion aus Licht und Schall verletzt alle Kreaturen im Umkreis von 5 m: Schaden/1 MP.",
+    "list": "Freie Magie",
+    "rank": 4,
+    "cost": 1,
+    "costOptions": [
+      1,
+      5
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "explosion",
+    "externalId": "freie-magie--explosion--4",
+    "school": "Freie Magie"
+  },
+  "_id": "3722e9ff47da56db",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "freie-magie--explosion--4",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/freie-magie--explosion--4.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

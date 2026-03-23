@@ -1,0 +1,36 @@
+{
+  "name": "Stoßwelle",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Mit den Händen kann eine Druckwelle ausgesandt werden, die alle auf einer Linie von 2 m/1 MP umreißt. Sie erhalten 1 Schaden/2 MP (max. 5).",
+    "list": "Freie Magie",
+    "rank": 9,
+    "cost": 1,
+    "costOptions": [
+      1,
+      2,
+      5
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "stosswelle",
+    "externalId": "freie-magie--stosswelle--9",
+    "school": "Freie Magie"
+  },
+  "_id": "f55e63a27e7ee29f",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "freie-magie--stosswelle--9",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/freie-magie--stosswelle--9.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

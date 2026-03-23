@@ -9,10 +9,16 @@
     "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
     "special": "Leitmagie-Beruf."
   },
-  "_id": "b89cfb018f794b81",
-  "folder": null,
-  "flags": {},
+  "_id": "b0d7978a74a425a1",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "priester",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/priester.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

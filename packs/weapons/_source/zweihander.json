@@ -1,0 +1,31 @@
+{
+  "name": "Zweihänder",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "langeKlingenwaffe",
+    "minStrength": 6,
+    "damage": 4,
+    "initiative": 0,
+    "range": "lang",
+    "price": "4 GF",
+    "weight": null,
+    "attrChoices": [
+      "st"
+    ],
+    "hands": 1
+  },
+  "_id": "682712f49c545390",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zweihander",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/zweihander.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

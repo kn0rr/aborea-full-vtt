@@ -16,10 +16,16 @@
     ],
     "hands": 1
   },
-  "_id": "1b13308e5fb040e1",
-  "folder": null,
-  "flags": {},
+  "_id": "14d24762bb143c20",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "langschwert",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/langschwert.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

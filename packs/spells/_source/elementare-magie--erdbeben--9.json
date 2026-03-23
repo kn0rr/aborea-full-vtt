@@ -1,0 +1,36 @@
+{
+  "name": "Erdbeben",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Lässt die Erde im Umkreis von 10 m/2 MP erzittern. Das Beben erreicht Stärke/10 MP (höchstens Stärke 8) und kündigt sich 10 Minuten lang durch kleinere Vorbeben an. Die Stärke ist äquivalent zur Richterskala zu sehen.",
+    "list": "Elementare Magie",
+    "rank": 9,
+    "cost": 2,
+    "costOptions": [
+      2,
+      8,
+      10
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "10 Minuten lang durch kleinere Vorbeben angekündigt",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "erdbeben",
+    "externalId": "elementare-magie--erdbeben--9",
+    "school": "Elementare Magie"
+  },
+  "_id": "e7b6c6bdd174a441",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "elementare-magie--erdbeben--9",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/elementare-magie--erdbeben--9.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

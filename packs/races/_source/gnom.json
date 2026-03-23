@@ -14,10 +14,16 @@
     "special": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
     "restrictions": ""
   },
-  "_id": "c67a1d3e8f6c4e35",
-  "folder": null,
-  "flags": {},
+  "_id": "0b62eb4e797cf76b",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "gnom",
+      "sourcePath": "systems/aborea-v7/packs/races/_source/gnom.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

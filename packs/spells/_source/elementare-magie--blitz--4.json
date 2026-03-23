@@ -1,0 +1,34 @@
+{
+  "name": "Blitz",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Von dem Zauberer aus schießt ein Blitz; mehrere Ziele in einer Reihe möglich: Schaden/1 MP und Person/1 MP.",
+    "list": "Elementare Magie",
+    "rank": 4,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "blitz",
+    "externalId": "elementare-magie--blitz--4",
+    "school": "Elementare Magie"
+  },
+  "_id": "65299b958ea081a5",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "elementare-magie--blitz--4",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/elementare-magie--blitz--4.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

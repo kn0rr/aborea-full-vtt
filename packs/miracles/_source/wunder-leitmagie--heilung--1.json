@@ -1,0 +1,35 @@
+{
+  "name": "Heilung",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Heilt 4 TP/1 MP.",
+    "list": "Wunder (Leitmagie)",
+    "rank": 1,
+    "cost": 1,
+    "costOptions": [
+      1,
+      4
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "heilung",
+    "externalId": "wunder-leitmagie--heilung--1",
+    "domain": "Wunder (Leitmagie)"
+  },
+  "_id": "456c2f4a2f4a2224",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "wunder-leitmagie--heilung--1",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/wunder-leitmagie--heilung--1.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

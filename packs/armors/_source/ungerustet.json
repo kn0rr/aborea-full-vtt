@@ -1,0 +1,25 @@
+{
+  "name": "Ungerüstet",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 0,
+    "armor": 5,
+    "maneuverMod": 0,
+    "price": "0",
+    "weight": 0
+  },
+  "_id": "6cb2b7ae33b2cdfc",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "ungerustet",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/ungerustet.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

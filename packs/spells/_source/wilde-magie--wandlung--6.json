@@ -1,0 +1,34 @@
+{
+  "name": "Wandlung",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Verwandelt in ein Tier der Stufe/1 MP für einen Tag.",
+    "list": "Wilde Magie",
+    "rank": 6,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Berührung",
+    "targeted": true,
+    "duration": "einen Tag",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "wandlung",
+    "externalId": "wilde-magie--wandlung--6",
+    "school": "Wilde Magie"
+  },
+  "_id": "2cb49f84e64693d7",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "wilde-magie--wandlung--6",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/wilde-magie--wandlung--6.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

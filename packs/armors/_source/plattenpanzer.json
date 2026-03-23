@@ -10,10 +10,16 @@
     "price": "40 GF",
     "weight": 30
   },
-  "_id": "900db3fb5c7e49b6",
-  "folder": null,
-  "flags": {},
+  "_id": "eccfe018a8e6c858",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "plattenpanzer",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/plattenpanzer.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

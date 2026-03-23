@@ -14,10 +14,16 @@
     "special": "Wärmesicht, einmalig +2 Trefferpunkte auf der ersten Stufe, Bonus auf Geheimtüren und Fallen, +1 Rüstung.",
     "restrictions": "Kein Zauberer"
   },
-  "_id": "92ba584c4bb448da",
-  "folder": null,
-  "flags": {},
+  "_id": "106f6e00adef0b21",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zwerg",
+      "sourcePath": "systems/aborea-v7/packs/races/_source/zwerg.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

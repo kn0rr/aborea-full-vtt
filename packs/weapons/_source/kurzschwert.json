@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "b0fbf9de853048a7",
-  "folder": null,
-  "flags": {},
+  "_id": "6ab6c775d262125d",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "kurzschwert",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/kurzschwert.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

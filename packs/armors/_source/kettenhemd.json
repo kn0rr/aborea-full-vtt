@@ -10,10 +10,16 @@
     "price": "13 GF",
     "weight": 15
   },
-  "_id": "c6067197fbec497d",
-  "folder": null,
-  "flags": {},
+  "_id": "a6e4c0e4ca55ce2a",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "kettenhemd",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/kettenhemd.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

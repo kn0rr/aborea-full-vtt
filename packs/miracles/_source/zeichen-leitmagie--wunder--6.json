@@ -1,0 +1,32 @@
+{
+  "name": "Wunder",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Ein nicht vorher bestimmbares Wunder passiert (Entscheidung des Spielleiters).",
+    "list": "Zeichen (Leitmagie)",
+    "rank": 6,
+    "cost": 0,
+    "costOptions": [],
+    "range": "Speziell",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "wunder",
+    "externalId": "zeichen-leitmagie--wunder--6",
+    "domain": "Zeichen (Leitmagie)"
+  },
+  "_id": "5f05a6735b3e2448",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zeichen-leitmagie--wunder--6",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/zeichen-leitmagie--wunder--6.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

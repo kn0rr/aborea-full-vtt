@@ -16,10 +16,16 @@
     ],
     "hands": 1
   },
-  "_id": "eb1b0d0f73094374",
-  "folder": null,
-  "flags": {},
+  "_id": "901589868ec51073",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "waffenlos",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/waffenlos.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

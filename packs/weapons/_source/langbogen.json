@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "afb393b7846f4e87",
-  "folder": null,
-  "flags": {},
+  "_id": "3a200b7c238a048a",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "langbogen",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/langbogen.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

@@ -14,10 +14,16 @@
     "special": "Verbesserte Sicht (+1 auf Manöver), Immunität gegen natürliche Krankheiten.",
     "restrictions": "Kein Krieger"
   },
-  "_id": "5e831c2efca64b56",
-  "folder": null,
-  "flags": {},
+  "_id": "305b516e5a40e2af",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "elf",
+      "sourcePath": "systems/aborea-v7/packs/races/_source/elf.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

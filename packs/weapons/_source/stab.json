@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "a6199cf424bf429e",
-  "folder": null,
-  "flags": {},
+  "_id": "4de7a006f83024d9",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "stab",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/stab.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

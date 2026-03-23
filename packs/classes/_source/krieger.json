@@ -9,10 +9,16 @@
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
     "special": "Fokus auf Waffen und Kampf."
   },
-  "_id": "3d4c6ffbb0ca4938",
-  "folder": null,
-  "flags": {},
+  "_id": "e41eb9e29ecc4d99",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "krieger",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/krieger.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

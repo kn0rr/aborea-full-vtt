@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "4e608be6dd3b4cd0",
-  "folder": null,
-  "flags": {},
+  "_id": "438c25781485d96a",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schleuder",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/schleuder.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

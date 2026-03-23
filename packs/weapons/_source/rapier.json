@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "12f95855d1524a50",
-  "folder": null,
-  "flags": {},
+  "_id": "44e6c858286c38b9",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "rapier",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/rapier.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

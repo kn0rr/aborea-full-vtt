@@ -1,0 +1,25 @@
+{
+  "name": "Lederrüstung",
+  "type": "armor",
+  "img": "icons/svg/shield.svg",
+  "system": {
+    "description": "",
+    "minStrength": 3,
+    "armor": 6,
+    "maneuverMod": 0,
+    "price": "9 TT",
+    "weight": 10
+  },
+  "_id": "0a4216ab189b4dcc",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "lederrustung",
+      "sourcePath": "systems/aborea-v7/packs/armors/_source/lederrustung.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

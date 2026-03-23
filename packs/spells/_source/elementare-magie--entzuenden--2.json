@@ -1,0 +1,35 @@
+{
+  "name": "Entzünden",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Entzündet etwas Brennbares in 10 m/1 MP.",
+    "list": "Elementare Magie",
+    "rank": 2,
+    "cost": 1,
+    "costOptions": [
+      1,
+      10
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "",
+    "sourcePage": 44,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "entzuenden",
+    "externalId": "elementare-magie--entzuenden--2",
+    "school": "Elementare Magie"
+  },
+  "_id": "48eda65d1f983b57",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "elementare-magie--entzuenden--2",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/elementare-magie--entzuenden--2.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

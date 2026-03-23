@@ -1,0 +1,34 @@
+{
+  "name": "Symbol",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Vertreiben von Unleben (Leben) für Runde/1 MP pro Stufe/1 MP.",
+    "list": "Zeichen (Leitmagie)",
+    "rank": 3,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": false,
+    "duration": "Runde/1 MP pro Stufe/1 MP",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "symbol",
+    "externalId": "zeichen-leitmagie--symbol--3",
+    "domain": "Zeichen (Leitmagie)"
+  },
+  "_id": "7013843925d199eb",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zeichen-leitmagie--symbol--3",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/zeichen-leitmagie--symbol--3.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

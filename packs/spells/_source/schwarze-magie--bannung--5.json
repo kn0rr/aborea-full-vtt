@@ -1,0 +1,34 @@
+{
+  "name": "Bannung",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Verbannt eine beschworene Kreatur für ein Jahr/1 MP und Stufe/1 MP der Kreatur.",
+    "list": "Schwarze Magie",
+    "rank": 5,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Sichtweite",
+    "targeted": true,
+    "duration": "ein Jahr/1 MP und Stufe/1 MP der Kreatur",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "bannung",
+    "externalId": "schwarze-magie--bannung--5",
+    "school": "Schwarze Magie"
+  },
+  "_id": "29549b5ff32d8859",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schwarze-magie--bannung--5",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/schwarze-magie--bannung--5.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

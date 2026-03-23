@@ -16,10 +16,16 @@
     ],
     "hands": 1
   },
-  "_id": "ed0c3adfd9284db1",
-  "folder": null,
-  "flags": {},
+  "_id": "423021c70a0c0d96",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zweihand-axt",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/zweihand-axt.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

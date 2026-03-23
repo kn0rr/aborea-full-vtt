@@ -1,0 +1,34 @@
+{
+  "name": "Legende",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der Barde kann für eine Stunde/1 MP die Identität eines Fremden annehmen (keine Person, die existiert oder existiert hat).",
+    "list": "Bardenmagie (Leitmagie)",
+    "rank": 6,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "Wahrnehmung",
+    "targeted": false,
+    "duration": "eine Stunde/1 MP",
+    "sourcePage": 46,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "legende",
+    "externalId": "bardenmagie-leitmagie--legende--6",
+    "domain": "Bardenmagie (Leitmagie)"
+  },
+  "_id": "312ef607405d3094",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "bardenmagie-leitmagie--legende--6",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/bardenmagie-leitmagie--legende--6.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

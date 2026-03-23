@@ -14,10 +14,16 @@
     "special": "Einmalig zwei Ausbildungspunkte mehr auf der ersten Stufe.",
     "restrictions": ""
   },
-  "_id": "1d7c980897f7406a",
-  "folder": null,
-  "flags": {},
+  "_id": "bb54547d5e7020f4",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "mensch",
+      "sourcePath": "systems/aborea-v7/packs/races/_source/mensch.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

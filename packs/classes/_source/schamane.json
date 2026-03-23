@@ -9,10 +9,16 @@
     "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
     "special": "Leitmagie-Beruf."
   },
-  "_id": "abd01c22233540e2",
-  "folder": null,
-  "flags": {},
+  "_id": "47e0d58a5e4e3856",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "schamane",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/schamane.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

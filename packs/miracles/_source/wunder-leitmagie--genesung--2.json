@@ -1,0 +1,36 @@
+{
+  "name": "Genesung",
+  "type": "miracle",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Heilt 1 Blutung/2 MP, eine Vergiftung (Rang des Giftes/1 MP) oder einen Attributsverlust (Attributspunkt/3 MP).",
+    "list": "Wunder (Leitmagie)",
+    "rank": 2,
+    "cost": 1,
+    "costOptions": [
+      1,
+      2,
+      3
+    ],
+    "range": "Berührung",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 45,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "genesung",
+    "externalId": "wunder-leitmagie--genesung--2",
+    "domain": "Wunder (Leitmagie)"
+  },
+  "_id": "ac227933f3f16b84",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "wunder-leitmagie--genesung--2",
+      "sourcePath": "systems/aborea-v7/packs/miracles/_source/wunder-leitmagie--genesung--2.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

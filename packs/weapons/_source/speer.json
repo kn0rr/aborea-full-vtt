@@ -17,10 +17,16 @@
     ],
     "hands": 1
   },
-  "_id": "44eb58ecf8994f8d",
-  "folder": null,
-  "flags": {},
+  "_id": "2f08dfa82d949d11",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "speer",
+      "sourcePath": "systems/aborea-v7/packs/weapons/_source/speer.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

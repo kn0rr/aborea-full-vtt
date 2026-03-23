@@ -14,10 +14,16 @@
     "special": "Besonderer Schutz gegen Zauber (Zauberresistenz), +1 Rüstungsbonus.",
     "restrictions": ""
   },
-  "_id": "9344360e81104cc8",
-  "folder": null,
-  "flags": {},
+  "_id": "8083e1724f49e894",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "halbling",
+      "sourcePath": "systems/aborea-v7/packs/races/_source/halbling.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

@@ -9,10 +9,16 @@
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
     "special": "Arkaner Magieberuf."
   },
-  "_id": "343c4494848a46b4",
-  "folder": null,
-  "flags": {},
+  "_id": "bf924c8446d18402",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zauberer",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/zauberer.json",
+      "generated": true
+    }
+  },
   "ownership": {
     "default": 0
-  }
+  },
+  "folder": null
 }

@@ -1,0 +1,34 @@
+{
+  "name": "Pfadfinder",
+  "type": "spell",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Führt zu einer Pflanze oder einem bekannten Ort innerhalb von einem km/1 MP.",
+    "list": "Wilde Magie",
+    "rank": 1,
+    "cost": 1,
+    "costOptions": [
+      1
+    ],
+    "range": "-",
+    "targeted": false,
+    "duration": "",
+    "sourcePage": 43,
+    "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+    "slug": "pfadfinder",
+    "externalId": "wilde-magie--pfadfinder--1",
+    "school": "Wilde Magie"
+  },
+  "_id": "b3942b5fce6b447b",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "wilde-magie--pfadfinder--1",
+      "sourcePath": "systems/aborea-v7/packs/spells/_source/wilde-magie--pfadfinder--1.json",
+      "generated": true
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}
