@@ -2,12 +2,18 @@
 import { ABOREA } from "./config.mjs";
 import { AboreaActorSheet, AboreaCharacterSheet, AboreaNpcSheet, AboreaCreatureSheet } from "./actor-sheet.mjs";
 import { AboreaItemSheet } from "./item-sheet.mjs";
-import { importAboreaPackSources, importSingleAboreaPack } from "./compendium-importer.mjs";
+import { importAboreaPackSources, importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
 
 Hooks.once("init", async function () {
   console.log("ABOREA V7 | Initialisiere System");
 
-  game.aborea = { config: ABOREA, importPackSources: importAboreaPackSources, importPack: importSingleAboreaPack };
+  game.aborea = {
+    config: ABOREA,
+    importPackSources: importAboreaPackSources,
+    importPack: importSingleAboreaPack,
+    listWorldPacks: listAboreaWorldPacks,
+    resetWorldPacks: resetAboreaWorldPacks
+  };
   CONFIG.ABOREA = ABOREA;
 
   Actors.unregisterSheet("core", ActorSheet);
