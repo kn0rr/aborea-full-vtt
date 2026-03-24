@@ -23,19 +23,46 @@
       "wahrnehmung": "1",
       "wissen": "1"
     },
-    "starterPackage": {
-      "name": "Empfohlenes Startpaket",
-      "skills": {
-        "einflussnahme": 1,
-        "kunst": 1,
-        "wahrnehmung": 1,
-        "wissen": 1,
-        "magieEntwickeln": 1
+    "levelFeatures": [
+      {
+        "level": 1,
+        "key": "information",
+        "label": "Informationen +1",
+        "type": "maneuverBonus",
+        "target": "information",
+        "value": 1,
+        "description": "Bonus von +1 auf Manöver zur Informationsbeschaffung (Einflussnahme, List, Wahrnehmung)."
       },
-      "notes": [
-        "Leitmagie-Fokus vorbereiten",
-        "Empfohlene Listen: Bardenmagie, Schwarze Magie"
-      ]
+      {
+        "level": 1,
+        "key": "geheimschrift",
+        "label": "Zeichen (Geheimschrift)",
+        "type": "sense",
+        "target": "geheimschrift",
+        "value": 1,
+        "description": "Barden können bardische Geheimschrift lesen und schreiben."
+      },
+      {
+        "level": 1,
+        "key": "gemeinsamesSpiel",
+        "label": "Gemeinsames Spiel",
+        "type": "pool",
+        "target": "gemeinsamesSpiel",
+        "description": "Mehrere Barden können einen Magiepunkte-Pool bilden und die Wirkungen addieren."
+      }
+    ],
+    "starterPackage": {}
+  },
+  "_id": "519cc01436242caf",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "barde",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/barde.json",
+      "generated": true
     }
-  }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
 }

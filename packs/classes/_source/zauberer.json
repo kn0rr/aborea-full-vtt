@@ -7,7 +7,75 @@
     "hitPointsBase": 4,
     "magicAttribute": "in",
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Arkaner Magieberuf."
+    "special": "Arkaner Magieberuf.",
+    "skillCosts": {
+      "athletik": "3",
+      "einflussnahme": "2",
+      "gezielteSprueche": "2",
+      "kunst": "1",
+      "list": "4",
+      "magieEntwickeln": "1/2",
+      "natur": "3",
+      "reiten": "3",
+      "schwimmen": "3",
+      "spruchlisten": "1/3",
+      "waffen": "4/8",
+      "wahrnehmung": "2",
+      "wissen": "1"
+    },
+    "levelFeatures": [
+      {
+        "level": 1,
+        "key": "magieWahrnehmen",
+        "label": "Magie wahrnehmen",
+        "type": "sense",
+        "target": "senseMagic",
+        "description": "Kann aktive Magie in Sichtweite erkennen (1 Runde Konzentration)."
+      },
+      {
+        "level": 1,
+        "key": "grundzauber",
+        "label": "Grundzauber (Lichtbogen/Funkenregen)",
+        "type": "dailyPower",
+        "target": "grundzauber",
+        "description": "Kann einen Lichtbogen oder Funkenregen formen (1 Runde/Stufe, wie helle Laterne)."
+      },
+      {
+        "level": 1,
+        "key": "zauberbuch",
+        "label": "Zauberbuch (+2 Manöver)",
+        "type": "castingBonus",
+        "value": 2,
+        "target": "zauberbuch",
+        "description": "Zauberbuch gibt +2 Bonus auf Zauber-Manöver (wenn nicht in Zeitnot, +10 Min/Rang)."
+      },
+      {
+        "level": 1,
+        "key": "schriftrollen",
+        "label": "Schriftrollen",
+        "type": "sense",
+        "target": "schriftrollen",
+        "description": "Kann Schriftrollen für ungelernte Zauber benutzen (kostet MP)."
+      },
+      {
+        "level": 1,
+        "key": "zauberstab",
+        "label": "Zauberstab (Rang-1 Zauber, 3×/Tag)",
+        "type": "dailyPower",
+        "usesPerDay": 3,
+        "target": "zauberstab",
+        "description": "Startzauberstab enthält einen Rang-1-Zauber, 3× täglich kostenlos (Optionen kosten MP). Gilt als gezielter Zauber."
+      },
+      {
+        "level": 10,
+        "key": "freundZauberers",
+        "label": "Freund des Zauberers (ab Stufe 10)",
+        "type": "companion",
+        "target": "freundZauberers",
+        "description": "Ab Stufe 10: magische Kreatur als gelegentlicher Freund (Stufe ≤ Zauberer-Stufe minus 5)."
+      }
+    ],
+    "starterPackage": {}
   },
   "_id": "bf924c8446d18402",
   "flags": {

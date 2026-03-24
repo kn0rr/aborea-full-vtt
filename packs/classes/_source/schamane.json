@@ -7,7 +7,41 @@
     "hitPointsBase": 6,
     "magicAttribute": "ch",
     "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Leitmagie-Beruf."
+    "special": "Leitmagie-Beruf.",
+    "skillCosts": {
+      "athletik": "2",
+      "einflussnahme": "1",
+      "gezielteSprueche": "3",
+      "kunst": "1",
+      "list": "3",
+      "magieEntwickeln": "3/4",
+      "natur": "1",
+      "reiten": "2",
+      "schwimmen": "2",
+      "spruchlisten": "3/4",
+      "waffen": "3/6",
+      "wahrnehmung": "1",
+      "wissen": "1"
+    },
+    "levelFeatures": [
+      {
+        "level": 1,
+        "key": "fokus",
+        "label": "Fokus (Spruchspeicher)",
+        "type": "focusStorage",
+        "target": "fokus",
+        "description": "Kristallfokus speichert bis zu 1 Rang Zauber pro Stufe. Erneutes Binden kostet 2 MP pro Rang."
+      },
+      {
+        "level": 1,
+        "key": "blutmagie",
+        "label": "Blutmagie",
+        "type": "resourceConversion",
+        "target": "blutmagie",
+        "description": "Kann Trefferpunkte in Magiepunkte umwandeln (1 TP = 1 MP) beim Zaubern."
+      }
+    ],
+    "starterPackage": {}
   },
   "_id": "47e0d58a5e4e3856",
   "flags": {

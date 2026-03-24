@@ -318,7 +318,26 @@
       "hitPointsBase": 5,
       "magicAttribute": "",
       "special": "",
-      "magicFormula": ""
+      "magicFormula": "",
+      "skillCosts": {
+        "athletik": "2/4",
+        "einflussnahme": "1",
+        "gezielteSprueche": "3",
+        "kunst": "1",
+        "list": "2",
+        "magieEntwickeln": "3/4",
+        "natur": "2",
+        "reiten": "2",
+        "schwimmen": "2",
+        "spruchlisten": "3/4",
+        "waffen": "3/5",
+        "wahrnehmung": "1",
+        "wissen": "1"
+      },
+      "levelFeatures": [],
+      "starterPackage": {},
+      "allowedRaces": [],
+      "forbiddenRaces": []
     },
     "skill": {
       "templates": [

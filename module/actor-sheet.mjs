@@ -978,14 +978,17 @@ export class AboreaActorSheet extends ActorSheet {
       traits.secretDoorsBonus = true;
     }
 
-    const trainingBudget = ABOREA.baseTrainingPoints + (((race?.name || '').toLowerCase() === 'mensch' && level === 1) ? 2 : 0);
+    // Training budget: 8 AP per level, +2 bonus for humans (once, at level 1 only)
+    const humanBonus = (race?.name || '').toLowerCase() === 'mensch' ? 2 : 0;
+    const trainingBudget = (ABOREA.baseTrainingPoints * level) + humanBonus;
     const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system);
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
 
     const hpBase = Number(cls?.system?.hitPointsBase ?? 5);
-    let hpMax = Math.max(1, (hpBase + ABOREA.attributeBonus(finalAttrs.ko.value)) * level);
-    if ((race?.name || '').toLowerCase() === 'zwerg' && level === 1) hpMax += 2;
+    // Zwerg gets +2 extra HP on level 1 (permanent bonus, counts once)
+    const zwergBonus = (race?.name || '').toLowerCase() === 'zwerg' ? 2 : 0;
+    let hpMax = Math.max(1, (hpBase + ABOREA.attributeBonus(finalAttrs.ko.value)) * level + zwergBonus);
 
     const magicAttribute = cls?.system?.magicAttribute || 'in';
     const magicDevelop = Number(actorSystem.skills?.magieEntwickeln?.rank ?? 0);
@@ -1024,7 +1027,17 @@ export class AboreaActorSheet extends ActorSheet {
 
   async _applyLevelFeatures() {
     if (this.actor.type !== "character") return;
-    return this._recalculateCharacter();
+    const result = await this._recalculateCharacter();
+    const level = Number(this.actor.system?.resources?.level ?? 1);
+    const cls = this.actor.items.find(i => i.type === "class");
+    const race = this.actor.items.find(i => i.type === "race");
+    const humanBonus = (race?.name || '').toLowerCase() === 'mensch' ? 2 : 0;
+    const totalAP = (ABOREA.baseTrainingPoints * level) + humanBonus;
+    const newFeatures = ABOREA.activeClassFeatures(cls?.system || {}, level).filter(f => Number(f.level) === level);
+    let msg = `${this.actor.name}: Stufe ${level} — ${totalAP} AP Gesamt`;
+    if (newFeatures.length) msg += ` | Neue Fähigkeiten: ${newFeatures.map(f => f.label).join(', ')}`;
+    ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: `<p>${msg}</p>` });
+    return result;
   }
 
   async _activateClassFeature(featureKey) {

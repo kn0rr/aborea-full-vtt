@@ -23,18 +23,89 @@
       "wahrnehmung": "1",
       "wissen": "2"
     },
-    "starterPackage": {
-      "name": "Empfohlenes Startpaket",
-      "skills": {
-        "athletik": 1,
-        "einflussnahme": 1,
-        "list": 1,
-        "wahrnehmung": 1,
-        "waffen": 1
+    "levelFeatures": [
+      {
+        "level": 1,
+        "key": "fallen",
+        "label": "Fallen finden/entschärfen +1",
+        "type": "maneuverBonus",
+        "target": "fallen",
+        "value": 1,
+        "description": "Bonus von +1 auf Manöver zum Finden und Entschärfen von Fallen."
       },
-      "notes": [
-        "Fokus auf soziale und listige Manöver"
-      ]
+      {
+        "level": 1,
+        "key": "schloesser",
+        "label": "Schlösser öffnen +1",
+        "type": "maneuverBonus",
+        "target": "list",
+        "value": 1,
+        "description": "Bonus von +1 auf Schlösser öffnen (List)."
+      },
+      {
+        "level": 1,
+        "key": "geheimtueren",
+        "label": "Geheimtüren entdecken +1",
+        "type": "maneuverBonus",
+        "target": "wahrnehmung",
+        "value": 1,
+        "description": "Bonus von +1 auf Geheimtüren entdecken."
+      },
+      {
+        "level": 1,
+        "key": "heimlichkeit",
+        "label": "Heimlichkeit +1",
+        "type": "maneuverBonus",
+        "target": "stealth",
+        "value": 1,
+        "description": "Bonus von +1 auf Schleichen und Tarnen."
+      },
+      {
+        "level": 1,
+        "key": "heimlicherAngriff",
+        "label": "Heimlicher Angriff",
+        "type": "dailyPower",
+        "target": "heimlicherAngriff",
+        "description": "Bei Überraschung: doppelter Schaden (erster Angriff)."
+      },
+      {
+        "level": 1,
+        "key": "ausweichen",
+        "label": "Ausweichen",
+        "type": "castingBonus",
+        "target": "ausweichen",
+        "description": "Rang in Athletik als Rüstungsbonus (max. 5), wenn max. Lederrüstung und nicht überrascht."
+      },
+      {
+        "level": 1,
+        "key": "gift",
+        "label": "Gift +1",
+        "type": "maneuverBonus",
+        "target": "gift",
+        "value": 1,
+        "description": "Bonus von +1 auf Manöver mit Giften."
+      },
+      {
+        "level": 1,
+        "key": "magGegenstände",
+        "label": "Magische Gegenstände",
+        "type": "sense",
+        "target": "magGegenstände",
+        "description": "Kann magische Gegenstände sofort einsetzen."
+      }
+    ],
+    "starterPackage": {}
+  },
+  "_id": "94ff8a9606fd5c99",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "dieb",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/dieb.json",
+      "generated": true
     }
-  }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
 }

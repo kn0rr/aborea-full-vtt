@@ -23,19 +23,72 @@
       "wahrnehmung": "2",
       "wissen": "1"
     },
-    "starterPackage": {
-      "name": "Empfohlenes Startpaket",
-      "skills": {
-        "einflussnahme": 1,
-        "wissen": 1,
-        "magieEntwickeln": 1,
-        "spruchlisten": 1,
-        "waffen": 1
+    "levelFeatures": [
+      {
+        "level": 1,
+        "key": "heiligesSymbol",
+        "label": "Heiliges Symbol (+1 Rüstung)",
+        "type": "armorBonus",
+        "value": 1,
+        "description": "Heiliges Symbol gewährt +1 Rüstungsbonus."
       },
-      "notes": [
-        "Heiliges Symbol als Klassenmerkmal notieren",
-        "Empfohlene Listen: Zeichen, Wunder"
-      ]
+      {
+        "level": 1,
+        "key": "schriftrollen",
+        "label": "Schriftrollen",
+        "type": "sense",
+        "target": "schriftrollen",
+        "description": "Kann Schriftrollen für ungelernte Zauber benutzen (kostet MP)."
+      },
+      {
+        "level": 1,
+        "key": "heilen",
+        "label": "Heilen +1",
+        "type": "maneuverBonus",
+        "target": "heilen",
+        "value": 1,
+        "description": "Bonus von +1 auf Heilkunst-Manöver."
+      },
+      {
+        "level": 1,
+        "key": "goettlicheWaffe",
+        "label": "Göttliche Waffe +0",
+        "type": "weaponMinimum",
+        "target": "goettlicheWaffe",
+        "minimumRank": 0,
+        "description": "Waffe der Gottheit gilt nicht als ungelernt."
+      },
+      {
+        "level": 5,
+        "key": "messe",
+        "label": "Messe (ab Stufe 5)",
+        "type": "dailyPower",
+        "usesPerDay": 1,
+        "target": "messe",
+        "description": "Einmal täglich inspirierende Messe: alle Teilnehmer +1 auf alle Manöver für 4 Stunden."
+      },
+      {
+        "level": 10,
+        "key": "segnung",
+        "label": "Segnung (ab Stufe 10)",
+        "type": "dailyPower",
+        "usesPerDay": 1,
+        "target": "segnung",
+        "description": "Einmal täglich: alle in Hörweite +2 auf Manöver und Angriffe für einen Tag."
+      }
+    ],
+    "starterPackage": {}
+  },
+  "_id": "b0d7978a74a425a1",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "priester",
+      "sourcePath": "systems/aborea-v7/packs/classes/_source/priester.json",
+      "generated": true
     }
-  }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
 }
