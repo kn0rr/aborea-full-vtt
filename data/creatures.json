@@ -1,0 +1,1352 @@
+[
+  {
+    "name": "Raufbold",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 6
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 5
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 10,
+          "max": 10
+        },
+        "mp": {
+          "value": 3,
+          "max": 3
+        }
+      },
+      "combat": {
+        "combatBonus": 3,
+        "offensiveBonus": 3,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": -1
+      },
+      "details": {
+        "level": 1,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 2, Waffenlos 2, Athletik 1; ME 1, S(Kampf) 1\nWaffen: mar. Knüppel; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -2; -3\nZusatzdaten: 1"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 1,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-1AB/+2S; -2; -3"
+      }
+    },
+    "_id": "b7f99d7c4561a22d",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-raufbold-1",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Grobian",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 6
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 22,
+          "max": 22
+        },
+        "mp": {
+          "value": 3,
+          "max": 3
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": -1
+      },
+      "details": {
+        "level": 2,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 4, Waffenlos 2, Stichwaffen 2; Athletik 1, List 1, ME 1, S(Kampf) 1\nWaffen: mar. Knüppel; ros. Dolch; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -2; -3; -3\nZusatzdaten: 1"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 2,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-1AB/+2S; -2; -3; -3"
+      }
+    },
+    "_id": "a32d5ea3eeecb715",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-grobian-2",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Schläger",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 7
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 33,
+          "max": 33
+        },
+        "mp": {
+          "value": 3,
+          "max": 3
+        }
+      },
+      "combat": {
+        "combatBonus": 7,
+        "offensiveBonus": 7,
+        "defensiveBonus": 0,
+        "armorValue": 6,
+        "defenseValue": 6,
+        "targetDefense": 6,
+        "initiative": -1
+      },
+      "details": {
+        "level": 3,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 6, Waffenlos 2, Stichwaffen 4; Athletik 1, List 2, ME 1, S(Kampf) 1\nWaffen: Knüppel; Dolch; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -1; -2; -3\nZusatzdaten: 1"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 3,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-1AB/+2S; -1; -2; -3"
+      }
+    },
+    "_id": "dcb68d4897e46217",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-schlaeger-3",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Taugenichts",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 6
+        },
+        "ko": {
+          "value": 5
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 6,
+          "max": 6
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 3,
+        "offensiveBonus": 3,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": 2
+      },
+      "details": {
+        "level": 1,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Dieb",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 2, List 2; Athletik 2, Wahrnehmung 1\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 1,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-3; -3"
+      }
+    },
+    "_id": "b3086bce3b2790a7",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-taugenichts-1",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Bandit",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 6
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 14,
+          "max": 14
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": 2
+      },
+      "details": {
+        "level": 2,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Dieb",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 4, List 4; Athletik 3, Wahrnehmung 2\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 2,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-3; -3"
+      }
+    },
+    "_id": "2c7e9033b6db99cf",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-bandit-2",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Schurke",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 7
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 21,
+          "max": 21
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 7,
+        "offensiveBonus": 7,
+        "defensiveBonus": 0,
+        "armorValue": 6,
+        "defenseValue": 6,
+        "targetDefense": 6,
+        "initiative": 2
+      },
+      "details": {
+        "level": 3,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Dieb",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 6, List 6; Athletik 4, Wahrnehmung 3\nWaffen: Dolch; Waffenlos\nBesonderes: -2; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 3,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-2; -3"
+      }
+    },
+    "_id": "c1c071b89018dd66",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-schurke-3",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Gauner",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 5
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 6
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 6,
+          "max": 6
+        },
+        "mp": {
+          "value": 4,
+          "max": 4
+        }
+      },
+      "combat": {
+        "combatBonus": 2,
+        "offensiveBonus": 2,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": 2
+      },
+      "details": {
+        "level": 1,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Barde",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 2, ME 1, Einfluss 2, K(Flöte) 1; S(Barde) 1\nWaffen: ros. Dolch; Waffenlos\nZauber: Bardenlied\nBesonderes: min. 5R; -3; -3\nZusatzdaten: +2; 2"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 1,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "min. 5R; -3; -3"
+      }
+    },
+    "_id": "645294febc0fb23f",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-gauner-1",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Stadtstreicher",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 6
+        },
+        "ko": {
+          "value": 5
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 6
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 12,
+          "max": 12
+        },
+        "mp": {
+          "value": 8,
+          "max": 8
+        }
+      },
+      "combat": {
+        "combatBonus": 4,
+        "offensiveBonus": 4,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": 2
+      },
+      "details": {
+        "level": 2,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Barde",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 3, ME 2, Einfluss 4, K(Flöte) 2; S(Barde) 2, List 1\nWaffen: ros. Dolch; Waffenlos\nZauber: Bardenlied; Lied \"Mut\"\nBesonderes: min. 5R; -3; +2 Mana/R; -3\nZusatzdaten: +3; 2; 3/R"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 2,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "min. 5R; -3; +2 Mana/R; -3"
+      }
+    },
+    "_id": "a20229821291fe86",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-stadtstreicher-2",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Trubadour",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 6
+        },
+        "ko": {
+          "value": 5
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 7
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 18,
+          "max": 18
+        },
+        "mp": {
+          "value": 12,
+          "max": 12
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 6,
+        "defenseValue": 6,
+        "targetDefense": 6,
+        "initiative": 2
+      },
+      "details": {
+        "level": 3,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Barde",
+        "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 4, ME 3, Einfluss 6, K(Flöte) 3; S(Barde 3), List 2\nWaffen: Dolch; Waffenlos\nZauber: Bardenlied; Lied \"Mut\"; Lied \"Beistand\"\nBesonderes: min. 5R; -2; +2 Mana/R; -3; +4 HP/R\nZusatzdaten: +4; 2; 3/R; 3/R"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesindel",
+        "threat": 3,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "min. 5R; -2; +2 Mana/R; -3; +4 HP/R"
+      }
+    },
+    "_id": "f5ad6a046a8e8c41",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-trubadour-3",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Miliz",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 5
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 11,
+          "max": 11
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 2,
+        "offensiveBonus": 2,
+        "defensiveBonus": 0,
+        "armorValue": 6,
+        "defenseValue": 6,
+        "targetDefense": 6,
+        "initiative": 0
+      },
+      "details": {
+        "level": 1,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 2, Wurfwaffe 2, Wahrnehmung 1; Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos\nBesonderes: 0; 0; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesetzeshüter",
+        "threat": 1,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "0; 0; -3"
+      }
+    },
+    "_id": "8b6bbc8992a1225d",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-miliz-1",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Soldat",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 6
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 22,
+          "max": 22
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 6,
+        "defenseValue": 6,
+        "targetDefense": 6,
+        "initiative": 0
+      },
+      "details": {
+        "level": 2,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesetzeshüter\nBeiname: (Stadtwache)\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 2, k.Klinge 2; Wahrnehmung 1, Athletik 1, Schild 1\nWaffen: Speer; Speer (w); Kurzschwert; Waffenlos\nBesonderes: 0; 0; Rundschild (H) (2/-1); -1; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesetzeshüter",
+        "threat": 2,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "0; 0; Rundschild (H) (2/-1); -1; -3"
+      }
+    },
+    "_id": "5a1d7b7dc0144b2e",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-soldat-2",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Erf. Soldat",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 6
+        },
+        "ge": {
+          "value": 6
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 5
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 33,
+          "max": 33
+        },
+        "mp": {
+          "value": 3,
+          "max": 3
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 7,
+        "defenseValue": 7,
+        "targetDefense": 7,
+        "initiative": 0
+      },
+      "details": {
+        "level": 3,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 3, k.Klinge 3; Wahrnehmung 2, Athletik 1, Schild 1, ME 1; S(Kampf) 1, Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos; Kurzschwert\nBesonderes: 0; 0; -3; Rundschild (H) (2/-1); -1"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesetzeshüter",
+        "threat": 3,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "0; 0; -3; Rundschild (H) (2/-1); -1"
+      }
+    },
+    "_id": "f668a20abacdf5f0",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-erf-soldat-3",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Veteran",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 6
+        },
+        "ge": {
+          "value": 6
+        },
+        "ko": {
+          "value": 6
+        },
+        "in": {
+          "value": 5
+        },
+        "ch": {
+          "value": 6
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 44,
+          "max": 44
+        },
+        "mp": {
+          "value": 6,
+          "max": 6
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 7,
+        "defenseValue": 7,
+        "targetDefense": 7,
+        "initiative": 0
+      },
+      "details": {
+        "level": 4,
+        "xp": 0,
+        "race": "Mensch",
+        "class": "Krieger",
+        "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 4, k.Klinge 4; Wahrnehmung 3, Athletik 2, Schild 1, ME 2; S(Kampf) 3, Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos; Kurzschwert\nBesonderes: 0; 0; -3; Rundschild (H) (2/-1); 0"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Gesetzeshüter",
+        "threat": 4,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "0; 0; -3; Rundschild (H) (2/-1); 0"
+      }
+    },
+    "_id": "4581d78fd0732f62",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-veteran-4",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Scherge",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 3
+        },
+        "ge": {
+          "value": 4
+        },
+        "ko": {
+          "value": 3
+        },
+        "in": {
+          "value": 3
+        },
+        "ch": {
+          "value": 2
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 4,
+          "max": 4
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 1,
+        "offensiveBonus": 1,
+        "defensiveBonus": 0,
+        "armorValue": 3,
+        "defenseValue": 3,
+        "targetDefense": 3,
+        "initiative": 1
+      },
+      "details": {
+        "level": 1,
+        "xp": 0,
+        "race": "Goblin",
+        "class": "Dieb",
+        "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 2, Wuchtwaffe 1, Wahrnehmung 1; List 1\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Goblin",
+        "threat": 1,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-3; -3"
+      }
+    },
+    "_id": "dc1ba11370969bda",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-scherge-1",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Redelsführer",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 3
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 3
+        },
+        "in": {
+          "value": 3
+        },
+        "ch": {
+          "value": 2
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 8,
+          "max": 8
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 4,
+        "offensiveBonus": 4,
+        "defensiveBonus": 0,
+        "armorValue": 4,
+        "defenseValue": 4,
+        "targetDefense": 4,
+        "initiative": 2
+      },
+      "details": {
+        "level": 2,
+        "xp": 0,
+        "race": "Goblin",
+        "class": "Dieb",
+        "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 4, Wuchtwaffe 2, Wahrnehmung 2; List 2\nWaffen: ros. Dolch; Waffenlos\nBesonderes: Lederflickenpanzer; -3; -3"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Goblin",
+        "threat": 2,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "Lederflickenpanzer; -3; -3"
+      }
+    },
+    "_id": "3155c4c08fadf8cf",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-redelsfuehrer-2",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Scharlatan",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 3
+        },
+        "ge": {
+          "value": 4
+        },
+        "ko": {
+          "value": 3
+        },
+        "in": {
+          "value": 3
+        },
+        "ch": {
+          "value": 3
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 8,
+          "max": 8
+        },
+        "mp": {
+          "value": 8,
+          "max": 8
+        }
+      },
+      "combat": {
+        "combatBonus": 1,
+        "offensiveBonus": 1,
+        "defensiveBonus": 0,
+        "armorValue": 3,
+        "defenseValue": 3,
+        "targetDefense": 3,
+        "initiative": 1
+      },
+      "details": {
+        "level": 2,
+        "xp": 0,
+        "race": "Goblin",
+        "class": "Schamane",
+        "notes": "Kategorie: Goblin\nFertigkeiten: ME 4, S(Schamane) 1, S(schwarz) 1,; Stichwaffe 2, Wahrnehmung 2\nWaffen: ros. Dolch; Waffenlos\nZauber: Ranken; Tarnung\nBesonderes: -3; -3\nZusatzdaten: 0; 0; 2/R; 0; 1/M"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Goblin",
+        "threat": 2,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "-3; -3"
+      }
+    },
+    "_id": "551c097a02e2708d",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-scharlatan-2",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Häuptling",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 4
+        },
+        "ge": {
+          "value": 5
+        },
+        "ko": {
+          "value": 3
+        },
+        "in": {
+          "value": 3
+        },
+        "ch": {
+          "value": 2
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 12,
+          "max": 12
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 5,
+        "offensiveBonus": 5,
+        "defensiveBonus": 0,
+        "armorValue": 5,
+        "defenseValue": 5,
+        "targetDefense": 5,
+        "initiative": 2
+      },
+      "details": {
+        "level": 3,
+        "xp": 0,
+        "race": "Goblin",
+        "class": "Dieb",
+        "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 5, Wuchtwaffe 4, Wahrnehmung 3; List 2, Einflussnahme 1\nWaffen: Dolch; Knüppel\nBesonderes: ros. Ringpanzer; -2; -1"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Goblin",
+        "threat": 3,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "ros. Ringpanzer; -2; -1"
+      }
+    },
+    "_id": "18b9259c52b345d1",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-haeuptling-3",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  },
+  {
+    "name": "Schamane",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": {
+        "st": {
+          "value": 3
+        },
+        "ge": {
+          "value": 4
+        },
+        "ko": {
+          "value": 3
+        },
+        "in": {
+          "value": 4
+        },
+        "ch": {
+          "value": 3
+        }
+      },
+      "resources": {
+        "hp": {
+          "value": 12,
+          "max": 12
+        },
+        "mp": {
+          "value": 0,
+          "max": 0
+        }
+      },
+      "combat": {
+        "combatBonus": 2,
+        "offensiveBonus": 2,
+        "defensiveBonus": 0,
+        "armorValue": 4,
+        "defenseValue": 4,
+        "targetDefense": 4,
+        "initiative": 1
+      },
+      "details": {
+        "level": 3,
+        "xp": 0,
+        "race": "Goblin",
+        "class": "Schamane",
+        "notes": "Kategorie: Goblin\nFertigkeiten: ME 5, S(Schamane) 2, S(schwarz) 2,; Stichwaffe 3, Wahrnehmung 3, W(Heilung) 1\nWaffen: Dolch; Waffenlos\nZauber: Ranken; Tarnung; Nachwachsen; Trübung\nBesonderes: Lederflickenpanzer; -2; -3\nZusatzdaten: 0; 0; 2/R; 1; 1/M; 1; 3; 1; 0; 2"
+      },
+      "skills": {
+        "waffenlos": {
+          "rank": 0,
+          "attribute": "st"
+        }
+      },
+      "creature": {
+        "kind": "Goblin",
+        "threat": 3,
+        "regeneration": 0,
+        "resistances": "",
+        "vulnerability": "",
+        "special": "Lederflickenpanzer; -2; -3"
+      }
+    },
+    "_id": "c052c121bf26cd22",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "npc-schamane-3",
+        "generated": true
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
+    "folder": null
+  }
+]

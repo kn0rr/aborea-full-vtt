@@ -56,9 +56,20 @@
             </div>
             {{/each}}
           </div>
-          <div class="resource-row"><label>{{localize "ABOREA.AttributeBudget"}}</label><input type="number" value="{{system.creation.pointsBudget}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.PointsSpent"}}</label><input type="number" value="{{system.creation.pointsSpent}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.PointsRemaining"}}</label><input type="number" value="{{system.creation.pointsRemaining}}" disabled /></div>
+          <div class="creation-metrics">
+            <div class="metric-card">
+              <label>{{localize "ABOREA.AttributeBudget"}}</label>
+              <input type="number" value="{{system.creation.pointsBudget}}" disabled />
+            </div>
+            <div class="metric-card">
+              <label>{{localize "ABOREA.PointsSpent"}}</label>
+              <input type="number" value="{{system.creation.pointsSpent}}" disabled />
+            </div>
+            <div class="metric-card">
+              <label>{{localize "ABOREA.PointsRemaining"}}</label>
+              <input type="number" value="{{system.creation.pointsRemaining}}" disabled />
+            </div>
+          </div>
           <div class="button-row">
             <button type="button" class="recalc-character">{{localize "ABOREA.Recalculate"}}</button>
             <button type="button" class="finalize-character">{{localize "ABOREA.FinalizeCharacter"}}</button>
@@ -66,16 +77,18 @@
         </div>
         <div class="panel">
           <h2>{{localize "ABOREA.CharacterValidation"}}</h2>
-          <div class="resource-row"><label>{{localize "ABOREA.Status"}}</label><input type="text" value="{{system.creation.status}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.TrainingBudget"}}</label><input type="number" value="{{system.creation.trainingBudget}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.TrainingSpent"}}</label><input type="number" value="{{system.creation.trainingSpent}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.TrainingRemaining"}}</label><input type="number" value="{{system.creation.trainingRemaining}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.SelectedRace"}}</label><input type="text" value="{{system.details.race}}" disabled /></div>
-          <div class="resource-row"><label>{{localize "ABOREA.SelectedClass"}}</label><input type="text" value="{{system.details.class}}" disabled /></div>
+          <div class="validation-grid">
+            <div class="summary-row"><label>{{localize "ABOREA.Status"}}</label><input type="text" value="{{system.creation.status}}" disabled /></div>
+            <div class="summary-row"><label>{{localize "ABOREA.TrainingBudget"}}</label><input type="number" value="{{system.creation.trainingBudget}}" disabled /></div>
+            <div class="summary-row"><label>{{localize "ABOREA.TrainingSpent"}}</label><input type="number" value="{{system.creation.trainingSpent}}" disabled /></div>
+            <div class="summary-row"><label>{{localize "ABOREA.TrainingRemaining"}}</label><input type="number" value="{{system.creation.trainingRemaining}}" disabled /></div>
+            <div class="summary-row"><label>{{localize "ABOREA.SelectedRace"}}</label><input type="text" value="{{system.details.race}}" disabled /></div>
+            <div class="summary-row"><label>{{localize "ABOREA.SelectedClass"}}</label><input type="text" value="{{system.details.class}}" disabled /></div>
+          </div>
           {{#if system.creation.starterPackage}}
           <div class="panel inset">
             <h3>{{localize "ABOREA.ClassFeatures"}}</h3>
-            <div class="resource-row"><label>{{localize "ABOREA.StarterPackage"}}</label><input type="text" value="{{system.creation.starterPackage.name}}" disabled /></div>
+            <div class="summary-row"><label>{{localize "ABOREA.StarterPackage"}}</label><input type="text" value="{{system.creation.starterPackage.name}}" disabled /></div>
             <button type="button" class="apply-starter-package">{{localize "ABOREA.ApplyStarterPackage"}}</button>
             <ul>{{#each system.creation.starterPackage.notes as |note|}}<li>{{note}}</li>{{/each}}</ul>
           </div>

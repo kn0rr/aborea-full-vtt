@@ -1,0 +1,76 @@
+{
+  "name": "Gauner",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 5
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 5
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 6
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 6,
+        "max": 6
+      },
+      "mp": {
+        "value": 4,
+        "max": 4
+      }
+    },
+    "combat": {
+      "combatBonus": 2,
+      "offensiveBonus": 2,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": 2
+    },
+    "details": {
+      "level": 1,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Barde",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 2, ME 1, Einfluss 2, K(Flöte) 1; S(Barde) 1\nWaffen: ros. Dolch; Waffenlos\nZauber: Bardenlied\nBesonderes: min. 5R; -3; -3\nZusatzdaten: +2; 2"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 1,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "min. 5R; -3; -3"
+    }
+  },
+  "_id": "645294febc0fb23f",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-gauner-1",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-gauner-1.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

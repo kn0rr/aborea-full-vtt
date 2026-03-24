@@ -1,0 +1,76 @@
+{
+  "name": "Trubadour",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 5
+      },
+      "ge": {
+        "value": 6
+      },
+      "ko": {
+        "value": 5
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 7
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 18,
+        "max": 18
+      },
+      "mp": {
+        "value": 12,
+        "max": 12
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 6,
+      "defenseValue": 6,
+      "targetDefense": 6,
+      "initiative": 2
+    },
+    "details": {
+      "level": 3,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Barde",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 4, ME 3, Einfluss 6, K(Flöte) 3; S(Barde 3), List 2\nWaffen: Dolch; Waffenlos\nZauber: Bardenlied; Lied \"Mut\"; Lied \"Beistand\"\nBesonderes: min. 5R; -2; +2 Mana/R; -3; +4 HP/R\nZusatzdaten: +4; 2; 3/R; 3/R"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 3,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "min. 5R; -2; +2 Mana/R; -3; +4 HP/R"
+    }
+  },
+  "_id": "f5ad6a046a8e8c41",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-trubadour-3",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-trubadour-3.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

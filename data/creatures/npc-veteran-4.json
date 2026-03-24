@@ -1,0 +1,76 @@
+{
+  "name": "Veteran",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 6
+      },
+      "ge": {
+        "value": 6
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 6
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 44,
+        "max": 44
+      },
+      "mp": {
+        "value": 6,
+        "max": 6
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 7,
+      "defenseValue": 7,
+      "targetDefense": 7,
+      "initiative": 0
+    },
+    "details": {
+      "level": 4,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Krieger",
+      "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 4, k.Klinge 4; Wahrnehmung 3, Athletik 2, Schild 1, ME 2; S(Kampf) 3, Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos; Kurzschwert\nBesonderes: 0; 0; -3; Rundschild (H) (2/-1); 0"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesetzeshüter",
+      "threat": 4,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "0; 0; -3; Rundschild (H) (2/-1); 0"
+    }
+  },
+  "_id": "4581d78fd0732f62",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-veteran-4",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-veteran-4.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

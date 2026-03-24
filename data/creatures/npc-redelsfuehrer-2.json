@@ -1,0 +1,76 @@
+{
+  "name": "Redelsführer",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 3
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 3
+      },
+      "in": {
+        "value": 3
+      },
+      "ch": {
+        "value": 2
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 8,
+        "max": 8
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      }
+    },
+    "combat": {
+      "combatBonus": 4,
+      "offensiveBonus": 4,
+      "defensiveBonus": 0,
+      "armorValue": 4,
+      "defenseValue": 4,
+      "targetDefense": 4,
+      "initiative": 2
+    },
+    "details": {
+      "level": 2,
+      "xp": 0,
+      "race": "Goblin",
+      "class": "Dieb",
+      "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 4, Wuchtwaffe 2, Wahrnehmung 2; List 2\nWaffen: ros. Dolch; Waffenlos\nBesonderes: Lederflickenpanzer; -3; -3"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Goblin",
+      "threat": 2,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "Lederflickenpanzer; -3; -3"
+    }
+  },
+  "_id": "3155c4c08fadf8cf",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-redelsfuehrer-2",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-redelsfuehrer-2.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

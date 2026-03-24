@@ -1,0 +1,76 @@
+{
+  "name": "Raufbold",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 6
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 5
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 10,
+        "max": 10
+      },
+      "mp": {
+        "value": 3,
+        "max": 3
+      }
+    },
+    "combat": {
+      "combatBonus": 3,
+      "offensiveBonus": 3,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": -1
+    },
+    "details": {
+      "level": 1,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Krieger",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 2, Waffenlos 2, Athletik 1; ME 1, S(Kampf) 1\nWaffen: mar. Knüppel; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -2; -3\nZusatzdaten: 1"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 1,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "-1AB/+2S; -2; -3"
+    }
+  },
+  "_id": "b7f99d7c4561a22d",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-raufbold-1",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-raufbold-1.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

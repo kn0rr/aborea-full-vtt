@@ -1,0 +1,76 @@
+{
+  "name": "Taugenichts",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 5
+      },
+      "ge": {
+        "value": 6
+      },
+      "ko": {
+        "value": 5
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 6,
+        "max": 6
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      }
+    },
+    "combat": {
+      "combatBonus": 3,
+      "offensiveBonus": 3,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": 2
+    },
+    "details": {
+      "level": 1,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Dieb",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 2, List 2; Athletik 2, Wahrnehmung 1\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 1,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "-3; -3"
+    }
+  },
+  "_id": "b3086bce3b2790a7",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-taugenichts-1",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-taugenichts-1.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

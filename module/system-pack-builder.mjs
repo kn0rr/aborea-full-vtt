@@ -1,7 +1,9 @@
-
 async function fetchJson(path) {
   const response = await fetch(path);
-  if (!response.ok) throw new Error(`Konnte ${path} nicht laden (${response.status})`);
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    throw new Error(`Konnte ${path} nicht laden (${response.status})`);
+  }
   return response.json();
 }
 
@@ -28,15 +30,18 @@ function normalizeDocs(docs) {
 }
 
 async function ensureUnlocked(pack) {
-  if (pack.locked && pack.configure) {
-    await pack.configure({locked: false});
-  }
+  if (pack.locked && pack.configure) await pack.configure({locked: false});
 }
 
-function getDocumentClass(type) {
-  if (type === "Actor") return getDocumentClass("Actor");
-  if (type === "Item") return getDocumentClass("Item");
-  return CONFIG[type]?.documentClass ?? globalThis.getDocumentClass?.(type);
+function getDocumentClassByType(type) {
+  switch (type) {
+    case "Actor": return CONFIG.Actor.documentClass;
+    case "Item": return CONFIG.Item.documentClass;
+    case "JournalEntry": return CONFIG.JournalEntry?.documentClass;
+    case "RollTable": return CONFIG.RollTable?.documentClass;
+    case "Scene": return CONFIG.Scene?.documentClass;
+    default: return CONFIG[type]?.documentClass;
+  }
 }
 
 async function upsertDocumentsToPack(pack, docs, {replace=true}={}) {
@@ -54,7 +59,9 @@ async function upsertDocumentsToPack(pack, docs, {replace=true}={}) {
     else creates.push(doc);
   }
 
-  const cls = pack.documentClass ?? getDocumentClass(pack.metadata.type);
+  const cls = pack.documentClass ?? getDocumentClassByType(pack.metadata.type);
+  if (!cls) throw new Error(`Kein DocumentClass für Pack-Typ ${pack.metadata.type} gefunden.`);
+
   if (replace) {
     const incomingIds = new Set(docs.map(sourceFlag));
     const deleteIds = existing.filter(doc => !incomingIds.has(sourceFlag(doc))).map(doc => doc.id);
@@ -62,7 +69,6 @@ async function upsertDocumentsToPack(pack, docs, {replace=true}={}) {
   }
   if (creates.length) await cls.createDocuments(creates, {pack: pack.collection, keepId: true});
   if (updates.length) await cls.updateDocuments(updates, {pack: pack.collection, diff: false, recursive: false});
-
   return {created: creates.length, updated: updates.length, total: docs.length};
 }
 
@@ -74,12 +80,12 @@ async function getBuildEntries() {
 
   for (const pack of packs) {
     const key = pack.name;
-    try {
-      await fetchJson(dataPathFor(key));
-      entries.push({ key, label: pack.label, type: pack.type, path: `data/${key}.json` });
-    } catch (err) {
+    const docs = await fetchJson(dataPathFor(key));
+    if (!docs) {
       console.warn(`ABOREA: überspringe Pack ${key}, keine Datenquelle unter ${dataPathFor(key)}.`);
+      continue;
     }
+    entries.push({ key, label: pack.label, type: pack.type, path: `data/${key}.json` });
   }
   return entries;
 }
@@ -94,6 +100,7 @@ export async function buildSystemPacks({notify=true, replace=true}={}) {
     const pack = getSystemPack(entry.key);
     if (!pack) throw new Error(`System-Pack ${entry.key} (${game.system.id}.${entry.key}) wurde nicht gefunden.`);
     const docs = await fetchJson(`systems/${game.system.id}/${entry.path}`);
+    if (!docs) continue;
     const result = await upsertDocumentsToPack(pack, docs, {replace});
     summary.push({pack: pack.collection, label: pack.metadata.label, ...result});
   }
@@ -108,23 +115,14 @@ export async function buildSystemPacks({notify=true, replace=true}={}) {
 export async function resetSystemPacks({notify=true}={}) {
   if (!game.user.isGM) throw new Error("Nur ein GM kann System-Packs zurücksetzen.");
   const entries = await getBuildEntries();
-  const summary = [];
-
   for (const entry of entries) {
     const pack = getSystemPack(entry.key);
     if (!pack) continue;
     await ensureUnlocked(pack);
+    const cls = pack.documentClass ?? getDocumentClassByType(pack.metadata.type);
     const docs = await pack.getDocuments();
-    if (docs.length) {
-      const cls = pack.documentClass ?? getDocumentClass(pack.metadata.type);
-      await cls.deleteDocuments(docs.map(d => d.id), {pack: pack.collection});
-    }
-    summary.push({pack: pack.collection, deleted: docs.length});
+    if (docs.length) await cls.deleteDocuments(docs.map(d => d.id), {pack: pack.collection});
   }
-
-  if (notify) {
-    const text = summary.map(s => `${s.pack}: ${s.deleted} gelöscht`).join(" | ") || "keine Dokumente";
-    ui.notifications.info(`ABOREA System-Packs geleert. ${text}`);
-  }
-  return summary;
+  if (notify) ui.notifications.info("ABOREA System-Packs geleert.");
+  return true;
 }

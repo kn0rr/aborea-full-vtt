@@ -1,0 +1,76 @@
+{
+  "name": "Soldat",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 6
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 22,
+        "max": 22
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 6,
+      "defenseValue": 6,
+      "targetDefense": 6,
+      "initiative": 0
+    },
+    "details": {
+      "level": 2,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Krieger",
+      "notes": "Kategorie: Gesetzeshüter\nBeiname: (Stadtwache)\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 2, k.Klinge 2; Wahrnehmung 1, Athletik 1, Schild 1\nWaffen: Speer; Speer (w); Kurzschwert; Waffenlos\nBesonderes: 0; 0; Rundschild (H) (2/-1); -1; -3"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesetzeshüter",
+      "threat": 2,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "0; 0; Rundschild (H) (2/-1); -1; -3"
+    }
+  },
+  "_id": "5a1d7b7dc0144b2e",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-soldat-2",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-soldat-2.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

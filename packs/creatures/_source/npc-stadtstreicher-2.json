@@ -1,0 +1,76 @@
+{
+  "name": "Stadtstreicher",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 5
+      },
+      "ge": {
+        "value": 6
+      },
+      "ko": {
+        "value": 5
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 6
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 12,
+        "max": 12
+      },
+      "mp": {
+        "value": 8,
+        "max": 8
+      }
+    },
+    "combat": {
+      "combatBonus": 4,
+      "offensiveBonus": 4,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": 2
+    },
+    "details": {
+      "level": 2,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Barde",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 3, ME 2, Einfluss 4, K(Flöte) 2; S(Barde) 2, List 1\nWaffen: ros. Dolch; Waffenlos\nZauber: Bardenlied; Lied \"Mut\"\nBesonderes: min. 5R; -3; +2 Mana/R; -3\nZusatzdaten: +3; 2; 3/R"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 2,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "min. 5R; -3; +2 Mana/R; -3"
+    }
+  },
+  "_id": "a20229821291fe86",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-stadtstreicher-2",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-stadtstreicher-2.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

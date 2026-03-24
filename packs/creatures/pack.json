@@ -1,7 +1,7 @@
 {
   "package": "aborea-v7",
   "name": "creatures",
-  "label": "Creatures",
+  "label": "Kreaturen",
   "type": "Actor",
   "system": "aborea-v7",
   "path": "packs/creatures",

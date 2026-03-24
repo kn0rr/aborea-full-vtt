@@ -1,0 +1,76 @@
+{
+  "name": "Grobian",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 6
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 22,
+        "max": 22
+      },
+      "mp": {
+        "value": 3,
+        "max": 3
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": -1
+    },
+    "details": {
+      "level": 2,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Krieger",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 4, Waffenlos 2, Stichwaffen 2; Athletik 1, List 1, ME 1, S(Kampf) 1\nWaffen: mar. Knüppel; ros. Dolch; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -2; -3; -3\nZusatzdaten: 1"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 2,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "-1AB/+2S; -2; -3; -3"
+    }
+  },
+  "_id": "a32d5ea3eeecb715",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-grobian-2",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-grobian-2.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

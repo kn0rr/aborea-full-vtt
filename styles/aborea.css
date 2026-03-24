@@ -1,5 +1,10 @@
 .aborea-sheet {
   color: #1f1f1f;
+  background:
+    linear-gradient(rgba(243, 232, 210, 0.88), rgba(243, 232, 210, 0.9)),
+    url("../assets/images/leet-background.svg") center/cover no-repeat;
+  border-radius: 12px;
+  padding: 8px;
 }
 
 .aborea-sheet .sheet-header {
@@ -16,6 +21,7 @@
   object-fit: cover;
   border: 1px solid #666;
   border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
 }
 
 .aborea-sheet .header-grid,
@@ -38,17 +44,24 @@
 
 .aborea-sheet .panel {
   border: 1px solid #8b7d6b;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 10px;
+  padding: 12px;
   margin-bottom: 12px;
-  background: rgba(250, 246, 236, 0.7);
+  background: rgba(250, 246, 236, 0.84);
+  box-shadow: 0 1px 4px rgba(0,0,0,.12);
+}
+
+.aborea-sheet .panel.inset {
+  background: rgba(255,255,255,0.55);
+  margin-top: 12px;
 }
 
 .aborea-sheet .panel-header,
 .aborea-sheet .attribute-row,
 .aborea-sheet .resource-row,
 .aborea-sheet .item-row,
-.aborea-sheet .skill-row {
+.aborea-sheet .skill-row,
+.aborea-sheet .summary-row {
   display: grid;
   gap: 8px;
   align-items: center;
@@ -59,11 +72,16 @@
 }
 
 .aborea-sheet .attribute-row {
-  grid-template-columns: 140px 80px 1fr;
+  grid-template-columns: minmax(120px, 1fr) 80px minmax(100px, 140px);
 }
 
 .aborea-sheet .resource-row {
-  grid-template-columns: 40px 90px 20px 90px auto;
+  grid-template-columns: minmax(52px,auto) 90px 20px 90px auto;
+  margin-bottom: 8px;
+}
+
+.aborea-sheet .summary-row {
+  grid-template-columns: minmax(150px,1fr) minmax(110px,180px);
   margin-bottom: 8px;
 }
 
@@ -73,13 +91,48 @@
 }
 
 .aborea-sheet .skill-row {
-  grid-template-columns: 1fr 160px 70px 100px;
+  grid-template-columns: minmax(180px,1fr) 160px 70px 100px;
+}
+
+.aborea-sheet .creation-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 10px 0 12px;
+}
+
+.aborea-sheet .metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid rgba(80,60,45,.25);
+  border-radius: 10px;
+  background: rgba(255,255,255,.45);
+}
+
+.aborea-sheet .metric-card label {
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.aborea-sheet .metric-card input,
+.aborea-sheet .summary-row input {
+  text-align: right;
+}
+
+.aborea-sheet .validation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 8px 12px;
+  margin-bottom: 10px;
 }
 
 .aborea-sheet .tabs {
   display: flex;
   gap: 12px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .aborea-sheet .tabs .item {
@@ -96,6 +149,8 @@
 .aborea-sheet select,
 .aborea-sheet textarea {
   width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .aborea-sheet textarea {
@@ -109,7 +164,36 @@
   background: #f7f0e0;
 }
 
-.sheet-header .header-grid.compact { grid-template-columns: 1fr auto 1fr auto; margin-top: .5rem; }
+.sheet-header .header-grid.compact {
+  grid-template-columns: minmax(180px,1fr) auto minmax(180px,1fr) auto;
+  margin-top: .5rem;
+}
+
 .pill-list { display:flex; gap:.4rem; flex-wrap: wrap; }
 .pill { background:#ddd; border-radius:999px; padding:.15rem .5rem; }
 .aborea-sheet .panel { margin-bottom: .75rem; }
+.button-row { display:flex; gap:.5rem; flex-wrap: wrap; align-items:center; }
+.button-row.compact { gap:.35rem; }
+.validation-errors { margin: .5rem 0 0 1.25rem; }
+.creation-skill-list .skill-row { grid-template-columns: minmax(180px,1fr) 130px 110px minmax(120px,160px); }
+
+@media (max-width: 900px) {
+  .aborea-sheet .sheet-header {
+    grid-template-columns: 1fr;
+  }
+  .sheet-header .header-grid.compact,
+  .aborea-sheet .header-grid,
+  .aborea-sheet .combat-grid {
+    grid-template-columns: 1fr;
+  }
+  .aborea-sheet .creation-metrics {
+    grid-template-columns: 1fr;
+  }
+  .aborea-sheet .resource-row {
+    grid-template-columns: minmax(52px,auto) 1fr 20px 1fr auto;
+  }
+  .aborea-sheet .skill-row,
+  .creation-skill-list .skill-row {
+    grid-template-columns: 1fr;
+  }
+}

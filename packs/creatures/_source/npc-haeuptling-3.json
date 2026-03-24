@@ -1,0 +1,76 @@
+{
+  "name": "Häuptling",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 4
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 3
+      },
+      "in": {
+        "value": 3
+      },
+      "ch": {
+        "value": 2
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 12,
+        "max": 12
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": 2
+    },
+    "details": {
+      "level": 3,
+      "xp": 0,
+      "race": "Goblin",
+      "class": "Dieb",
+      "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 5, Wuchtwaffe 4, Wahrnehmung 3; List 2, Einflussnahme 1\nWaffen: Dolch; Knüppel\nBesonderes: ros. Ringpanzer; -2; -1"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Goblin",
+      "threat": 3,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "ros. Ringpanzer; -2; -1"
+    }
+  },
+  "_id": "18b9259c52b345d1",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-haeuptling-3",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-haeuptling-3.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

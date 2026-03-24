@@ -1,0 +1,76 @@
+{
+  "name": "Schurke",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 5
+      },
+      "ge": {
+        "value": 7
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 21,
+        "max": 21
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      }
+    },
+    "combat": {
+      "combatBonus": 7,
+      "offensiveBonus": 7,
+      "defensiveBonus": 0,
+      "armorValue": 6,
+      "defenseValue": 6,
+      "targetDefense": 6,
+      "initiative": 2
+    },
+    "details": {
+      "level": 3,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Dieb",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 6, List 6; Athletik 4, Wahrnehmung 3\nWaffen: Dolch; Waffenlos\nBesonderes: -2; -3"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 3,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "-2; -3"
+    }
+  },
+  "_id": "c1c071b89018dd66",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-schurke-3",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-schurke-3.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

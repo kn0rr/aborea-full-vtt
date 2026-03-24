@@ -1,0 +1,76 @@
+{
+  "name": "Schläger",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 7
+      },
+      "ge": {
+        "value": 5
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 33,
+        "max": 33
+      },
+      "mp": {
+        "value": 3,
+        "max": 3
+      }
+    },
+    "combat": {
+      "combatBonus": 7,
+      "offensiveBonus": 7,
+      "defensiveBonus": 0,
+      "armorValue": 6,
+      "defenseValue": 6,
+      "targetDefense": 6,
+      "initiative": -1
+    },
+    "details": {
+      "level": 3,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Krieger",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 6, Waffenlos 2, Stichwaffen 4; Athletik 1, List 2, ME 1, S(Kampf) 1\nWaffen: Knüppel; Dolch; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -1; -2; -3\nZusatzdaten: 1"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 3,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "-1AB/+2S; -1; -2; -3"
+    }
+  },
+  "_id": "dcb68d4897e46217",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-schlaeger-3",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-schlaeger-3.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

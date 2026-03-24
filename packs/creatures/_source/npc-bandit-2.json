@@ -1,0 +1,76 @@
+{
+  "name": "Bandit",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 5
+      },
+      "ge": {
+        "value": 6
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 14,
+        "max": 14
+      },
+      "mp": {
+        "value": 0,
+        "max": 0
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 5,
+      "defenseValue": 5,
+      "targetDefense": 5,
+      "initiative": 2
+    },
+    "details": {
+      "level": 2,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Dieb",
+      "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 4, List 4; Athletik 3, Wahrnehmung 2\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesindel",
+      "threat": 2,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "-3; -3"
+    }
+  },
+  "_id": "2c7e9033b6db99cf",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-bandit-2",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-bandit-2.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}

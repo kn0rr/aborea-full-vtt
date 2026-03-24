@@ -1,0 +1,76 @@
+{
+  "name": "Erf. Soldat",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": {
+      "st": {
+        "value": 6
+      },
+      "ge": {
+        "value": 6
+      },
+      "ko": {
+        "value": 6
+      },
+      "in": {
+        "value": 5
+      },
+      "ch": {
+        "value": 5
+      }
+    },
+    "resources": {
+      "hp": {
+        "value": 33,
+        "max": 33
+      },
+      "mp": {
+        "value": 3,
+        "max": 3
+      }
+    },
+    "combat": {
+      "combatBonus": 5,
+      "offensiveBonus": 5,
+      "defensiveBonus": 0,
+      "armorValue": 7,
+      "defenseValue": 7,
+      "targetDefense": 7,
+      "initiative": 0
+    },
+    "details": {
+      "level": 3,
+      "xp": 0,
+      "race": "Mensch",
+      "class": "Krieger",
+      "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 3, k.Klinge 3; Wahrnehmung 2, Athletik 1, Schild 1, ME 1; S(Kampf) 1, Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos; Kurzschwert\nBesonderes: 0; 0; -3; Rundschild (H) (2/-1); -1"
+    },
+    "skills": {
+      "waffenlos": {
+        "rank": 0,
+        "attribute": "st"
+      }
+    },
+    "creature": {
+      "kind": "Gesetzeshüter",
+      "threat": 3,
+      "regeneration": 0,
+      "resistances": "",
+      "vulnerability": "",
+      "special": "0; 0; -3; Rundschild (H) (2/-1); -1"
+    }
+  },
+  "_id": "f668a20abacdf5f0",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "npc-erf-soldat-3",
+      "generated": true,
+      "sourcePath": "systems/aborea-v7/packs/creatures/_source/npc-erf-soldat-3.json"
+    }
+  },
+  "ownership": {
+    "default": 0
+  },
+  "folder": null
+}
