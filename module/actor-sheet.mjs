@@ -7,9 +7,10 @@ function duplicateItemObject(item) {
   return obj;
 }
 
-async function findPackDocumentByTypeAndName(type, name) {
+async function findPackDocumentByTypeAndName(type, name, preferredPack = null) {
   const matchingPacks = game.packs.filter(p => p.documentName === (type === "creature" ? "Actor" : "Item"));
-  for (const pack of matchingPacks) {
+  const orderedPacks = preferredPack ? [matchingPacks.find(p => p.collection === preferredPack), ...matchingPacks.filter(p => p.collection !== preferredPack)] : matchingPacks;
+  for (const pack of orderedPacks.filter(Boolean)) {
     const index = await pack.getIndex({ fields: ["name", "type"] });
     const hit = index.find(e => e.name === name && (type === "creature" || e.type === type));
     if (hit) return pack.getDocument(hit._id);
@@ -17,11 +18,103 @@ async function findPackDocumentByTypeAndName(type, name) {
   return null;
 }
 
+function parsePackSelection(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return { pack: null, name: "" };
+  const [pack, name] = raw.split("||");
+  return { pack: pack || null, name: name || raw };
+}
+
+async function resolveDroppedActorDocument(data) {
+  if (!data || data.type !== "Actor") return null;
+  try {
+    return await Actor.implementation.fromDropData(data);
+  } catch (err) {
+    if (data.uuid) return await fromUuid(data.uuid);
+    throw err;
+  }
+}
 
 
 function currentDayStamp() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function nowStamp() {
+  return new Date().toLocaleString(game.i18n.lang || undefined);
+}
+
+function makeHistoryEntry(type, action, label, details = {}) {
+  return {
+    timestamp: Date.now(),
+    stamp: nowStamp(),
+    type,
+    action,
+    label,
+    ...details
+  };
+}
+
+function normalizeWallet(wallet = {}) {
+  const defaults = [
+    { key: 'gf', label: 'GF', name: 'Goldfalken', amount: 0 },
+    { key: 'tt', label: 'TT', name: 'Trionthaler', amount: 0 },
+    { key: 'kl', label: 'KL', name: 'Kupferlinge', amount: 0 },
+    { key: 'mu', label: 'MU', name: 'Münzen unbekannt', amount: 0 }
+  ];
+  const currencies = Array.isArray(wallet?.currencies) ? foundry.utils.deepClone(wallet.currencies) : [];
+  for (const cur of defaults) {
+    if (!currencies.find(c => String(c.key) === cur.key)) currencies.push(foundry.utils.deepClone(cur));
+  }
+  return {
+    currencies,
+    history: Array.isArray(wallet?.history) ? foundry.utils.deepClone(wallet.history) : []
+  };
+}
+
+function logListPush(list = [], entry, max = 200) {
+  const next = [entry, ...list];
+  return next.slice(0, max);
+}
+
+function classFeatureBonusMap(classFeatures = {}) {
+  return foundry.utils.deepClone(classFeatures?.bonuses || {});
+}
+
+function buildSkillDisplayRows(system) {
+  const rows = [];
+  const classBonuses = classFeatureBonusMap(system.classFeatures);
+  for (const [key, skill] of Object.entries(system.skills || {})) {
+    rows.push({
+      key,
+      label: skill.label,
+      name: game.i18n.localize(skill.label || key),
+      attribute: skill.attribute,
+      rank: Number(skill.rank || 0),
+      bonus: Number(classBonuses[key] || 0),
+      source: 'base',
+      isCustom: false
+    });
+  }
+  for (const [index, skill] of (system.customSkills || []).entries()) {
+    rows.push({
+      key: skill.key,
+      label: skill.name,
+      name: skill.name,
+      attribute: skill.attribute || 'in',
+      rank: Number(skill.rank || 0),
+      bonus: Number(skill.bonus || 0),
+      source: 'custom',
+      isCustom: true,
+      customIndex: index
+    });
+  }
+  return rows.sort((a, b) => String(a.name).localeCompare(String(b.name), game.i18n.lang || undefined));
+}
+
+function itemHistoryLabel(item) {
+  return `${item.name}${item.type ? ` (${item.type})` : ''}`;
 }
 
 function isActivatableFeature(feature) {
@@ -319,6 +412,7 @@ export class AboreaActorSheet extends ActorSheet {
         current.attribute = current.attribute || cfg.attribute;
         system.skills[key] = current;
       }
+      system.customSkills = Array.isArray(system.customSkills) ? system.customSkills : [];
 
       const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
       const armorBonus = armorItems.reduce((sum, item) => sum + Number(item.system.armor ?? 0) - 5, 0);
@@ -331,6 +425,32 @@ export class AboreaActorSheet extends ActorSheet {
       const spent = ABOREA.attributeCostTotal(system.baseAttributes || {});
       const remaining = budget - spent;
       const validationErrors = Array.isArray(system.creation?.validationErrors) ? system.creation.validationErrors : [];
+      system.creation = system.creation || {};
+      system.creation.attributeRows = Object.entries(system.baseAttributes || {}).map(([key, attr]) => {
+        const value = Number(attr?.value ?? 5);
+        const totalCost = ABOREA.attributeCost(value);
+        const nextValue = Math.min(10, value + 1);
+        const nextCost = value < 10 ? (ABOREA.attributeCost(nextValue) - totalCost) : null;
+        return {
+          key,
+          label: ABOREA.attributes[key],
+          value,
+          totalCost,
+          nextStepCost: nextCost,
+          bonus: ABOREA.attributeBonus(value)
+        };
+      });
+      system.creation.attributeCostTable = Array.from({ length: 10 }, (_, i) => {
+        const value = i + 1;
+        const totalCost = ABOREA.attributeCost(value);
+        const nextValue = value < 10 ? value + 1 : null;
+        return {
+          value,
+          bonus: ABOREA.attributeBonus(value),
+          totalCost,
+          stepCost: nextValue ? ABOREA.attributeCost(nextValue) - totalCost : null
+        };
+      });
       const classItem = actor.items.find(i => i.type === "class");
       const trainingBudget = Number(system.creation?.trainingBudget ?? system.resources?.trainingPoints ?? ABOREA.baseTrainingPoints);
       const trainingSpent = ABOREA.skillTrainingSpent(system.skills, classItem?.system);
@@ -369,6 +489,9 @@ export class AboreaActorSheet extends ActorSheet {
         validationErrors,
         canFinalize: validationErrors.length === 0 && remaining === 0 && trainingRemaining >= 0 && !!system.details?.race && !!system.details?.class
       };
+      system.wallet = normalizeWallet(system.wallet);
+      system.inventoryHistory = Array.isArray(system.inventoryHistory) ? foundry.utils.deepClone(system.inventoryHistory) : [];
+      system.skillDisplayRows = buildSkillDisplayRows(system);
       system.companions = system.companions || { list: [] };
       system.companions.list = (system.companions.list || []).map(comp => ({
         ...comp,
@@ -404,18 +527,30 @@ export class AboreaActorSheet extends ActorSheet {
     context.availablePacks = {
       races: await this._packChoices("race"),
       classes: await this._packChoices("class"),
-      creatures: await this._packChoices("creature")
+      creatures: await this._packChoices("creature"),
+      weapons: await this._packChoices("weapon"),
+      armors: await this._packChoices("armor"),
+      spells: await this._packChoices("spell"),
+      miracles: await this._packChoices("miracle"),
+      gear: await this._packChoices("gear")
     };
     return context;
   }
 
   async _packChoices(type) {
     const docs = [];
-    for (const pack of game.packs.filter(p => p.documentName === "Item")) {
+    const docName = type === "creature" ? "Actor" : "Item";
+    for (const pack of game.packs.filter(p => p.documentName === docName)) {
       const index = await pack.getIndex({ fields: ["name", "type"] });
-      docs.push(...index.filter(e => e.type === type).map(e => ({ name: e.name })));
+      docs.push(...index.filter(e => (type === "creature" || e.type === type)).map(e => ({ name: e.name, pack: pack.collection, label: `${e.name} — ${pack.metadata.label || pack.collection}` })));
     }
-    return docs.sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
+    const seen = new Set();
+    return docs.filter(d => {
+      const key = `${d.pack}:${d.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
   }
 
   activateListeners(html) {
@@ -434,7 +569,11 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".item-edit").on("click", ev => this.actor.items.get(ev.currentTarget.closest("[data-item-id]")?.dataset.itemId)?.sheet?.render(true));
     html.find(".item-delete").on("click", async ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
-      if (itemId) await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+      if (itemId) {
+        const item = this.actor.items.get(itemId);
+        if (item) await this._logInventoryEntry('item-remove', itemHistoryLabel(item), { itemType: item.type });
+        await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+      }
       if (this.actor.type === "character") await this._recalculateCharacter();
     });
 
@@ -517,6 +656,21 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".creation-skill-adjust").on("click", async ev => {
       await this._adjustCreationSkill(ev.currentTarget.dataset.skill, Number(ev.currentTarget.dataset.delta || 0));
     });
+    html.find(".add-custom-skill").on("click", async () => { await this._addCustomSkill(); });
+    html.find(".remove-custom-skill").on("click", async ev => { await this._removeCustomSkill(ev.currentTarget.dataset.skillKey); });
+
+    html.find(".wallet-adjust").on("click", async ev => {
+      const key = ev.currentTarget.dataset.currencyKey;
+      const mode = ev.currentTarget.dataset.mode;
+      await this._adjustWalletCurrency(key, mode);
+    });
+    html.find(".wallet-add-currency").on("click", async () => { await this._addWalletCurrency(); });
+    html.find(".wallet-remove-currency").on("click", async ev => { await this._removeWalletCurrency(ev.currentTarget.dataset.currencyKey); });
+
+    html.find(".import-pack-item").on("click", async ev => {
+      const type = ev.currentTarget.dataset.type;
+      await this._importSelectedPackItem(html, type);
+    });
 
     html.find(".apply-starter-package").on("click", async () => {
       await this._applyStarterPackage();
@@ -543,6 +697,21 @@ export class AboreaActorSheet extends ActorSheet {
     });
   }
 
+  async _onDrop(event) {
+    const data = TextEditor.getDragEventData(event);
+    if (this.actor.type === "character" && data?.type === "Actor") {
+      const dropTarget = event.target?.closest?.(".companion-dropzone, .tab[data-tab=companions]");
+      if (dropTarget) {
+        const actorDoc = await resolveDroppedActorDocument(data);
+        if (actorDoc?.type === "creature") {
+          await this._createCompanionFromActorDoc(actorDoc);
+          return;
+        }
+      }
+    }
+    return super._onDrop(event);
+  }
+
   async _onDropItem(event, data) {
     const item = await Item.implementation.fromDropData(data);
     if (!item) return super._onDropItem(event, data);
@@ -551,21 +720,29 @@ export class AboreaActorSheet extends ActorSheet {
     if (item.type === "class") return this._applyClass(item);
 
     const obj = duplicateItemObject(item);
-    return this.actor.createEmbeddedDocuments("Item", [obj]);
+    const created = await this.actor.createEmbeddedDocuments("Item", [obj]);
+    await this._logInventoryEntry('item-add', itemHistoryLabel(obj), { itemType: obj.type, sourcePack: item.pack || item.compendium || '' });
+    return created;
   }
 
-  async _createCompanion(creatureName) {
+  async _createCompanion(selectionValue) {
     if (this.actor.type !== "character") return;
-    const creatureDoc = await findPackDocumentByTypeAndName("creature", creatureName);
+    const { pack, name: creatureName } = parsePackSelection(selectionValue);
+    const creatureDoc = await findPackDocumentByTypeAndName("creature", creatureName, pack);
     if (!creatureDoc) return ui.notifications.error(`ABOREA: Kreatur ${creatureName} nicht gefunden.`);
+    return this._createCompanionFromActorDoc(creatureDoc);
+  }
+
+  async _createCompanionFromActorDoc(creatureDoc) {
+    if (this.actor.type !== "character" || !creatureDoc || creatureDoc.type !== "creature") return;
     const source = creatureDoc.toObject();
     delete source._id;
     source.folder = null;
     source.name = `${creatureDoc.name} (${this.actor.name})`;
-    source.flags = foundry.utils.mergeObject(source.flags || {}, { aborea: { ownerActorId: this.actor.id, isCompanion: true } }, { inplace: false });
+    source.flags = foundry.utils.mergeObject(source.flags || {}, { aborea: { ownerActorId: this.actor.id, isCompanion: true, sourcePack: creatureDoc.pack || "", sourceId: creatureDoc.id } }, { inplace: false });
     const created = await Actor.create(source);
     const list = foundry.utils.deepClone(this.actor.system.companions?.list || []);
-    list.push({ actorId: created.id, name: created.name, kind: created.system?.creature?.kind || created.type, sourceName: creatureDoc.name, permanent: true, status: 'created' });
+    list.push({ actorId: created.id, name: created.name, kind: created.system?.creature?.kind || created.type, sourceName: creatureDoc.name, sourcePack: creatureDoc.pack || "", permanent: true, status: 'created' });
     await this.actor.update({ "system.companions.list": list });
     ui.notifications.info("ABOREA: Begleiter erstellt.");
   }
@@ -762,7 +939,7 @@ export class AboreaActorSheet extends ActorSheet {
       labels: classFeatures.map(f => `[Stufe ${f.level}] ${f.label}`),
       notes: classFeatures.map(f => f.description).filter(Boolean),
       flags: {},
-      bonuses: { information: 0, natur: 0, heal: 0, influence: 0, list: 0, wahrnehmung: 0, stealth: 0, poison: 0, traps: 0 },
+      bonuses: { information: 0, natur: 0, heilen: 0, heal: 0, einflussnahme: 0, influence: 0, list: 0, wahrnehmung: 0, heimlichkeit: 0, stealth: 0, gift: 0, poison: 0, fallen: 0, traps: 0, magieWahrnehmen: 0 },
       armorBonus: 0,
       weaponMinimums: {},
       followers: 0,
@@ -777,13 +954,14 @@ export class AboreaActorSheet extends ActorSheet {
       const target = String(f.target || '').toLowerCase();
       if (target === 'information') featureState.bonuses.information += Number(f.value || 0);
       if (target === 'natur') featureState.bonuses.natur += Number(f.value || 0);
-      if (target === 'heilen') featureState.bonuses.heal += Number(f.value || 0);
-      if (target === 'einflussnahme') featureState.bonuses.influence += Number(f.value || 0);
+      if (target === 'heilen') { featureState.bonuses.heilen += Number(f.value || 0); featureState.bonuses.heal += Number(f.value || 0); }
+      if (target === 'einflussnahme') { featureState.bonuses.einflussnahme += Number(f.value || 0); featureState.bonuses.influence += Number(f.value || 0); }
       if (target === 'list') featureState.bonuses.list += Number(f.value || 0);
       if (target === 'wahrnehmung') featureState.bonuses.wahrnehmung += Number(f.value || 0);
-      if (target === 'stealth') featureState.bonuses.stealth += Number(f.value || 0);
-      if (target === 'gift') featureState.bonuses.poison += Number(f.value || 0);
-      if (target === 'fallen') featureState.bonuses.traps += Number(f.value || 0);
+      if (target === 'stealth') { featureState.bonuses.heimlichkeit += Number(f.value || 0); featureState.bonuses.stealth += Number(f.value || 0); }
+      if (target === 'gift') { featureState.bonuses.gift += Number(f.value || 0); featureState.bonuses.poison += Number(f.value || 0); }
+      if (target === 'fallen') { featureState.bonuses.fallen += Number(f.value || 0); featureState.bonuses.traps += Number(f.value || 0); }
+      if (target === 'senseMagic') featureState.bonuses.magieWahrnehmen += Number(f.value || 0);
     }
     if (['zwerg','halbling','gnom'].includes((race?.name || '').toLowerCase())) traits.racialArmorBonus = 1;
     if ((race?.name || '').toLowerCase() === 'zwerg') {
@@ -883,6 +1061,112 @@ export class AboreaActorSheet extends ActorSheet {
     ui.notifications.info(game.i18n.localize("ABOREA.ResetDone"));
   }
 
+
+  async _logInventoryEntry(action, label, extra = {}) {
+    if (this.actor.type !== "character") return;
+    const current = Array.isArray(this.actor.system.inventoryHistory) ? foundry.utils.deepClone(this.actor.system.inventoryHistory) : [];
+    await this.actor.update({ "system.inventoryHistory": logListPush(current, makeHistoryEntry("inventory", action, label, extra)) });
+  }
+
+  async _logWalletEntry(action, label, amount, currency) {
+    if (this.actor.type !== "character") return;
+    const wallet = normalizeWallet(this.actor.system.wallet);
+    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", action, label, { amount, currency }));
+    await this.actor.update({ "system.wallet": wallet });
+  }
+
+  async _addCustomSkill() {
+    if (this.actor.type !== "character") return;
+    const list = Array.isArray(this.actor.system.customSkills) ? foundry.utils.deepClone(this.actor.system.customSkills) : [];
+    const idx = list.length;
+    list.push(ABOREA.customSkillTemplate(idx));
+    await this.actor.update({ "system.customSkills": list });
+  }
+
+  async _removeCustomSkill(skillKey) {
+    if (this.actor.type !== "character") return;
+    const list = (this.actor.system.customSkills || []).filter(s => s.key !== skillKey);
+    await this.actor.update({ "system.customSkills": list });
+  }
+
+  async _adjustWalletCurrency(currencyKey, mode) {
+    if (this.actor.type !== "character") return;
+    const wallet = normalizeWallet(this.actor.system.wallet);
+    const cur = wallet.currencies.find(c => c.key === currencyKey);
+    if (!cur) return;
+    const title = `${mode === 'deposit' ? game.i18n.localize('ABOREA.Deposit') : game.i18n.localize('ABOREA.Withdraw')} ${cur.label}`;
+    const amount = await new Promise(resolve => {
+      new Dialog({
+        title,
+        content: `<form><div class="form-group"><label>${game.i18n.localize('ABOREA.Amount')}</label><input type="number" name="amount" value="1" min="1" step="1"/></div></form>`,
+        buttons: {
+          ok: { label: "OK", callback: html => resolve(Number(html.find('[name="amount"]').val() || 0)) },
+          cancel: { label: game.i18n.localize("Cancel"), callback: () => resolve(0) }
+        },
+        default: "ok",
+        close: () => resolve(0)
+      }).render(true);
+    });
+    if (!amount || amount < 0) return;
+    const current = Number(cur.amount || 0);
+    cur.amount = mode === 'withdraw' ? Math.max(0, current - amount) : current + amount;
+    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, `${cur.label}`, { amount, currency: cur.label }));
+    await this.actor.update({ "system.wallet": wallet });
+  }
+
+  async _addWalletCurrency() {
+    if (this.actor.type !== "character") return;
+    const result = await new Promise(resolve => {
+      new Dialog({
+        title: game.i18n.localize("ABOREA.AddCurrency"),
+        content: `<form>
+          <div class="form-group"><label>${game.i18n.localize('ABOREA.CurrencyCode')}</label><input type="text" name="key" maxlength="4"/></div>
+          <div class="form-group"><label>${game.i18n.localize('ABOREA.CurrencyLabel')}</label><input type="text" name="label" maxlength="4"/></div>
+          <div class="form-group"><label>${game.i18n.localize('ABOREA.CurrencyName')}</label><input type="text" name="name"/></div>
+        </form>`,
+        buttons: {
+          ok: { label: "OK", callback: html => resolve({
+            key: String(html.find('[name="key"]').val() || '').trim().toLowerCase(),
+            label: String(html.find('[name="label"]').val() || '').trim().toUpperCase(),
+            name: String(html.find('[name="name"]').val() || '').trim()
+          }) },
+          cancel: { label: game.i18n.localize("Cancel"), callback: () => resolve(null) }
+        },
+        default: "ok",
+        close: () => resolve(null)
+      }).render(true);
+    });
+    if (!result?.key || !result?.label || !result?.name) return;
+    const wallet = normalizeWallet(this.actor.system.wallet);
+    if (wallet.currencies.some(c => c.key === result.key || c.label === result.label)) return ui.notifications.warn("ABOREA: Zahlungsmittel existiert bereits.");
+    wallet.currencies.push({ ...result, amount: 0 });
+    await this.actor.update({ "system.wallet": wallet });
+  }
+
+  async _removeWalletCurrency(currencyKey) {
+    if (this.actor.type !== "character") return;
+    const wallet = normalizeWallet(this.actor.system.wallet);
+    const base = ['gf','tt','kl','mu'];
+    if (base.includes(String(currencyKey))) return ui.notifications.warn("ABOREA: Standard-Zahlungsmittel können nicht entfernt werden.");
+    wallet.currencies = wallet.currencies.filter(c => c.key !== currencyKey);
+    await this.actor.update({ "system.wallet": wallet });
+  }
+
+  async _importSelectedPackItem(html, type) {
+    const selected = html.find(`[name="selectedPackItem-${type}"]`).val();
+    if (!selected) return;
+    const [packId, docName] = String(selected).split("||");
+    const pack = game.packs.get(packId);
+    if (!pack) return ui.notifications.error("ABOREA: Kompendium nicht gefunden.");
+    const index = await pack.getIndex({ fields: ["name","type"] });
+    const hit = index.find(e => e.name === docName && e.type === type);
+    if (!hit) return ui.notifications.error("ABOREA: Eintrag im Kompendium nicht gefunden.");
+    const doc = await pack.getDocument(hit._id);
+    const obj = duplicateItemObject(doc);
+    await this.actor.createEmbeddedDocuments("Item", [obj]);
+    await this._logInventoryEntry('item-add', itemHistoryLabel(obj), { itemType: obj.type, sourcePack: packId });
+  }
+
   async _castPower(itemId) {
     const item = this.actor.items.get(itemId);
     if (!item || !['spell', 'miracle'].includes(item.type)) return;
@@ -945,7 +1229,9 @@ export class AboreaActorSheet extends ActorSheet {
     event.preventDefault();
     const type = event.currentTarget.dataset.type;
     const name = game.i18n.format("ABOREA.NewItem", { type });
-    return this.actor.createEmbeddedDocuments("Item", [{ name, type, system: {} }]);
+    const created = await this.actor.createEmbeddedDocuments("Item", [{ name, type, system: {} }]);
+    await this._logInventoryEntry('item-add', itemHistoryLabel({ name, type }), { itemType: type, sourcePack: 'manual' });
+    return created;
   }
 }
 

@@ -63,6 +63,11 @@ Hooks.once("init", async function () {
   Handlebars.registerHelper("aboreaHas", function (arr, value) { return Array.isArray(arr) && arr.includes(value); });
 });
 
+Hooks.once("diceSoNiceReady", function (dice3d) {
+  console.log("ABOREA V7 | Dice So Nice erkannt");
+  game.aborea.dice3d = dice3d;
+});
+
 Hooks.once("ready", async function () {
   console.log("ABOREA V7 | Bereit");
   if (game.user.isGM) {

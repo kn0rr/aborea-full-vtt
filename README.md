@@ -66,3 +66,10 @@ Dieses System enthält ein ABOREA-Soundboard für Musik, Ambiente und One-Shots.
 - Aus den Presets können per Button Foundry-Playlists angelegt werden.
 
 Hinweis: Aus Lizenzgründen werden keine Drittanbieter-Audiodateien mitgeliefert. Nutze nur Audio, das du selbst erstellt hast oder dessen Lizenz die Nutzung in deiner Foundry-Installation erlaubt.
+
+
+## Begleiter per Drag & Drop
+Kreaturen können direkt aus einem Compendium auf den Bereich **Begleiter** im Charakterbogen gezogen werden.
+
+## 3D-Würfel
+Das System unterstützt das Modul **Dice So Nice** automatisch. Wenn das Modul installiert und aktiv ist, werden ABOREA-Würfe als 3D-Würfel angezeigt. Ohne das Modul bleibt der eingebaute Würfel-Overlay aktiv.

@@ -1,14 +1,78 @@
 import { ABOREA } from "./config.mjs";
 
-export async function rollOpenD10({ label = "ABOREA.RollOpenD10" } = {}) {
+function ensureDiceOverlay() {
+  let overlay = document.getElementById("aborea-dice-overlay");
+  if (overlay) return overlay;
+  overlay = document.createElement("div");
+  overlay.id = "aborea-dice-overlay";
+  overlay.className = "aborea-dice-overlay hidden";
+  overlay.innerHTML = `
+    <div class="aborea-dice-backdrop"></div>
+    <div class="aborea-dice-panel">
+      <div class="aborea-dice-label"></div>
+      <div class="aborea-die d10">
+        <div class="aborea-die-face">10</div>
+      </div>
+      <div class="aborea-dice-subline"></div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+async function showDiceSoNiceRoll(result) {
+  if (!game.dice3d?.showForRoll || !Array.isArray(result.rolls) || !result.rolls.length) return false;
+  try {
+    for (const roll of result.rolls) {
+      await game.dice3d.showForRoll(roll, game.user, true);
+    }
+    return true;
+  } catch (err) {
+    console.warn("ABOREA | Dice So Nice visualization failed, falling back to overlay", err);
+    return false;
+  }
+}
+
+async function showVisualRoll(label, roller) {
+  const result = await roller();
+  const usedDiceSoNice = await showDiceSoNiceRoll(result);
+  if (usedDiceSoNice) return result;
+
+  const overlay = ensureDiceOverlay();
+  const face = overlay.querySelector(".aborea-die-face");
+  const labelEl = overlay.querySelector(".aborea-dice-label");
+  const subline = overlay.querySelector(".aborea-dice-subline");
+  labelEl.textContent = label;
+  subline.textContent = game.i18n.localize("ABOREA.Rolling") || "Würfelt …";
+  overlay.classList.remove("hidden");
+  overlay.classList.add("visible");
+  let tick = 1;
+  face.textContent = "?";
+  const interval = window.setInterval(() => {
+    face.textContent = String(((Math.random() * 10) | 0) + 1);
+    overlay.querySelector('.aborea-die')?.style.setProperty('--aborea-spin', String(tick++));
+  }, 85);
+  await new Promise(resolve => setTimeout(resolve, 900));
+  window.clearInterval(interval);
+  face.textContent = String(result.parts?.[0] || result.total || 0);
+  subline.textContent = result.parts?.length > 1 ? `${result.formula} = ${result.total}` : `${result.total}`;
+  await new Promise(resolve => setTimeout(resolve, 600));
+  overlay.classList.remove("visible");
+  overlay.classList.add("hidden");
+  return result;
+}
+
+async function _evaluateOpenD10({ label = "ABOREA.RollOpenD10" } = {}) {
   let total = 0;
   const parts = [];
+  const rolls = [];
   let critical = false;
   let naturalOne = false;
 
   while (true) {
     const roll = await (new Roll("1d10")).evaluate();
     const result = Number(roll.total);
+    rolls.push(roll);
     parts.push(result);
     total += result;
 
@@ -26,8 +90,13 @@ export async function rollOpenD10({ label = "ABOREA.RollOpenD10" } = {}) {
     total,
     critical,
     naturalOne,
-    formula: parts.join(" + ")
+    formula: parts.join(" + "),
+    rolls
   };
+}
+
+export async function rollOpenD10({ label = "ABOREA.RollOpenD10" } = {}) {
+  return showVisualRoll(game.i18n.localize(label), () => _evaluateOpenD10({ label }));
 }
 
 export async function rollInitiative(actor) {
@@ -51,14 +120,16 @@ export async function rollInitiative(actor) {
 }
 
 export async function rollSkill(actor, skillKey) {
-  const skill = actor.system.skills?.[skillKey] ?? { rank: 0, attribute: "in" };
+  const custom = (actor.system.customSkills || []).find(s => s.key === skillKey);
+  const skill = custom ?? actor.system.skills?.[skillKey] ?? { rank: 0, attribute: "in" };
   const attrKey = skill.attribute || ABOREA.skills?.[skillKey]?.attribute || "in";
   const attrValue = actor.system.attributes?.[attrKey]?.value ?? 5;
   const attrBonus = ABOREA.attributeBonus(attrValue);
   const rank = Number(skill.rank ?? 0);
-  const roll = await rollOpenD10({ label: skill.label ?? skillKey });
-  const total = roll.total + attrBonus + rank;
-  const label = skill.label ?? ABOREA.skills?.[skillKey]?.label ?? skillKey;
+  const classBonus = Number(actor.system.classFeatures?.bonuses?.[skillKey] ?? skill.bonus ?? 0);
+  const roll = await rollOpenD10({ label: skill.label ?? skill.name ?? skillKey });
+  const total = roll.total + attrBonus + rank + classBonus;
+  const label = skill.label ?? skill.name ?? ABOREA.skills?.[skillKey]?.label ?? skillKey;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
@@ -68,6 +139,7 @@ export async function rollSkill(actor, skillKey) {
         <p>${game.i18n.localize("ABOREA.Roll")}: ${roll.formula}</p>
         <p>${game.i18n.localize(ABOREA.attributes[attrKey])}: ${attrBonus >= 0 ? "+" : ""}${attrBonus}</p>
         <p>${game.i18n.localize("ABOREA.Rank")}: ${rank >= 0 ? "+" : ""}${rank}</p>
+        <p>${game.i18n.localize("ABOREA.ClassBonus")}: ${classBonus >= 0 ? "+" : ""}${classBonus}</p>
         <p><strong>${game.i18n.localize("ABOREA.Total")}: ${total}</strong></p>
       </div>
     `

@@ -214,7 +214,38 @@
       },
       "companions": {
         "list": []
-      }
+      },
+      "customSkills": [],
+      "wallet": {
+        "currencies": [
+          {
+            "key": "gf",
+            "label": "GF",
+            "name": "Goldfalken",
+            "amount": 0
+          },
+          {
+            "key": "tt",
+            "label": "TT",
+            "name": "Trionthaler",
+            "amount": 0
+          },
+          {
+            "key": "kl",
+            "label": "KL",
+            "name": "Kupferlinge",
+            "amount": 0
+          },
+          {
+            "key": "mu",
+            "label": "MU",
+            "name": "Münzen unbekannt",
+            "amount": 0
+          }
+        ],
+        "history": []
+      },
+      "inventoryHistory": []
     },
     "npc": {
       "templates": [

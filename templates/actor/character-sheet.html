@@ -47,12 +47,21 @@
         <div class="panel">
           <h2>{{localize "ABOREA.CharacterCreation"}}</h2>
           <p>{{localize "ABOREA.CharacterCreationHint"}}</p>
-          <div class="attributes-grid">
-            {{#each system.baseAttributes as |attr key|}}
-            <div class="attribute-row">
-              <label>{{localize (lookup ../config.attributes key)}}</label>
-              <input type="number" name="system.baseAttributes.{{key}}.value" value="{{attr.value}}" min="1" max="10" />
-              <span>{{localize "ABOREA.Cost"}} {{attr.value}}</span>
+          <div class="attributes-grid creation-attributes-grid">
+            <div class="attribute-row attribute-header">
+              <span>{{localize "ABOREA.Attributes"}}</span>
+              <span>{{localize "ABOREA.Value"}}</span>
+              <span>{{localize "ABOREA.CostTotal"}}</span>
+              <span>{{localize "ABOREA.NextStepCost"}}</span>
+              <span>{{localize "ABOREA.Bonus"}}</span>
+            </div>
+            {{#each system.creation.attributeRows as |attr|}}
+            <div class="attribute-row creation-attribute-row">
+              <label>{{localize attr.label}}</label>
+              <input type="number" name="system.baseAttributes.{{attr.key}}.value" value="{{attr.value}}" min="1" max="10" />
+              <span>{{attr.totalCost}}</span>
+              <span>{{#if attr.nextStepCost}}+{{attr.nextStepCost}}{{else}}—{{/if}}</span>
+              <span>{{attr.bonus}}</span>
             </div>
             {{/each}}
           </div>
@@ -75,6 +84,30 @@
             <button type="button" class="finalize-character">{{localize "ABOREA.FinalizeCharacter"}}</button>
           </div>
         </div>
+
+          <div class="panel inset cost-reference-panel">
+            <h3>{{localize "ABOREA.AttributeCostReference"}}</h3>
+            <table class="cost-reference-table">
+              <thead>
+                <tr>
+                  <th>{{localize "ABOREA.Value"}}</th>
+                  <th>{{localize "ABOREA.Bonus"}}</th>
+                  <th>{{localize "ABOREA.CostTotal"}}</th>
+                  <th>{{localize "ABOREA.NextStepCost"}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each system.creation.attributeCostTable as |row|}}
+                <tr>
+                  <td>{{row.value}}</td>
+                  <td>{{row.bonus}}</td>
+                  <td>{{row.totalCost}}</td>
+                  <td>{{#if row.stepCost}}+{{row.stepCost}}{{else}}—{{/if}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
         <div class="panel">
           <h2>{{localize "ABOREA.CharacterValidation"}}</h2>
           <div class="validation-grid">
@@ -108,14 +141,18 @@
         <p>{{localize "ABOREA.CreationSkillsHint"}}</p>
         <div class="skill-list creation-skill-list">
           {{#each system.creation.skillRows as |skill|}}
-          <div class="skill-row">
-            <span>{{localize skill.label}}</span>
-            <span>{{localize "ABOREA.SkillCost"}} {{skill.cost}}</span>
-            <span>{{localize "ABOREA.MaxRank"}} {{skill.maxRank}}</span>
-            <div class="button-row compact">
-              <button type="button" class="creation-skill-adjust" data-skill="{{skill.key}}" data-delta="-1">-</button>
+          <div class="skill-row creation-skill-row">
+            <div class="skill-meta">
+              <span class="skill-name">{{localize skill.label}}</span>
+              <div class="skill-submeta">
+                <span>{{localize "ABOREA.SkillCost"}} {{skill.cost}}</span>
+                <span>{{localize "ABOREA.MaxRank"}} {{skill.maxRank}}</span>
+              </div>
+            </div>
+            <div class="skill-controls inline-controls">
+              <button type="button" class="creation-skill-adjust" data-skill="{{skill.key}}" data-delta="-1" aria-label="{{localize 'ABOREA.Decrease'}}">-</button>
               <input type="number" value="{{skill.rank}}" disabled />
-              <button type="button" class="creation-skill-adjust" data-skill="{{skill.key}}" data-delta="1">+</button>
+              <button type="button" class="creation-skill-adjust" data-skill="{{skill.key}}" data-delta="1" aria-label="{{localize 'ABOREA.Increase'}}">+</button>
             </div>
           </div>
           {{/each}}
@@ -175,25 +212,36 @@
 
     <div class="tab" data-group="primary" data-tab="skills">
       <section class="panel">
-        <h2>{{localize "ABOREA.Skills"}}</h2>
+        <div class="panel-header"><h2>{{localize "ABOREA.Skills"}}</h2><button type="button" class="add-custom-skill">+ {{localize "ABOREA.AddSkill"}}</button></div>
         <div class="skill-list">
-          {{#each system.skills as |skill key|}}
-          <div class="skill-row">
-            <span>{{localize skill.label}}</span>
-            <select name="system.skills.{{key}}.attribute">
-              {{#each ../config.attributes as |attrLabel attrKey|}}
-              <option value="{{attrKey}}" {{#if (aboreaEq attrKey skill.attribute)}}selected{{/if}}>{{localize attrLabel}}</option>
-              {{/each}}
-            </select>
-            <input type="number" name="system.skills.{{key}}.rank" value="{{skill.rank}}" />
-            <button type="button" class="roll-skill" data-skill="{{key}}">{{localize "ABOREA.Roll"}}</button>
+          {{#each system.skillDisplayRows as |skill|}}
+          <div class="skill-row skill-editor-row">
+            <div class="skill-meta">
+              <span class="skill-name">{{skill.name}}</span>
+              <div class="skill-submeta">
+                <span>{{localize "ABOREA.Attribute"}}:
+                  <select name="{{#if skill.isCustom}}system.customSkills.{{skill.customIndex}}.attribute{{else}}system.skills.{{skill.key}}.attribute{{/if}}">
+                    {{#each ../config.attributes as |attrLabel attrKey|}}
+                    <option value="{{attrKey}}" {{#if (aboreaEq attrKey skill.attribute)}}selected{{/if}}>{{localize attrLabel}}</option>
+                    {{/each}}
+                  </select>
+                </span>
+                <span>{{localize "ABOREA.ClassBonus"}} {{skill.bonus}}</span>
+              </div>
+            </div>
+            <div class="skill-controls inline-controls">
+              {{#if skill.isCustom}}<input type="text" name="system.customSkills.{{skill.customIndex}}.name" value="{{skill.name}}" class="skill-name-input" />{{/if}}
+              <input type="number" name="{{#if skill.isCustom}}system.customSkills.{{skill.customIndex}}.rank{{else}}system.skills.{{skill.key}}.rank{{/if}}" value="{{skill.rank}}" />
+              <button type="button" class="roll-skill" data-skill="{{skill.key}}" {{#if skill.isCustom}}data-custom="true"{{/if}}>{{localize "ABOREA.Roll"}}</button>
+              {{#if skill.isCustom}}<button type="button" class="remove-custom-skill" data-skill-key="{{skill.key}}">🗑</button>{{/if}}
+            </div>
           </div>
           {{/each}}
         </div>
       </section>
     </div>
 
-    <div class="tab" data-group="primary" data-tab="inventory">
+<div class="tab" data-group="primary" data-tab="inventory">
       {{> "systems/aborea-v7/templates/actor/partials/inventory.html"}}
     </div>
 
@@ -245,17 +293,18 @@
   
 
     <div class="tab" data-group="primary" data-tab="companions">
-      <section class="panel">
+      <section class="panel companion-dropzone">
         <h2>{{localize "ABOREA.Companions"}}</h2>
         <div class="header-grid compact">
           <label>{{localize "ABOREA.CompanionPack"}}
             <select name="selectedCreature">
               <option value=""></option>
-              {{#each availablePacks.creatures as |entry|}}<option value="{{entry.name}}">{{entry.name}}</option>{{/each}}
+              {{#each availablePacks.creatures as |entry|}}<option value="{{entry.pack}}||{{entry.name}}">{{entry.name}} — {{entry.pack}}</option>{{/each}}
             </select>
           </label>
           <button type="button" class="create-companion">{{localize "ABOREA.CreateCompanion"}}</button>
         </div>
+        <p class="drop-help">{{localize "ABOREA.CompanionDropHint"}}</p>
       </section>
       <section class="panel">
         {{#if system.companions.list.length}}

@@ -1,22 +1,53 @@
+<section class="panel">
+  <div class="panel-header">
+    <h2>{{localize "ABOREA.Wallet"}}</h2>
+    <button type="button" class="wallet-add-currency">+ {{localize "ABOREA.AddCurrency"}}</button>
+  </div>
+  <div class="wallet-list">
+    {{#each system.wallet.currencies as |currency idx|}}
+    <div class="wallet-row">
+      <div class="wallet-meta"><strong>{{currency.label}}</strong><small>{{currency.name}}</small></div>
+      <div class="wallet-controls inline-controls">
+        <button type="button" class="wallet-adjust" data-currency-key="{{currency.key}}" data-mode="withdraw">-</button>
+        <input type="number" name="system.wallet.currencies.{{idx}}.amount" value="{{currency.amount}}" />
+        <button type="button" class="wallet-adjust" data-currency-key="{{currency.key}}" data-mode="deposit">+</button>
+        <button type="button" class="wallet-remove-currency" data-currency-key="{{currency.key}}">🗑</button>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</section>
 
 <section class="panel">
-  <div class="panel-header"><h2>{{localize "ABOREA.Weapons"}}</h2><button type="button" class="item-create" data-type="weapon">+</button></div>
+  <div class="panel-header"><h2>{{localize "ABOREA.Weapons"}}</h2><div class="pack-import-row"><select name="selectedPackItem-weapon"><option value=""></option>{{#each availablePacks.weapons as |entry|}}<option value="{{entry.pack}}||{{entry.name}}">{{entry.name}}</option>{{/each}}</select><button type="button" class="import-pack-item" data-type="weapon">{{localize "ABOREA.ImportFromCompendium"}}</button><button type="button" class="item-create" data-type="weapon">+</button></div></div>
   {{#each itemLists.weapons as |item|}}
   <div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{localize "ABOREA.Damage"}} {{item.system.damage}}</span><button type="button" class="roll-attack">{{localize "ABOREA.Attack"}}</button><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>
   {{/each}}
 </section>
 <section class="panel">
-  <div class="panel-header"><h2>{{localize "ABOREA.Armors"}}</h2><button type="button" class="item-create" data-type="armor">+</button></div>
+  <div class="panel-header"><h2>{{localize "ABOREA.Armors"}}</h2><div class="pack-import-row"><select name="selectedPackItem-armor"><option value=""></option>{{#each availablePacks.armors as |entry|}}<option value="{{entry.pack}}||{{entry.name}}">{{entry.name}}</option>{{/each}}</select><button type="button" class="import-pack-item" data-type="armor">{{localize "ABOREA.ImportFromCompendium"}}</button><button type="button" class="item-create" data-type="armor">+</button></div></div>
   {{#each itemLists.armors as |item|}}
   <div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{localize "ABOREA.ArmorValue"}} {{item.system.armor}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>
   {{/each}}
 </section>
 <section class="panel">
-  <div class="panel-header"><h2>{{localize "ABOREA.SpellsAndMiracles"}}</h2><div><button type="button" class="item-create" data-type="spell">{{localize "ABOREA.Spell"}}</button><button type="button" class="item-create" data-type="miracle">{{localize "ABOREA.Miracle"}}</button></div></div>
+  <div class="panel-header"><h2>{{localize "ABOREA.SpellsAndMiracles"}}</h2><div class="pack-import-row"><select name="selectedPackItem-spell"><option value=""></option>{{#each availablePacks.spells as |entry|}}<option value="{{entry.pack}}||{{entry.name}}">{{entry.name}}</option>{{/each}}</select><button type="button" class="import-pack-item" data-type="spell">{{localize "ABOREA.ImportFromCompendium"}}</button><button type="button" class="item-create" data-type="spell">{{localize "ABOREA.Spell"}}</button><select name="selectedPackItem-miracle"><option value=""></option>{{#each availablePacks.miracles as |entry|}}<option value="{{entry.pack}}||{{entry.name}}">{{entry.name}}</option>{{/each}}</select><button type="button" class="import-pack-item" data-type="miracle">{{localize "ABOREA.ImportFromCompendium"}}</button><button type="button" class="item-create" data-type="miracle">{{localize "ABOREA.Miracle"}}</button></div></div>
   {{#each itemLists.spells as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{item.system.list}}</span><button type="button" class="cast-power">{{localize "ABOREA.Cast"}}</button><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
   {{#each itemLists.miracles as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{item.system.list}}</span><button type="button" class="cast-power">{{localize "ABOREA.Cast"}}</button><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
 </section>
 <section class="panel">
-  <div class="panel-header"><h2>{{localize "ABOREA.Gear"}}</h2><button type="button" class="item-create" data-type="gear">+</button></div>
+  <div class="panel-header"><h2>{{localize "ABOREA.Gear"}}</h2><div class="pack-import-row"><select name="selectedPackItem-gear"><option value=""></option>{{#each availablePacks.gear as |entry|}}<option value="{{entry.pack}}||{{entry.name}}">{{entry.name}}</option>{{/each}}</select><button type="button" class="import-pack-item" data-type="gear">{{localize "ABOREA.ImportFromCompendium"}}</button><button type="button" class="item-create" data-type="gear">+</button></div></div>
   {{#each itemLists.gear as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
+</section>
+
+<section class="panel">
+  <h2>{{localize "ABOREA.TransactionHistory"}}</h2>
+  <div class="history-list">
+    {{#each system.wallet.history as |entry|}}
+    <div class="history-row"><span>{{entry.stamp}}</span><span>{{entry.action}}</span><span>{{entry.label}}</span><span>{{entry.amount}} {{entry.currency}}</span></div>
+    {{/each}}
+    {{#each system.inventoryHistory as |entry|}}
+    <div class="history-row"><span>{{entry.stamp}}</span><span>{{entry.action}}</span><span>{{entry.label}}</span><span>{{entry.itemType}}</span></div>
+    {{/each}}
+  </div>
 </section>

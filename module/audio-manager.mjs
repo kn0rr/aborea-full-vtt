@@ -21,7 +21,14 @@ export class AboreaSoundboard {
     return list[Math.floor(Math.random() * list.length)];
   }
 
+  static normalizePath(src) {
+    if (!src) return src;
+    if (/^(https?:|data:|systems\/|modules\/|worlds\/)/.test(src)) return src;
+    return `${ROOT}/${src.replace(/^\/+/, "")}`;
+  }
+
   static async playFile(src, { loop = false, volume = 0.5, fade = 500 } = {}) {
+    src = this.normalizePath(src);
     if (!src) return null;
     return await AudioHelper.play({ src, loop, volume, fade, autoplay: true }, true);
   }
@@ -80,9 +87,9 @@ export class AboreaSoundboard {
       }
       const existing = playlist.sounds.map(s => s.path);
       const entries = [
-        ...(preset.music || []).map(path => ({ name: foundry.utils.getRoute(path).split('/').pop(), path, channel: "music", repeat: true, volume: 0.35 })),
-        ...(preset.ambience || []).map(path => ({ name: foundry.utils.getRoute(path).split('/').pop(), path, channel: "environment", repeat: true, volume: 0.45 })),
-        ...(preset.oneshots || []).map(path => ({ name: foundry.utils.getRoute(path).split('/').pop(), path, channel: "interface", repeat: false, volume: 0.7 }))
+        ...(preset.music || []).map(path => { path = this.normalizePath(path); return ({ name: foundry.utils.getRoute(path).split('/').pop(), path, channel: "music", repeat: true, volume: 0.35 }); }),
+        ...(preset.ambience || []).map(path => { path = this.normalizePath(path); return ({ name: foundry.utils.getRoute(path).split('/').pop(), path, channel: "environment", repeat: true, volume: 0.45 }); }),
+        ...(preset.oneshots || []).map(path => { path = this.normalizePath(path); return ({ name: foundry.utils.getRoute(path).split('/').pop(), path, channel: "interface", repeat: false, volume: 0.7 }); })
       ].filter(s => !existing.includes(s.path));
       if (entries.length) await playlist.createEmbeddedDocuments("PlaylistSound", entries);
     }

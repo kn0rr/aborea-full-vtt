@@ -29,7 +29,13 @@ export const ABOREA = {
     langeKlingenwaffe: { label: "ABOREA.SkillLangeKlingenwaffe", attribute: "st" },
     kurzeKlingenwaffe: { label: "ABOREA.SkillKurzeKlingenwaffe", attribute: "ge" },
     stangenwaffe: { label: "ABOREA.SkillStangenwaffe", attribute: "st" },
-    wurfwaffe: { label: "ABOREA.SkillWurfwaffe", attribute: "ge" }
+    wurfwaffe: { label: "ABOREA.SkillWurfwaffe", attribute: "ge" },
+    fallen: { label: "ABOREA.SkillFallen", attribute: "in" },
+    gift: { label: "ABOREA.SkillGift", attribute: "in" },
+    heimlichkeit: { label: "ABOREA.SkillHeimlichkeit", attribute: "ge" },
+    heilen: { label: "ABOREA.SkillHeilen", attribute: "ch" },
+    information: { label: "ABOREA.SkillInformation", attribute: "ch" },
+    magieWahrnehmen: { label: "ABOREA.SkillMagieWahrnehmen", attribute: "in" }
   },
   weaponSkillKeys: ["waffenlos","boegen","aexte","langeKlingenwaffe","kurzeKlingenwaffe","stangenwaffe","wurfwaffe"],
   maneuvers: {
@@ -90,6 +96,15 @@ export const ABOREA = {
   },
   getCreationSkills() {
     return Object.entries(this.skills).filter(([, cfg]) => cfg.creation).map(([key, cfg]) => ({ key, ...cfg }));
+  },
+  customSkillTemplate(index = 0) {
+    return {
+      key: `custom-${index}`,
+      name: `Neue Fähigkeit ${index + 1}`,
+      attribute: "in",
+      rank: 0,
+      source: "custom"
+    };
   },
   activeClassFeatures(classSystem = {}, level = 1) {
     const features = Array.isArray(classSystem?.levelFeatures) ? classSystem.levelFeatures : [];

@@ -197,3 +197,167 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.aborea-sheet .creation-attributes-grid {
+  gap: 6px;
+}
+
+.aborea-sheet .creation-attributes-grid .attribute-row {
+  grid-template-columns: minmax(150px, 1.4fr) minmax(72px, 90px) minmax(72px, 90px) minmax(88px, 110px) minmax(70px, 90px);
+}
+
+.aborea-sheet .creation-attributes-grid .attribute-header {
+  font-weight: 700;
+  border-bottom: 1px solid rgba(80,60,45,.25);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.aborea-sheet .creation-attributes-grid .attribute-header span,
+.aborea-sheet .creation-attributes-grid .creation-attribute-row span {
+  text-align: center;
+}
+
+.aborea-sheet .creation-attributes-grid .creation-attribute-row label {
+  font-weight: 600;
+}
+
+.aborea-sheet .cost-reference-panel {
+  margin-top: 12px;
+  overflow-x: auto;
+}
+
+.aborea-sheet .cost-reference-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.aborea-sheet .cost-reference-table th,
+.aborea-sheet .cost-reference-table td {
+  border: 1px solid rgba(80,60,45,.2);
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.aborea-sheet .cost-reference-table th {
+  background: rgba(120,90,60,.12);
+}
+
+@media (max-width: 900px) {
+  .aborea-sheet .creation-attributes-grid .attribute-row {
+    grid-template-columns: 1fr;
+  }
+  .aborea-sheet .creation-attributes-grid .attribute-header {
+    display: none;
+  }
+}
+
+
+/* UI polish for character creation and skill controls */
+.aborea-sheet .creation-skill-list {
+  gap: 10px;
+}
+
+.aborea-sheet .creation-skill-list .creation-skill-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(80,60,45,.18);
+  border-radius: 10px;
+  background: rgba(255,255,255,.42);
+}
+
+.aborea-sheet .creation-skill-list .skill-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.aborea-sheet .creation-skill-list .skill-name {
+  font-weight: 600;
+}
+
+.aborea-sheet .creation-skill-list .skill-submeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #5b4b3a;
+  font-size: .9rem;
+}
+
+.aborea-sheet .inline-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+}
+
+.aborea-sheet .inline-controls input {
+  width: 52px;
+  min-width: 52px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.aborea-sheet .inline-controls button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.aborea-sheet .creation-metrics .metric-card input {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.aborea-sheet .validation-grid .summary-row {
+  margin-bottom: 0;
+}
+
+.aborea-sheet .validation-grid {
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .aborea-sheet .creation-skill-list .creation-skill-row {
+    grid-template-columns: 1fr;
+  }
+
+  .aborea-sheet .inline-controls {
+    justify-self: start;
+  }
+}
+
+
+.skill-editor-row { display:grid; grid-template-columns: 1fr auto; align-items:center; gap:10px; }
+.skill-name-input { min-width: 180px; }
+.wallet-list, .history-list { display:flex; flex-direction:column; gap:8px; }
+.wallet-row, .history-row { display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; }
+.wallet-meta { display:flex; flex-direction:column; }
+.pack-import-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.pack-import-row select { min-width: 180px; }
+.history-row { grid-template-columns: 170px 110px 1fr auto; font-size: 12px; }
+.history-list { max-height: 240px; overflow:auto; }
+.wallet-controls input { width: 72px; text-align:center; }
+
+/* Visual dice overlay */
+.aborea-dice-overlay.hidden { display:none; }
+.aborea-dice-overlay.visible { display:block; }
+#aborea-dice-overlay { position: fixed; inset: 0; z-index: 10000; }
+#aborea-dice-overlay .aborea-dice-backdrop { position:absolute; inset:0; background: rgba(10,10,18,0.55); backdrop-filter: blur(3px); }
+#aborea-dice-overlay .aborea-dice-panel { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); min-width:220px; padding:20px 24px; border-radius:16px; background:linear-gradient(180deg, rgba(31,26,22,0.96), rgba(16,14,12,0.96)); box-shadow:0 16px 40px rgba(0,0,0,0.45); text-align:center; border:1px solid rgba(255,255,255,0.08); }
+#aborea-dice-overlay .aborea-dice-label { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+#aborea-dice-overlay .aborea-die { width: 90px; height: 90px; margin: 0 auto 12px; display:flex; align-items:center; justify-content:center; transform: rotate(calc(var(--aborea-spin, 1) * 1turn)); transition: transform 80ms linear; }
+#aborea-dice-overlay .aborea-die-face { width: 78px; height: 78px; border-radius: 18px; display:flex; align-items:center; justify-content:center; font-size: 34px; font-weight: 800; color: #fff6d6; background: radial-gradient(circle at 30% 30%, #d1a95a 0%, #90652f 55%, #56371a 100%); box-shadow: inset 0 1px 4px rgba(255,255,255,0.25), 0 10px 24px rgba(0,0,0,0.45); }
+#aborea-dice-overlay .aborea-dice-subline { font-size: 13px; opacity: 0.9; }
+
+.companion-dropzone { border: 2px dashed rgba(80,80,120,0.35); border-radius: 10px; }
+.companion-dropzone .drop-help { margin-top: 0.5rem; color: var(--color-text-light-highlight, #666); font-size: 0.875rem; }
