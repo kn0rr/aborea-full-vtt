@@ -8,7 +8,61 @@
       "hitPointsBase": 6,
       "magicAttribute": "ch",
       "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Leitmagie-Beruf."
+      "special": "Leitmagie-Beruf.",
+      "skillCosts": {
+        "athletik": "2",
+        "einflussnahme": "1",
+        "gezielteSprueche": "3",
+        "kunst": "1",
+        "list": "2",
+        "magieEntwickeln": "3/4",
+        "natur": "2",
+        "reiten": "2",
+        "schwimmen": "2",
+        "spruchlisten": "3/4",
+        "waffen": "3/5",
+        "wahrnehmung": "1",
+        "wissen": "1"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "einflussnahme": 1,
+          "kunst": 1,
+          "wahrnehmung": 1,
+          "wissen": 1,
+          "magieEntwickeln": 1
+        },
+        "notes": [
+          "Leitmagie-Fokus vorbereiten",
+          "Empfohlene Listen: Bardenmagie, Schwarze Magie"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "informationen",
+          "label": "Informationen +1",
+          "type": "situationalBonus",
+          "target": "information",
+          "value": 1,
+          "description": "Bonus von +1 auf Manöver der Informationsbeschaffung (z. B. Einflussnahme, List, Wahrnehmung)."
+        },
+        {
+          "level": 1,
+          "key": "zeichen-geheimschrift",
+          "label": "Zeichen (Geheimschrift)",
+          "type": "trait",
+          "description": "Kann die bardische Geheimschrift und Zeichen lesen und verwenden."
+        },
+        {
+          "level": 1,
+          "key": "gemeinsames-spiel",
+          "label": "Gemeinsames Spiel",
+          "type": "pool",
+          "description": "Mehrere Barden können ihre Magiepunkte für gemeinsame Wirkungen zusammenlegen; Maximalwerte bleiben bestehen."
+        }
+      ]
     }
   },
   {
@@ -20,7 +74,103 @@
       "hitPointsBase": 6,
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Fokus auf List, Heimlichkeit und Waffen."
+      "special": "Fokus auf List, Heimlichkeit und Waffen.",
+      "skillCosts": {
+        "athletik": "1",
+        "einflussnahme": "1",
+        "gezielteSprueche": "4",
+        "kunst": "1",
+        "list": "2",
+        "magieEntwickeln": "3/6",
+        "natur": "2",
+        "reiten": "2",
+        "schwimmen": "2",
+        "spruchlisten": "3/6",
+        "waffen": "2/4",
+        "wahrnehmung": "1",
+        "wissen": "2"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "athletik": 1,
+          "einflussnahme": 1,
+          "list": 1,
+          "wahrnehmung": 1,
+          "waffen": 1
+        },
+        "notes": [
+          "Fokus auf soziale und listige Manöver"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "fallen",
+          "label": "Fallen +1",
+          "type": "skillBonus",
+          "target": "fallen",
+          "value": 1,
+          "description": "Bonus von +1 auf Manöver zum Finden und Entschärfen von Fallen."
+        },
+        {
+          "level": 1,
+          "key": "schloesser",
+          "label": "Schlösser (List) +1",
+          "type": "skillBonus",
+          "target": "list",
+          "value": 1,
+          "description": "Bonus von +1 auf Manöver zum Öffnen von Schlössern mittels List."
+        },
+        {
+          "level": 1,
+          "key": "geheimtueren",
+          "label": "Geheimtüren (Wahrnehmung) +1",
+          "type": "skillBonus",
+          "target": "wahrnehmung",
+          "value": 1,
+          "description": "Bonus von +1 auf Wahrnehmungs-Manöver zum Entdecken von Geheimtüren."
+        },
+        {
+          "level": 1,
+          "key": "heimlichkeit",
+          "label": "Heimlichkeit +1",
+          "type": "situationalBonus",
+          "target": "stealth",
+          "value": 1,
+          "description": "Bonus von +1 auf Schleichen, Tarnung, Verstecken und Untertauchen."
+        },
+        {
+          "level": 1,
+          "key": "heimlicher-angriff",
+          "label": "Heimlicher Angriff",
+          "type": "trait",
+          "description": "Bei Überraschung verdoppelt ein erfolgreicher Nahkampftreffer den Schaden."
+        },
+        {
+          "level": 1,
+          "key": "ausweichen",
+          "label": "Ausweichen",
+          "type": "conditionalDefense",
+          "description": "Bei maximal Lederrüstung, ohne Schild und wenn nicht überrascht: Athletik-Rang als Rüstungsbonus (max. 5)."
+        },
+        {
+          "level": 1,
+          "key": "gift",
+          "label": "Gift +1",
+          "type": "skillBonus",
+          "target": "gift",
+          "value": 1,
+          "description": "Bonus von +1 auf Manöver im Umgang mit Giften."
+        },
+        {
+          "level": 1,
+          "key": "magische-gegenstaende",
+          "label": "Magische Gegenstände",
+          "type": "trait",
+          "description": "Kann magische Gegenstände sofort einsetzen."
+        }
+      ]
     }
   },
   {
@@ -32,7 +182,92 @@
       "hitPointsBase": 10,
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Fokus auf Waffen und Kampf."
+      "special": "Fokus auf Waffen und Kampf.",
+      "skillCosts": {
+        "athletik": "1",
+        "einflussnahme": "2",
+        "gezielteSprueche": "4",
+        "kunst": "1",
+        "list": "2",
+        "magieEntwickeln": "4/8",
+        "natur": "2",
+        "reiten": "1",
+        "schwimmen": "2",
+        "spruchlisten": "4/8",
+        "waffen": "1/3",
+        "wahrnehmung": "1",
+        "wissen": "2"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "athletik": 1,
+          "reiten": 1,
+          "waffen": 2,
+          "wahrnehmung": 1
+        },
+        "notes": [
+          "Fokus auf Waffen und Mobilität"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "magische-waffen-ruestungen",
+          "label": "Magische Waffen / Rüstungen",
+          "type": "trait",
+          "description": "Kann magische Waffen und Rüstungen benutzen, ohne sie zu verstehen."
+        },
+        {
+          "level": 1,
+          "key": "waffenkundig",
+          "label": "Waffenkundig",
+          "type": "weaponMinimum",
+          "target": "all",
+          "minimumRank": 0,
+          "description": "Kein Ungelernt-Malus von -2 bei ungelernter Waffengruppe."
+        },
+        {
+          "level": 1,
+          "key": "unzerstoerbar",
+          "label": "Unzerstörbar",
+          "type": "trait",
+          "description": "Wird bei 0 TP nicht bewusstlos."
+        },
+        {
+          "level": 1,
+          "key": "drohen-fuehren",
+          "label": "Drohen / Führen +1",
+          "type": "situationalBonus",
+          "target": "einflussnahme",
+          "value": 1,
+          "description": "Bonus von +1 auf Einflussnahme, wenn der Krieger entsprechend auftritt; kann Verbündeten für die ersten zwei Kampfrunden +1 geben."
+        },
+        {
+          "level": 11,
+          "key": "gefolgsleute-i",
+          "label": "Gefolgsleute I",
+          "type": "followers",
+          "followers": 3,
+          "description": "Kann Gefolgsleute anwerben; Richtwert laut Tabelle ab höheren Stufen."
+        },
+        {
+          "level": 12,
+          "key": "gefolgsleute-ii",
+          "label": "Gefolgsleute II",
+          "type": "followers",
+          "followers": 6,
+          "description": "Mehr Gefolgsleute möglich; Spielleiter entscheidet Details."
+        },
+        {
+          "level": 13,
+          "key": "gefolgsleute-iii",
+          "label": "Gefolgsleute III",
+          "type": "followers",
+          "followers": 12,
+          "description": "Mehr Gefolgsleute möglich; Spielleiter entscheidet Details."
+        }
+      ]
     }
   },
   {
@@ -44,7 +279,87 @@
       "hitPointsBase": 8,
       "magicAttribute": "ch",
       "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Leitmagie-Beruf."
+      "special": "Leitmagie-Beruf.",
+      "skillCosts": {
+        "athletik": "2",
+        "einflussnahme": "1",
+        "gezielteSprueche": "3",
+        "kunst": "1",
+        "list": "4",
+        "magieEntwickeln": "2/3",
+        "natur": "3",
+        "reiten": "2",
+        "schwimmen": "2",
+        "spruchlisten": "2/4",
+        "waffen": "2/4",
+        "wahrnehmung": "2",
+        "wissen": "1"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "einflussnahme": 1,
+          "wissen": 1,
+          "magieEntwickeln": 1,
+          "spruchlisten": 1,
+          "waffen": 1
+        },
+        "notes": [
+          "Heiliges Symbol als Klassenmerkmal notieren",
+          "Empfohlene Listen: Zeichen, Wunder"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "heiliges-symbol",
+          "label": "Heiliges Symbol",
+          "type": "armorBonus",
+          "value": 1,
+          "description": "Solange der Priester sein heiliges Symbol trägt, erhält er +1 auf die Rüstung."
+        },
+        {
+          "level": 1,
+          "key": "schriftrollen",
+          "label": "Schriftrollen",
+          "type": "trait",
+          "description": "Kann mittels Schriftrollen ungelernte Zauber verwenden; diese kosten Magiepunkte."
+        },
+        {
+          "level": 1,
+          "key": "heilen",
+          "label": "Heilen +1",
+          "type": "situationalBonus",
+          "target": "heilen",
+          "value": 1,
+          "description": "Bonus von +1 auf entsprechende Heil-Manöver."
+        },
+        {
+          "level": 1,
+          "key": "goettliche-waffe",
+          "label": "Göttliche Waffe +0",
+          "type": "weaponMinimum",
+          "target": "deityWeapon",
+          "minimumRank": 0,
+          "description": "Die Waffe der Gottheit gilt nicht als ungeübt; der Malus von -2 entfällt."
+        },
+        {
+          "level": 5,
+          "key": "messe",
+          "label": "Messe",
+          "type": "dailyPower",
+          "usesPerDay": 1,
+          "description": "Einmal am Tag besonders inspirierende Messe: Einflussnahme-Manöver um 4 erleichtert; bei Erfolg erhalten Teilnehmer 4 Stunden +1 auf alle Manöver."
+        },
+        {
+          "level": 10,
+          "key": "segnung",
+          "label": "Segnung",
+          "type": "dailyPower",
+          "usesPerDay": 1,
+          "description": "Einmal am Tag Segnung aller in Hörweite: für einen Tag +2 auf alle Manöver und Angriffe; Dauer 10 Minuten."
+        }
+      ]
     }
   },
   {
@@ -56,7 +371,52 @@
       "hitPointsBase": 6,
       "magicAttribute": "ch",
       "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Leitmagie-Beruf."
+      "special": "Leitmagie-Beruf.",
+      "skillCosts": {
+        "athletik": "2",
+        "einflussnahme": "1",
+        "gezielteSprueche": "3",
+        "kunst": "1",
+        "list": "3",
+        "magieEntwickeln": "3/4",
+        "natur": "1",
+        "reiten": "2",
+        "schwimmen": "2",
+        "spruchlisten": "3/4",
+        "waffen": "3/6",
+        "wahrnehmung": "1",
+        "wissen": "1"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "natur": 1,
+          "wahrnehmung": 1,
+          "magieEntwickeln": 1,
+          "spruchlisten": 1,
+          "wissen": 1
+        },
+        "notes": [
+          "Schamanischer Fokus als Klassenmerkmal notieren",
+          "Empfohlene Listen: Schamanenmagie"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "fokus",
+          "label": "Fokus",
+          "type": "focusStorage",
+          "description": "Fokus speichert Zauberränge bis zu einem Rang pro Stufe; erneutes Binden kostet 2 MP pro Rang zzgl. Verstärkungen."
+        },
+        {
+          "level": 1,
+          "key": "blutmagie",
+          "label": "Blutmagie",
+          "type": "resourceConversion",
+          "description": "Beim Wirken eines Zaubers kann 1 TP Blutverlust in 1 zusätzlichen Magiepunkt für genau diesen Zauber umgewandelt werden."
+        }
+      ]
     }
   },
   {
@@ -68,7 +428,62 @@
       "hitPointsBase": 8,
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Fokus auf Natur, Bogen und Bewegung."
+      "special": "Fokus auf Natur, Bogen und Bewegung.",
+      "skillCosts": {
+        "athletik": "2",
+        "einflussnahme": "2",
+        "gezielteSprueche": "4",
+        "kunst": "1",
+        "list": "3",
+        "magieEntwickeln": "3/6",
+        "natur": "1",
+        "reiten": "1",
+        "schwimmen": "1",
+        "spruchlisten": "3/6",
+        "waffen": "2/3",
+        "wahrnehmung": "1",
+        "wissen": "2"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "athletik": 1,
+          "natur": 1,
+          "reiten": 1,
+          "schwimmen": 1,
+          "waffen": 1
+        },
+        "notes": [
+          "Natur- und Bewegungsfokus"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "bogenschuetze",
+          "label": "Bogen/Armbrust mind. +0",
+          "type": "weaponMinimum",
+          "target": "bows-crossbows",
+          "minimumRank": 0,
+          "description": "Bögen und Armbrüste gelten nicht als ungelernt."
+        },
+        {
+          "level": 1,
+          "key": "naturverbundenheit",
+          "label": "Naturverbundenheit +1",
+          "type": "situationalBonus",
+          "target": "natur",
+          "value": 1,
+          "description": "Situationsbonus von +1 auf Natur-Manöver."
+        },
+        {
+          "level": 5,
+          "key": "tierfreund",
+          "label": "Tierfreund",
+          "type": "companion",
+          "description": "Ab Stufe 5 kann ein tierischer Freund entstehen; dessen Stufe liegt mindestens 4 Stufen unter der des Waldläufers."
+        }
+      ]
     }
   },
   {
@@ -80,7 +495,81 @@
       "hitPointsBase": 4,
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-      "special": "Arkaner Magieberuf."
+      "special": "Arkaner Magieberuf.",
+      "skillCosts": {
+        "athletik": "3",
+        "einflussnahme": "2",
+        "gezielteSprueche": "2",
+        "kunst": "1",
+        "list": "4",
+        "magieEntwickeln": "1/2",
+        "natur": "3",
+        "reiten": "3",
+        "schwimmen": "3",
+        "spruchlisten": "1/3",
+        "waffen": "4/8",
+        "wahrnehmung": "2",
+        "wissen": "1"
+      },
+      "starterPackage": {
+        "name": "Empfohlenes Startpaket",
+        "skills": {
+          "gezielteSprueche": 1,
+          "wissen": 1,
+          "magieEntwickeln": 1,
+          "spruchlisten": 1
+        },
+        "notes": [
+          "Zauberbuch/Fokus als Klassenmerkmal notieren",
+          "Empfohlene Listen: Freie, Elementare, Schwarze, Wilde Magie"
+        ]
+      },
+      "levelFeatures": [
+        {
+          "level": 1,
+          "key": "magie-wahrnehmen",
+          "label": "Magie wahrnehmen",
+          "type": "sense",
+          "description": "Kann durch eine Runde Konzentration aktive Magie an einem Ort wahrnehmen."
+        },
+        {
+          "level": 1,
+          "key": "grundzauber",
+          "label": "Grundzauber",
+          "type": "trait",
+          "description": "Weiße Zauberer: Lichtbogen; andere: Funkenregen. Dauer jeweils eine Runde pro Stufe."
+        },
+        {
+          "level": 1,
+          "key": "zauberbuch",
+          "label": "Zauberbuch",
+          "type": "castingBonus",
+          "value": 2,
+          "description": "Wenn keine Zeitnot besteht: +2 auf Zauber-Manöver; Zeitaufwand erhöht sich um 10 Minuten pro Rang."
+        },
+        {
+          "level": 1,
+          "key": "schriftrollen",
+          "label": "Schriftrollen",
+          "type": "trait",
+          "description": "Kann mittels Schriftrollen ungelernte Zauber verwenden; diese kosten Magiepunkte."
+        },
+        {
+          "level": 1,
+          "key": "zauberstab",
+          "label": "Zauberstab",
+          "type": "dailyPower",
+          "usesPerDay": 3,
+          "description": "Beginnt mit einem einfachen Zauberstab: enthält einen Rang-1-Zauber einer nicht-leitmagischen Liste, 3× pro Tag ohne MP-Kosten; Optionen kosten MP, jeder Zauberstab-Zauber ist gezielt."
+        },
+        {
+          "level": 10,
+          "key": "freund-des-zauberers",
+          "label": "Freund des Zauberers",
+          "type": "companion",
+          "description": "Ab Stufe 10 kann ein ungewöhnlicher magischer Freund erscheinen; seine Stufe ist höchstens Zauberer-Stufe minus 5."
+        }
+      ]
     }
   }
 ]

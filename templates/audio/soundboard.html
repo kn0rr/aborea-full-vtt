@@ -1,0 +1,17 @@
+<form class="aborea-soundboard">
+  <div class="form-group">
+    <label>Preset</label>
+    <select name="preset">
+      {{#each presets}}
+      <option value="{{this.id}}" {{#if (aboreaEq this.id ../activeId)}}selected{{/if}}>{{this.label}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <p>Lege deine Audio-Dateien unter <code>systems/aborea-v7/assets/audio/...</code> ab oder passe <code>data/audio-presets.json</code> an.</p>
+  <div class="aborea-audio-buttons" style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button type="button" data-audio-action="start"><i class="fas fa-play"></i> Start</button>
+    <button type="button" data-audio-action="oneshot"><i class="fas fa-bolt"></i> One-Shot</button>
+    <button type="button" data-audio-action="stop"><i class="fas fa-stop"></i> Stop</button>
+    <button type="button" data-audio-action="playlist"><i class="fas fa-list"></i> Playlists anlegen</button>
+  </div>
+</form>

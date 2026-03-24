@@ -7,6 +7,35 @@
     "hitPointsBase": 6,
     "magicAttribute": "ch",
     "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Leitmagie-Beruf."
+    "special": "Leitmagie-Beruf.",
+    "skillCosts": {
+      "athletik": "2",
+      "einflussnahme": "1",
+      "gezielteSprueche": "3",
+      "kunst": "1",
+      "list": "2",
+      "magieEntwickeln": "3/4",
+      "natur": "2",
+      "reiten": "2",
+      "schwimmen": "2",
+      "spruchlisten": "3/4",
+      "waffen": "3/5",
+      "wahrnehmung": "1",
+      "wissen": "1"
+    },
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "einflussnahme": 1,
+        "kunst": 1,
+        "wahrnehmung": 1,
+        "wissen": 1,
+        "magieEntwickeln": 1
+      },
+      "notes": [
+        "Leitmagie-Fokus vorbereiten",
+        "Empfohlene Listen: Bardenmagie, Schwarze Magie"
+      ]
+    }
   }
 }

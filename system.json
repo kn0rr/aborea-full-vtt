@@ -1,8 +1,8 @@
 {
   "id": "aborea-v7",
   "title": "ABOREA V7 (inoffiziell)",
-  "description": "ABOREA V7 System-Repo mit kollisionsfreien Pack-Quellen und Importskript für Welt-Compendien.",
-  "version": "0.5.0",
+  "description": "ABOREA V7 System mit Char-Gen, Klassenfähigkeiten und Zauber-/Active-Effect-Automation.",
+  "version": "0.6.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13.350"

@@ -7,6 +7,33 @@
     "hitPointsBase": 10,
     "magicAttribute": "in",
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Fokus auf Waffen und Kampf."
+    "special": "Fokus auf Waffen und Kampf.",
+    "skillCosts": {
+      "athletik": "1",
+      "einflussnahme": "2",
+      "gezielteSprueche": "4",
+      "kunst": "1",
+      "list": "2",
+      "magieEntwickeln": "4/8",
+      "natur": "2",
+      "reiten": "1",
+      "schwimmen": "2",
+      "spruchlisten": "4/8",
+      "waffen": "1/3",
+      "wahrnehmung": "1",
+      "wissen": "2"
+    },
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "athletik": 1,
+        "reiten": 1,
+        "waffen": 2,
+        "wahrnehmung": 1
+      },
+      "notes": [
+        "Fokus auf Waffen und Mobilität"
+      ]
+    }
   }
 }

@@ -7,6 +7,34 @@
     "hitPointsBase": 4,
     "magicAttribute": "in",
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Arkaner Magieberuf."
+    "special": "Arkaner Magieberuf.",
+    "skillCosts": {
+      "athletik": "3",
+      "einflussnahme": "2",
+      "gezielteSprueche": "2",
+      "kunst": "1",
+      "list": "4",
+      "magieEntwickeln": "1/2",
+      "natur": "3",
+      "reiten": "3",
+      "schwimmen": "3",
+      "spruchlisten": "1/3",
+      "waffen": "4/8",
+      "wahrnehmung": "2",
+      "wissen": "1"
+    },
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "gezielteSprueche": 1,
+        "wissen": 1,
+        "magieEntwickeln": 1,
+        "spruchlisten": 1
+      },
+      "notes": [
+        "Zauberbuch/Fokus als Klassenmerkmal notieren",
+        "Empfohlene Listen: Freie, Elementare, Schwarze, Wilde Magie"
+      ]
+    }
   }
 }

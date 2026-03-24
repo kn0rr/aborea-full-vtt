@@ -34,7 +34,8 @@
             "max": 0
           },
           "xp": 0,
-          "level": 1
+          "level": 1,
+          "trainingPoints": 0
         },
         "combat": {
           "initiative": 0,
@@ -50,6 +51,61 @@
           "class": "",
           "size": "mittel",
           "notes": ""
+        },
+        "baseAttributes": {
+          "st": {
+            "value": 5
+          },
+          "ge": {
+            "value": 5
+          },
+          "ko": {
+            "value": 5
+          },
+          "in": {
+            "value": 5
+          },
+          "ch": {
+            "value": 5
+          }
+        },
+        "finalAttributes": {
+          "st": {
+            "value": 5
+          },
+          "ge": {
+            "value": 5
+          },
+          "ko": {
+            "value": 5
+          },
+          "in": {
+            "value": 5
+          },
+          "ch": {
+            "value": 5
+          }
+        },
+        "creation": {
+          "status": "draft",
+          "completed": false,
+          "pointsBudget": 35,
+          "pointsSpent": 25,
+          "pointsRemaining": 10,
+          "validationErrors": [],
+          "trainingBudget": 8,
+          "trainingSpent": 0,
+          "trainingRemaining": 8,
+          "appliedStarterPackage": ""
+        },
+        "traits": {
+          "racialArmorBonus": 0,
+          "maneuverBonus": 0,
+          "spellResistance": false,
+          "diseaseImmunity": false,
+          "secretDoorsBonus": false,
+          "mechanicsBonus": false,
+          "thermalVision": false
         }
       }
     },
@@ -62,27 +118,51 @@
           "rank": 0,
           "attribute": "st"
         },
+        "einflussnahme": {
+          "rank": 0,
+          "attribute": "ch"
+        },
+        "gezielteSprueche": {
+          "rank": 0,
+          "attribute": "in"
+        },
+        "kunst": {
+          "rank": 0,
+          "attribute": "ch"
+        },
+        "list": {
+          "rank": 0,
+          "attribute": "in"
+        },
+        "magieEntwickeln": {
+          "rank": 0,
+          "attribute": "in"
+        },
         "natur": {
           "rank": 0,
           "attribute": "in"
         },
-        "heilkunst": {
+        "reiten": {
+          "rank": 0,
+          "attribute": "ge"
+        },
+        "schwimmen": {
+          "rank": 0,
+          "attribute": "ko"
+        },
+        "spruchlisten": {
           "rank": 0,
           "attribute": "in"
         },
-        "heimlichkeit": {
+        "waffen": {
           "rank": 0,
-          "attribute": "ge"
+          "attribute": "st"
         },
         "wahrnehmung": {
           "rank": 0,
           "attribute": "in"
         },
-        "ueberreden": {
-          "rank": 0,
-          "attribute": "ch"
-        },
-        "mechanik": {
+        "wissen": {
           "rank": 0,
           "attribute": "in"
         },
@@ -119,6 +199,21 @@
         "goldfalken": 0,
         "trionthaler": 0,
         "kupferlinge": 0
+      },
+      "classFeatures": {
+        "list": [],
+        "labels": [],
+        "notes": [],
+        "flags": {},
+        "bonuses": {},
+        "armorBonus": 0,
+        "weaponMinimums": {},
+        "followers": 0,
+        "activations": {},
+        "lastResetDay": ""
+      },
+      "companions": {
+        "list": []
       }
     },
     "npc": {
@@ -139,6 +234,18 @@
         "resistances": "",
         "vulnerability": "",
         "special": ""
+      },
+      "summon": {
+        "ownerActorId": "",
+        "sourceItemId": "",
+        "sourceItemName": "",
+        "summonType": "",
+        "summonLevel": 0,
+        "mpCost": 0,
+        "permanent": false,
+        "durationLabel": "",
+        "expiresAt": null,
+        "active": false
       }
     }
   },

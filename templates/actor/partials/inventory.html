@@ -13,8 +13,8 @@
 </section>
 <section class="panel">
   <div class="panel-header"><h2>{{localize "ABOREA.SpellsAndMiracles"}}</h2><div><button type="button" class="item-create" data-type="spell">{{localize "ABOREA.Spell"}}</button><button type="button" class="item-create" data-type="miracle">{{localize "ABOREA.Miracle"}}</button></div></div>
-  {{#each itemLists.spells as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{item.system.list}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
-  {{#each itemLists.miracles as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{item.system.list}}</span><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
+  {{#each itemLists.spells as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{item.system.list}}</span><button type="button" class="cast-power">{{localize "ABOREA.Cast"}}</button><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
+  {{#each itemLists.miracles as |item|}}<div class="item-row" data-item-id="{{item.id}}"><span>{{item.name}}</span><span>{{item.system.list}}</span><button type="button" class="cast-power">{{localize "ABOREA.Cast"}}</button><button type="button" class="item-edit">✎</button><button type="button" class="item-delete">🗑</button></div>{{/each}}
 </section>
 <section class="panel">
   <div class="panel-header"><h2>{{localize "ABOREA.Gear"}}</h2><button type="button" class="item-create" data-type="gear">+</button></div>

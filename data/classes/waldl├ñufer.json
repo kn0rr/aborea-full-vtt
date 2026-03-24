@@ -7,6 +7,34 @@
     "hitPointsBase": 8,
     "magicAttribute": "in",
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Fokus auf Natur, Bogen und Bewegung."
+    "special": "Fokus auf Natur, Bogen und Bewegung.",
+    "skillCosts": {
+      "athletik": "2",
+      "einflussnahme": "2",
+      "gezielteSprueche": "4",
+      "kunst": "1",
+      "list": "3",
+      "magieEntwickeln": "3/6",
+      "natur": "1",
+      "reiten": "1",
+      "schwimmen": "1",
+      "spruchlisten": "3/6",
+      "waffen": "2/3",
+      "wahrnehmung": "1",
+      "wissen": "2"
+    },
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "athletik": 1,
+        "natur": 1,
+        "reiten": 1,
+        "schwimmen": 1,
+        "waffen": 1
+      },
+      "notes": [
+        "Natur- und Bewegungsfokus"
+      ]
+    }
   }
 }

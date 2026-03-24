@@ -7,6 +7,34 @@
     "hitPointsBase": 6,
     "magicAttribute": "in",
     "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
-    "special": "Fokus auf List, Heimlichkeit und Waffen."
+    "special": "Fokus auf List, Heimlichkeit und Waffen.",
+    "skillCosts": {
+      "athletik": "1",
+      "einflussnahme": "1",
+      "gezielteSprueche": "4",
+      "kunst": "1",
+      "list": "2",
+      "magieEntwickeln": "3/6",
+      "natur": "2",
+      "reiten": "2",
+      "schwimmen": "2",
+      "spruchlisten": "3/6",
+      "waffen": "2/4",
+      "wahrnehmung": "1",
+      "wissen": "2"
+    },
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "athletik": 1,
+        "einflussnahme": 1,
+        "list": 1,
+        "wahrnehmung": 1,
+        "waffen": 1
+      },
+      "notes": [
+        "Fokus auf soziale und listige Manöver"
+      ]
+    }
   }
 }

@@ -1,0 +1,1 @@
+await game.aborea.buildSystemPacks();

@@ -1,0 +1,53 @@
+{
+  "presets": [
+    {
+      "id": "leet-village",
+      "label": "Leet / Dorf",
+      "music": ["assets/audio/music/leet_village_theme.ogg"],
+      "ambience": ["assets/audio/ambience/village_day.ogg"],
+      "oneshots": ["assets/audio/oneshots/market_bell.ogg"]
+    },
+    {
+      "id": "forest-travel",
+      "label": "Wald / Reise",
+      "music": ["assets/audio/music/forest_journey.ogg"],
+      "ambience": ["assets/audio/ambience/forest_day.ogg"],
+      "oneshots": ["assets/audio/oneshots/wolf_howl.ogg", "assets/audio/oneshots/branch_snap.ogg"]
+    },
+    {
+      "id": "troll-cave",
+      "label": "Trollhöhle",
+      "music": ["assets/audio/music/dark_cave.ogg"],
+      "ambience": ["assets/audio/ambience/cave_drips.ogg"],
+      "oneshots": ["assets/audio/oneshots/rock_fall.ogg"]
+    },
+    {
+      "id": "tavern",
+      "label": "Taverne",
+      "music": ["assets/audio/music/tavern_evening.ogg"],
+      "ambience": ["assets/audio/ambience/tavern_room.ogg"],
+      "oneshots": ["assets/audio/oneshots/tankard_clink.ogg"]
+    },
+    {
+      "id": "combat",
+      "label": "Kampf",
+      "music": ["assets/audio/music/combat_drums.ogg"],
+      "ambience": ["assets/audio/ambience/battlefield_wind.ogg"],
+      "oneshots": ["assets/audio/oneshots/sword_draw.ogg", "assets/audio/oneshots/battle_cry.ogg"]
+    },
+    {
+      "id": "rain-night",
+      "label": "Nacht / Regen",
+      "music": ["assets/audio/music/night_watch.ogg"],
+      "ambience": ["assets/audio/ambience/rain_night.ogg"],
+      "oneshots": ["assets/audio/oneshots/thunder_close.ogg"]
+    },
+    {
+      "id": "temple",
+      "label": "Tempel",
+      "music": ["assets/audio/music/temple_choir.ogg"],
+      "ambience": ["assets/audio/ambience/temple_hall.ogg"],
+      "oneshots": ["assets/audio/oneshots/chime.ogg"]
+    }
+  ]
+}
