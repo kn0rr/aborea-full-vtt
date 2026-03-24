@@ -1,7 +1,7 @@
 {
   "id": "aborea-v7",
   "title": "ABOREA V7 (inoffiziell)",
-  "description": "ABOREA V7 System mit Char-Gen, Klassenf\u00e4higkeiten und Zauber-/Active-Effect-Automation.",
+  "description": "ABOREA V7 System mit Char-Gen, Klassenfähigkeiten und Zauber-/Active-Effect-Automation.",
   "version": "0.6.0",
   "compatibility": {
     "minimum": "13",
@@ -13,9 +13,7 @@
     }
   ],
   "esmodules": [
-    "module/aborea.mjs",
-    "module/compendium-importer.mjs",
-    "module/system-pack-builder.mjs"
+    "module/aborea.mjs"
   ],
   "styles": [
     "styles/aborea.css"
@@ -58,7 +56,7 @@
   "packs": [
     {
       "name": "races",
-      "label": "V\u00f6lker",
+      "label": "Völker",
       "type": "Item",
       "path": "packs/races",
       "system": "aborea-v7",
@@ -91,7 +89,7 @@
     },
     {
       "name": "armors",
-      "label": "R\u00fcstungen",
+      "label": "Rüstungen",
       "type": "Item",
       "path": "packs/armors",
       "system": "aborea-v7",
