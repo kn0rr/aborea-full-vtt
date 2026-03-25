@@ -1,12 +1,24 @@
 import { ABOREA } from "./config.mjs";
 import { rollAttack, rollInitiative, rollSkill } from "./dice.mjs";
 
+/**
+ * Erstellt eine Kopie eines Items ohne _id für das Erstellen als neues eingebettetes Dokument.
+ * @param {Item} item - Das zu duplizierende Item
+ * @returns {Object} Dupliziertes Item-Objekt ohne _id
+ */
 function duplicateItemObject(item) {
   const obj = item.toObject();
   delete obj._id;
   return obj;
 }
 
+/**
+ * Sucht ein Dokument in Compendiums nach Typ und Name.
+ * @param {string} type - Dokumenttyp ('race', 'class', 'creature', etc.)
+ * @param {string} name - Name des gesuchten Dokuments
+ * @param {string|null} preferredPack - Bevorzugtes Compendium
+ * @returns {Promise<Document|null>} Das gefundene Dokument oder null
+ */
 async function findPackDocumentByTypeAndName(type, name, preferredPack = null) {
   const matchingPacks = game.packs.filter(p => p.documentName === (type === "creature" ? "Actor" : "Item"));
   const orderedPacks = preferredPack ? [matchingPacks.find(p => p.collection === preferredPack), ...matchingPacks.filter(p => p.collection !== preferredPack)] : matchingPacks;
@@ -18,6 +30,11 @@ async function findPackDocumentByTypeAndName(type, name, preferredPack = null) {
   return null;
 }
 
+/**
+ * Parst eine Compendium-Auswahl im Format "packId||docName".
+ * @param {string} value - Der Auswahlwert
+ * @returns {{pack: string|null, name: string}} Parseresultat
+ */
 function parsePackSelection(value) {
   const raw = String(value || "").trim();
   if (!raw) return { pack: null, name: "" };
@@ -25,6 +42,11 @@ function parsePackSelection(value) {
   return { pack: pack || null, name: name || raw };
 }
 
+/**
+ * Löst ein gedropptes Actor-Dokument aus Drag&Drop-Daten auf.
+ * @param {Object} data - Die Drag&Drop-Daten
+ * @returns {Promise<Actor|null>} Der aufgelöste Actor oder null
+ */
 async function resolveDroppedActorDocument(data) {
   if (!data || data.type !== "Actor") return null;
   try {
@@ -36,15 +58,31 @@ async function resolveDroppedActorDocument(data) {
 }
 
 
+/**
+ * Erstellt einen Datumsstempel im Format YYYY-MM-DD.
+ * @returns {string} Datumsstempel
+ */
 function currentDayStamp() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
+/**
+ * Erstellt einen Zeitstempel im lokalen Format.
+ * @returns {string} Lokaler Zeitstempel
+ */
 function nowStamp() {
   return new Date().toLocaleString(game.i18n.lang || undefined);
 }
 
+/**
+ * Erstellt einen Historieneintrag für Inventar- oder Geldbeutel-Änderungen.
+ * @param {string} type - Art des Eintrags ('inventory', 'wallet')
+ * @param {string} action - Aktion ('item-add', 'item-remove', 'deposit', 'withdraw')
+ * @param {string} label - Beschriftung
+ * @param {Object} details - Zusätzliche Details
+ * @returns {Object} Historieneintrag
+ */
 function makeHistoryEntry(type, action, label, details = {}) {
   return {
     timestamp: Date.now(),
@@ -56,12 +94,17 @@ function makeHistoryEntry(type, action, label, details = {}) {
   };
 }
 
+/**
+ * Normalisiert das Geldbeutel-Objekt und füllt Standardwährungen auf.
+ * @param {Object} wallet - Das Geldbeutel-Objekt
+ * @returns {{currencies: Array, history: Array}} Normalisiertes Geldbeutel-Objekt
+ */
 function normalizeWallet(wallet = {}) {
   const defaults = [
     { key: 'gf', label: 'GF', name: 'Goldfalken', amount: 0 },
     { key: 'tt', label: 'TT', name: 'Trionthaler', amount: 0 },
     { key: 'kl', label: 'KL', name: 'Kupferlinge', amount: 0 },
-    { key: 'mu', label: 'MU', name: 'Münzen unbekannt', amount: 0 }
+    { key: 'mu', label: 'MU', name: 'Muena', amount: 0 }
   ];
   const currencies = Array.isArray(wallet?.currencies) ? foundry.utils.deepClone(wallet.currencies) : [];
   for (const cur of defaults) {
@@ -73,15 +116,33 @@ function normalizeWallet(wallet = {}) {
   };
 }
 
+/**
+ * Fügt einen Eintrag zur Liste hinzu und begrenzt die Länge.
+ * @param {Array} list - Bestehende Liste
+ * @param {Object} entry - Neuer Eintrag
+ * @param {number} max - Maximale Länge
+ * @returns {Array} Aktualisierte Liste
+ */
 function logListPush(list = [], entry, max = 200) {
   const next = [entry, ...list];
   return next.slice(0, max);
 }
 
+/**
+ * Extrahiert die Klassenboni aus den Klassenmerkmalen.
+ * @param {Object} classFeatures - Klassenmerkmale-Objekt
+ * @returns {Object} Map mit Skill-Boni
+ */
 function classFeatureBonusMap(classFeatures = {}) {
   return foundry.utils.deepClone(classFeatures?.bonuses || {});
 }
 
+/**
+ * Erstellt Skill-Anzeigezeilen für die Fertigkeiten-Tab.
+ * Kombiniert Standard-Skills und benutzerdefinierte Skills mit Klassenboni.
+ * @param {Object} system - Das Actor-System-Objekt
+ * @returns {Array} Sortierte Liste von Skill-Anzeigezeilen
+ */
 function buildSkillDisplayRows(system) {
   const rows = [];
   const classBonuses = classFeatureBonusMap(system.classFeatures);
@@ -113,14 +174,30 @@ function buildSkillDisplayRows(system) {
   return rows.sort((a, b) => String(a.name).localeCompare(String(b.name), game.i18n.lang || undefined));
 }
 
+/**
+ * Erstellt eine Beschriftung für ein Item im Historieneintrag.
+ * @param {Object} item - Das Item
+ * @returns {string} Beschriftung
+ */
 function itemHistoryLabel(item) {
   return `${item.name}${item.type ? ` (${item.type})` : ''}`;
 }
 
+/**
+ * Prüft ob ein Klassenmerkmal aktivierbar ist.
+ * @param {Object} feature - Das Klassenmerkmal
+ * @returns {boolean} Ob es aktivierbar ist
+ */
 function isActivatableFeature(feature) {
   return ["dailyPower", "pool", "focusStorage", "resourceConversion", "companion", "sense", "castingBonus"].includes(String(feature?.type || ""));
 }
 
+/**
+ * Erstellt das Nutzungs-Label für ein Klassenmerkmal.
+ * @param {Object} feature - Das Klassenmerkmal
+ * @param {Object} state - Aktueller Zustand
+ * @returns {string} Nutzungs-Label
+ */
 function featureUsesLabel(feature, state = {}) {
   if (!feature?.usesPerDay) return "—";
   const used = Number(state.used || 0);
@@ -128,11 +205,24 @@ function featureUsesLabel(feature, state = {}) {
   return `${Math.max(0, max - used)}/${max}`;
 }
 
+/**
+ * Prüft ob ein Klassenmerkmal noch nutzbar ist.
+ * @param {Object} feature - Das Klassenmerkmal
+ * @param {Object} state - Aktueller Zustand
+ * @returns {boolean} Ob es noch nutzbar ist
+ */
 function featureReady(feature, state = {}) {
   if (!feature?.usesPerDay) return true;
   return Number(state.used || 0) < Number(feature.usesPerDay || 0);
 }
 
+/**
+ * Erstellt eine Chat-Karte für die Klassenmerkmal-Aktivierung.
+ * @param {Actor} actor - Der Actor
+ * @param {Object} feature - Das Klassenmerkmal
+ * @param {Object} state - Aktueller Zustand
+ * @returns {string} HTML-String der Chat-Karte
+ */
 function buildFeatureCard(actor, feature, state = {}) {
   const uses = feature?.usesPerDay ? `<p><strong>${game.i18n.localize("ABOREA.FeatureUses")}:</strong> ${featureUsesLabel(feature, state)}</p>` : "";
   const last = state?.lastActivated ? `<p><strong>${game.i18n.localize("ABOREA.LastActivated")}:</strong> ${state.lastActivated}</p>` : "";
@@ -148,6 +238,11 @@ function buildFeatureCard(actor, feature, state = {}) {
 }
 
 
+/**
+ * Bestimmt das passende Icon für einen Effekt basierend auf dem Namen.
+ * @param {string} name - Effektname
+ * @returns {string} Icon-Pfad
+ */
 function effectIcon(name) {
   const slug = String(name || '').toLowerCase();
   if (slug.includes('blind') || slug.includes('blend')) return 'icons/svg/blind.svg';
@@ -158,6 +253,11 @@ function effectIcon(name) {
   return 'icons/svg/mystery-man.svg';
 }
 
+/**
+ * Zeigt einen Dialog zur Auswahl der MP-Kosten für einen Zauber.
+ * @param {Item} item - Das Zauber-Item
+ * @returns {Promise<number|null>} Gewählte MP-Kosten oder null bei Abbruch
+ */
 async function chooseMpCost(item) {
   const options = Array.isArray(item.system?.costOptions) && item.system.costOptions.length ? item.system.costOptions : [Number(item.system?.cost || 1)];
   if (options.length === 1) return Number(options[0]);
@@ -176,6 +276,12 @@ async function chooseMpCost(item) {
   });
 }
 
+/**
+ * Parst die einfache Dauer aus einem Item.
+ * @param {Item} item - Das Item
+ * @param {number} mpCost - MP-Kosten
+ * @returns {Object} Dauer-Objekt mit rounds/seconds
+ */
 function parseSimpleDuration(item, mpCost) {
   const txt = String(item.system?.duration || '').toLowerCase();
   const roundsMatch = txt.match(/(\d+)\s*runde/);
@@ -195,10 +301,21 @@ function parseSimpleDuration(item, mpCost) {
   return {};
 }
 
+/**
+ * Normalisiert Text für Vergleiche (Entfernt Diakritika, Lowercase).
+ * @param {string} value - Zu normalisierender Text
+ * @returns {string} Normalisierter Text
+ */
 function normalizeText(value) {
   return String(value || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
+/**
+ * Parst die Dauer-Metadaten aus einem Item.
+ * @param {Item} item - Das Item
+ * @param {number} mpCost - MP-Kosten
+ * @returns {Object} Dauer-Metadaten
+ */
 function parseDurationMeta(item, mpCost) {
   const raw = String(item.system?.duration || '').trim();
   const base = parseSimpleDuration(item, mpCost);
@@ -214,11 +331,23 @@ function parseDurationMeta(item, mpCost) {
   };
 }
 
+/**
+ * Formatiert einen Zeitstempel für die Anzeige.
+ * @param {number|null} ts - Zeitstempel
+ * @returns {string} Formatiertes Datum oder 'Permanent'
+ */
 function formatExpiry(ts) {
   if (!ts) return 'Permanent';
   return new Date(ts).toLocaleString(game.i18n.lang || undefined);
 }
 
+/**
+ * Fasst die Beschwörungsregel für ein Item zusammen.
+ * @param {Item} item - Das Beschwörungs-Item
+ * @param {Actor} actor - Der Actor
+ * @param {number} mpCost - MP-Kosten
+ * @returns {Object|null} Beschwörungsregel oder null
+ */
 function summarizeSummonRule(item, actor, mpCost) {
   const name = normalizeText(item.name);
   const list = normalizeText(item.system?.list);
@@ -236,6 +365,12 @@ function summarizeSummonRule(item, actor, mpCost) {
   return null;
 }
 
+/**
+ * Gibt Basiswerte für einen beschworenen Kreaturentyp zurück.
+ * @param {string} kind - Kreaturentyp
+ * @param {number} level - Stufe
+ * @returns {Object} Basiswerte
+ */
 function summonedBaseStats(kind, level) {
   const lvl = Math.max(1, Number(level || 1));
   const stats = {
@@ -251,6 +386,13 @@ function summonedBaseStats(kind, level) {
   return stats[kind] || stats['conjured'];
 }
 
+/**
+ * Erstellt die Quelldaten für einen beschworenen Kreaturen-Actor.
+ * @param {Actor} owner - Der besitzende Actor
+ * @param {Item} item - Das Beschwörungs-Item
+ * @param {Object} rule - Die Beschwörungsregel
+ * @returns {Object} Actor-Quelldaten
+ */
 function buildSummonedCreatureSource(owner, item, rule) {
   const lvl = Math.max(1, Number(rule.level || 1));
   const s = summonedBaseStats(rule.summonType, lvl);
@@ -303,6 +445,15 @@ function buildSummonedCreatureSource(owner, item, rule) {
   };
 }
 
+/**
+ * Erstellt eine Chat-Karte für Zauber-/Wunderwirkung.
+ * @param {Actor} actor - Der wirkende Actor
+ * @param {Item} item - Das Zauber-/Wunder-Item
+ * @param {number} mpCost - MP-Kosten
+ * @param {Array} targets - Ziele
+ * @param {string} extra - Zusätzlicher HTML-Content
+ * @returns {string} HTML-String der Chat-Karte
+ */
 function buildPowerCard(actor, item, mpCost, targets, extra='') {
   return `
     <section class="aborea-chat-card">
@@ -318,6 +469,11 @@ function buildPowerCard(actor, item, mpCost, targets, extra='') {
   `;
 }
 
+/**
+ * Wendet Effekte auf einen Actor an (erstellt oder aktualisiert ActiveEffects).
+ * @param {Actor} actor - Der Actor
+ * @param {Array} effects - Liste der Effekte
+ */
 async function applyEffectsToActor(actor, effects) {
   if (!effects.length) return;
   const existing = actor.effects.filter(e => effects.some(n => n.name === e.name));
@@ -335,6 +491,12 @@ async function applyEffectsToActor(actor, effects) {
   await actor.createEmbeddedDocuments('ActiveEffect', docs);
 }
 
+/**
+ * Leitet automatisch Effekte aus dem Zaubernamen ab.
+ * @param {Item} item - Das Zauber-Item
+ * @param {number} mpCost - MP-Kosten
+ * @returns {Array} Liste der abgeleiteten Effekte
+ */
 function inferEffects(item, mpCost) {
   const name = String(item.name || '').toLowerCase();
   const duration = parseSimpleDuration(item, mpCost);
@@ -350,6 +512,12 @@ function inferEffects(item, mpCost) {
   return effects;
 }
 
+/**
+ * Leitet direkte HP-Änderungen aus dem Zaubernamen ab.
+ * @param {Item} item - Das Zauber-Item
+ * @param {number} mpCost - MP-Kosten
+ * @returns {Object|null} HP-Änderung oder null
+ */
 function inferDirectHp(item, mpCost) {
   const name = String(item.name || '').toLowerCase();
   if (name.includes('heilung')) return { type: 'heal', amount: 4 * mpCost };
@@ -362,6 +530,10 @@ function inferDirectHp(item, mpCost) {
   return null;
 }
 
+/**
+ * Erstellt ein leeres Trait-Objekt mit Standardwerten.
+ * @returns {Object} Leere Traits
+ */
 function emptyTraits() {
   return {
     racialArmorBonus: 0,
@@ -476,7 +648,6 @@ export class AboreaActorSheet extends ActorSheet {
           maxRank: ABOREA.skillMaxCreationRank(key, classItem?.system || {})
         };
       });
-      system.creation.starterPackage = classItem?.system?.starterPackage || null;
       system.creation = {
         ...(system.creation || {}),
         pointsBudget: budget,
@@ -489,6 +660,10 @@ export class AboreaActorSheet extends ActorSheet {
         validationErrors,
         canFinalize: validationErrors.length === 0 && remaining === 0 && trainingRemaining >= 0 && !!system.details?.race && !!system.details?.class
       };
+      system.resources.xpForNextLevel = system.resources.xpForNextLevel || this._calculateXpForLevel((system.resources?.level || 1) + 1);
+      const currentXp = Number(system.resources?.xp ?? 0);
+      const nextLevelXp = system.resources.xpForNextLevel;
+      system.resources.xpProgress = nextLevelXp > 0 ? Math.min(100, Math.round((currentXp / nextLevelXp) * 100)) : 0;
       system.wallet = normalizeWallet(system.wallet);
       system.inventoryHistory = Array.isArray(system.inventoryHistory) ? foundry.utils.deepClone(system.inventoryHistory) : [];
       system.skillDisplayRows = buildSkillDisplayRows(system);
@@ -559,6 +734,25 @@ export class AboreaActorSheet extends ActorSheet {
 
     html.find(".roll-initiative").on("click", () => rollInitiative(this.actor));
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
+    html.find(".unlock-skills").on("click", async () => {
+      if (!game.user.isGM) return ui.notifications.warn("Nur der Spielleiter kann Fertigkeiten freischalten.");
+      await this.actor.update({ "system.creation.skillsLocked": false });
+      ui.notifications.info("Fertigkeiten wurden freigeschaltet.");
+    });
+
+    html.find(".lock-skills").on("click", async () => {
+      await this.actor.update({ "system.creation.skillsLocked": true });
+      ui.notifications.info("Fertigkeiten wurden gesperrt.");
+    });
+
+    html.find('input[name="system.resources.xp"]').on("change", async ev => {
+      const oldXp = Number(this.actor.system?.resources?.xp ?? 0);
+      const newXp = Number(ev.currentTarget.value ?? 0);
+      if (newXp !== oldXp) {
+        await this._checkXpLevelUp(oldXp, newXp);
+      }
+    });
+
     html.find(".roll-attack").on("click", ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       const weapon = this.actor.items.get(itemId);
@@ -672,10 +866,6 @@ export class AboreaActorSheet extends ActorSheet {
       await this._importSelectedPackItem(html, type);
     });
 
-    html.find(".apply-starter-package").on("click", async () => {
-      await this._applyStarterPackage();
-    });
-
     html.find(".recalc-character").on("click", async () => {
       await this._recalculateCharacter();
       ui.notifications.info("ABOREA: Charakterwerte neu berechnet.");
@@ -687,8 +877,15 @@ export class AboreaActorSheet extends ActorSheet {
         ui.notifications.error("ABOREA: Charaktererstellung ist noch nicht gültig.");
         return;
       }
-      await this.actor.update({ "system.creation.completed": true, "system.creation.status": "ready" });
-      ui.notifications.info("ABOREA: Charakter abgeschlossen.");
+      const level = Number(this.actor.system?.resources?.level ?? 1);
+      const xpForNextLevel = this._calculateXpForLevel(level + 1);
+      await this.actor.update({
+        "system.creation.completed": true,
+        "system.creation.status": "ready",
+        "system.creation.skillsLocked": true,
+        "system.resources.xpForNextLevel": xpForNextLevel
+      });
+      ui.notifications.info("ABOREA: Charakter abgeschlossen. Fertigkeiten sind bis zum Erhalt von Erfahrungspunkten gesperrt.");
     });
 
     html.find('input[name="system.resources.level"]').on("change", async () => {
@@ -852,6 +1049,45 @@ export class AboreaActorSheet extends ActorSheet {
     return Number(this.actor.system?.finalAttributes?.[key]?.value ?? this.actor.system?.attributes?.[key]?.value ?? 5);
   }
 
+  _calculateXpForLevel(level) {
+    const xpTable = {
+      1: 0, 2: 1000, 3: 4000, 4: 8000, 5: 13000,
+      6: 19000, 7: 26000, 8: 34000, 9: 43000, 10: 53000,
+      11: 64000, 12: 76000, 13: 89000, 14: 103000, 15: 118000,
+      16: 134000, 17: 151000, 18: 169000, 19: 188000, 20: 208000
+    };
+    return xpTable[level] ?? level * 10000;
+  }
+
+  _getXpForNextLevel(currentLevel) {
+    return this._calculateXpForLevel(currentLevel + 1);
+  }
+
+  async _checkXpLevelUp(oldXp, newXp) {
+    if (this.actor.type !== "character") return;
+    if (this.actor.system.creation?.skillsLocked !== false) return;
+    const currentLevel = Number(this.actor.system?.resources?.level ?? 1);
+    let newLevel = currentLevel;
+    let xpNeeded = this._calculateXpForLevel(newLevel + 1);
+    while (newXp >= xpNeeded && newLevel < 20) {
+      newLevel++;
+      xpNeeded = this._calculateXpForLevel(newLevel + 1);
+    }
+    if (newLevel > currentLevel) {
+      await this.actor.update({
+        "system.resources.level": newLevel,
+        "system.resources.xpForNextLevel": this._calculateXpForLevel(newLevel + 1),
+        "system.creation.skillsLocked": false
+      });
+      await this._recalculateCharacter();
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<p><strong>${this.actor.name}</strong> ist auf Stufe ${newLevel} aufgestiegen!</p><p>Neue Fertigkeitenpunkte verfügbar.</p>`
+      });
+      ui.notifications.info(`${this.actor.name}: Stufenaufstieg auf Stufe ${newLevel}!`);
+    }
+  }
+
   async _applyRace(raceItem) {
     if (this.actor.type !== "character") return;
     const race = duplicateItemObject(raceItem);
@@ -890,18 +1126,6 @@ export class AboreaActorSheet extends ActorSheet {
     const next = Math.max(0, Math.min(maxRank, current + Number(delta)));
     await this.actor.update({ [`system.skills.${skillKey}.rank`]: next, "system.creation.completed": false, "system.creation.status": "draft" });
     await this._recalculateCharacter();
-  }
-
-  async _applyStarterPackage() {
-    if (this.actor.type !== "character") return;
-    const cls = this.actor.items.find(i => i.type === "class");
-    const starter = cls?.system?.starterPackage;
-    if (!starter) return ui.notifications.warn("ABOREA: Kein Startpaket für diesen Beruf hinterlegt.");
-    const updates = { "system.creation.appliedStarterPackage": starter.name || cls.name };
-    for (const [key, rank] of Object.entries(starter.skills || {})) updates[`system.skills.${key}.rank`] = rank;
-    await this.actor.update(updates);
-    await this._recalculateCharacter();
-    ui.notifications.info(game.i18n.localize("ABOREA.StartPackageApplied"));
   }
 
   async _recalculateCharacter() {

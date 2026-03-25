@@ -34,6 +34,7 @@
             "max": 0
           },
           "xp": 0,
+          "xpForNextLevel": 100,
           "level": 1,
           "trainingPoints": 0
         },
@@ -89,14 +90,14 @@
         "creation": {
           "status": "draft",
           "completed": false,
+          "skillsLocked": true,
           "pointsBudget": 35,
           "pointsSpent": 25,
           "pointsRemaining": 10,
           "validationErrors": [],
           "trainingBudget": 8,
           "trainingSpent": 0,
-          "trainingRemaining": 8,
-          "appliedStarterPackage": ""
+          "trainingRemaining": 8
         },
         "traits": {
           "racialArmorBonus": 0,
@@ -239,7 +240,7 @@
           {
             "key": "mu",
             "label": "MU",
-            "name": "Münzen unbekannt",
+            "name": "Muena",
             "amount": 0
           }
         ],
@@ -335,7 +336,6 @@
         "wissen": "1"
       },
       "levelFeatures": [],
-      "starterPackage": {},
       "allowedRaces": [],
       "forbiddenRaces": []
     },

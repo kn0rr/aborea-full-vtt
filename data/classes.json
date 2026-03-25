@@ -24,20 +24,6 @@
         "wahrnehmung": "1",
         "wissen": "1"
       },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "einflussnahme": 1,
-          "kunst": 1,
-          "wahrnehmung": 1,
-          "wissen": 1,
-          "magieEntwickeln": 1
-        },
-        "notes": [
-          "Leitmagie-Fokus vorbereiten",
-          "Empfohlene Listen: Bardenmagie, Schwarze Magie"
-        ]
-      },
       "levelFeatures": [
         {
           "level": 1,
@@ -89,19 +75,6 @@
         "waffen": "2/4",
         "wahrnehmung": "1",
         "wissen": "2"
-      },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "athletik": 1,
-          "einflussnahme": 1,
-          "list": 1,
-          "wahrnehmung": 1,
-          "waffen": 1
-        },
-        "notes": [
-          "Fokus auf soziale und listige Manöver"
-        ]
       },
       "levelFeatures": [
         {
@@ -198,18 +171,6 @@
         "wahrnehmung": "1",
         "wissen": "2"
       },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "athletik": 1,
-          "reiten": 1,
-          "waffen": 2,
-          "wahrnehmung": 1
-        },
-        "notes": [
-          "Fokus auf Waffen und Mobilität"
-        ]
-      },
       "levelFeatures": [
         {
           "level": 1,
@@ -295,20 +256,6 @@
         "wahrnehmung": "2",
         "wissen": "1"
       },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "einflussnahme": 1,
-          "wissen": 1,
-          "magieEntwickeln": 1,
-          "spruchlisten": 1,
-          "waffen": 1
-        },
-        "notes": [
-          "Heiliges Symbol als Klassenmerkmal notieren",
-          "Empfohlene Listen: Zeichen, Wunder"
-        ]
-      },
       "levelFeatures": [
         {
           "level": 1,
@@ -387,20 +334,6 @@
         "wahrnehmung": "1",
         "wissen": "1"
       },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "natur": 1,
-          "wahrnehmung": 1,
-          "magieEntwickeln": 1,
-          "spruchlisten": 1,
-          "wissen": 1
-        },
-        "notes": [
-          "Schamanischer Fokus als Klassenmerkmal notieren",
-          "Empfohlene Listen: Schamanenmagie"
-        ]
-      },
       "levelFeatures": [
         {
           "level": 1,
@@ -443,19 +376,6 @@
         "waffen": "2/3",
         "wahrnehmung": "1",
         "wissen": "2"
-      },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "athletik": 1,
-          "natur": 1,
-          "reiten": 1,
-          "schwimmen": 1,
-          "waffen": 1
-        },
-        "notes": [
-          "Natur- und Bewegungsfokus"
-        ]
       },
       "levelFeatures": [
         {
@@ -510,19 +430,6 @@
         "waffen": "4/8",
         "wahrnehmung": "2",
         "wissen": "1"
-      },
-      "starterPackage": {
-        "name": "Empfohlenes Startpaket",
-        "skills": {
-          "gezielteSprueche": 1,
-          "wissen": 1,
-          "magieEntwickeln": 1,
-          "spruchlisten": 1
-        },
-        "notes": [
-          "Zauberbuch/Fokus als Klassenmerkmal notieren",
-          "Empfohlene Listen: Freie, Elementare, Schwarze, Wilde Magie"
-        ]
       },
       "levelFeatures": [
         {

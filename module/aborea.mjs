@@ -78,3 +78,15 @@ Hooks.once("ready", async function () {
     setInterval(() => cleanupExpiredSummons().catch(err => console.error("ABOREA summon cleanup failed", err)), 30000);
   }
 });
+
+Hooks.on("updateActor", (actor, changes) => {
+  if (actor.type !== "character") return;
+  const newXp = foundry.utils.getProperty(changes, "system.resources.xp");
+  if (newXp === undefined) return;
+  const oldXp = actor.system?.resources?.xp ?? 0;
+  if (newXp === oldXp) return;
+  const sheet = actor.sheet;
+  if (sheet && typeof sheet._checkXpLevelUp === "function") {
+    sheet._checkXpLevelUp(oldXp, newXp);
+  }
+});

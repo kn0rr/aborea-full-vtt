@@ -37,6 +37,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.aborea-sheet .header-grid {
+  row-gap: 8px;
+}
+
 .aborea-sheet .attributes-grid,
 .aborea-sheet .skill-list {
   grid-template-columns: 1fr;
@@ -361,3 +365,103 @@
 
 .companion-dropzone { border: 2px dashed rgba(80,80,120,0.35); border-radius: 10px; }
 .companion-dropzone .drop-help { margin-top: 0.5rem; color: var(--color-text-light-highlight, #666); font-size: 0.875rem; }
+
+/* Skills Tab */
+.aborea-sheet .skills-locked-hint {
+  font-size: 0.85rem;
+  color: #7a6a5a;
+  font-style: italic;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 6px;
+  border-left: 3px solid #8b7d6b;
+}
+
+.aborea-sheet .skill-editor-row .skill-rank-input {
+  width: 52px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.aborea-sheet .skill-editor-row .class-bonus {
+  color: #2a6b2a;
+  font-weight: 600;
+}
+
+.aborea-sheet .skill-editor-row.custom-skill {
+  background: rgba(255,255,255,0.5);
+  border: 1px dashed rgba(80,60,45,0.3);
+}
+
+.aborea-sheet .skill-editor-row.custom-skill .skill-name-input {
+  min-width: 140px;
+  font-size: 0.95rem;
+}
+
+.aborea-sheet .skill-header-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.aborea-sheet .skills-locked-badge,
+.aborea-sheet .skills-unlocked-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.aborea-sheet .skills-locked-badge {
+  background: #d9534f;
+  color: #fff;
+}
+
+.aborea-sheet .skills-unlocked-badge {
+  background: #5cb85c;
+  color: #fff;
+}
+
+.aborea-sheet .xp-progress-label {
+  font-size: 0.85rem;
+  color: #5b4b3a;
+}
+
+.aborea-sheet .xp-progress-bar {
+  grid-column: 1 / -1;
+  height: 12px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(80, 60, 45, 0.3);
+}
+
+.aborea-sheet .xp-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a90d9, #2d6da3);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+/* Pack Import Styling */
+.aborea-sheet .pack-import-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.aborea-sheet .pack-import-group .pack-select {
+  min-width: 160px;
+  max-width: 280px;
+}
+
+.aborea-sheet .pack-import-group button {
+  white-space: nowrap;
+}
+
+.aborea-sheet .panel .panel-header {
+  gap: 12px;
+}
