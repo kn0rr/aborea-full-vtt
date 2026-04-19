@@ -1,0 +1,730 @@
+[
+  {
+    "name": "Othil",
+    "type": "god",
+    "img": "icons/svg/sun.svg",
+    "system": {
+      "description": "Ohne Othil gäbe es kein Licht und kein Leben auf Aborea. Sie ist der Inbegriff von Energie und Belebung, Schöpferin allen Seins auf Aborea und überall sonst. Sie wandelt nie unter den Sterblichen, aber beseelt manchmal Wesen des Lichts. Frauen vor der Niederkunft sollen von ihr berührt werden. Gütig und von warmem Gemüt, geduldig und beständig. Ihrem ärgsten Feind Næroth steht sie mit eben diesen Tugenden entgegen. „Möge das Licht (Othils) mit Dir sein.",
+      "pantheon": "Elfisch (Ïareth)",
+      "rank": "Höchste Gottheit",
+      "aspects": "Leben, Geburt",
+      "weapon": "Schwert",
+      "symbol": "Sonne, lichtgebadete Frau mit offenen Armen",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "othil",
+      "externalId": "othil"
+    },
+    "_id": "a1b2c3d4e5f6a7b1",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "othil",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/othil.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Il Anæra",
+    "type": "god",
+    "img": "icons/svg/moon.svg",
+    "system": {
+      "description": "Il Anæra (Ill A-nai-rha) ist ein ständiger Bezugspunkt der Ïareth (Elfen) und in jedem Kulturkreis auf die eine oder andere Art vorhanden. Die Gottheit manifestiert sich nur im vollen Mond Aboreas. Die Ïareth glauben, dass am Ende ihres Lebens ein Nachleben dort stattfindet — in absolutem Frieden, in dem nur noch die Eine Melodie erklingt. Das größte Fest der nördlichen Ïareth ist das jährliche „Orilum Anæra. Die Eine Melodie wird irgendwann die Finsternis und Næroth besiegen.",
+      "pantheon": "Elfisch (Ïareth)",
+      "rank": "Höhere Gottheit",
+      "aspects": "Frieden, Tod",
+      "weapon": "Bogen",
+      "symbol": "Vollmond",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "il-anaera",
+      "externalId": "il-anaera"
+    },
+    "_id": "a1b2c3d4e5f6a7b2",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "il-anaera",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/il-anaera.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Næroth",
+    "type": "god",
+    "img": "icons/svg/skull.svg",
+    "system": {
+      "description": "Næroth (Nai-rosz) ist der Herr der Kreaturen der Finsternis, der dunkle Meister des Unlichts. Er ist der Schöpfer der Wesen der Tiefe und vergiftet die Seelen der Kreaturen des Lichts. Er tritt als Schatten in Erscheinung und selten in der Hülle eines Besessenen. Stern- und mondlichtlose Nächte gelten als Zeichen seines Sieges und als Zeit großer Betrübnis. Manchmal gelingt es ihm, einen der Herrscher über ein Element für seine Seite zu gewinnen und damit große Katastrophen anzurichten.",
+      "pantheon": "Elfisch (Ïareth)",
+      "rank": "Feindgottheit",
+      "aspects": "Unlicht, Finsternis, Dunkelheit, Nacht, Leere",
+      "weapon": "Schwert",
+      "symbol": "Schatten, mondlichtlose Nacht",
+      "miracleList": "",
+      "slug": "naeroth",
+      "externalId": "naeroth"
+    },
+    "_id": "a1b2c3d4e5f6a7b3",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "naeroth",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/naeroth.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Esron",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Esron ist der große Schmied der Zwerge, der leidenschaftlich Dinge schafft. Er schlägt die Essenzen in Form und hört dabei kaum die Stimmen der Sterblichen. Ein Zwerg muss daher hart sein wie Granit und Eisen, darf nicht wehklagen und muss sich über die wenigen Gaben freuen, die Esron in die Erde Aboreas brachte. Ein Zwerg muss ebenso emsig sein, wie Esron es lehrt. Er ist der Schöpfer Aboreas nach zwergischer Überlieferung — seine Esse ließ die Funken in den Himmel stoben, die das Nachtfirmament mit Sternen besprenkten.",
+      "pantheon": "Zwergisch",
+      "rank": "Höchste Gottheit",
+      "aspects": "Leben, Leidenschaft",
+      "weapon": "Hammer",
+      "symbol": "Amboss, Esse",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "esron",
+      "externalId": "esron"
+    },
+    "_id": "a1b2c3d4e5f6a7b4",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "esron",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/esron.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Hornwan",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Der Gott der Freude wandelt gerne unter den Sterblichen. Er überbringt die Botschaften der Götter und soll schon mit manchem guten Zwerg einen Humpen gehoben haben. Die Reisen Hornwans werden Zwergenkindern am Bett erzählt. Er ist der Bruder Barros' und schätzt diesen sehr. Typischer Spruch eines zwergischen Ausbilders: „Erst Barros Werk, dann Hornwans Freud'.",
+      "pantheon": "Zwergisch",
+      "rank": "Gottheit",
+      "aspects": "Freude",
+      "weapon": "Armbrust",
+      "symbol": "Humpen, Bote",
+      "miracleList": "",
+      "slug": "hornwan",
+      "externalId": "hornwan"
+    },
+    "_id": "a1b2c3d4e5f6a7b5",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "hornwan",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/hornwan.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Otheila",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Otheila wollte den Zwergen Glanz unter Tage schenken und gab eine Strähne ihres Haares in Esrons Esse. Dort schmolz sie und wurde zu Gold. Mancher Zwerg bleibt ehrfürchtig vor einer Goldader stehen, um kurz Otheilas Geschenk zu gedenken. Die Diamanten verdankt man ebenfalls der Göttin — es sind die Funken, die aus Esrons Esse entsprangen, als ihr Haar hineingab.",
+      "pantheon": "Zwergisch",
+      "rank": "Gottheit",
+      "aspects": "Gold, Diamanten",
+      "weapon": "Flegel",
+      "symbol": "Goldader, Diamant",
+      "miracleList": "",
+      "slug": "otheila",
+      "externalId": "otheila"
+    },
+    "_id": "a1b2c3d4e5f6a7b6",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "otheila",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/otheila.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Tragur",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Der einzige gefürchtete (aber nicht weniger geehrte) Gott der Zwerge. Er herrscht über alle Wasser — in tiefen Brunnen sollen seine Geister unvorsichtige Zwerge in seine kalten Gefilde ziehen. In den unterirdischen Seen finden sich augenlose Kreaturen, die mit magischem Licht Unglückliche in die Tiefen locken. Dort unten soll sich das Tor zur Unterwelt befinden. Ihm kann man nicht trauen — Barros widerstand seinen Angeboten.",
+      "pantheon": "Zwergisch",
+      "rank": "Gefürchtete Gottheit",
+      "aspects": "Magie, Wasser",
+      "weapon": "Bogen, Harpune",
+      "symbol": "Unterirdischer See, blindes Wesen",
+      "miracleList": "",
+      "slug": "tragur",
+      "externalId": "tragur"
+    },
+    "_id": "a1b2c3d4e5f6a7b7",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "tragur",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/tragur.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Egaros",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Am Tage Egaros kommen alle Zwerge zusammen, und die besten Handwerker zeigen ihre Kunstwerke. Unter ihnen wird ein Meister erwählt. Dieser Titel ist eine der höchsten Auszeichnungen, und die ganze Sippe wird mit Stolz erfüllt sein. Egaros steht für Fleiß, Handwerkskunst und den Stolz auf das Geschaffene.",
+      "pantheon": "Zwergisch",
+      "rank": "Gottheit",
+      "aspects": "Erz, Handwerk",
+      "weapon": "Axt, Hammer",
+      "symbol": "Handwerkerwerkzeug, Meisterstück",
+      "miracleList": "",
+      "slug": "egaros",
+      "externalId": "egaros"
+    },
+    "_id": "a1b2c3d4e5f6a7b8",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "egaros",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/egaros.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Barros",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Barros, der Herr über die unendlichen Kristallhöhlen, ist der Bruder Hornwans und schätzt diesen sehr. In seinem Reich beherbergt er alle guten Zwerge nach ihrem Tode. In den frühen Zeitaltern, als die Dämonen der Unterwelt sich gegen die Götter auflehnten, war es Barros, der den Kampf entschied. Sein Mut und seine Entschlossenheit haben den Ausschlag gegeben. Er widerstand auch den listenreichen Angeboten Tragurs. Typischer Spruch: „Erst Barros Werk, dann Hornwans Freud'.",
+      "pantheon": "Zwergisch",
+      "rank": "Gottheit",
+      "aspects": "Kampf, Widerstand, Ehre",
+      "weapon": "Zweihand-Axt",
+      "symbol": "Kristallhöhlen, Axt",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "barros",
+      "externalId": "barros"
+    },
+    "_id": "a1b2c3d4e5f6a7b9",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "barros",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/barros.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Minna",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Die Schutzgottheit der angesehenen Braumeister. Sie steht auch für die guten Speisen. Sie gilt als eifersüchtig und aufbrausend — an schlimmen Tagen lässt ihr Gemüt ganze Berge Feuer spucken. Es heißt, alle Zwergenfrauen würden einen Funken von Minna in sich tragen, ganz besonders die rothaarigen.",
+      "pantheon": "Zwergisch",
+      "rank": "Gottheit",
+      "aspects": "Feuer, Braukunst",
+      "weapon": "Hellebarde",
+      "symbol": "Braukessel, Feuer",
+      "miracleList": "",
+      "slug": "minna",
+      "externalId": "minna"
+    },
+    "_id": "a1b2c3d4e5f6a7ba",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "minna",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/minna.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Ænora",
+    "type": "god",
+    "img": "icons/svg/skull.svg",
+    "system": {
+      "description": "Wer meint, dass Ænora eine böse Gottheit sei, der irrt. Wie bei allen Göttern des trionischen Pantheons gibt es keine klare Unterscheidung zwischen Gut und Böse. Ænora herrscht über die Unterwelten und gebietet über den Tod. Sie gilt als geduldig und unnachgiebig. Sie wird vielfach verführerisch schön dargestellt, aber auch furchterregend monströs — teilweise sogar als körperloser Schrecken. Dem leidenschaftlichen Verhältnis mit Varus soll Ateom entstammen. Ihre Mutter schützt angeblich die „Kinder Ateoms\"",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Dunkelheit, Nacht, Tod, Zeit",
+      "weapon": "Armbrust, Dolch",
+      "symbol": "Schwarz gefüllter Kreis, Helm",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "aenora",
+      "externalId": "aenora"
+    },
+    "_id": "a1b2c3d4e5f6a7bb",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "aenora",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/aenora.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Aone",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Aone entstammt der Verbindung der Götter Iandara und Varus. Sie ist die Schwester Mycaels; beide ergänzen sich und gelten als unzertrennlich. Sie nahm einst einen Sterblichen zum Partner, dem sie bis an das Ende seines kurzen Lebens treu blieb. Die Trioner erbitten daher auch bei schweren Krankheiten ihre Hilfe. Sie gilt als neckisch und launenhaft. Nach langer Trauer ging sie mit Ateom eine Bindung ein, die jedoch nicht dauerhaft war. Aus dem Betrug soll Zia entstanden sein.",
+      "pantheon": "Trionisch",
+      "rank": "Gottheit",
+      "aspects": "Ehe, Liebe",
+      "weapon": "Dolch",
+      "symbol": "Weiße Kugel, Muschel",
+      "miracleList": "",
+      "slug": "aone",
+      "externalId": "aone"
+    },
+    "_id": "a1b2c3d4e5f6a7bc",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "aone",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/aone.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Ateom",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ateom gilt als leidenschaftlich und zärtlich. Er ist aber auch listenreich und nicht immer ehrlich. Er ist der Gott der Diebe, und einige Kirchen lehren die Regeln des „Schaffenden Gewinns" (Evolution durch Anhäufung von Reichtümern). Man sagt, dass gewissenlose Händler heimlich Ateom opfern. Er wird von Liebenden angebetet — tatsächlich erbittet fast jeder vor einer Liebesnacht Ateoms Feuer. Seiner Mutter Ænora zufolge schützt sie die „Kinder Ateoms".",
+      "pantheon": "Trionisch",
+      "rank": "Gottheit",
+      "aspects": "Feuer, Reichtum",
+      "weapon": "Dreizack",
+      "symbol": "Nach oben offener Halbkreis",
+      "miracleList": "",
+      "slug": "ateom",
+      "externalId": "ateom"
+    },
+    "_id": "a1b2c3d4e5f6a7bd",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "ateom",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/ateom.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Esthion",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Esthion wird von vielen als die Hauptgottheit im Pantheon der Trioner angesehen. Sein größter Widersacher Otum, der Zweigesichtige, ist ihm völlig ebenbürtig. Esthion ist der Inbegriff von Wahrhaftigkeit, Stärke und Gerechtigkeit. Er wacht über Ehre und Frieden, steht für Stärke und den Sieg und beherrscht den Himmel. Sein Zeichen — ein gewaltiger Adler mit abschwingenden Flügeln — ist zugleich die Ehrenstandarte Trions. Die Blutlinie des Großkönigs soll der Verbindung des Gottes mit einer Sterblichen entstammen. Trioner schwören bei Esthion und rufen ihn im Kampf an.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Führerschaft, Hüterschaft, Stärke, Gerechtigkeit, Wahrheit, Friede",
+      "weapon": "Lanze, Speer, Schwert",
+      "symbol": "Unten offenes, nach oben gerichtetes Dreieck; Adler; Flügel",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "esthion",
+      "externalId": "esthion"
+    },
+    "_id": "a1b2c3d4e5f6a7be",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "esthion",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/esthion.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Hemron",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Hemron wird mit Aspekten wie Edelmut, Fairness und Besonnenheit in Verbindung gebracht. Für viele Ritterorden ist er daher Schutzgottheit. Allerdings sagt man Hemrons Kirche nach, mit dem Schwert zu bekehren. Arme werden häufig von Hemrons Kirchen versorgt. Die Weihe zur Schwert-Reife (ab 21 Jahren) erfolgt durch die Kirche Hemrons. Hemron ist der Sohn Otums und Leceias. Sein Bruder ist Thios.",
+      "pantheon": "Trionisch",
+      "rank": "Gottheit",
+      "aspects": "Frieden, Führerschaft, Krieg",
+      "weapon": "Langschwert",
+      "symbol": "Eine oben und unten offene Acht",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "hemron",
+      "externalId": "hemron"
+    },
+    "_id": "a1b2c3d4e5f6a7bf",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "hemron",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/hemron.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Iandara",
+    "type": "god",
+    "img": "icons/svg/sun.svg",
+    "system": {
+      "description": "Iandaras Handlungen sind kraftvoll und beharrlich. Sie ist zugleich liebevoll und wärmend. Diese Eigenschaften haben Varus seit jeher angezogen — er soll sich an sie verloren haben. Doch Iandara bindet sich nicht. Aone soll aus Varus' Liebesklagen hervorgegangen sein. Immer wieder gibt es Lieder von Sterblichen und Halbgöttern, die aus Liebe zu Iandara bemerkenswerte Taten vollbrachten.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Licht, Liebe, Sonne, Wetter",
+      "weapon": "Stab, Speer",
+      "symbol": "Halber Sonnenkreis mit Strahlenkranz unten",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "iandara",
+      "externalId": "iandara"
+    },
+    "_id": "a1b2c3d4e5f6a7c0",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "iandara",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/iandara.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Juvio",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Viele Schurken, Glücksritter und Händler verehren Juvio und hoffen auf ein ewiges Leben auf Juvios berauschenden Festen. Am Abend nach dem ersten Tag der Weinernte wird ihm zu Ehren das Fest des Tag des Juvio gefeiert. Gereiften werden in den Kreis der anderen aufgenommen, indem sie über das Feuer springen. Ein weitverbreiteter Wunsch ist es, nach dem Tod auf den Feldern der Glückseligkeit des Juvios zu wandeln. Er entstammt dem Reigen Otums und Neomes.",
+      "pantheon": "Trionisch",
+      "rank": "Gottheit",
+      "aspects": "Handel, Glück, Musik, Tanz",
+      "weapon": "Schleuder, Hammer",
+      "symbol": "Horizontaler Zacken",
+      "miracleList": "",
+      "slug": "juvio",
+      "externalId": "juvio"
+    },
+    "_id": "a1b2c3d4e5f6a7c1",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "juvio",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/juvio.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Leceia",
+    "type": "god",
+    "img": "icons/svg/moon.svg",
+    "system": {
+      "description": "Leceia ist still, zurückhaltend und überlegt. Die Töchter Leceias sind Musen, Heilerinnen und Lehrerinnen. Nur als wehrhafte Kleriker sind Männer Diener Leceias. Sie wird aber von beiden Geschlechtern gleichermaßen angebetet. Das 50. Lebensjahr wird bei Bessergestellten gerne mit einer Feier zu Ehren Leceias begangen. Sie herrschte mit Otum über Aborea, während Esthion gefangen war — aus diesem Bund entstand Hemron.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Handwerk, Heilung, Kunst, Kultur, Mond, Weisheit",
+      "weapon": "Bogen",
+      "symbol": "Mondsichel",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "leceia",
+      "externalId": "leceia"
+    },
+    "_id": "a1b2c3d4e5f6a7c2",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "leceia",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/leceia.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Mycael",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Mycael ist der Bruder Aones. Oft wird er mit wilden Tieren zusammen dargestellt. Er wird zumeist von Waldläufern verehrt. Einige Darstellungen zeigen einen jugendlichen Mycael — andere einen gealterten Mann, der unter Ænora leidet. Für viele Anhänger Mycaels sind Pferde heilige Tiere.",
+      "pantheon": "Trionisch",
+      "rank": "Gottheit",
+      "aspects": "Jagd, Pflanzenwelt, Tiere",
+      "weapon": "Bogen",
+      "symbol": "Stilisierter Bogen, Pferde",
+      "miracleList": "",
+      "slug": "mycael",
+      "externalId": "mycael"
+    },
+    "_id": "a1b2c3d4e5f6a7c3",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "mycael",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/mycael.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Neome",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Neome ist eine der wenigen Gottheiten, die mit keinem anderen Gott im Streit liegt. Als Göttin der Fruchtbarkeit ist sie äußerst wichtig für alle Trioner und wird fast überall verehrt. Bei einer Geburt ist, wenn möglich, eine Schwester Neomes zugegen. Beim Deihfest zur Aussaat werden ihr Ziegen dargebracht. Die Schwestern dürfen beim Opferfest nicht zugegen sein. Verstirbt ein Kind bei der Geburt, kehrt die Schwester mit blutverschmiertem Gesicht in den Tempel zurück.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Erde, Fruchtbarkeit, Geburt, Kinder, Landwirtschaft",
+      "weapon": "Kurzschwert",
+      "symbol": "Dreieck, Löwin, Ähren, Obst, stillende Frau",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "neome",
+      "externalId": "neome"
+    },
+    "_id": "a1b2c3d4e5f6a7c4",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "neome",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/neome.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Otum",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Otum, der Zweigesichtige, ist der Gott des Meeres und des Schicksals. Er herrschte mit Leceia über Aborea, als Esthion gefangen war — aus diesem Bund kam Hemron hervor. Otum ist launenhaft und gewaltig. Er steht für das Schicksal und den Sturm, die Lüge und die Wut — aber auch für Klarheit und Wahrheit. Er trägt eine riesige Harpune und ein Horn, aus dem er Ozeane fließen lassen kann. Seine Töchter sind kapriziös, und Seeleute singen jeden Abend, um sie zu beschwichtigen.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Meere, Flüsse, Schicksal, Wind",
+      "weapon": "Alle Stangenwaffen",
+      "symbol": "Delfin, Hai",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "otum",
+      "externalId": "otum"
+    },
+    "_id": "a1b2c3d4e5f6a7c5",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "otum",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/otum.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Seista",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Die Schwester Esthions ist das Sternenlicht. Sie weist Seefahrern den Kurs und Wanderern den Weg. Sie ist die Göttin des Wissens und der Magie. In vielen Schriften wird sie als Sonderheit unter den Göttern benannt — sie scheint etwas von den 'älteren' Göttern zu haben. Die Lichter Seistas, wie die Dienerinnen Seistas sich nennen, haben ewige Jungfräulichkeit gelobt.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Altvordern, Magie",
+      "weapon": "Stab",
+      "symbol": "Raute, Sterne",
+      "miracleList": "Zeichen (Leitmagie)",
+      "slug": "seista",
+      "externalId": "seista"
+    },
+    "_id": "a1b2c3d4e5f6a7c6",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "seista",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/seista.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Thios",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Der jüngste der Götter und Bruder Hemrons ist gewalttätig und streitlustig. Er wurde von seinem Vater aus der Oberwelt auf Zeit in die Unterwelt verbannt — dort soll er wütend seine Tage absitzen. Es gilt als unklug, sein Zeichen offen zur Schau zu tragen, wenn man die anderen Götter nicht verärgern will.",
+      "pantheon": "Trionisch",
+      "rank": "Verbannte Gottheit",
+      "aspects": "Gewalt, Blitz",
+      "weapon": "Flegel, Schleuder",
+      "symbol": "Blitz",
+      "miracleList": "",
+      "slug": "thios",
+      "externalId": "thios"
+    },
+    "_id": "a1b2c3d4e5f6a7c7",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "thios",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/thios.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Varus",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Esthions Bruder ist der Gott des Krieges. Er gilt als unbezwingbar und wild. Varus wird jung und kraftvoll dargestellt — übermütig, waghalsig und spontan. Es ist kaum ein Krieger vorstellbar, der nicht Varus in einer Schlacht angerufen hat. Viele versuchen, durch ihren Mut Varus zu gefallen. Sein Missfallen gilt als Garant für eine Niederlage. In der Ballade Der Kampf der drei Jahrhunderte wäre er beinahe gefallen — sein Bruder Esthion und Ænora retteten ihn.",
+      "pantheon": "Trionisch",
+      "rank": "Höhere Gottheit",
+      "aspects": "Krieg, Wettkampf",
+      "weapon": "Schwert (meist Bastardschwert), Schild",
+      "symbol": "Halbkreis auf Ebene, Wolfsrudel",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "varus",
+      "externalId": "varus"
+    },
+    "_id": "a1b2c3d4e5f6a7c8",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "varus",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/varus.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Zia",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "In der Hafeneinfahrt Angors steht die über 20 Meter hohe Statue Zias — zugleich der größte Leuchtturm der Bucht. Die Arme hält sie über Kreuz, in jeder Hand eine Axt, und Zorn scheint Blitze aus ihren Augen zu feuern. Sie trägt die befeuerte Krone der Gerechtigkeit. Zia steht für Gerechtigkeit und Rache. Sie kann zornig und unberechenbar sein. Viele Trioner opfern Zia, um von Schmerzen verschont zu werden oder um Vergeltung zu erreichen. Zia ist eine junge Gottheit, gilt aber als eine der mächtigsten. Sie entstammt dem Betrug Ateoms an ihrer Mutter Aone.",
+      "pantheon": "Trionisch",
+      "rank": "Gottheit",
+      "aspects": "Rache, Gerechtigkeit, Vergeltung",
+      "weapon": "Axt",
+      "symbol": "Raute mit offenen Dreiecken oben und unten",
+      "miracleList": "Wunder (Leitmagie)",
+      "slug": "zia",
+      "externalId": "zia"
+    },
+    "_id": "a1b2c3d4e5f6a7c9",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "zia",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/zia.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Insa",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Die Große Mutter der Halblinge. Gemeinsam mit dem Großen Vater Elm sind Insa und Elm die Stammmutter und der Stammvater aller Halblinge. Außer Pria haben sie alle ihre Kinder im Garten Aboreas ihr Glück finden lassen, damit sie ihr eigenes Schicksal selbst bestimmen können.",
+      "pantheon": "Halblingisch",
+      "rank": "Gottheit",
+      "aspects": "Mütterlichkeit, Fruchtbarkeit, Schöpfung",
+      "weapon": "",
+      "symbol": "Große Mutter",
+      "miracleList": "",
+      "slug": "insa",
+      "externalId": "insa"
+    },
+    "_id": "a1b2c3d4e5f6a7ca",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "insa",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/insa.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Elm",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Der Große Vater der Halblinge. Gemeinsam mit der Großen Mutter Insa sind Elm und Insa die Stammeltern aller Halblinge. Außer Pria haben sie alle ihre Kinder im Garten Aboreas ihr Glück finden lassen, damit sie dort ihr eigenes Schicksal selbst bestimmen können.",
+      "pantheon": "Halblingisch",
+      "rank": "Gottheit",
+      "aspects": "Väterlichkeit, Schöpfung, Fürsorge",
+      "weapon": "",
+      "symbol": "Großer Vater",
+      "miracleList": "",
+      "slug": "elm",
+      "externalId": "elm"
+    },
+    "_id": "a1b2c3d4e5f6a7cb",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "elm",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/elm.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Pria",
+    "type": "god",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Pria ist das einzige der vielen Kinder Insas und Elms, das zu ihnen aufgestiegen ist. Alle anderen Halblinge dürfen im Garten Aboreas ihr Glück finden und ihr Schicksal selbst bestimmen.",
+      "pantheon": "Halblingisch",
+      "rank": "Gottheit",
+      "aspects": "Aufstieg, Vollkommenheit",
+      "weapon": "",
+      "symbol": "",
+      "miracleList": "",
+      "slug": "pria",
+      "externalId": "pria"
+    },
+    "_id": "a1b2c3d4e5f6a7cc",
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "pria",
+        "sourcePath": "systems/aborea-v7/packs/gods/_source/pria.json",
+        "generated": true
+      }
+    },
+    "ownership": { "default": 0 },
+    "folder": null
+  }
+]
