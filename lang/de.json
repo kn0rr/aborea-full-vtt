@@ -86,6 +86,8 @@
   "ABOREA.Apply": "Übernehmen",
   "ABOREA.ApplyRace": "Volk anwenden",
   "ABOREA.ApplyClass": "Beruf anwenden",
+  "ABOREA.God": "Gottheit",
+  "ABOREA.ApplyGod": "Gottheit wählen",
   "ABOREA.TotalArmorValue": "Gesamt-Rüstung",
   "ABOREA.EmbeddedRaceClass": "Verknüpfte Herkunft",
   "ABOREA.DropHint": "Du kannst Völker, Berufe, Waffen, Rüstungen, Zauber und Wunder direkt aus den Packs auf den Actor ziehen.",

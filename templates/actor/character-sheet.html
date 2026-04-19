@@ -16,6 +16,11 @@
         <label>{{localize "ABOREA.Class"}}
           <input type="text" name="system.details.class" value="{{system.details.class}}" readonly />
         </label>
+        {{#if system.isLeitmagieClass}}
+        <label>{{localize "ABOREA.God"}}
+          <input type="text" name="system.details.god" value="{{system.details.god}}" readonly />
+        </label>
+        {{/if}}
       </div>
       {{#unless system.creation.completed}}
       <div class="header-grid compact">
@@ -35,6 +40,18 @@
         <button type="button" class="apply-class">{{localize "ABOREA.Apply"}}</button>
       </div>
       {{/unless}}
+      {{#if system.isLeitmagieClass}}
+      <div class="header-grid compact">
+        <label>{{localize "ABOREA.ApplyGod"}}
+          <select name="selectedGod">
+            <option value=""></option>
+            {{#each availablePacks.gods as |entry|}}<option value="{{entry.name}}" {{#if (aboreaEq entry.name ../system.details.god)}}selected{{/if}}>{{entry.name}}</option>{{/each}}
+          </select>
+        </label>
+        <button type="button" class="apply-god">{{localize "ABOREA.Apply"}}</button>
+        <span></span><span></span>
+      </div>
+      {{/if}}
     </div>
   </header>
 

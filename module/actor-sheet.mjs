@@ -64,7 +64,8 @@ export class AboreaActorSheet extends ActorSheet {
       armors: await this._packChoices("armor"),
       spells: await this._packChoices("spell"),
       miracles: await this._packChoices("miracle"),
-      gear: await this._packChoices("gear")
+      gear: await this._packChoices("gear"),
+      gods: await this._packChoices("god")
     };
     return context;
   }
@@ -102,6 +103,7 @@ export class AboreaActorSheet extends ActorSheet {
       return { value: v, bonus: ABOREA.attributeBonus(v), totalCost: total, stepCost: nv ? ABOREA.attributeCost(nv) - total : null };
     });
     const classItem = actor.items.find(i => i.type === "class");
+    system.isLeitmagieClass = !!(classItem?.system?.description ?? "").includes("Leitmagie");
     const level = Number(system.resources?.level ?? 1);
     const raceName = (system.details?.race || "").toLowerCase();
     const humanBonus = raceName === "mensch" ? 2 : 0;
@@ -232,6 +234,7 @@ export class AboreaActorSheet extends ActorSheet {
     });
     html.find(".apply-race").on("click", async () => { const s = html.find("[name=selectedRace]").val(); if (s) { const i = await findPackDocumentByTypeAndName("race", s); if (i) await this._applyRace(i); } });
     html.find(".apply-class").on("click", async () => { const s = html.find("[name=selectedClass]").val(); if (s) { const i = await findPackDocumentByTypeAndName("class", s); if (i) await this._applyClass(i); } });
+    html.find(".apply-god").on("click", async () => { const s = html.find("[name=selectedGod]").val(); if (s) { const i = await findPackDocumentByTypeAndName("god", s); if (i) await this._applyGod(i); } });
     html.find(".class-feature-activate").on("click", async ev => { await this._activateClassFeature(ev.currentTarget.dataset.featureKey); });
     html.find(".class-feature-reset").on("click", async () => { await this._resetDailyClassFeatures(); });
     html.find(".cast-power").on("click", async ev => { const id = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId; if (id) await this._castPower(id); });
@@ -308,6 +311,13 @@ export class AboreaActorSheet extends ActorSheet {
     const result = await this._recalculateCharacter();
     if (!result.valid && result.validationErrors.length) ui.notifications.warn(result.validationErrors.join(" | "));
     else ui.notifications.info(`${cls.name} auf ${this.actor.name} angewendet.`);
+  }
+
+  async _applyGod(godItem) {
+    if (this.actor.type !== "character") return;
+    const godName = godItem.name ?? godItem.system?.name ?? "";
+    await this.actor.update({ "system.details.god": godName });
+    ui.notifications.info(`${godName} als Gottheit für ${this.actor.name} gesetzt.`);
   }
 
   async _adjustCreationSkill(skillKey, delta) {
