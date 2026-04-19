@@ -110,6 +110,17 @@ export class AboreaActorSheet extends ActorSheet {
     system.activatableClassFeatures = system.activeClassFeatures.filter(isActivatableFeature).map(f => ({
       ...f, state: activationState[f.key] || {}, ready: featureReady(f, activationState[f.key] || {}), usesLabel: featureUsesLabel(f, activationState[f.key] || {})
     }));
+
+    // Compute skill bonus map fresh from active class features so the display
+    // is always correct even if _recalculateCharacter hasn't run yet.
+    const liveSkillBonuses = {};
+    for (const f of system.activeClassFeatures) {
+      const tgt = String(f.target || "").toLowerCase();
+      if (tgt && Number(f.value)) liveSkillBonuses[tgt] = (liveSkillBonuses[tgt] || 0) + Number(f.value);
+    }
+    system.classFeatures = system.classFeatures || {};
+    system.classFeatures.bonuses = liveSkillBonuses;
+
     system.creation.skillRows = ABOREA.getCreationSkills().map(({ key, label, attribute }) => {
       const skill = system.skills[key] || { rank: 0, attribute };
       return { key, label, rank: Number(skill.rank || 0), attribute: skill.attribute || attribute, cost: classItem?.system?.skillCosts?.[key] ?? "—", maxRank: ABOREA.skillMaxCreationRank(key, classItem?.system || {}) };
@@ -300,6 +311,16 @@ export class AboreaActorSheet extends ActorSheet {
     if (creationDone && !levelUpPending) { ui.notifications.warn("ABOREA: Fertigkeiten können erst nach einem Stufenaufstieg verbessert werden."); return; }
     const cls = this.actor.items.find(i => i.type === "class");
     if (!cls) return ui.notifications.warn("ABOREA: Wähle zuerst einen Beruf.");
+
+    const customList = foundry.utils.deepClone(system.customSkills || []);
+    const customIdx = customList.findIndex(s => s.key === skillKey);
+    if (customIdx !== -1) {
+      customList[customIdx].rank = Math.max(0, Number(customList[customIdx].rank ?? 0) + Number(delta));
+      await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": "draft" });
+      await this._recalculateCharacter();
+      return;
+    }
+
     const current = Number(system.skills?.[skillKey]?.rank ?? 0);
     const maxRank = creationDone ? 99 : ABOREA.skillMaxCreationRank(skillKey, cls.system);
     const next = Math.max(0, Math.min(maxRank, current + Number(delta)));
@@ -383,7 +404,7 @@ export class AboreaActorSheet extends ActorSheet {
     const featureState = {
       list: classFeatures, labels: classFeatures.map(f => `[Stufe ${f.level}] ${f.label}`),
       notes: classFeatures.map(f => f.description).filter(Boolean), flags: {},
-      bonuses: { information:0,natur:0,heilen:0,heal:0,einflussnahme:0,influence:0,list:0,wahrnehmung:0,heimlichkeit:0,stealth:0,gift:0,poison:0,fallen:0,traps:0,magieWahrnehmen:0 },
+      bonuses: {},
       armorBonus:0, weaponMinimums:{}, followers:0,
       activations: foundry.utils.deepClone(actorSystem.classFeatures?.activations || {}),
       lastResetDay: actorSystem.classFeatures?.lastResetDay || ""
@@ -394,16 +415,7 @@ export class AboreaActorSheet extends ActorSheet {
       if (f.type === "followers")     featureState.followers = Math.max(featureState.followers, Number(f.followers || 0));
       if (f.type === "weaponMinimum") featureState.weaponMinimums[f.target || "generic"] = Number(f.minimumRank ?? 0);
       const tgt = String(f.target || "").toLowerCase();
-      if (tgt==="information")   featureState.bonuses.information  += Number(f.value||0);
-      if (tgt==="natur")         featureState.bonuses.natur        += Number(f.value||0);
-      if (tgt==="heilen")        { featureState.bonuses.heilen+=Number(f.value||0); featureState.bonuses.heal+=Number(f.value||0); }
-      if (tgt==="einflussnahme") { featureState.bonuses.einflussnahme+=Number(f.value||0); featureState.bonuses.influence+=Number(f.value||0); }
-      if (tgt==="list")          featureState.bonuses.list         += Number(f.value||0);
-      if (tgt==="wahrnehmung")   featureState.bonuses.wahrnehmung  += Number(f.value||0);
-      if (tgt==="stealth")       { featureState.bonuses.heimlichkeit+=Number(f.value||0); featureState.bonuses.stealth+=Number(f.value||0); }
-      if (tgt==="gift")          { featureState.bonuses.gift+=Number(f.value||0); featureState.bonuses.poison+=Number(f.value||0); }
-      if (tgt==="fallen")        { featureState.bonuses.fallen+=Number(f.value||0); featureState.bonuses.traps+=Number(f.value||0); }
-      if (tgt==="senseMagic")    featureState.bonuses.magieWahrnehmen += Number(f.value||0);
+      if (tgt && Number(f.value)) featureState.bonuses[tgt] = (featureState.bonuses[tgt] || 0) + Number(f.value);
     }
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
