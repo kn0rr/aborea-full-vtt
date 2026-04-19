@@ -98,13 +98,17 @@ export const ABOREA = {
     if (rank <= 1) return parts[0];
     return parts[Math.min(rank - 1, parts.length - 1)] ?? parts[parts.length - 1];
   },
-  skillTrainingSpent(skills = {}, classSystem = {}) {
+  skillTrainingSpent(skills = {}, classSystem = {}, customSkills = []) {
     const costs = classSystem?.skillCosts ?? {};
     let total = 0;
     for (const [key, cfg] of Object.entries(this.skills)) {
       if (!cfg.creation) continue;
       const rank = Number(skills?.[key]?.rank ?? 0);
       for (let r = 1; r <= rank; r++) total += this.skillCostForRank(costs[key], r);
+    }
+    for (const cs of (customSkills || [])) {
+      const rank = Number(cs.rank ?? 0);
+      for (let r = 1; r <= rank; r++) total += this.skillCostForRank(cs.cost ?? "1", r);
     }
     return total;
   },

@@ -21,10 +21,11 @@ function ensureDiceOverlay() {
 }
 
 async function showDiceSoNiceRoll(result) {
-  if (!game.dice3d?.showForRoll || !Array.isArray(result.rolls) || !result.rolls.length) return false;
+  const dice3d = game.dice3d ?? game.aborea?.dice3d;
+  if (!dice3d?.showForRoll || !Array.isArray(result.rolls) || !result.rolls.length) return false;
   try {
     for (const roll of result.rolls) {
-      await game.dice3d.showForRoll(roll, game.user, true);
+      await dice3d.showForRoll(roll, game.user, true);
     }
     return true;
   } catch (err) {

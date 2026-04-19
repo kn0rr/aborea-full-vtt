@@ -103,7 +103,7 @@ export class AboreaActorSheet extends ActorSheet {
     const raceName = (system.details?.race || "").toLowerCase();
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
-    const trainingSpent = ABOREA.skillTrainingSpent(system.skills, classItem?.system);
+    const trainingSpent = ABOREA.skillTrainingSpent(system.skills, classItem?.system, system.customSkills);
     const trainingRemaining = trainingBudget - trainingSpent;
     system.activeClassFeatures = ABOREA.activeClassFeatures(classItem?.system || {}, level);
     const activationState = system.classFeatures?.activations || {};
@@ -266,6 +266,7 @@ export class AboreaActorSheet extends ActorSheet {
 
   async _applyRace(raceItem) {
     if (this.actor.type !== "character") return;
+    if (this.actor.system.creation?.completed) { ui.notifications.warn("ABOREA: Rasse kann nach Abschluss der Charaktererstellung nicht mehr geändert werden."); return; }
     const race = duplicateItemObject(raceItem);
     const existing = this.actor.items.filter(i => i.type === "race");
     if (existing.length) await this.actor.deleteEmbeddedDocuments("Item", existing.map(i => i.id));
@@ -278,6 +279,7 @@ export class AboreaActorSheet extends ActorSheet {
 
   async _applyClass(classItem) {
     if (this.actor.type !== "character") return;
+    if (this.actor.system.creation?.completed) { ui.notifications.warn("ABOREA: Beruf kann nach Abschluss der Charaktererstellung nicht mehr geändert werden."); return; }
     const cls = duplicateItemObject(classItem);
     const race = this.actor.items.find(i => i.type === "race");
     if (race && !ABOREA.classAllowedForRace(race.system, cls.name)) { ui.notifications.error(`${race.name} darf den Beruf ${cls.name} nicht wählen.`); return; }
@@ -311,14 +313,14 @@ export class AboreaActorSheet extends ActorSheet {
     const result = await new Promise(resolve => {
       new Dialog({
         title: game.i18n.localize("ABOREA.AddSkill"),
-        content: `<form><div class="form-group"><label>Name</label><input type="text" name="name" placeholder="Fertigkeit" /></div><div class="form-group"><label>Attribut</label><select name="attr">${attrOptions}</select></div></form>`,
-        buttons: { ok: { label: "Hinzufügen", callback: html => resolve({ name: html.find("[name=name]").val().trim(), attr: html.find("[name=attr]").val() }) }, cancel: { label: "Abbruch", callback: () => resolve(null) } },
+        content: `<form><div class="form-group"><label>Name</label><input type="text" name="name" placeholder="Fertigkeit" /></div><div class="form-group"><label>Attribut</label><select name="attr">${attrOptions}</select></div><div class="form-group"><label>AP-Kosten pro Rang (z.B. "2" oder "1/2")</label><input type="text" name="cost" value="1" placeholder="1" /></div></form>`,
+        buttons: { ok: { label: "Hinzufügen", callback: html => resolve({ name: html.find("[name=name]").val().trim(), attr: html.find("[name=attr]").val(), cost: html.find("[name=cost]").val().trim() || "1" }) }, cancel: { label: "Abbruch", callback: () => resolve(null) } },
         default: "ok", close: () => resolve(null)
       }).render(true);
     });
     if (!result?.name) return;
     const list = Array.isArray(this.actor.system.customSkills) ? foundry.utils.deepClone(this.actor.system.customSkills) : [];
-    list.push({ key: `custom-${Date.now()}`, name: result.name, attribute: result.attr, rank: 0, source: "custom" });
+    list.push({ key: `custom-${Date.now()}`, name: result.name, attribute: result.attr, rank: 0, cost: result.cost, source: "custom" });
     await this.actor.update({ "system.customSkills": list });
   }
 
@@ -340,7 +342,7 @@ export class AboreaActorSheet extends ActorSheet {
     const newFeatures = ABOREA.activeClassFeatures(cls?.system || {}, targetLvl).filter(f => Number(f.level) > currentLvl && Number(f.level) <= targetLvl);
     const humanBonus = (system.details?.race || "").toLowerCase() === "mensch" ? 2 : 0;
     const totalAP = ABOREA.baseTrainingPoints * targetLvl + humanBonus;
-    const spentAP = ABOREA.skillTrainingSpent(this.actor.system.skills || {}, cls?.system);
+    const spentAP = ABOREA.skillTrainingSpent(this.actor.system.skills || {}, cls?.system, this.actor.system.customSkills || []);
     const freeAP = totalAP - spentAP;
     const featureList = newFeatures.length ? `<ul>${newFeatures.map(f => `<li><strong>${f.label}</strong>: ${f.description || ""}</li>`).join("")}</ul>` : "<p>Keine neuen Klassenfähigkeiten.</p>";
     await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: `<section class="aborea-chat-card"><h2>🎉 Stufenaufstieg: Stufe ${targetLvl}</h2><p><strong>${this.actor.name}</strong> ist auf Stufe ${targetLvl} aufgestiegen!</p><p><strong>Freie AP:</strong> ${freeAP}</p><h3>Neue Klassenfähigkeiten</h3>${featureList}</section>` });
@@ -405,7 +407,7 @@ export class AboreaActorSheet extends ActorSheet {
     }
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
-    const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system);
+    const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, actorSystem.customSkills || []);
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
     const hpBase = Number(cls?.system?.hitPointsBase ?? 5);
