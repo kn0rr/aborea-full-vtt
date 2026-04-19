@@ -106,7 +106,8 @@ export const ABOREA = {
       const rank = Number(skills?.[key]?.rank ?? 0);
       for (let r = 1; r <= rank; r++) total += this.skillCostForRank(costs[key], r);
     }
-    for (const cs of (customSkills || [])) {
+    const csArray = Array.isArray(customSkills) ? customSkills : Object.values(customSkills || {});
+    for (const cs of csArray) {
       const rank = Number(cs.rank ?? 0);
       for (let r = 1; r <= rank; r++) total += this.skillCostForRank(cs.cost ?? "1", r);
     }
