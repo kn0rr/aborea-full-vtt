@@ -1,0 +1,26 @@
+{
+  "name": "Næroth",
+  "type": "god",
+  "img": "icons/svg/skull.svg",
+  "system": {
+    "description": "Næroth (Nai-rosz) ist der Herr der Kreaturen der Finsternis, der dunkle Meister des Unlichts. Er ist der Schöpfer der Wesen der Tiefe und vergiftet die Seelen der Kreaturen des Lichts. Er tritt als Schatten in Erscheinung und selten in der Hülle eines Besessenen. Stern- und mondlichtlose Nächte gelten als Zeichen seines Sieges und als Zeit großer Betrübnis. Manchmal gelingt es ihm, einen der Herrscher über ein Element für seine Seite zu gewinnen und damit große Katastrophen anzurichten.",
+    "pantheon": "Elfisch (Ïareth)",
+    "rank": "Feindgottheit",
+    "aspects": "Unlicht, Finsternis, Dunkelheit, Nacht, Leere",
+    "weapon": "Schwert",
+    "symbol": "Schatten, mondlichtlose Nacht",
+    "miracleList": "",
+    "slug": "naeroth",
+    "externalId": "naeroth"
+  },
+  "_id": "a1b2c3d4e5f6a7b3",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "naeroth",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/naeroth.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

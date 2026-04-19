@@ -1,0 +1,26 @@
+{
+  "name": "Iandara",
+  "type": "god",
+  "img": "icons/svg/sun.svg",
+  "system": {
+    "description": "Iandaras Handlungen sind kraftvoll und beharrlich. Sie ist zugleich liebevoll und wärmend. Diese Eigenschaften haben Varus seit jeher angezogen — er soll sich an sie verloren haben. Doch Iandara bindet sich nicht. Aone soll aus Varus' Liebesklagen hervorgegangen sein. Immer wieder gibt es Lieder von Sterblichen und Halbgöttern, die aus Liebe zu Iandara bemerkenswerte Taten vollbrachten.",
+    "pantheon": "Trionisch",
+    "rank": "Höhere Gottheit",
+    "aspects": "Licht, Liebe, Sonne, Wetter",
+    "weapon": "Stab, Speer",
+    "symbol": "Halber Sonnenkreis mit Strahlenkranz unten",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "iandara",
+    "externalId": "iandara"
+  },
+  "_id": "a1b2c3d4e5f6a7c0",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "iandara",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/iandara.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

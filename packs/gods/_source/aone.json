@@ -1,0 +1,26 @@
+{
+  "name": "Aone",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Aone entstammt der Verbindung der Götter Iandara und Varus. Sie ist die Schwester Mycaels; beide ergänzen sich und gelten als unzertrennlich. Sie nahm einst einen Sterblichen zum Partner, dem sie bis an das Ende seines kurzen Lebens treu blieb. Die Trioner erbitten daher auch bei schweren Krankheiten ihre Hilfe. Sie gilt als neckisch und launenhaft. Nach langer Trauer ging sie mit Ateom eine Bindung ein, die jedoch nicht dauerhaft war. Aus dem Betrug soll Zia entstanden sein.",
+    "pantheon": "Trionisch",
+    "rank": "Gottheit",
+    "aspects": "Ehe, Liebe",
+    "weapon": "Dolch",
+    "symbol": "Weiße Kugel, Muschel",
+    "miracleList": "",
+    "slug": "aone",
+    "externalId": "aone"
+  },
+  "_id": "a1b2c3d4e5f6a7bc",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "aone",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/aone.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

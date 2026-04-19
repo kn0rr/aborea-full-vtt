@@ -44,7 +44,8 @@
       "armor": {},
       "spell": {},
       "miracle": {},
-      "gear": {}
+      "gear": {},
+      "god": {}
     }
   },
   "grid": {
@@ -114,6 +115,17 @@
       "label": "Wunder & Leitmagie",
       "type": "Item",
       "path": "packs/miracles",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "gods",
+      "label": "Götter",
+      "type": "Item",
+      "path": "packs/gods",
       "system": "aborea-v7",
       "ownership": {
         "PLAYER": "OBSERVER",

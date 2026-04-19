@@ -1,0 +1,26 @@
+{
+  "name": "Neome",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Neome ist eine der wenigen Gottheiten, die mit keinem anderen Gott im Streit liegt. Als Göttin der Fruchtbarkeit ist sie äußerst wichtig für alle Trioner und wird fast überall verehrt. Bei einer Geburt ist, wenn möglich, eine Schwester Neomes zugegen. Beim Deihfest zur Aussaat werden ihr Ziegen dargebracht. Die Schwestern dürfen beim Opferfest nicht zugegen sein. Verstirbt ein Kind bei der Geburt, kehrt die Schwester mit blutverschmiertem Gesicht in den Tempel zurück.",
+    "pantheon": "Trionisch",
+    "rank": "Höhere Gottheit",
+    "aspects": "Erde, Fruchtbarkeit, Geburt, Kinder, Landwirtschaft",
+    "weapon": "Kurzschwert",
+    "symbol": "Dreieck, Löwin, Ähren, Obst, stillende Frau",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "neome",
+    "externalId": "neome"
+  },
+  "_id": "a1b2c3d4e5f6a7c4",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "neome",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/neome.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

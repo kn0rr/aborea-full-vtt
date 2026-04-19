@@ -1,0 +1,26 @@
+{
+  "name": "Othil",
+  "type": "god",
+  "img": "icons/svg/sun.svg",
+  "system": {
+    "description": "Ohne Othil gäbe es kein Licht und kein Leben auf Aborea. Sie ist der Inbegriff von Energie und Belebung, Schöpferin allen Seins auf Aborea und überall sonst. Sie wandelt nie unter den Sterblichen, aber beseelt manchmal Wesen des Lichts. Frauen vor der Niederkunft sollen von ihr berührt werden. Gütig und von warmem Gemüt, geduldig und beständig. Ihrem ärgsten Feind Næroth steht sie mit eben diesen Tugenden entgegen. „Möge das Licht (Othils) mit Dir sein."",
+    "pantheon": "Elfisch (Ïareth)",
+    "rank": "Höchste Gottheit",
+    "aspects": "Leben, Geburt",
+    "weapon": "Schwert",
+    "symbol": "Sonne, lichtgebadete Frau mit offenen Armen",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "othil",
+    "externalId": "othil"
+  },
+  "_id": "a1b2c3d4e5f6a7b1",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "othil",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/othil.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

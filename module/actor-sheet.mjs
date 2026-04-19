@@ -56,6 +56,8 @@ export class AboreaActorSheet extends ActorSheet {
       gear: actor.items.filter(i => i.type === "gear"),
       skills: actor.items.filter(i => i.type === "skill")
     };
+    context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
+    context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
     context.availablePacks = {
       races: await this._packChoices("race"),
       classes: await this._packChoices("class"),
@@ -64,7 +66,8 @@ export class AboreaActorSheet extends ActorSheet {
       armors: await this._packChoices("armor"),
       spells: await this._packChoices("spell"),
       miracles: await this._packChoices("miracle"),
-      gear: await this._packChoices("gear")
+      gear: await this._packChoices("gear"),
+      gods: await this._packChoices("god")
     };
     return context;
   }
@@ -102,6 +105,10 @@ export class AboreaActorSheet extends ActorSheet {
       return { value: v, bonus: ABOREA.attributeBonus(v), totalCost: total, stepCost: nv ? ABOREA.attributeCost(nv) - total : null };
     });
     const classItem = actor.items.find(i => i.type === "class");
+    system.isLeitmagieClass = !!(classItem?.system?.description ?? "").includes("Leitmagie");
+    const spellListRank = Number(system.skills?.spruchlisten?.rank ?? 0);
+    const knownSpellLists = [...new Set(actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
+    system.spellLists = { capacity: spellListRank, known: knownSpellLists, count: knownSpellLists.length, overflow: knownSpellLists.length > spellListRank && spellListRank > 0 };
     const level = Number(system.resources?.level ?? 1);
     const raceName = (system.details?.race || "").toLowerCase();
     const humanBonus = raceName === "mensch" ? 2 : 0;
@@ -186,7 +193,10 @@ export class AboreaActorSheet extends ActorSheet {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       if (!itemId) return;
       const item = this.actor.items.get(itemId);
-      if (item) await this._logInventoryEntry("item-remove", itemHistoryLabel(item), { itemType: item.type });
+      if (item) {
+        const note = await this._promptNote(`${itemHistoryLabel(item)} entfernen`);
+        await this._logInventoryEntry("item-remove", itemHistoryLabel(item), { itemType: item.type, note });
+      }
       await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
       if (this.actor.type === "character") await this._recalculateCharacter();
     });
@@ -202,8 +212,10 @@ export class AboreaActorSheet extends ActorSheet {
       const hit = index.find(e => e.name === pick.name && e.type === type); if (!hit) return;
       const doc = await pack.getDocument(hit._id);
       const obj = duplicateItemObject(doc);
+      this._checkSpellListCapacity(obj);
       await this.actor.createEmbeddedDocuments("Item", [obj]);
-      await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack });
+      const note = await this._promptNote(`${itemHistoryLabel(obj)} hinzufügen`);
+      await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack, note });
     });
     html.find(".combat-balance").on("change", async ev => {
       const offensive = Number(ev.currentTarget.value ?? 0);
@@ -228,6 +240,7 @@ export class AboreaActorSheet extends ActorSheet {
     });
     html.find(".apply-race").on("click", async () => { const s = html.find("[name=selectedRace]").val(); if (s) { const i = await findPackDocumentByTypeAndName("race", s); if (i) await this._applyRace(i); } });
     html.find(".apply-class").on("click", async () => { const s = html.find("[name=selectedClass]").val(); if (s) { const i = await findPackDocumentByTypeAndName("class", s); if (i) await this._applyClass(i); } });
+    html.find(".apply-god").on("click", async () => { const s = html.find("[name=selectedGod]").val(); if (s) { const i = await findPackDocumentByTypeAndName("god", s); if (i) await this._applyGod(i); } });
     html.find(".class-feature-activate").on("click", async ev => { await this._activateClassFeature(ev.currentTarget.dataset.featureKey); });
     html.find(".class-feature-reset").on("click", async () => { await this._resetDailyClassFeatures(); });
     html.find(".cast-power").on("click", async ev => { const id = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId; if (id) await this._castPower(id); });
@@ -273,6 +286,7 @@ export class AboreaActorSheet extends ActorSheet {
     if (item.type === "race")  return this._applyRace(item);
     if (item.type === "class") return this._applyClass(item);
     const obj = duplicateItemObject(item);
+    this._checkSpellListCapacity(obj);
     const created = await this.actor.createEmbeddedDocuments("Item", [obj]);
     await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: item.pack || "" });
     return created;
@@ -304,6 +318,13 @@ export class AboreaActorSheet extends ActorSheet {
     const result = await this._recalculateCharacter();
     if (!result.valid && result.validationErrors.length) ui.notifications.warn(result.validationErrors.join(" | "));
     else ui.notifications.info(`${cls.name} auf ${this.actor.name} angewendet.`);
+  }
+
+  async _applyGod(godItem) {
+    if (this.actor.type !== "character") return;
+    const godName = godItem.name ?? godItem.system?.name ?? "";
+    await this.actor.update({ "system.details.god": godName });
+    ui.notifications.info(`${godName} als Gottheit für ${this.actor.name} gesetzt.`);
   }
 
   async _adjustCreationSkill(skillKey, delta) {
@@ -435,6 +456,9 @@ export class AboreaActorSheet extends ActorSheet {
     const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, Array.isArray(rawCS) ? rawCS : Object.values(rawCS || {}));
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
+    const spruchlistenRank = Number(actorSystem.skills?.spruchlisten?.rank ?? 0);
+    const knownLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
+    if (knownLists.length > spruchlistenRank && knownLists.length > 0) errors.push(`Spruchlisten: ${knownLists.length} bekannt, Rang Spruchlisten erlaubt aber nur ${spruchlistenRank}.`);
     const hpBase = Number(cls?.system?.hitPointsBase ?? 5);
     const zwergBonus = raceName === "zwerg" ? 2 : 0;
     const hpMax = Math.max(1, (hpBase + ABOREA.attributeBonus(finalAttrs.ko.value)) * level + zwergBonus);
@@ -483,14 +507,15 @@ export class AboreaActorSheet extends ActorSheet {
     const wallet = normalizeWallet(this.actor.system.wallet);
     const cur = wallet.currencies.find(c => c.key === currencyKey); if (!cur) return;
     const title = `${mode === "deposit" ? "Einzahlen" : "Auszahlen"}: ${cur.name} (${cur.label})`;
-    const amount = await new Promise(resolve => {
-      new Dialog({ title, content: `<form><div class="form-group"><label>Betrag</label><input type="number" name="amount" value="1" min="1" step="1" /></div></form>`,
-        buttons: { ok: { label:"OK", callback: html => resolve(Number(html.find("[name=amount]").val()||0)) }, cancel: { label:"Abbruch", callback: ()=>resolve(0) } },
-        default:"ok", close:()=>resolve(0) }).render(true);
+    const result = await new Promise(resolve => {
+      new Dialog({ title, content: `<form><div class="form-group"><label>Betrag</label><input type="number" name="amount" value="1" min="1" step="1" /></div><div class="form-group"><label>Notiz (optional)</label><input type="text" name="note" placeholder="z.B. Belohnung vom Wirt" /></div></form>`,
+        buttons: { ok: { label:"OK", callback: html => resolve({ amount: Number(html.find("[name=amount]").val()||0), note: html.find("[name=note]").val().trim() }) }, cancel: { label:"Abbruch", callback: ()=>resolve(null) } },
+        default:"ok", close:()=>resolve(null) }).render(true);
     });
-    if (!amount || amount <= 0) return;
+    if (!result || !result.amount || result.amount <= 0) return;
+    const { amount, note } = result;
     cur.amount = mode === "withdraw" ? Math.max(0, Number(cur.amount||0) - amount) : Number(cur.amount||0) + amount;
-    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, cur.label, { amount, currency: cur.label }));
+    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, cur.label, { amount, currency: cur.label, note }));
     await this.actor.update({ "system.wallet": wallet });
   }
 
@@ -622,8 +647,46 @@ export class AboreaActorSheet extends ActorSheet {
     event.preventDefault();
     const type=event.currentTarget.dataset.type; const name=game.i18n.format("ABOREA.NewItem",{type});
     const created=await this.actor.createEmbeddedDocuments("Item",[{name,type,system:{}}]);
-    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual"});
+    const note = await this._promptNote(`${name} hinzufügen`);
+    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual",note});
     return created;
+  }
+
+  _groupByList(items) {
+    const groups = {};
+    for (const item of items) {
+      const list = item.system?.list || "Unbekannt";
+      if (!groups[list]) groups[list] = [];
+      groups[list].push(item);
+    }
+    return Object.entries(groups)
+      .map(([list, spells]) => ({ list, spells: spells.slice().sort((a, b) => Number(a.system?.rank ?? 0) - Number(b.system?.rank ?? 0)) }))
+      .sort((a, b) => a.list.localeCompare(b.list));
+  }
+
+  _checkSpellListCapacity(itemObj) {
+    if (itemObj.type !== "spell") return;
+    const spellList = itemObj.system?.list;
+    if (!spellList) return;
+    const currentLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
+    const rank = Number(this.actor.system.skills?.spruchlisten?.rank ?? 0);
+    if (!currentLists.includes(spellList) && currentLists.length >= rank) {
+      ui.notifications.warn(`ABOREA: Neue Spruchliste „${spellList}" überschreitet Kapazität (${currentLists.length}/${rank}). Rang Spruchlisten zu niedrig!`);
+    }
+  }
+
+  async _promptNote(context = "") {
+    return new Promise(resolve => {
+      new Dialog({
+        title: "Notiz hinzufügen",
+        content: `<form><div class="form-group"><label>${context}</label><input type="text" name="note" placeholder="Notiz (optional)" style="width:100%" /></div></form>`,
+        buttons: {
+          ok: { label: "OK", callback: html => resolve(html.find("[name=note]").val().trim()) },
+          skip: { label: "Ohne Notiz", callback: () => resolve("") }
+        },
+        default: "ok", close: () => resolve("")
+      }).render(true);
+    });
   }
 
   _attributeValue(key) { return Number(this.actor.system?.finalAttributes?.[key]?.value??this.actor.system?.attributes?.[key]?.value??5); }

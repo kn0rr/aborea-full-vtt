@@ -1,0 +1,26 @@
+{
+  "name": "Mycael",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Mycael ist der Bruder Aones. Oft wird er mit wilden Tieren zusammen dargestellt. Er wird zumeist von Waldläufern verehrt. Einige Darstellungen zeigen einen jugendlichen Mycael — andere einen gealterten Mann, der unter Ænora leidet. Für viele Anhänger Mycaels sind Pferde heilige Tiere.",
+    "pantheon": "Trionisch",
+    "rank": "Gottheit",
+    "aspects": "Jagd, Pflanzenwelt, Tiere",
+    "weapon": "Bogen",
+    "symbol": "Stilisierter Bogen, Pferde",
+    "miracleList": "",
+    "slug": "mycael",
+    "externalId": "mycael"
+  },
+  "_id": "a1b2c3d4e5f6a7c3",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "mycael",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/mycael.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

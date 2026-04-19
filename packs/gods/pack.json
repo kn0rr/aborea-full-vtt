@@ -1,0 +1,12 @@
+{
+  "package": "aborea-v7",
+  "name": "gods",
+  "label": "Götter",
+  "type": "Item",
+  "system": "aborea-v7",
+  "path": "packs/gods",
+  "ownership": {
+    "PLAYER": "OBSERVER",
+    "ASSISTANT": "OWNER"
+  }
+}

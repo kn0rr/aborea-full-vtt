@@ -1,0 +1,26 @@
+{
+  "name": "Egaros",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Am Tage Egaros kommen alle Zwerge zusammen, und die besten Handwerker zeigen ihre Kunstwerke. Unter ihnen wird ein Meister erwählt. Dieser Titel ist eine der höchsten Auszeichnungen, und die ganze Sippe wird mit Stolz erfüllt sein. Egaros steht für Fleiß, Handwerkskunst und den Stolz auf das Geschaffene.",
+    "pantheon": "Zwergisch",
+    "rank": "Gottheit",
+    "aspects": "Erz, Handwerk",
+    "weapon": "Axt, Hammer",
+    "symbol": "Handwerkerwerkzeug, Meisterstück",
+    "miracleList": "",
+    "slug": "egaros",
+    "externalId": "egaros"
+  },
+  "_id": "a1b2c3d4e5f6a7b8",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "egaros",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/egaros.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

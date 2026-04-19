@@ -1,0 +1,26 @@
+{
+  "name": "Otheila",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Otheila wollte den Zwergen Glanz unter Tage schenken und gab eine Strähne ihres Haares in Esrons Esse. Dort schmolz sie und wurde zu Gold. Mancher Zwerg bleibt ehrfürchtig vor einer Goldader stehen, um kurz Otheilas Geschenk zu gedenken. Die Diamanten verdankt man ebenfalls der Göttin — es sind die Funken, die aus Esrons Esse entsprangen, als ihr Haar hineingab.",
+    "pantheon": "Zwergisch",
+    "rank": "Gottheit",
+    "aspects": "Gold, Diamanten",
+    "weapon": "Flegel",
+    "symbol": "Goldader, Diamant",
+    "miracleList": "",
+    "slug": "otheila",
+    "externalId": "otheila"
+  },
+  "_id": "a1b2c3d4e5f6a7b6",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "otheila",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/otheila.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

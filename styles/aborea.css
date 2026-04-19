@@ -430,6 +430,26 @@
 .h-stamp { color: var(--aborea-brown); font-size: .75rem; }
 .h-action { font-weight: 600; }
 .h-amount { text-align: right; font-weight: 600; color: var(--aborea-green); }
+.h-note { grid-column: 1 / -1; color: var(--aborea-brown); font-style: italic; font-size: .75rem; padding-left: 2px; }
+
+/* ── Spruchlisten ───────────────────────────────────── */
+.spell-list-capacity { font-size: .8rem; color: var(--aborea-brown); margin-left: auto; padding: 0 6px; }
+.spell-list-capacity.overflow { color: #c0392b; font-weight: 700; }
+.spell-list-group { margin-bottom: 6px; }
+.spell-list-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 3px 8px;
+  background: rgba(120,80,40,.12);
+  border-left: 3px solid var(--aborea-brown);
+  font-weight: 600; font-size: .82rem;
+  margin-bottom: 2px; border-radius: 0 var(--aborea-radius) var(--aborea-radius) 0;
+}
+.spell-rank {
+  min-width: 22px; text-align: center;
+  background: rgba(120,80,40,.18); border-radius: 3px;
+  padding: 0 4px; font-size: .72rem; font-weight: 700;
+  color: var(--aborea-brown);
+}
 
 /* ── Begleiter ──────────────────────────────────────── */
 .companion-dropzone { border: 2px dashed rgba(80,80,120,.3); border-radius: var(--aborea-radius); }

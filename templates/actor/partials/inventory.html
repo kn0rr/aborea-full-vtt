@@ -63,36 +63,65 @@
 
 <section class="panel">
   <div class="panel-header">
-    <h2>{{localize "ABOREA.SpellsAndMiracles"}}</h2>
+    <h2>Zauber</h2>
+    <span class="spell-list-capacity {{#if system.spellLists.overflow}}overflow{{/if}}">
+      Listen: {{system.spellLists.count}} / {{system.spellLists.capacity}}
+    </span>
     <div class="button-row compact">
       <button type="button" class="import-pack-item btn-sm" data-type="spell">📦 Zauber</button>
-      <button type="button" class="item-create btn-sm" data-type="spell">+ Zauber</button>
+      <button type="button" class="item-create btn-sm" data-type="spell">+ Neu</button>
+    </div>
+  </div>
+  {{#each spellsByList as |group|}}
+  <div class="spell-list-group">
+    <div class="spell-list-header">✨ {{group.list}}</div>
+    {{#each group.spells as |item|}}
+    <div class="item-row" data-item-id="{{item.id}}">
+      <span class="spell-rank">{{item.system.rank}}</span>
+      <span class="item-name">{{item.name}}</span>
+      <span class="item-detail">{{item.system.range}}</span>
+      <div class="item-actions">
+        <button type="button" class="cast-power btn-sm">✨ {{localize "ABOREA.Cast"}}</button>
+        <button type="button" class="item-edit btn-icon">✎</button>
+        <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{/each}}
+  {{#unless spellsByList}}
+  <p class="hint-text">Keine Zauber vorhanden. Füge Zauber aus dem Kompendium hinzu.</p>
+  {{/unless}}
+</section>
+
+<section class="panel">
+  <div class="panel-header">
+    <h2>Wunder & Leitmagie</h2>
+    <div class="button-row compact">
       <button type="button" class="import-pack-item btn-sm" data-type="miracle">📦 Wunder</button>
-      <button type="button" class="item-create btn-sm" data-type="miracle">+ Wunder</button>
+      <button type="button" class="item-create btn-sm" data-type="miracle">+ Neu</button>
     </div>
   </div>
-  {{#each itemLists.spells as |item|}}
-  <div class="item-row" data-item-id="{{item.id}}">
-    <span class="item-name">{{item.name}}</span>
-    <span class="item-detail item-tag">{{item.system.list}}</span>
-    <div class="item-actions">
-      <button type="button" class="cast-power btn-sm">✨ {{localize "ABOREA.Cast"}}</button>
-      <button type="button" class="item-edit btn-icon">✎</button>
-      <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
+  {{#each miraclesByList as |group|}}
+  <div class="spell-list-group">
+    <div class="spell-list-header">🙏 {{group.list}}</div>
+    {{#each group.spells as |item|}}
+    <div class="item-row miracle-row" data-item-id="{{item.id}}">
+      <span class="spell-rank">{{item.system.rank}}</span>
+      <span class="item-name">{{item.name}}</span>
+      <span class="item-detail">{{item.system.range}}</span>
+      <div class="item-actions">
+        <button type="button" class="cast-power btn-sm">🙏 {{localize "ABOREA.Cast"}}</button>
+        <button type="button" class="item-edit btn-icon">✎</button>
+        <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
+      </div>
     </div>
-  </div>
-  {{/each}}
-  {{#each itemLists.miracles as |item|}}
-  <div class="item-row miracle-row" data-item-id="{{item.id}}">
-    <span class="item-name">{{item.name}}</span>
-    <span class="item-detail item-tag">{{item.system.list}}</span>
-    <div class="item-actions">
-      <button type="button" class="cast-power btn-sm">🙏 {{localize "ABOREA.Cast"}}</button>
-      <button type="button" class="item-edit btn-icon">✎</button>
-      <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
-    </div>
+    {{/each}}
   </div>
   {{/each}}
+  {{#unless miraclesByList}}
+  <p class="hint-text">Keine Wunder vorhanden.</p>
+  {{/unless}}
 </section>
 
 <section class="panel">
@@ -121,6 +150,7 @@
       <span class="h-action">{{entry.action}}</span>
       <span class="h-label">{{entry.label}}</span>
       <span class="h-amount">{{entry.amount}} {{entry.currency}}</span>
+      {{#if entry.note}}<span class="h-note">{{entry.note}}</span>{{/if}}
     </div>
     {{/each}}
     {{#each system.inventoryHistory as |entry|}}
@@ -129,6 +159,7 @@
       <span class="h-action">{{entry.action}}</span>
       <span class="h-label">{{entry.label}}</span>
       <span class="h-amount">{{entry.itemType}}</span>
+      {{#if entry.note}}<span class="h-note">{{entry.note}}</span>{{/if}}
     </div>
     {{/each}}
   </div>

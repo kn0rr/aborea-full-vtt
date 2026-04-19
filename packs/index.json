@@ -171,6 +171,43 @@
       "documents": [
         "troll.json"
       ]
+    },
+    {
+      "key": "gods",
+      "label": "Götter",
+      "type": "Item",
+      "worldName": "aborea-gods",
+      "path": "systems/aborea-v7/packs/gods/_source",
+      "documents": [
+        "othil.json",
+        "il-anaera.json",
+        "naeroth.json",
+        "esron.json",
+        "hornwan.json",
+        "otheila.json",
+        "tragur.json",
+        "egaros.json",
+        "barros.json",
+        "minna.json",
+        "aenora.json",
+        "aone.json",
+        "ateom.json",
+        "esthion.json",
+        "hemron.json",
+        "iandara.json",
+        "juvio.json",
+        "leceia.json",
+        "mycael.json",
+        "neome.json",
+        "otum.json",
+        "seista.json",
+        "thios.json",
+        "varus.json",
+        "zia.json",
+        "insa.json",
+        "elm.json",
+        "pria.json"
+      ]
     }
   ]
 }

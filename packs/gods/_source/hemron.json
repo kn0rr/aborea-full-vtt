@@ -1,0 +1,26 @@
+{
+  "name": "Hemron",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Hemron wird mit Aspekten wie Edelmut, Fairness und Besonnenheit in Verbindung gebracht. Für viele Ritterorden ist er daher Schutzgottheit. Allerdings sagt man Hemrons Kirche nach, mit dem Schwert zu bekehren. Arme werden häufig von Hemrons Kirchen versorgt. Die Weihe zur Schwert-Reife (ab 21 Jahren) erfolgt durch die Kirche Hemrons. Hemron ist der Sohn Otums und Leceias. Sein Bruder ist Thios.",
+    "pantheon": "Trionisch",
+    "rank": "Gottheit",
+    "aspects": "Frieden, Führerschaft, Krieg",
+    "weapon": "Langschwert",
+    "symbol": "Eine oben und unten offene Acht",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "hemron",
+    "externalId": "hemron"
+  },
+  "_id": "a1b2c3d4e5f6a7bf",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "hemron",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/hemron.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Insa",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Die Große Mutter der Halblinge. Gemeinsam mit dem Großen Vater Elm sind Insa und Elm die Stammmutter und der Stammvater aller Halblinge. Außer Pria haben sie alle ihre Kinder im Garten Aboreas ihr Glück finden lassen, damit sie ihr eigenes Schicksal selbst bestimmen können.",
+    "pantheon": "Halblingisch",
+    "rank": "Gottheit",
+    "aspects": "Mütterlichkeit, Fruchtbarkeit, Schöpfung",
+    "weapon": "",
+    "symbol": "Große Mutter",
+    "miracleList": "",
+    "slug": "insa",
+    "externalId": "insa"
+  },
+  "_id": "a1b2c3d4e5f6a7ca",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "insa",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/insa.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}
