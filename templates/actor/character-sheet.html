@@ -17,6 +17,7 @@
           <input type="text" name="system.details.class" value="{{system.details.class}}" readonly />
         </label>
       </div>
+      {{#unless system.creation.completed}}
       <div class="header-grid compact">
         <label>{{localize "ABOREA.ApplyRace"}}
           <select name="selectedRace">
@@ -33,6 +34,7 @@
         </label>
         <button type="button" class="apply-class">{{localize "ABOREA.Apply"}}</button>
       </div>
+      {{/unless}}
     </div>
   </header>
 
@@ -149,7 +151,7 @@
       <section class="panel">
         <div class="panel-header">
           <h2>{{localize "ABOREA.CreationSkills"}}</h2>
-          <button type="button" class="add-custom-skill">+ {{localize "ABOREA.AddSkill"}}</button>
+          {{#unless system.creation.completed}}<button type="button" class="add-custom-skill">+ {{localize "ABOREA.AddSkill"}}</button>{{/unless}}
         </div>
         <p class="hint-text">{{localize "ABOREA.CreationSkillsHint"}}</p>
 
@@ -183,6 +185,9 @@
                     <option value="{{attrKey}}" {{#if (aboreaEq attrKey skill.attribute)}}selected{{/if}}>{{localize attrLabel}}</option>
                     {{/each}}
                   </select>
+                </label>
+                <label class="skill-cost-label">AP/Rang:
+                  <input type="text" name="system.customSkills.{{idx}}.cost" value="{{skill.cost}}" class="skill-cost-input" placeholder="1" style="width:3em" />
                 </label>
               </div>
             </div>

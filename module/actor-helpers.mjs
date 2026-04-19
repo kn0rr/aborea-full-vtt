@@ -155,6 +155,7 @@ export function buildSkillDisplayRows(system) {
       attribute: skill.attribute || "in",
       rank: Number(skill.rank || 0),
       bonus: Number(skill.bonus || 0),
+      cost: skill.cost ?? "1",
       source: "custom", isCustom: true, customIndex: index
     });
   }
