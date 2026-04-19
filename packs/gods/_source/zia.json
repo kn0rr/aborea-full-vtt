@@ -1,0 +1,26 @@
+{
+  "name": "Zia",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "In der Hafeneinfahrt Angors steht die über 20 Meter hohe Statue Zias — zugleich der größte Leuchtturm der Bucht. Die Arme hält sie über Kreuz, in jeder Hand eine Axt, und Zorn scheint Blitze aus ihren Augen zu feuern. Sie trägt die befeuerte Krone der Gerechtigkeit. Zia steht für Gerechtigkeit und Rache. Sie kann zornig und unberechenbar sein. Viele Trioner opfern Zia, um von Schmerzen verschont zu werden oder um Vergeltung zu erreichen. Zia ist eine junge Gottheit, gilt aber als eine der mächtigsten. Sie entstammt dem Betrug Ateoms an ihrer Mutter Aone.",
+    "pantheon": "Trionisch",
+    "rank": "Gottheit",
+    "aspects": "Rache, Gerechtigkeit, Vergeltung",
+    "weapon": "Axt",
+    "symbol": "Raute mit offenen Dreiecken oben und unten",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "zia",
+    "externalId": "zia"
+  },
+  "_id": "a1b2c3d4e5f6a7c9",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "zia",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/zia.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

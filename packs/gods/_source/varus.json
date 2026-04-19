@@ -1,0 +1,26 @@
+{
+  "name": "Varus",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Esthions Bruder ist der Gott des Krieges. Er gilt als unbezwingbar und wild. Varus wird jung und kraftvoll dargestellt — übermütig, waghalsig und spontan. Es ist kaum ein Krieger vorstellbar, der nicht Varus in einer Schlacht angerufen hat. Viele versuchen, durch ihren Mut Varus zu gefallen. Sein Missfallen gilt als Garant für eine Niederlage. In der Ballade „Der Kampf der drei Jahrhunderte" wäre er beinahe gefallen — sein Bruder Esthion und Ænora retteten ihn.",
+    "pantheon": "Trionisch",
+    "rank": "Höhere Gottheit",
+    "aspects": "Krieg, Wettkampf",
+    "weapon": "Schwert (meist Bastardschwert), Schild",
+    "symbol": "Halbkreis auf Ebene, Wolfsrudel",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "varus",
+    "externalId": "varus"
+  },
+  "_id": "a1b2c3d4e5f6a7c8",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "varus",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/varus.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

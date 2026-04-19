@@ -1,0 +1,26 @@
+{
+  "name": "Barros",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Barros, der Herr über die unendlichen Kristallhöhlen, ist der Bruder Hornwans und schätzt diesen sehr. In seinem Reich beherbergt er alle guten Zwerge nach ihrem Tode. In den frühen Zeitaltern, als die Dämonen der Unterwelt sich gegen die Götter auflehnten, war es Barros, der den Kampf entschied. Sein Mut und seine Entschlossenheit haben den Ausschlag gegeben. Er widerstand auch den listenreichen Angeboten Tragurs. Typischer Spruch: „Erst Barros Werk, dann Hornwans Freud'."",
+    "pantheon": "Zwergisch",
+    "rank": "Gottheit",
+    "aspects": "Kampf, Widerstand, Ehre",
+    "weapon": "Zweihand-Axt",
+    "symbol": "Kristallhöhlen, Axt",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "barros",
+    "externalId": "barros"
+  },
+  "_id": "a1b2c3d4e5f6a7b9",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "barros",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/barros.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

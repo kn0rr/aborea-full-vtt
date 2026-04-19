@@ -1,0 +1,26 @@
+{
+  "name": "Seista",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Die Schwester Esthions ist das Sternenlicht. Sie weist Seefahrern den Kurs und Wanderern den Weg. Sie ist die Göttin des Wissens und der Magie. In vielen Schriften wird sie als Sonderheit unter den Göttern benannt — sie scheint etwas von den 'älteren' Göttern zu haben. Die Lichter Seistas, wie die Dienerinnen Seistas sich nennen, haben ewige Jungfräulichkeit gelobt.",
+    "pantheon": "Trionisch",
+    "rank": "Höhere Gottheit",
+    "aspects": "Altvordern, Magie",
+    "weapon": "Stab",
+    "symbol": "Raute, Sterne",
+    "miracleList": "Zeichen (Leitmagie)",
+    "slug": "seista",
+    "externalId": "seista"
+  },
+  "_id": "a1b2c3d4e5f6a7c6",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "seista",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/seista.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

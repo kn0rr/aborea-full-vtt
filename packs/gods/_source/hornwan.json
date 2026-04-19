@@ -1,0 +1,26 @@
+{
+  "name": "Hornwan",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der Gott der Freude wandelt gerne unter den Sterblichen. Er überbringt die Botschaften der Götter und soll schon mit manchem guten Zwerg einen Humpen gehoben haben. Die Reisen Hornwans werden Zwergenkindern am Bett erzählt. Er ist der Bruder Barros' und schätzt diesen sehr. Typischer Spruch eines zwergischen Ausbilders: „Erst Barros Werk, dann Hornwans Freud'."",
+    "pantheon": "Zwergisch",
+    "rank": "Gottheit",
+    "aspects": "Freude",
+    "weapon": "Armbrust",
+    "symbol": "Humpen, Bote",
+    "miracleList": "",
+    "slug": "hornwan",
+    "externalId": "hornwan"
+  },
+  "_id": "a1b2c3d4e5f6a7b5",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "hornwan",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/hornwan.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Elm",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der Große Vater der Halblinge. Gemeinsam mit der Großen Mutter Insa sind Elm und Insa die Stammeltern aller Halblinge. Außer Pria haben sie alle ihre Kinder im Garten Aboreas ihr Glück finden lassen, damit sie dort ihr eigenes Schicksal selbst bestimmen können.",
+    "pantheon": "Halblingisch",
+    "rank": "Gottheit",
+    "aspects": "Väterlichkeit, Schöpfung, Fürsorge",
+    "weapon": "",
+    "symbol": "Großer Vater",
+    "miracleList": "",
+    "slug": "elm",
+    "externalId": "elm"
+  },
+  "_id": "a1b2c3d4e5f6a7cb",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "elm",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/elm.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

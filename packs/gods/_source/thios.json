@@ -1,0 +1,26 @@
+{
+  "name": "Thios",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der jüngste der Götter und Bruder Hemrons ist gewalttätig und streitlustig. Er wurde von seinem Vater aus der Oberwelt auf Zeit in die Unterwelt verbannt — dort soll er wütend seine Tage absitzen. Es gilt als unklug, sein Zeichen offen zur Schau zu tragen, wenn man die anderen Götter nicht verärgern will.",
+    "pantheon": "Trionisch",
+    "rank": "Verbannte Gottheit",
+    "aspects": "Gewalt, Blitz",
+    "weapon": "Flegel, Schleuder",
+    "symbol": "Blitz",
+    "miracleList": "",
+    "slug": "thios",
+    "externalId": "thios"
+  },
+  "_id": "a1b2c3d4e5f6a7c7",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "thios",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/thios.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

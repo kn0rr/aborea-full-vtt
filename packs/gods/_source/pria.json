@@ -1,0 +1,26 @@
+{
+  "name": "Pria",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Pria ist das einzige der vielen Kinder Insas und Elms, das zu ihnen aufgestiegen ist. Alle anderen Halblinge dürfen im Garten Aboreas ihr Glück finden und ihr Schicksal selbst bestimmen.",
+    "pantheon": "Halblingisch",
+    "rank": "Gottheit",
+    "aspects": "Aufstieg, Vollkommenheit",
+    "weapon": "",
+    "symbol": "",
+    "miracleList": "",
+    "slug": "pria",
+    "externalId": "pria"
+  },
+  "_id": "a1b2c3d4e5f6a7cc",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "pria",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/pria.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

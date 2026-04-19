@@ -1,0 +1,26 @@
+{
+  "name": "Tragur",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Der einzige gefürchtete (aber nicht weniger geehrte) Gott der Zwerge. Er herrscht über alle Wasser — in tiefen Brunnen sollen seine Geister unvorsichtige Zwerge in seine kalten Gefilde ziehen. In den unterirdischen Seen finden sich augenlose Kreaturen, die mit magischem Licht Unglückliche in die Tiefen locken. Dort unten soll sich das Tor zur Unterwelt befinden. Ihm kann man nicht trauen — Barros widerstand seinen Angeboten.",
+    "pantheon": "Zwergisch",
+    "rank": "Gefürchtete Gottheit",
+    "aspects": "Magie, Wasser",
+    "weapon": "Bogen, Harpune",
+    "symbol": "Unterirdischer See, blindes Wesen",
+    "miracleList": "",
+    "slug": "tragur",
+    "externalId": "tragur"
+  },
+  "_id": "a1b2c3d4e5f6a7b7",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "tragur",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/tragur.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

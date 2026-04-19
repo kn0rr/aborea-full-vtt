@@ -1,0 +1,26 @@
+{
+  "name": "Minna",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Die Schutzgottheit der angesehenen Braumeister. Sie steht auch für die guten Speisen. Sie gilt als eifersüchtig und aufbrausend — an schlimmen Tagen lässt ihr Gemüt ganze Berge Feuer spucken. Es heißt, alle Zwergenfrauen würden einen Funken von Minna in sich tragen, ganz besonders die rothaarigen.",
+    "pantheon": "Zwergisch",
+    "rank": "Gottheit",
+    "aspects": "Feuer, Braukunst",
+    "weapon": "Hellebarde",
+    "symbol": "Braukessel, Feuer",
+    "miracleList": "",
+    "slug": "minna",
+    "externalId": "minna"
+  },
+  "_id": "a1b2c3d4e5f6a7ba",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "minna",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/minna.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Leceia",
+  "type": "god",
+  "img": "icons/svg/moon.svg",
+  "system": {
+    "description": "Leceia ist still, zurückhaltend und überlegt. Die Töchter Leceias sind Musen, Heilerinnen und Lehrerinnen. Nur als wehrhafte Kleriker sind Männer Diener Leceias. Sie wird aber von beiden Geschlechtern gleichermaßen angebetet. Das 50. Lebensjahr wird bei Bessergestellten gerne mit einer Feier zu Ehren Leceias begangen. Sie herrschte mit Otum über Aborea, während Esthion gefangen war — aus diesem Bund entstand Hemron.",
+    "pantheon": "Trionisch",
+    "rank": "Höhere Gottheit",
+    "aspects": "Handwerk, Heilung, Kunst, Kultur, Mond, Weisheit",
+    "weapon": "Bogen",
+    "symbol": "Mondsichel",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "leceia",
+    "externalId": "leceia"
+  },
+  "_id": "a1b2c3d4e5f6a7c2",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "leceia",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/leceia.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}

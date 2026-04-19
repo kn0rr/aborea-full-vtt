@@ -1,0 +1,26 @@
+{
+  "name": "Otum",
+  "type": "god",
+  "img": "icons/svg/book.svg",
+  "system": {
+    "description": "Otum, der Zweigesichtige, ist der Gott des Meeres und des Schicksals. Er herrschte mit Leceia über Aborea, als Esthion gefangen war — aus diesem Bund kam Hemron hervor. Otum ist launenhaft und gewaltig. Er steht für das Schicksal und den Sturm, die Lüge und die Wut — aber auch für Klarheit und Wahrheit. Er trägt eine riesige Harpune und ein Horn, aus dem er Ozeane fließen lassen kann. Seine Töchter sind kapriziös, und Seeleute singen jeden Abend, um sie zu beschwichtigen.",
+    "pantheon": "Trionisch",
+    "rank": "Höhere Gottheit",
+    "aspects": "Meere, Flüsse, Schicksal, Wind",
+    "weapon": "Alle Stangenwaffen",
+    "symbol": "Delfin, Hai",
+    "miracleList": "Wunder (Leitmagie)",
+    "slug": "otum",
+    "externalId": "otum"
+  },
+  "_id": "a1b2c3d4e5f6a7c5",
+  "flags": {
+    "aborea-v7": {
+      "sourceId": "otum",
+      "sourcePath": "systems/aborea-v7/packs/gods/_source/otum.json",
+      "generated": true
+    }
+  },
+  "ownership": { "default": 0 },
+  "folder": null
+}
