@@ -56,6 +56,8 @@ export class AboreaActorSheet extends ActorSheet {
       gear: actor.items.filter(i => i.type === "gear"),
       skills: actor.items.filter(i => i.type === "skill")
     };
+    context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
+    context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
     context.availablePacks = {
       races: await this._packChoices("race"),
       classes: await this._packChoices("class"),
@@ -104,6 +106,9 @@ export class AboreaActorSheet extends ActorSheet {
     });
     const classItem = actor.items.find(i => i.type === "class");
     system.isLeitmagieClass = !!(classItem?.system?.description ?? "").includes("Leitmagie");
+    const spellListRank = Number(system.skills?.spruchlisten?.rank ?? 0);
+    const knownSpellLists = [...new Set(actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
+    system.spellLists = { capacity: spellListRank, known: knownSpellLists, count: knownSpellLists.length, overflow: knownSpellLists.length > spellListRank && spellListRank > 0 };
     const level = Number(system.resources?.level ?? 1);
     const raceName = (system.details?.race || "").toLowerCase();
     const humanBonus = raceName === "mensch" ? 2 : 0;
@@ -207,6 +212,7 @@ export class AboreaActorSheet extends ActorSheet {
       const hit = index.find(e => e.name === pick.name && e.type === type); if (!hit) return;
       const doc = await pack.getDocument(hit._id);
       const obj = duplicateItemObject(doc);
+      this._checkSpellListCapacity(obj);
       await this.actor.createEmbeddedDocuments("Item", [obj]);
       const note = await this._promptNote(`${itemHistoryLabel(obj)} hinzufügen`);
       await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack, note });
@@ -280,6 +286,7 @@ export class AboreaActorSheet extends ActorSheet {
     if (item.type === "race")  return this._applyRace(item);
     if (item.type === "class") return this._applyClass(item);
     const obj = duplicateItemObject(item);
+    this._checkSpellListCapacity(obj);
     const created = await this.actor.createEmbeddedDocuments("Item", [obj]);
     await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: item.pack || "" });
     return created;
@@ -449,6 +456,9 @@ export class AboreaActorSheet extends ActorSheet {
     const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, Array.isArray(rawCS) ? rawCS : Object.values(rawCS || {}));
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
+    const spruchlistenRank = Number(actorSystem.skills?.spruchlisten?.rank ?? 0);
+    const knownLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
+    if (knownLists.length > spruchlistenRank && knownLists.length > 0) errors.push(`Spruchlisten: ${knownLists.length} bekannt, Rang Spruchlisten erlaubt aber nur ${spruchlistenRank}.`);
     const hpBase = Number(cls?.system?.hitPointsBase ?? 5);
     const zwergBonus = raceName === "zwerg" ? 2 : 0;
     const hpMax = Math.max(1, (hpBase + ABOREA.attributeBonus(finalAttrs.ko.value)) * level + zwergBonus);
@@ -640,6 +650,29 @@ export class AboreaActorSheet extends ActorSheet {
     const note = await this._promptNote(`${name} hinzufügen`);
     await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual",note});
     return created;
+  }
+
+  _groupByList(items) {
+    const groups = {};
+    for (const item of items) {
+      const list = item.system?.list || "Unbekannt";
+      if (!groups[list]) groups[list] = [];
+      groups[list].push(item);
+    }
+    return Object.entries(groups)
+      .map(([list, spells]) => ({ list, spells: spells.slice().sort((a, b) => Number(a.system?.rank ?? 0) - Number(b.system?.rank ?? 0)) }))
+      .sort((a, b) => a.list.localeCompare(b.list));
+  }
+
+  _checkSpellListCapacity(itemObj) {
+    if (itemObj.type !== "spell") return;
+    const spellList = itemObj.system?.list;
+    if (!spellList) return;
+    const currentLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
+    const rank = Number(this.actor.system.skills?.spruchlisten?.rank ?? 0);
+    if (!currentLists.includes(spellList) && currentLists.length >= rank) {
+      ui.notifications.warn(`ABOREA: Neue Spruchliste „${spellList}" überschreitet Kapazität (${currentLists.length}/${rank}). Rang Spruchlisten zu niedrig!`);
+    }
   }
 
   async _promptNote(context = "") {
