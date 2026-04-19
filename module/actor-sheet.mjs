@@ -186,7 +186,10 @@ export class AboreaActorSheet extends ActorSheet {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       if (!itemId) return;
       const item = this.actor.items.get(itemId);
-      if (item) await this._logInventoryEntry("item-remove", itemHistoryLabel(item), { itemType: item.type });
+      if (item) {
+        const note = await this._promptNote(`${itemHistoryLabel(item)} entfernen`);
+        await this._logInventoryEntry("item-remove", itemHistoryLabel(item), { itemType: item.type, note });
+      }
       await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
       if (this.actor.type === "character") await this._recalculateCharacter();
     });
@@ -203,7 +206,8 @@ export class AboreaActorSheet extends ActorSheet {
       const doc = await pack.getDocument(hit._id);
       const obj = duplicateItemObject(doc);
       await this.actor.createEmbeddedDocuments("Item", [obj]);
-      await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack });
+      const note = await this._promptNote(`${itemHistoryLabel(obj)} hinzufügen`);
+      await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack, note });
     });
     html.find(".combat-balance").on("change", async ev => {
       const offensive = Number(ev.currentTarget.value ?? 0);
@@ -483,14 +487,15 @@ export class AboreaActorSheet extends ActorSheet {
     const wallet = normalizeWallet(this.actor.system.wallet);
     const cur = wallet.currencies.find(c => c.key === currencyKey); if (!cur) return;
     const title = `${mode === "deposit" ? "Einzahlen" : "Auszahlen"}: ${cur.name} (${cur.label})`;
-    const amount = await new Promise(resolve => {
-      new Dialog({ title, content: `<form><div class="form-group"><label>Betrag</label><input type="number" name="amount" value="1" min="1" step="1" /></div></form>`,
-        buttons: { ok: { label:"OK", callback: html => resolve(Number(html.find("[name=amount]").val()||0)) }, cancel: { label:"Abbruch", callback: ()=>resolve(0) } },
-        default:"ok", close:()=>resolve(0) }).render(true);
+    const result = await new Promise(resolve => {
+      new Dialog({ title, content: `<form><div class="form-group"><label>Betrag</label><input type="number" name="amount" value="1" min="1" step="1" /></div><div class="form-group"><label>Notiz (optional)</label><input type="text" name="note" placeholder="z.B. Belohnung vom Wirt" /></div></form>`,
+        buttons: { ok: { label:"OK", callback: html => resolve({ amount: Number(html.find("[name=amount]").val()||0), note: html.find("[name=note]").val().trim() }) }, cancel: { label:"Abbruch", callback: ()=>resolve(null) } },
+        default:"ok", close:()=>resolve(null) }).render(true);
     });
-    if (!amount || amount <= 0) return;
+    if (!result || !result.amount || result.amount <= 0) return;
+    const { amount, note } = result;
     cur.amount = mode === "withdraw" ? Math.max(0, Number(cur.amount||0) - amount) : Number(cur.amount||0) + amount;
-    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, cur.label, { amount, currency: cur.label }));
+    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, cur.label, { amount, currency: cur.label, note }));
     await this.actor.update({ "system.wallet": wallet });
   }
 
@@ -622,8 +627,23 @@ export class AboreaActorSheet extends ActorSheet {
     event.preventDefault();
     const type=event.currentTarget.dataset.type; const name=game.i18n.format("ABOREA.NewItem",{type});
     const created=await this.actor.createEmbeddedDocuments("Item",[{name,type,system:{}}]);
-    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual"});
+    const note = await this._promptNote(`${name} hinzufügen`);
+    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual",note});
     return created;
+  }
+
+  async _promptNote(context = "") {
+    return new Promise(resolve => {
+      new Dialog({
+        title: "Notiz hinzufügen",
+        content: `<form><div class="form-group"><label>${context}</label><input type="text" name="note" placeholder="Notiz (optional)" style="width:100%" /></div></form>`,
+        buttons: {
+          ok: { label: "OK", callback: html => resolve(html.find("[name=note]").val().trim()) },
+          skip: { label: "Ohne Notiz", callback: () => resolve("") }
+        },
+        default: "ok", close: () => resolve("")
+      }).render(true);
+    });
   }
 
   _attributeValue(key) { return Number(this.actor.system?.finalAttributes?.[key]?.value??this.actor.system?.attributes?.[key]?.value??5); }

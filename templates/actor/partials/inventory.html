@@ -121,6 +121,7 @@
       <span class="h-action">{{entry.action}}</span>
       <span class="h-label">{{entry.label}}</span>
       <span class="h-amount">{{entry.amount}} {{entry.currency}}</span>
+      {{#if entry.note}}<span class="h-note">{{entry.note}}</span>{{/if}}
     </div>
     {{/each}}
     {{#each system.inventoryHistory as |entry|}}
@@ -129,6 +130,7 @@
       <span class="h-action">{{entry.action}}</span>
       <span class="h-label">{{entry.label}}</span>
       <span class="h-amount">{{entry.itemType}}</span>
+      {{#if entry.note}}<span class="h-note">{{entry.note}}</span>{{/if}}
     </div>
     {{/each}}
   </div>
