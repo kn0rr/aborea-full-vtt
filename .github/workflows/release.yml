@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Update version in system.json
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          jq --arg v "$VERSION" '.version = $v' system.json > system.tmp.json
+          mv system.tmp.json system.json
+
+      - name: Build release zip
+        run: |
+          ZIP_NAME="aborea-full-vtt-main.zip"
+          zip -r "$ZIP_NAME" . \
+            --exclude "*.git*" \
+            --exclude ".claude/*" \
+            --exclude ".github/*" \
+            --exclude "*.gitignore" \
+            --exclude "examples/*" \
+            --exclude "scripts/*" \
+            --exclude "README.md" \
+            --exclude "*.zip"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "ABOREA VTT v${{ steps.version.outputs.version }}"
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            system.json
+            aborea-full-vtt-main.zip
