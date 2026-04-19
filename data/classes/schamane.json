@@ -23,36 +23,19 @@
       "wahrnehmung": "1",
       "wissen": "1"
     },
-    "levelFeatures": [
-      {
-        "level": 1,
-        "key": "fokus",
-        "label": "Fokus (Spruchspeicher)",
-        "type": "focusStorage",
-        "target": "fokus",
-        "description": "Kristallfokus speichert bis zu 1 Rang Zauber pro Stufe. Erneutes Binden kostet 2 MP pro Rang."
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "natur": 1,
+        "wahrnehmung": 1,
+        "magieEntwickeln": 1,
+        "spruchlisten": 1,
+        "wissen": 1
       },
-      {
-        "level": 1,
-        "key": "blutmagie",
-        "label": "Blutmagie",
-        "type": "resourceConversion",
-        "target": "blutmagie",
-        "description": "Kann Trefferpunkte in Magiepunkte umwandeln (1 TP = 1 MP) beim Zaubern."
-      }
-    ],
-    "starterPackage": {}
-  },
-  "_id": "47e0d58a5e4e3856",
-  "flags": {
-    "aborea-v7": {
-      "sourceId": "schamane",
-      "sourcePath": "systems/aborea-v7/packs/classes/_source/schamane.json",
-      "generated": true
+      "notes": [
+        "Schamanischer Fokus als Klassenmerkmal notieren",
+        "Empfohlene Listen: Schamanenmagie"
+      ]
     }
-  },
-  "ownership": {
-    "default": 0
-  },
-  "folder": null
+  }
 }

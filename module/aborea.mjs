@@ -58,7 +58,10 @@ Hooks.once("init", async function () {
     "systems/aborea-v7/templates/audio/soundboard.html"
   ]);
 
-  Handlebars.registerHelper("aboreaEq", function (a, b) { return a === b; });
+  Handlebars.registerHelper("aboreaEq",  function (a, b)   { return a === b; });
+  Handlebars.registerHelper("aboreaJoin",function (arr, sep) { return Array.isArray(arr) ? arr.join(sep || ", ") : ""; });
+  Handlebars.registerHelper("aboreaHas", function (arr, val) { return Array.isArray(arr) && arr.includes(val); });
+  Handlebars.registerHelper("array",     function (...args)  { return args.slice(0, -1); });
   Handlebars.registerHelper("aboreaJoin", function (arr, sep = ", ") { return Array.isArray(arr) ? arr.join(sep) : ""; });
   Handlebars.registerHelper("aboreaHas", function (arr, value) { return Array.isArray(arr) && arr.includes(value); });
 });
@@ -79,14 +82,25 @@ Hooks.once("ready", async function () {
   }
 });
 
-Hooks.on("updateActor", (actor, changes) => {
+/**
+ * XP-Hook: Wenn ein Spielercharakter EP erhält und dadurch
+ * einen Stufenschwellenwert überschreitet, wird der Spieler benachrichtigt.
+ * Der tatsächliche Stufenaufstieg muss manuell per Button bestätigt werden.
+ */
+Hooks.on("updateActor", function (actor, changes) {
   if (actor.type !== "character") return;
-  const newXp = foundry.utils.getProperty(changes, "system.resources.xp");
-  if (newXp === undefined) return;
-  const oldXp = actor.system?.resources?.xp ?? 0;
-  if (newXp === oldXp) return;
-  const sheet = actor.sheet;
-  if (sheet && typeof sheet._checkXpLevelUp === "function") {
-    sheet._checkXpLevelUp(oldXp, newXp);
+  const xpChanged = foundry.utils.hasProperty(changes, "system.resources.xp");
+  if (!xpChanged) return;
+  const xp = Number(actor.system?.resources?.xp ?? 0);
+  const currentLevel = Number(actor.system?.resources?.level ?? 1);
+  const targetLevel  = ABOREA.levelForXp(xp);
+  if (targetLevel > currentLevel) {
+    // Nur dem besitzenden Spieler oder dem GM anzeigen
+    if (!actor.isOwner) return;
+    ui.notifications.info(
+      `🎉 ${actor.name}: Genug EP für Stufe ${targetLevel}! Öffne den Charakterbogen und klicke „Stufe aufsteigen".`,
+      { permanent: false }
+    );
   }
 });
+

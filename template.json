@@ -34,7 +34,6 @@
             "max": 0
           },
           "xp": 0,
-          "xpForNextLevel": 100,
           "level": 1,
           "trainingPoints": 0
         },
@@ -90,14 +89,14 @@
         "creation": {
           "status": "draft",
           "completed": false,
-          "skillsLocked": true,
           "pointsBudget": 35,
           "pointsSpent": 25,
           "pointsRemaining": 10,
           "validationErrors": [],
           "trainingBudget": 8,
           "trainingSpent": 0,
-          "trainingRemaining": 8
+          "trainingRemaining": 8,
+          "appliedStarterPackage": ""
         },
         "traits": {
           "racialArmorBonus": 0,
@@ -240,7 +239,7 @@
           {
             "key": "mu",
             "label": "MU",
-            "name": "Muena",
+            "name": "Münzen unbekannt",
             "amount": 0
           }
         ],
@@ -319,25 +318,7 @@
       "hitPointsBase": 5,
       "magicAttribute": "",
       "special": "",
-      "magicFormula": "",
-      "skillCosts": {
-        "athletik": "2/4",
-        "einflussnahme": "1",
-        "gezielteSprueche": "3",
-        "kunst": "1",
-        "list": "2",
-        "magieEntwickeln": "3/4",
-        "natur": "2",
-        "reiten": "2",
-        "schwimmen": "2",
-        "spruchlisten": "3/4",
-        "waffen": "3/5",
-        "wahrnehmung": "1",
-        "wissen": "1"
-      },
-      "levelFeatures": [],
-      "allowedRaces": [],
-      "forbiddenRaces": []
+      "magicFormula": ""
     },
     "skill": {
       "templates": [

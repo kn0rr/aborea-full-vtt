@@ -29,19 +29,16 @@
         "key": "fokus",
         "label": "Fokus (Spruchspeicher)",
         "type": "focusStorage",
-        "target": "fokus",
-        "description": "Kristallfokus speichert bis zu 1 Rang Zauber pro Stufe. Erneutes Binden kostet 2 MP pro Rang."
+        "description": "Kristallfokus speichert Zauber (1 Rang pro Stufe, 2 MP/Rang zum Binden)."
       },
       {
         "level": 1,
         "key": "blutmagie",
         "label": "Blutmagie",
         "type": "resourceConversion",
-        "target": "blutmagie",
-        "description": "Kann Trefferpunkte in Magiepunkte umwandeln (1 TP = 1 MP) beim Zaubern."
+        "description": "Kann TP in MP umwandeln (1:1) beim Zaubern."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "47e0d58a5e4e3856",
   "flags": {

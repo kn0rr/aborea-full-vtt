@@ -31,7 +31,7 @@
         "type": "maneuverBonus",
         "target": "information",
         "value": 1,
-        "description": "Bonus von +1 auf Manöver zur Informationsbeschaffung (Einflussnahme, List, Wahrnehmung)."
+        "description": "Bonus von +1 auf Manöver zur Informationsbeschaffung."
       },
       {
         "level": 1,
@@ -39,7 +39,6 @@
         "label": "Zeichen (Geheimschrift)",
         "type": "sense",
         "target": "geheimschrift",
-        "value": 1,
         "description": "Barden können bardische Geheimschrift lesen und schreiben."
       },
       {
@@ -47,11 +46,9 @@
         "key": "gemeinsamesSpiel",
         "label": "Gemeinsames Spiel",
         "type": "pool",
-        "target": "gemeinsamesSpiel",
-        "description": "Mehrere Barden können einen Magiepunkte-Pool bilden und die Wirkungen addieren."
+        "description": "Mehrere Barden können einen Magiepunkte-Pool bilden."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "519cc01436242caf",
   "flags": {

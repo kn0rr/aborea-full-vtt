@@ -40,18 +40,16 @@
         "type": "maneuverBonus",
         "target": "natur",
         "value": 1,
-        "description": "Bonus von +1 auf Natur-Manöver."
+        "description": "+1 auf Natur-Manöver."
       },
       {
         "level": 5,
         "key": "tierfreund",
         "label": "Tierfreund (ab Stufe 5)",
         "type": "companion",
-        "target": "tierfreund",
-        "description": "Ab Stufe 5: Ein Tier (Stufe ≤ Waldläufer-Stufe minus 4) kann dauerhafter Begleiter werden."
+        "description": "Ab Stufe 5: dauerhafter Tier-Begleiter möglich."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "db04a475f8c3cafc",
   "flags": {

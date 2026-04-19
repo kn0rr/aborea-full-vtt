@@ -29,53 +29,46 @@
         "key": "magieWahrnehmen",
         "label": "Magie wahrnehmen",
         "type": "sense",
-        "target": "senseMagic",
-        "description": "Kann aktive Magie in Sichtweite erkennen (1 Runde Konzentration)."
+        "description": "Kann aktive Magie in Sichtweite erkennen."
       },
       {
         "level": 1,
         "key": "grundzauber",
-        "label": "Grundzauber (Lichtbogen/Funkenregen)",
+        "label": "Grundzauber",
         "type": "dailyPower",
-        "target": "grundzauber",
-        "description": "Kann einen Lichtbogen oder Funkenregen formen (1 Runde/Stufe, wie helle Laterne)."
+        "description": "Lichtbogen oder Funkenregen formen."
       },
       {
         "level": 1,
         "key": "zauberbuch",
-        "label": "Zauberbuch (+2 Manöver)",
+        "label": "Zauberbuch (+2)",
         "type": "castingBonus",
         "value": 2,
-        "target": "zauberbuch",
-        "description": "Zauberbuch gibt +2 Bonus auf Zauber-Manöver (wenn nicht in Zeitnot, +10 Min/Rang)."
+        "description": "+2 Bonus auf Zauber-Manöver wenn nicht in Zeitnot."
       },
       {
         "level": 1,
         "key": "schriftrollen",
         "label": "Schriftrollen",
         "type": "sense",
-        "target": "schriftrollen",
-        "description": "Kann Schriftrollen für ungelernte Zauber benutzen (kostet MP)."
+        "description": "Kann Schriftrollen für ungelernte Zauber nutzen."
       },
       {
         "level": 1,
         "key": "zauberstab",
-        "label": "Zauberstab (Rang-1 Zauber, 3×/Tag)",
+        "label": "Zauberstab (3×/Tag)",
         "type": "dailyPower",
         "usesPerDay": 3,
-        "target": "zauberstab",
-        "description": "Startzauberstab enthält einen Rang-1-Zauber, 3× täglich kostenlos (Optionen kosten MP). Gilt als gezielter Zauber."
+        "description": "Startzauberstab: Rang-1-Zauber 3× täglich kostenlos."
       },
       {
         "level": 10,
         "key": "freundZauberers",
         "label": "Freund des Zauberers (ab Stufe 10)",
         "type": "companion",
-        "target": "freundZauberers",
-        "description": "Ab Stufe 10: magische Kreatur als gelegentlicher Freund (Stufe ≤ Zauberer-Stufe minus 5)."
+        "description": "Ab Stufe 10: magische Kreatur als gelegentlicher Freund."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "bf924c8446d18402",
   "flags": {

@@ -27,11 +27,11 @@
       {
         "level": 1,
         "key": "fallen",
-        "label": "Fallen finden/entschärfen +1",
+        "label": "Fallen +1",
         "type": "maneuverBonus",
         "target": "fallen",
         "value": 1,
-        "description": "Bonus von +1 auf Manöver zum Finden und Entschärfen von Fallen."
+        "description": "+1 auf Fallen finden/entschärfen."
       },
       {
         "level": 1,
@@ -40,16 +40,16 @@
         "type": "maneuverBonus",
         "target": "list",
         "value": 1,
-        "description": "Bonus von +1 auf Schlösser öffnen (List)."
+        "description": "+1 auf Schlösser öffnen (List)."
       },
       {
         "level": 1,
         "key": "geheimtueren",
-        "label": "Geheimtüren entdecken +1",
+        "label": "Geheimtüren +1",
         "type": "maneuverBonus",
         "target": "wahrnehmung",
         "value": 1,
-        "description": "Bonus von +1 auf Geheimtüren entdecken."
+        "description": "+1 auf Geheimtüren entdecken."
       },
       {
         "level": 1,
@@ -58,23 +58,14 @@
         "type": "maneuverBonus",
         "target": "stealth",
         "value": 1,
-        "description": "Bonus von +1 auf Schleichen und Tarnen."
+        "description": "+1 auf Schleichen und Tarnen."
       },
       {
         "level": 1,
         "key": "heimlicherAngriff",
         "label": "Heimlicher Angriff",
         "type": "dailyPower",
-        "target": "heimlicherAngriff",
         "description": "Bei Überraschung: doppelter Schaden (erster Angriff)."
-      },
-      {
-        "level": 1,
-        "key": "ausweichen",
-        "label": "Ausweichen",
-        "type": "castingBonus",
-        "target": "ausweichen",
-        "description": "Rang in Athletik als Rüstungsbonus (max. 5), wenn max. Lederrüstung und nicht überrascht."
       },
       {
         "level": 1,
@@ -83,18 +74,16 @@
         "type": "maneuverBonus",
         "target": "gift",
         "value": 1,
-        "description": "Bonus von +1 auf Manöver mit Giften."
+        "description": "+1 auf Manöver mit Giften."
       },
       {
         "level": 1,
         "key": "magGegenstände",
         "label": "Magische Gegenstände",
         "type": "sense",
-        "target": "magGegenstände",
         "description": "Kann magische Gegenstände sofort einsetzen."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "94ff8a9606fd5c99",
   "flags": {

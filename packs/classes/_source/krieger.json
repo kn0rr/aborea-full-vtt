@@ -29,8 +29,7 @@
         "key": "magWaffen",
         "label": "Magische Waffen/Rüstungen",
         "type": "sense",
-        "target": "magWaffen",
-        "description": "Kann magische Waffen und Rüstungen ohne Verständnis benutzen."
+        "description": "Kann magische Waffen/Rüstungen ohne Verständnis nutzen."
       },
       {
         "level": 1,
@@ -46,7 +45,6 @@
         "key": "unzerstoerbar",
         "label": "Unzerstörbar (0 TP kein KO)",
         "type": "sense",
-        "target": "unzerstoerbar",
         "description": "Krieger wird nicht bei 0 TP bewusstlos."
       },
       {
@@ -56,34 +54,17 @@
         "type": "maneuverBonus",
         "target": "einflussnahme",
         "value": 1,
-        "description": "Bonus von +1 auf Einflussnahme beim Drohen/Führen."
+        "description": "+1 auf Einflussnahme beim Drohen/Führen."
       },
       {
         "level": 8,
         "key": "gefolgsleute8",
-        "label": "Gefolgsleute (4×Stufe1)",
+        "label": "Gefolgsleute (ab Stufe 8)",
         "type": "followers",
         "followers": 4,
         "description": "Kann 4 Gefolgsleute Stufe 1 anwerben."
-      },
-      {
-        "level": 9,
-        "key": "gefolgsleute9",
-        "label": "Gefolgsleute (8×Stufe1, 2×Stufe2)",
-        "type": "followers",
-        "followers": 8,
-        "description": "Kann 8 Gefolgsleute Stufe 1 und 2 Stufe 2 anwerben."
-      },
-      {
-        "level": 10,
-        "key": "gefolgsleute10",
-        "label": "Gefolgsleute (12×Stufe1, 3×Stufe2)",
-        "type": "followers",
-        "followers": 12,
-        "description": "Kann 12 Gefolgsleute Stufe 1 und 3 Stufe 2 anwerben."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "e41eb9e29ecc4d99",
   "flags": {

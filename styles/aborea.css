@@ -1,153 +1,492 @@
+/* ═══════════════════════════════════════════════════
+   aborea.css — Aborea System Stylesheet
+   ═══════════════════════════════════════════════════ */
+
+/* ── Design-Tokens ─────────────────────────────────── */
+:root {
+  --aborea-parchment:   #f3e8d2;
+  --aborea-parchment-2: #faf6ec;
+  --aborea-border:      #8b7d6b;
+  --aborea-border-light:rgba(80,60,45,.2);
+  --aborea-red:         #7a1010;
+  --aborea-brown:       #5b4b3a;
+  --aborea-gold:        #c09540;
+  --aborea-green:       #2d6a2d;
+  --aborea-blue:        #1e4a7a;
+  --aborea-radius:      10px;
+  --aborea-radius-sm:   6px;
+  --aborea-shadow:      0 1px 4px rgba(0,0,0,.12);
+}
+
+/* ── Basis-Sheet ────────────────────────────────────── */
 .aborea-sheet {
   color: #1f1f1f;
   background:
-    linear-gradient(rgba(243, 232, 210, 0.88), rgba(243, 232, 210, 0.9)),
+    linear-gradient(rgba(243,232,210,0.88), rgba(243,232,210,0.9)),
     url("../assets/images/leet-background.svg") center/cover no-repeat;
   border-radius: 12px;
   padding: 8px;
+  font-family: var(--font-primary, "Signika", sans-serif);
 }
 
+/* ── Header ─────────────────────────────────────────── */
 .aborea-sheet .sheet-header {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: 12px;
   align-items: start;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
-
 .aborea-sheet .profile-img {
-  width: 120px;
-  height: 120px;
+  width: 110px; height: 110px;
   object-fit: cover;
-  border: 1px solid #666;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  border: 2px solid var(--aborea-border);
+  border-radius: var(--aborea-radius);
+  box-shadow: var(--aborea-shadow);
 }
-
-.aborea-sheet .header-grid,
-.aborea-sheet .combat-grid,
-.aborea-sheet .attributes-grid,
-.aborea-sheet .skill-list {
-  display: grid;
-  gap: 8px;
+.aborea-sheet .header-fields h1 input {
+  font-size: 1.3rem; font-weight: 700;
 }
-
-.aborea-sheet .header-grid,
-.aborea-sheet .combat-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
 .aborea-sheet .header-grid {
-  row-gap: 8px;
-}
-
-.aborea-sheet .attributes-grid,
-.aborea-sheet .skill-list {
-  grid-template-columns: 1fr;
-}
-
-.aborea-sheet .panel {
-  border: 1px solid #8b7d6b;
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: rgba(250, 246, 236, 0.84);
-  box-shadow: 0 1px 4px rgba(0,0,0,.12);
-}
-
-.aborea-sheet .panel.inset {
-  background: rgba(255,255,255,0.55);
-  margin-top: 12px;
-}
-
-.aborea-sheet .panel-header,
-.aborea-sheet .attribute-row,
-.aborea-sheet .resource-row,
-.aborea-sheet .item-row,
-.aborea-sheet .skill-row,
-.aborea-sheet .summary-row {
   display: grid;
-  gap: 8px;
-  align-items: center;
-}
-
-.aborea-sheet .panel-header {
-  grid-template-columns: 1fr auto;
-}
-
-.aborea-sheet .attribute-row {
-  grid-template-columns: minmax(120px, 1fr) 80px minmax(100px, 140px);
-}
-
-.aborea-sheet .resource-row {
-  grid-template-columns: minmax(52px,auto) 90px 20px 90px auto;
-  margin-bottom: 8px;
-}
-
-.aborea-sheet .summary-row {
-  grid-template-columns: minmax(150px,1fr) minmax(110px,180px);
-  margin-bottom: 8px;
-}
-
-.aborea-sheet .item-row {
-  grid-template-columns: 1fr auto auto auto auto;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 6px;
   margin-bottom: 6px;
 }
-
-.aborea-sheet .skill-row {
-  grid-template-columns: minmax(180px,1fr) 160px 70px 100px;
+.aborea-sheet .header-grid.compact {
+  grid-template-columns: minmax(160px,1fr) auto minmax(160px,1fr) auto;
+  gap: 6px;
 }
 
-.aborea-sheet .creation-metrics {
+/* ── Stufenaufstieg-Banner ──────────────────────────── */
+.levelup-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #fffbe6, #fff3c0);
+  border: 2px solid var(--aborea-gold);
+  border-radius: var(--aborea-radius);
+  padding: 10px 16px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(192,149,64,.25);
+}
+.levelup-banner button {
+  margin-left: auto;
+  background: var(--aborea-gold);
+  color: #fff;
+  border: none;
+  border-radius: var(--aborea-radius-sm);
+  padding: 6px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.levelup-banner button:hover { background: #a07830; }
+
+/* ── Tabs ───────────────────────────────────────────── */
+.aborea-sheet .tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--aborea-border-light);
+  padding-bottom: 0;
+}
+.aborea-sheet .tabs .item {
+  padding: 6px 14px;
+  border-radius: var(--aborea-radius-sm) var(--aborea-radius-sm) 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background .15s;
+}
+.aborea-sheet .tabs .item.active {
+  background: var(--aborea-parchment-2);
+  border-color: var(--aborea-border);
+  border-bottom-color: var(--aborea-parchment-2);
+  color: var(--aborea-red);
+  font-weight: 700;
+  margin-bottom: -2px;
+}
+.aborea-sheet .tabs .item:hover:not(.active) {
+  background: rgba(255,255,255,.5);
+}
+
+/* ── Panel ──────────────────────────────────────────── */
+.aborea-sheet .panel {
+  border: 1px solid var(--aborea-border);
+  border-radius: var(--aborea-radius);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: rgba(250,246,236,.84);
+  box-shadow: var(--aborea-shadow);
+}
+.aborea-sheet .panel.inset {
+  background: rgba(255,255,255,.55);
+  margin-top: 10px;
+}
+.aborea-sheet .panel h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--aborea-red);
+  border-bottom: 1px solid var(--aborea-border-light);
+  padding-bottom: 4px;
+}
+.aborea-sheet .panel h3, .aborea-sheet .panel h4 {
+  margin: 8px 0 4px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--aborea-brown);
+}
+
+/* ── Panel-Header (Zeile: Titel + Aktionen) ─────────── */
+.aborea-sheet .panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.aborea-sheet .panel-header h2 { margin: 0; border: none; padding: 0; flex: 1; }
+
+/* ── Grid-Layouts ───────────────────────────────────── */
+.grid.grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.aborea-sheet .combat-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 10px;
-  margin: 10px 0 12px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 8px;
+}
+.aborea-sheet .attributes-grid { display: flex; flex-direction: column; gap: 6px; }
+
+/* ── Attributzeile ──────────────────────────────────── */
+.aborea-sheet .attribute-row {
+  display: grid;
+  grid-template-columns: minmax(130px,1fr) 80px 56px;
+  align-items: center;
+  gap: 8px;
+}
+.aborea-sheet .creation-attributes-grid .attribute-row {
+  grid-template-columns: minmax(140px,1.4fr) 90px 80px 100px 70px;
+}
+.aborea-sheet .creation-attributes-grid .attribute-header {
+  font-weight: 700;
+  border-bottom: 1px solid var(--aborea-border-light);
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+}
+.aborea-sheet .creation-attributes-grid .attribute-header span,
+.aborea-sheet .creation-attributes-grid .creation-attribute-row span {
+  text-align: center;
 }
 
-.aborea-sheet .metric-card {
+/* ── Ressourcen-Zeile ───────────────────────────────── */
+.aborea-sheet .resource-row {
+  display: grid;
+  grid-template-columns: 36px 88px 16px 88px auto;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* ── Badge & Labels ─────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 26px;
+  border-radius: 99px;
+  background: rgba(120,90,60,.12);
+  border: 1px solid var(--aborea-border-light);
+  font-weight: 700;
+  font-size: .9rem;
+  padding: 0 8px;
+}
+.center { text-align: center; }
+
+/* ── Metriken (3er-Raster) ──────────────────────────── */
+.creation-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px,1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+.metric-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px;
-  border: 1px solid rgba(80,60,45,.25);
-  border-radius: 10px;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--aborea-border-light);
+  border-radius: var(--aborea-radius);
   background: rgba(255,255,255,.45);
 }
+.metric-card label { font-size: .8rem; font-weight: 600; color: var(--aborea-brown); }
+.metric-card .metric-value { font-size: 1.2rem; font-weight: 700; text-align: right; }
+.metric-card.metric-warn { border-color: #d97706; background: rgba(254,243,199,.6); }
 
-.aborea-sheet .metric-card label {
-  font-size: .85rem;
+/* ── Validierungs-Panel ─────────────────────────────── */
+.validation-panel { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--aborea-border-light); }
+.validation-grid { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.summary-row { display: grid; grid-template-columns: minmax(130px,1fr) 1fr; gap: 8px; align-items: center; font-size: .9rem; }
+.summary-row.row-ok span { color: var(--aborea-green); font-weight: 700; }
+.status-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: .8rem; font-weight: 600; }
+.status-badge.status-draft    { background: #fde68a; color: #92400e; }
+.status-badge.status-ready    { background: #d1fae5; color: #065f46; }
+.status-badge.status-leveling { background: #dbeafe; color: #1e40af; }
+.validation-errors { margin: 6px 0 0 1rem; color: #b91c1c; font-size: .88rem; }
+.valid-hint { color: var(--aborea-green); font-weight: 600; margin: 4px 0 0; }
+
+/* ── Kostentabelle ──────────────────────────────────── */
+.cost-reference-panel { overflow-x: auto; }
+.cost-reference-table { width: 100%; border-collapse: collapse; }
+.cost-reference-table th,
+.cost-reference-table td { border: 1px solid var(--aborea-border-light); padding: 5px 8px; text-align: center; font-size: .88rem; }
+.cost-reference-table th { background: rgba(120,90,60,.12); font-weight: 700; }
+
+/* ── Hint-Texte ─────────────────────────────────────── */
+.hint-text { font-size: .85rem; color: var(--aborea-brown); margin: 0 0 8px; }
+
+/* ── Buttons (globale Typen) ────────────────────────── */
+.aborea-sheet button, .btn-sm {
+  border-radius: var(--aborea-radius-sm);
+  cursor: pointer;
+  transition: filter .12s;
+}
+.btn-sm { padding: 3px 10px; font-size: .85rem; height: 26px; }
+.btn-icon { width: 26px; height: 26px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: .85rem; }
+.btn-danger { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+.btn-danger:hover { background: #fca5a5; }
+.btn-primary { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+.btn-primary:hover { background: #bfdbfe; }
+.aborea-sheet button:hover:not(:disabled) { filter: brightness(0.92); }
+.aborea-sheet button:disabled { opacity: .45; cursor: not-allowed; }
+.button-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.button-row.compact { gap: 4px; }
+
+/* ── Skill-Listen ───────────────────────────────────── */
+.skill-list { display: flex; flex-direction: column; gap: 6px; }
+
+.skill-row {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid var(--aborea-border-light);
+  border-radius: var(--aborea-radius-sm);
+  background: rgba(255,255,255,.4);
+}
+.skill-row:hover { background: rgba(255,255,255,.6); }
+
+.skill-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.skill-name { font-weight: 600; font-size: .95rem; }
+.skill-submeta { display: flex; flex-wrap: wrap; gap: 6px; font-size: .8rem; color: var(--aborea-brown); }
+
+.skill-cost-badge, .skill-max-badge, .skill-attr-tag {
+  background: rgba(120,90,60,.1);
+  border-radius: 99px;
+  padding: 1px 7px;
+  font-size: .78rem;
+}
+.class-bonus-tag {
+  background: rgba(30,74,122,.1);
+  color: var(--aborea-blue);
+  border-radius: 99px;
+  padding: 1px 7px;
+  font-size: .78rem;
   font-weight: 600;
 }
 
-.aborea-sheet .metric-card input,
-.aborea-sheet .summary-row input {
-  text-align: right;
+/* Rank-Anzeige (keine Input-Box) */
+.skill-rank-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  border-radius: var(--aborea-radius-sm);
+  border: 1px solid var(--aborea-border-light);
+  background: rgba(255,255,255,.7);
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0 6px;
+}
+.skill-total-display { font-size: .8rem; color: var(--aborea-brown); }
+
+/* Inline-Controls (±-Buttons + Rank) */
+.inline-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
-.aborea-sheet .validation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 8px 12px;
-  margin-bottom: 10px;
+.locked-hint {
+  font-size: .82rem;
+  color: var(--aborea-brown);
+  opacity: .8;
+  font-style: italic;
 }
 
-.aborea-sheet .tabs {
+/* Custom-Skill im Erschaffungs-Tab */
+.custom-skill-row { border-color: rgba(30,74,122,.2); background: rgba(219,234,254,.2); }
+.skill-name-input { min-width: 140px; font-weight: 600; }
+
+/* Klassenbonus-Info (Kapseln über der Liste) */
+.class-bonus-info { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.bonus-pill {
+  background: rgba(30,74,122,.1);
+  color: var(--aborea-blue);
+  border: 1px solid rgba(30,74,122,.2);
+  border-radius: 99px;
+  padding: 2px 10px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+
+/* Feature-Liste (Besonderes-Tab) */
+.feature-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.feature-list li { font-size: .9rem; }
+.feature-level-badge {
+  display: inline-block;
+  background: var(--aborea-red);
+  color: #fff;
+  border-radius: 99px;
+  padding: 1px 8px;
+  font-size: .75rem;
+  font-weight: 700;
+  margin-right: 4px;
+}
+.uses-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; background: #d1fae5; color: #065f46; font-size: .82rem; font-weight: 700; }
+.uses-badge.uses-spent { background: #fee2e2; color: #b91c1c; }
+.activatable-feature-row { grid-template-columns: 1fr auto auto; }
+
+/* ── Item-Zeilen (Inventar) ─────────────────────────── */
+.item-row {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--aborea-border-light);
+  font-size: .9rem;
 }
+.item-row:last-child { border-bottom: none; }
+.item-row:hover { background: rgba(255,255,255,.5); border-radius: var(--aborea-radius-sm); }
+.item-name { flex: 1; font-weight: 500; }
+.item-detail { color: var(--aborea-brown); font-size: .82rem; }
+.item-tag { background: rgba(120,90,60,.1); border-radius: 99px; padding: 1px 8px; font-size: .78rem; }
+.item-actions { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; }
+.miracle-row .item-name::before { content: "✨ "; }
 
-.aborea-sheet .tabs .item {
-  border-bottom: 2px solid transparent;
-  padding-bottom: 4px;
+/* ── Wallet ─────────────────────────────────────────── */
+.wallet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 6px;
 }
-
-.aborea-sheet .tabs .item.active {
-  border-color: #7a1010;
+.wallet-card {
+  border: 1px solid var(--aborea-border-light);
+  border-radius: var(--aborea-radius);
+  padding: 10px 12px;
+  background: rgba(255,255,255,.5);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
+.wallet-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wallet-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--aborea-red);
+  min-width: 28px;
+}
+.wallet-name {
+  font-size: .82rem;
+  color: var(--aborea-brown);
+  flex: 1;
+}
+.wallet-amount {
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-align: center;
+  color: #1f1f1f;
+  letter-spacing: -.5px;
+}
+.wallet-card-actions { display: flex; gap: 6px; }
+.wallet-card-actions button { flex: 1; }
+.wallet-hint { margin-top: 4px; }
 
+/* Historie */
+.history-list { max-height: 220px; overflow: auto; display: flex; flex-direction: column; gap: 3px; }
+.history-row { display: grid; grid-template-columns: 160px 100px 1fr auto; gap: 8px; font-size: .8rem; padding: 4px 6px; border-radius: 4px; }
+.history-row:nth-child(odd) { background: rgba(255,255,255,.3); }
+.h-stamp { color: var(--aborea-brown); font-size: .75rem; }
+.h-action { font-weight: 600; }
+.h-amount { text-align: right; font-weight: 600; color: var(--aborea-green); }
+
+/* ── Begleiter ──────────────────────────────────────── */
+.companion-dropzone { border: 2px dashed rgba(80,80,120,.3); border-radius: var(--aborea-radius); }
+.companion-add-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+.companion-add-row select { flex: 1; min-width: 180px; }
+.companion-list { display: flex; flex-direction: column; gap: 8px; }
+.companion-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--aborea-border-light);
+  border-radius: var(--aborea-radius-sm);
+  background: rgba(255,255,255,.4);
+}
+.companion-info { display: flex; flex-direction: column; gap: 2px; }
+.companion-info strong { font-size: .95rem; }
+.companion-info small { font-size: .8rem; color: var(--aborea-brown); }
+.expired-label { color: #b91c1c; font-weight: 700; }
+.drop-help { margin-top: 4px; }
+
+/* ── Kompendium-Picker-Dialog ───────────────────────── */
+.aborea-compendium-picker .dialog-content { padding: 0; }
+.compendium-picker { display: flex; flex-direction: column; height: 380px; }
+.cp-search {
+  margin: 10px;
+  padding: 8px 12px;
+  border-radius: var(--aborea-radius-sm);
+  border: 1px solid var(--aborea-border);
+  font-size: .95rem;
+  width: calc(100% - 20px);
+  box-sizing: border-box;
+}
+.cp-results { flex: 1; overflow-y: auto; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 3px; }
+.cp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: var(--aborea-radius-sm);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .1s;
+}
+.cp-row:hover { background: rgba(122,16,16,.08); border-color: rgba(122,16,16,.2); }
+.cp-name { font-weight: 500; }
+.cp-pack { font-size: .78rem; color: var(--aborea-brown); }
+.cp-empty { color: var(--aborea-brown); font-style: italic; text-align: center; padding: 16px; }
+
+/* ── Pillen & Tags ──────────────────────────────────── */
+.pill-list { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { border-radius: 99px; padding: 3px 12px; font-size: .85rem; font-weight: 500; }
+.pill-race  { background: #fef9c3; border: 1px solid #fde047; color: #854d0e; }
+.pill-class { background: #dbeafe; border: 1px solid #93c5fd; color: #1e40af; }
+
+/* ── Inputs global ──────────────────────────────────── */
 .aborea-sheet input[type="text"],
 .aborea-sheet input[type="number"],
 .aborea-sheet select,
@@ -156,312 +495,50 @@
   min-width: 0;
   box-sizing: border-box;
 }
-
-.aborea-sheet textarea {
-  min-height: 120px;
+.aborea-sheet textarea { min-height: 120px; }
+.aborea-sheet input[disabled], .aborea-sheet select[disabled] {
+  background: rgba(0,0,0,.04);
+  cursor: default;
 }
 
+/* ── Chat-Karte ─────────────────────────────────────── */
 .aborea-chat-card {
-  border: 1px solid #8b7d6b;
+  border: 1px solid var(--aborea-border);
   border-radius: 8px;
-  padding: 8px 10px;
+  padding: 10px 12px;
   background: #f7f0e0;
 }
+.aborea-chat-card h2 { font-size: 1rem; margin: 0 0 6px; color: var(--aborea-red); }
+.aborea-chat-card h3 { font-size: .9rem; margin: 8px 0 4px; }
 
-.sheet-header .header-grid.compact {
-  grid-template-columns: minmax(180px,1fr) auto minmax(180px,1fr) auto;
-  margin-top: .5rem;
-}
-
-.pill-list { display:flex; gap:.4rem; flex-wrap: wrap; }
-.pill { background:#ddd; border-radius:999px; padding:.15rem .5rem; }
-.aborea-sheet .panel { margin-bottom: .75rem; }
-.button-row { display:flex; gap:.5rem; flex-wrap: wrap; align-items:center; }
-.button-row.compact { gap:.35rem; }
-.validation-errors { margin: .5rem 0 0 1.25rem; }
-.creation-skill-list .skill-row { grid-template-columns: minmax(180px,1fr) 130px 110px minmax(120px,160px); }
-
-@media (max-width: 900px) {
-  .aborea-sheet .sheet-header {
-    grid-template-columns: 1fr;
-  }
-  .sheet-header .header-grid.compact,
-  .aborea-sheet .header-grid,
-  .aborea-sheet .combat-grid {
-    grid-template-columns: 1fr;
-  }
-  .aborea-sheet .creation-metrics {
-    grid-template-columns: 1fr;
-  }
-  .aborea-sheet .resource-row {
-    grid-template-columns: minmax(52px,auto) 1fr 20px 1fr auto;
-  }
-  .aborea-sheet .skill-row,
-  .creation-skill-list .skill-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-.aborea-sheet .creation-attributes-grid {
-  gap: 6px;
-}
-
-.aborea-sheet .creation-attributes-grid .attribute-row {
-  grid-template-columns: minmax(150px, 1.4fr) minmax(72px, 90px) minmax(72px, 90px) minmax(88px, 110px) minmax(70px, 90px);
-}
-
-.aborea-sheet .creation-attributes-grid .attribute-header {
-  font-weight: 700;
-  border-bottom: 1px solid rgba(80,60,45,.25);
-  padding-bottom: 4px;
-  margin-bottom: 2px;
-}
-
-.aborea-sheet .creation-attributes-grid .attribute-header span,
-.aborea-sheet .creation-attributes-grid .creation-attribute-row span {
-  text-align: center;
-}
-
-.aborea-sheet .creation-attributes-grid .creation-attribute-row label {
-  font-weight: 600;
-}
-
-.aborea-sheet .cost-reference-panel {
-  margin-top: 12px;
-  overflow-x: auto;
-}
-
-.aborea-sheet .cost-reference-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.aborea-sheet .cost-reference-table th,
-.aborea-sheet .cost-reference-table td {
-  border: 1px solid rgba(80,60,45,.2);
-  padding: 6px 8px;
-  text-align: center;
-}
-
-.aborea-sheet .cost-reference-table th {
-  background: rgba(120,90,60,.12);
-}
-
-@media (max-width: 900px) {
-  .aborea-sheet .creation-attributes-grid .attribute-row {
-    grid-template-columns: 1fr;
-  }
-  .aborea-sheet .creation-attributes-grid .attribute-header {
-    display: none;
-  }
-}
-
-
-/* UI polish for character creation and skill controls */
-.aborea-sheet .creation-skill-list {
-  gap: 10px;
-}
-
-.aborea-sheet .creation-skill-list .creation-skill-row {
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid rgba(80,60,45,.18);
-  border-radius: 10px;
-  background: rgba(255,255,255,.42);
-}
-
-.aborea-sheet .creation-skill-list .skill-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.aborea-sheet .creation-skill-list .skill-name {
-  font-weight: 600;
-}
-
-.aborea-sheet .creation-skill-list .skill-submeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  color: #5b4b3a;
-  font-size: .9rem;
-}
-
-.aborea-sheet .inline-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  justify-self: end;
-}
-
-.aborea-sheet .inline-controls input {
-  width: 52px;
-  min-width: 52px;
-  text-align: center;
-  font-weight: 700;
-}
-
-.aborea-sheet .inline-controls button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  line-height: 1;
-}
-
-.aborea-sheet .creation-metrics .metric-card input {
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.aborea-sheet .validation-grid .summary-row {
-  margin-bottom: 0;
-}
-
-.aborea-sheet .validation-grid {
-  align-items: start;
-}
-
-@media (max-width: 900px) {
-  .aborea-sheet .creation-skill-list .creation-skill-row {
-    grid-template-columns: 1fr;
-  }
-
-  .aborea-sheet .inline-controls {
-    justify-self: start;
-  }
-}
-
-
-.skill-editor-row { display:grid; grid-template-columns: 1fr auto; align-items:center; gap:10px; }
-.skill-name-input { min-width: 180px; }
-.wallet-list, .history-list { display:flex; flex-direction:column; gap:8px; }
-.wallet-row, .history-row { display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; }
-.wallet-meta { display:flex; flex-direction:column; }
-.pack-import-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-.pack-import-row select { min-width: 180px; }
-.history-row { grid-template-columns: 170px 110px 1fr auto; font-size: 12px; }
-.history-list { max-height: 240px; overflow:auto; }
-.wallet-controls input { width: 72px; text-align:center; }
-
-/* Visual dice overlay */
-.aborea-dice-overlay.hidden { display:none; }
-.aborea-dice-overlay.visible { display:block; }
+/* ── Würfel-Overlay ─────────────────────────────────── */
+.aborea-dice-overlay.hidden { display: none; }
+.aborea-dice-overlay.visible { display: block; }
 #aborea-dice-overlay { position: fixed; inset: 0; z-index: 10000; }
-#aborea-dice-overlay .aborea-dice-backdrop { position:absolute; inset:0; background: rgba(10,10,18,0.55); backdrop-filter: blur(3px); }
-#aborea-dice-overlay .aborea-dice-panel { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); min-width:220px; padding:20px 24px; border-radius:16px; background:linear-gradient(180deg, rgba(31,26,22,0.96), rgba(16,14,12,0.96)); box-shadow:0 16px 40px rgba(0,0,0,0.45); text-align:center; border:1px solid rgba(255,255,255,0.08); }
+#aborea-dice-overlay .aborea-dice-backdrop { position: absolute; inset: 0; background: rgba(10,10,18,.55); backdrop-filter: blur(3px); }
+#aborea-dice-overlay .aborea-dice-panel { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); min-width: 220px; padding: 20px 24px; border-radius: 16px; background: linear-gradient(180deg, rgba(31,26,22,.96), rgba(16,14,12,.96)); box-shadow: 0 16px 40px rgba(0,0,0,.45); text-align: center; border: 1px solid rgba(255,255,255,.08); }
 #aborea-dice-overlay .aborea-dice-label { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
-#aborea-dice-overlay .aborea-die { width: 90px; height: 90px; margin: 0 auto 12px; display:flex; align-items:center; justify-content:center; transform: rotate(calc(var(--aborea-spin, 1) * 1turn)); transition: transform 80ms linear; }
-#aborea-dice-overlay .aborea-die-face { width: 78px; height: 78px; border-radius: 18px; display:flex; align-items:center; justify-content:center; font-size: 34px; font-weight: 800; color: #fff6d6; background: radial-gradient(circle at 30% 30%, #d1a95a 0%, #90652f 55%, #56371a 100%); box-shadow: inset 0 1px 4px rgba(255,255,255,0.25), 0 10px 24px rgba(0,0,0,0.45); }
-#aborea-dice-overlay .aborea-dice-subline { font-size: 13px; opacity: 0.9; }
+#aborea-dice-overlay .aborea-die { width: 90px; height: 90px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; }
+#aborea-dice-overlay .aborea-die-face { width: 78px; height: 78px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 800; color: #fff6d6; background: radial-gradient(circle at 30% 30%, #d1a95a 0%, #90652f 55%, #56371a 100%); box-shadow: inset 0 1px 4px rgba(255,255,255,.25), 0 10px 24px rgba(0,0,0,.45); }
+#aborea-dice-overlay .aborea-dice-subline { font-size: 13px; opacity: .9; }
 
-.companion-dropzone { border: 2px dashed rgba(80,80,120,0.35); border-radius: 10px; }
-.companion-dropzone .drop-help { margin-top: 0.5rem; color: var(--color-text-light-highlight, #666); font-size: 0.875rem; }
-
-/* Skills Tab */
-.aborea-sheet .skills-locked-hint {
-  font-size: 0.85rem;
-  color: #7a6a5a;
-  font-style: italic;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  background: rgba(255,255,255,0.4);
-  border-radius: 6px;
-  border-left: 3px solid #8b7d6b;
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 880px) {
+  .aborea-sheet .sheet-header { grid-template-columns: 1fr; }
+  .aborea-sheet .header-grid,
+  .aborea-sheet .header-grid.compact { grid-template-columns: 1fr 1fr; }
+  .grid.grid-2col { grid-template-columns: 1fr; }
+  .aborea-sheet .combat-grid { grid-template-columns: 1fr; }
+  .creation-metrics { grid-template-columns: repeat(2, 1fr); }
+  .wallet-grid { grid-template-columns: repeat(2, 1fr); }
+  .aborea-sheet .creation-attributes-grid .attribute-row { grid-template-columns: 1fr 70px 70px 80px 60px; }
 }
-
-.aborea-sheet .skill-editor-row .skill-rank-input {
-  width: 52px;
-  text-align: center;
-  font-weight: 700;
-}
-
-.aborea-sheet .skill-editor-row .class-bonus {
-  color: #2a6b2a;
-  font-weight: 600;
-}
-
-.aborea-sheet .skill-editor-row.custom-skill {
-  background: rgba(255,255,255,0.5);
-  border: 1px dashed rgba(80,60,45,0.3);
-}
-
-.aborea-sheet .skill-editor-row.custom-skill .skill-name-input {
-  min-width: 140px;
-  font-size: 0.95rem;
-}
-
-.aborea-sheet .skill-header-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.aborea-sheet .skills-locked-badge,
-.aborea-sheet .skills-unlocked-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.aborea-sheet .skills-locked-badge {
-  background: #d9534f;
-  color: #fff;
-}
-
-.aborea-sheet .skills-unlocked-badge {
-  background: #5cb85c;
-  color: #fff;
-}
-
-.aborea-sheet .xp-progress-label {
-  font-size: 0.85rem;
-  color: #5b4b3a;
-}
-
-.aborea-sheet .xp-progress-bar {
-  grid-column: 1 / -1;
-  height: 12px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid rgba(80, 60, 45, 0.3);
-}
-
-.aborea-sheet .xp-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4a90d9, #2d6da3);
-  border-radius: 6px;
-  transition: width 0.3s ease;
-}
-
-/* Pack Import Styling */
-.aborea-sheet .pack-import-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.aborea-sheet .pack-import-group .pack-select {
-  min-width: 160px;
-  max-width: 280px;
-}
-
-.aborea-sheet .pack-import-group button {
-  white-space: nowrap;
-}
-
-.aborea-sheet .panel .panel-header {
-  gap: 12px;
+@media (max-width: 560px) {
+  .aborea-sheet .header-grid,
+  .aborea-sheet .header-grid.compact { grid-template-columns: 1fr; }
+  .creation-metrics { grid-template-columns: 1fr; }
+  .wallet-grid { grid-template-columns: 1fr 1fr; }
+  .aborea-sheet .creation-attributes-grid .attribute-row { grid-template-columns: 1fr; }
+  .aborea-sheet .creation-attributes-grid .attribute-header { display: none; }
+  .history-row { grid-template-columns: 1fr 1fr; }
 }

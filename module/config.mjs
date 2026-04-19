@@ -2,6 +2,26 @@ export const ABOREA = {
   id: "aborea-v7",
   attributeBudget: 35,
   baseTrainingPoints: 8,
+
+  /**
+   * Offizielle Stufentabelle: Index 0 = Stufe 1, Index 1 = Stufe 2 usw.
+   * Wert = EP, die zum Erreichen dieser Stufe benötigt werden.
+   */
+  xpTable: [
+       0,  1000,  4000,  8000, 13000, 19000, 26000, 34000,
+    43000, 53000, 64000, 76000, 89000,103000,118000,134000,
+   151000,169000,188000,208000
+  ],
+
+  /** Gibt die Stufe zurück, die einem EP-Wert entspricht. */
+  levelForXp(xp) {
+    let level = 1;
+    for (let i = 0; i < this.xpTable.length; i++) {
+      if (Number(xp) >= this.xpTable[i]) level = i + 1;
+      else break;
+    }
+    return level;
+  },
   attributes: {
     st: "ABOREA.AttributeST",
     ge: "ABOREA.AttributeGE",

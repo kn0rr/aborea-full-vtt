@@ -37,7 +37,6 @@
         "key": "schriftrollen",
         "label": "Schriftrollen",
         "type": "sense",
-        "target": "schriftrollen",
         "description": "Kann Schriftrollen für ungelernte Zauber benutzen (kostet MP)."
       },
       {
@@ -47,7 +46,7 @@
         "type": "maneuverBonus",
         "target": "heilen",
         "value": 1,
-        "description": "Bonus von +1 auf Heilkunst-Manöver."
+        "description": "+1 auf Heilkunst-Manöver."
       },
       {
         "level": 1,
@@ -64,8 +63,7 @@
         "label": "Messe (ab Stufe 5)",
         "type": "dailyPower",
         "usesPerDay": 1,
-        "target": "messe",
-        "description": "Einmal täglich inspirierende Messe: alle Teilnehmer +1 auf alle Manöver für 4 Stunden."
+        "description": "Einmal täglich inspirierende Messe: +1 auf alle Manöver für 4 Stunden."
       },
       {
         "level": 10,
@@ -73,11 +71,9 @@
         "label": "Segnung (ab Stufe 10)",
         "type": "dailyPower",
         "usesPerDay": 1,
-        "target": "segnung",
-        "description": "Einmal täglich: alle in Hörweite +2 auf Manöver und Angriffe für einen Tag."
+        "description": "Einmal täglich: +2 auf Manöver und Angriffe für einen Tag."
       }
-    ],
-    "starterPackage": {}
+    ]
   },
   "_id": "b0d7978a74a425a1",
   "flags": {

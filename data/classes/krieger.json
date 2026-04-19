@@ -23,78 +23,17 @@
       "wahrnehmung": "1",
       "wissen": "2"
     },
-    "levelFeatures": [
-      {
-        "level": 1,
-        "key": "magWaffen",
-        "label": "Magische Waffen/Rüstungen",
-        "type": "sense",
-        "target": "magWaffen",
-        "description": "Kann magische Waffen und Rüstungen ohne Verständnis benutzen."
+    "starterPackage": {
+      "name": "Empfohlenes Startpaket",
+      "skills": {
+        "athletik": 1,
+        "reiten": 1,
+        "waffen": 2,
+        "wahrnehmung": 1
       },
-      {
-        "level": 1,
-        "key": "waffenkundig",
-        "label": "Waffenkundig",
-        "type": "weaponMinimum",
-        "target": "generic",
-        "minimumRank": 0,
-        "description": "Kein Malus bei ungelernten Waffen."
-      },
-      {
-        "level": 1,
-        "key": "unzerstoerbar",
-        "label": "Unzerstörbar (0 TP kein KO)",
-        "type": "sense",
-        "target": "unzerstoerbar",
-        "description": "Krieger wird nicht bei 0 TP bewusstlos."
-      },
-      {
-        "level": 1,
-        "key": "drohenFuehren",
-        "label": "Drohen & Führen +1",
-        "type": "maneuverBonus",
-        "target": "einflussnahme",
-        "value": 1,
-        "description": "Bonus von +1 auf Einflussnahme beim Drohen/Führen."
-      },
-      {
-        "level": 8,
-        "key": "gefolgsleute8",
-        "label": "Gefolgsleute (4×Stufe1)",
-        "type": "followers",
-        "followers": 4,
-        "description": "Kann 4 Gefolgsleute Stufe 1 anwerben."
-      },
-      {
-        "level": 9,
-        "key": "gefolgsleute9",
-        "label": "Gefolgsleute (8×Stufe1, 2×Stufe2)",
-        "type": "followers",
-        "followers": 8,
-        "description": "Kann 8 Gefolgsleute Stufe 1 und 2 Stufe 2 anwerben."
-      },
-      {
-        "level": 10,
-        "key": "gefolgsleute10",
-        "label": "Gefolgsleute (12×Stufe1, 3×Stufe2)",
-        "type": "followers",
-        "followers": 12,
-        "description": "Kann 12 Gefolgsleute Stufe 1 und 3 Stufe 2 anwerben."
-      }
-    ],
-    "starterPackage": {}
-  },
-  "_id": "e41eb9e29ecc4d99",
-  "flags": {
-    "aborea-v7": {
-      "sourceId": "krieger",
-      "sourcePath": "systems/aborea-v7/packs/classes/_source/krieger.json",
-      "generated": true
+      "notes": [
+        "Fokus auf Waffen und Mobilität"
+      ]
     }
-  },
-  "ownership": {
-    "default": 0
-  },
-  "folder": null
+  }
 }
