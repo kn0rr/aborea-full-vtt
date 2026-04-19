@@ -321,7 +321,8 @@ export class AboreaActorSheet extends ActorSheet {
     );
     const customIdx = customList.findIndex(s => s.key === skillKey);
     if (customIdx !== -1) {
-      const maxRankCustom = creationDone ? 99 : 3;
+      const costParts = String(customList[customIdx].cost ?? "1").split("/").filter(Boolean);
+      const maxRankCustom = creationDone ? 99 : costParts.length;
       customList[customIdx].rank = Math.max(0, Math.min(maxRankCustom, Number(customList[customIdx].rank ?? 0) + Number(delta)));
       await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": "draft" });
       await this._recalculateCharacter();
