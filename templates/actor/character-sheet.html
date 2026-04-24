@@ -193,6 +193,10 @@
           {{!-- Benutzerdefinierte Skills im Erschaffungs-Tab --}}
           {{#each system.customSkills as |skill idx|}}
           <div class="skill-row creation-skill-row custom-skill-row">
+            {{!-- Hidden fields preserve key/rank/source when form submits on attribute change --}}
+            <input type="hidden" name="system.customSkills.{{idx}}.key" value="{{skill.key}}" />
+            <input type="hidden" name="system.customSkills.{{idx}}.rank" value="{{skill.rank}}" />
+            <input type="hidden" name="system.customSkills.{{idx}}.source" value="custom" />
             <div class="skill-meta">
               <input type="text" name="system.customSkills.{{idx}}.name" value="{{skill.name}}" class="skill-name-input" placeholder="Fertigkeit" />
               <div class="skill-submeta">
@@ -315,6 +319,11 @@
             {{!-- Entsperrt: ±-Buttons --}}
             <div class="skill-controls inline-controls">
               {{#if skill.isCustom}}
+              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.key" value="{{skill.key}}" />
+              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.rank" value="{{skill.rank}}" />
+              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.attribute" value="{{skill.attribute}}" />
+              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.cost" value="{{skill.cost}}" />
+              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.source" value="custom" />
               <input type="text" name="system.customSkills.{{skill.customIndex}}.name" value="{{skill.name}}" class="skill-name-input" />
               {{/if}}
               <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="-1">−</button>
