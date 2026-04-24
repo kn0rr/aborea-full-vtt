@@ -191,24 +191,22 @@
           {{/each}}
 
           {{!-- Benutzerdefinierte Skills im Erschaffungs-Tab --}}
-          {{#each system.customSkills as |skill idx|}}
-          <div class="skill-row creation-skill-row custom-skill-row">
-            {{!-- Hidden fields preserve key/rank/source when form submits on attribute change --}}
-            <input type="hidden" name="system.customSkills.{{idx}}.key" value="{{skill.key}}" />
-            <input type="hidden" name="system.customSkills.{{idx}}.rank" value="{{skill.rank}}" />
-            <input type="hidden" name="system.customSkills.{{idx}}.source" value="custom" />
+          {{#each system.customSkills as |skill|}}
+          <div class="skill-row creation-skill-row custom-skill-row" data-skill-key="{{skill.key}}">
             <div class="skill-meta">
-              <input type="text" name="system.customSkills.{{idx}}.name" value="{{skill.name}}" class="skill-name-input" placeholder="Fertigkeit" />
+              <input type="text" class="skill-name-input custom-skill-field" placeholder="Fertigkeit"
+                data-field="name" value="{{skill.name}}" />
               <div class="skill-submeta">
                 <label>Attribut:
-                  <select name="system.customSkills.{{idx}}.attribute">
+                  <select class="custom-skill-field" data-field="attribute">
                     {{#each ../config.attributes as |attrLabel attrKey|}}
                     <option value="{{attrKey}}" {{#if (aboreaEq attrKey skill.attribute)}}selected{{/if}}>{{localize attrLabel}}</option>
                     {{/each}}
                   </select>
                 </label>
                 <label class="skill-cost-label">AP/Rang:
-                  <input type="text" name="system.customSkills.{{idx}}.cost" value="{{skill.cost}}" class="skill-cost-input" placeholder="1" style="width:3em" />
+                  <input type="text" class="skill-cost-input custom-skill-field" data-field="cost"
+                    value="{{skill.cost}}" placeholder="1" style="width:3em" />
                 </label>
               </div>
             </div>
@@ -299,7 +297,7 @@
 
         <div class="skill-list skill-display-list">
           {{#each system.skillDisplayRows as |skill|}}
-          <div class="skill-row skill-display-row {{#if skill.isCustom}}custom-skill{{/if}}">
+          <div class="skill-row skill-display-row {{#if skill.isCustom}}custom-skill{{/if}}" data-skill-key="{{skill.key}}">
             <div class="skill-meta">
               <span class="skill-name">{{skill.name}}</span>
               <div class="skill-submeta">
@@ -319,12 +317,8 @@
             {{!-- Entsperrt: ±-Buttons --}}
             <div class="skill-controls inline-controls">
               {{#if skill.isCustom}}
-              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.key" value="{{skill.key}}" />
-              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.rank" value="{{skill.rank}}" />
-              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.attribute" value="{{skill.attribute}}" />
-              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.cost" value="{{skill.cost}}" />
-              <input type="hidden" name="system.customSkills.{{skill.customIndex}}.source" value="custom" />
-              <input type="text" name="system.customSkills.{{skill.customIndex}}.name" value="{{skill.name}}" class="skill-name-input" />
+              <input type="text" class="skill-name-input custom-skill-field"
+                data-field="name" value="{{skill.name}}" />
               {{/if}}
               <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="-1">−</button>
               <span class="skill-rank-display">{{skill.rank}}</span>

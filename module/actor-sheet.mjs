@@ -252,6 +252,7 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".creation-skill-adjust").on("click", async ev => { await this._adjustCreationSkill(ev.currentTarget.dataset.skill, Number(ev.currentTarget.dataset.delta || 0)); });
     html.find(".add-custom-skill").on("click", async () => await this._addCustomSkillDialog());
     html.find(".remove-custom-skill").on("click", async ev => await this._removeCustomSkill(ev.currentTarget.dataset.skillKey));
+    html.find(".custom-skill-field").on("change", async ev => await this._onCustomSkillFieldChange(ev));
     html.find(".wallet-adjust").on("click", async ev => { await this._adjustWalletCurrency(ev.currentTarget.dataset.currencyKey, ev.currentTarget.dataset.mode); });
     html.find(".wallet-add-currency").on("click", async () => await this._addWalletCurrency());
     html.find(".wallet-remove-currency").on("click", async ev => await this._removeWalletCurrency(ev.currentTarget.dataset.currencyKey));
@@ -363,15 +364,68 @@ export class AboreaActorSheet extends ActorSheet {
     const result = await new Promise(resolve => {
       new Dialog({
         title: game.i18n.localize("ABOREA.AddSkill"),
-        content: `<form><div class="form-group"><label>Name</label><input type="text" name="name" placeholder="Fertigkeit" /></div><div class="form-group"><label>Attribut</label><select name="attr">${attrOptions}</select></div><div class="form-group"><label>AP-Kosten pro Rang (z.B. "2" oder "1/2")</label><input type="text" name="cost" value="1" placeholder="1" /></div></form>`,
-        buttons: { ok: { label: "Hinzufügen", callback: html => resolve({ name: html.find("[name=name]").val().trim(), attr: html.find("[name=attr]").val(), cost: html.find("[name=cost]").val().trim() || "1" }) }, cancel: { label: "Abbruch", callback: () => resolve(null) } },
+        content: `<form>
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Fertigkeit" />
+          </div>
+          <div class="form-group">
+            <label>Attribut</label>
+            <select name="attr">${attrOptions}</select>
+          </div>
+          <div class="form-group">
+            <label>AP-Kosten pro Rang (z.B. "2" oder "1/2")</label>
+            <input type="text" name="cost" value="1" placeholder="1" />
+          </div>
+        </form>`,
+        buttons: {
+          ok: {
+            label: "Hinzufügen",
+            callback: html => {
+              const name = html.find("[name=name]").val().trim();
+              const attr = html.find("[name=attr]").val();
+              const cost = html.find("[name=cost]").val().trim();
+              if (!name) { ui.notifications.warn("ABOREA: Name darf nicht leer sein."); return resolve(null); }
+              if (!attr) { ui.notifications.warn("ABOREA: Bitte ein Attribut wählen."); return resolve(null); }
+              if (!cost || !/^[\d/]+$/.test(cost)) { ui.notifications.warn("ABOREA: Ungültige AP-Kosten (z.B. \"1\" oder \"1/2\")."); return resolve(null); }
+              resolve({ name, attr, cost });
+            }
+          },
+          cancel: { label: "Abbruch", callback: () => resolve(null) }
+        },
         default: "ok", close: () => resolve(null)
       }).render(true);
     });
-    if (!result?.name) return;
+    if (!result) return;
     const raw = this.actor.system.customSkills;
     const list = foundry.utils.deepClone(Array.isArray(raw) ? raw : Object.values(raw || []));
-    list.push({ key: `custom-${Date.now()}`, name: result.name, attribute: result.attr, rank: 0, cost: result.cost, source: "custom" });
+    const uid = `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    list.push({ key: uid, name: result.name, attribute: result.attr, rank: 0, cost: result.cost, source: "custom" });
+    await this.actor.update({ "system.customSkills": list });
+  }
+
+  async _onCustomSkillFieldChange(ev) {
+    if (this.actor.type !== "character") return;
+    const el = ev.currentTarget;
+    const skillKey = el.closest("[data-skill-key]")?.dataset.skillKey;
+    const field = el.dataset.field;
+    if (!skillKey || !field) return;
+    const raw = this.actor.system.customSkills;
+    const list = foundry.utils.deepClone(Array.isArray(raw) ? raw : Object.values(raw || {}));
+    const idx = list.findIndex(s => s.key === skillKey);
+    if (idx === -1) return;
+    // Validate cost field
+    if (field === "cost") {
+      const val = el.value.trim();
+      if (!val || !/^[\d/]+$/.test(val)) { ui.notifications.warn("ABOREA: Ungültige AP-Kosten (z.B. \"1\" oder \"1/2\")."); el.value = list[idx].cost; return; }
+      list[idx].cost = val;
+    } else if (field === "name") {
+      const val = el.value.trim();
+      if (!val) { ui.notifications.warn("ABOREA: Name darf nicht leer sein."); el.value = list[idx].name; return; }
+      list[idx].name = val;
+    } else {
+      list[idx][field] = el.value;
+    }
     await this.actor.update({ "system.customSkills": list });
   }
 
