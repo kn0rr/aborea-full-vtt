@@ -65,5 +65,17 @@
       <label>{{localize "ABOREA.Cost"}} <input type="text" name="system.price" value="{{system.price}}" /></label>
       <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
     {{/if}}
+
+    {{#if (aboreaEq item.type "god")}}
+      <label>{{localize "ABOREA.Pantheon"}} <input type="text" name="system.pantheon" value="{{system.pantheon}}" /></label>
+      <label>{{localize "ABOREA.Rank"}} <input type="text" name="system.rank" value="{{system.rank}}" /></label>
+      <label>{{localize "ABOREA.Aspects"}} <input type="text" name="system.aspects" value="{{system.aspects}}" /></label>
+      <label>{{localize "ABOREA.Weapon"}} <input type="text" name="system.weapon" value="{{system.weapon}}" /></label>
+      <label>{{localize "ABOREA.Symbol"}} <input type="text" name="system.symbol" value="{{system.symbol}}" /></label>
+      {{#if system.miracleList}}
+      <label>{{localize "ABOREA.MiracleList"}} <input type="text" name="system.miracleList" value="{{system.miracleList}}" readonly /></label>
+      {{/if}}
+      <label>{{localize "ABOREA.Description"}} <textarea name="system.description">{{system.description}}</textarea></label>
+    {{/if}}
   </section>
 </form>
