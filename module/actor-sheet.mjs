@@ -479,7 +479,8 @@ export class AboreaActorSheet extends ActorSheet {
     const spent = ABOREA.attributeCostTotal(base);
     const budget = Number(actorSystem.creation?.pointsBudget ?? ABOREA.attributeBudget);
     const remaining = budget - spent;
-    if (remaining !== 0) errors.push(`Attributbudget: ${remaining > 0 ? remaining + " Punkte offen" : Math.abs(remaining) + " zu viel"}.`);
+    if (remaining > 0) errors.push(`Noch ${remaining} Eigenschaftspunkte zu verteilen (von ${budget}).`);
+    else if (remaining < 0) errors.push(`${Math.abs(remaining)} Eigenschaftspunkte zu viel vergeben (Budget: ${budget}).`);
     if (race && cls && !ABOREA.classAllowedForRace(race.system, cls.name)) errors.push(`${race.name} darf den Beruf ${cls.name} nicht wählen.`);
     const traits = emptyTraits();
     if (["zwerg","halbling","gnom"].includes(raceName)) traits.racialArmorBonus = 1;

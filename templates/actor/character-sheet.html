@@ -153,9 +153,12 @@
               <div class="summary-row"><label>{{localize "ABOREA.Status"}}</label><span class="status-badge status-{{system.creation.status}}">{{system.creation.status}}</span></div>
               <div class="summary-row"><label>{{localize "ABOREA.SelectedRace"}}</label><span>{{system.details.race}}</span></div>
               <div class="summary-row"><label>{{localize "ABOREA.SelectedClass"}}</label><span>{{system.details.class}}</span></div>
-              <div class="summary-row"><label>AP-Budget</label><span>{{system.creation.trainingBudget}}</span></div>
-              <div class="summary-row"><label>AP ausgegeben</label><span>{{system.creation.trainingSpent}}</span></div>
-              <div class="summary-row {{#if (aboreaEq system.creation.trainingRemaining 0)}}row-ok{{/if}}"><label>AP verbleibend</label><span class="metric-value">{{system.creation.trainingRemaining}}</span></div>
+              <div class="summary-row"><label>{{localize "ABOREA.AttributeBudget"}}</label><span>{{system.creation.pointsBudget}}</span></div>
+              <div class="summary-row"><label>{{localize "ABOREA.AttributeSpent"}}</label><span>{{system.creation.pointsSpent}}</span></div>
+              <div class="summary-row {{#if (aboreaEq system.creation.pointsRemaining 0)}}row-ok{{/if}}"><label>{{localize "ABOREA.AttributeRemaining"}}</label><span class="metric-value">{{system.creation.pointsRemaining}}</span></div>
+              <div class="summary-row"><label>{{localize "ABOREA.TrainingBudget"}}</label><span>{{system.creation.trainingBudget}}</span></div>
+              <div class="summary-row"><label>{{localize "ABOREA.TrainingSpent"}}</label><span>{{system.creation.trainingSpent}}</span></div>
+              <div class="summary-row {{#if (aboreaEq system.creation.trainingRemaining 0)}}row-ok{{/if}}"><label>{{localize "ABOREA.TrainingRemaining"}}</label><span class="metric-value">{{system.creation.trainingRemaining}}</span></div>
             </div>
             {{#if system.creation.validationErrors.length}}
             <ul class="validation-errors">{{#each system.creation.validationErrors as |err|}}<li>{{err}}</li>{{/each}}</ul>
