@@ -152,7 +152,7 @@ export class AboreaSoundboard {
   static registerSceneControl() {
     Hooks.on("getSceneControlButtons", controls => {
       if (!game.user?.isGM) return;
-      controls.push({
+      const entry = {
         name: "aborea-audio",
         title: "ABOREA Audio",
         icon: "fas fa-music",
@@ -173,7 +173,10 @@ export class AboreaSoundboard {
             onClick: () => AboreaSoundboard.stopAll()
           }
         ]
-      });
+      };
+      // Foundry v12: controls is an Array; v13: controls is a plain object keyed by name
+      if (Array.isArray(controls)) controls.push(entry);
+      else if (controls && typeof controls === "object") controls[entry.name] = entry;
     });
   }
 }
