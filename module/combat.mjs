@@ -42,6 +42,7 @@ export async function openAttackDialog(attackerActor) {
   const targetToken = game.user.targets.first() ?? null;
   const targetActor = targetToken?.actor ?? null;
 
+  const globalSituMod  = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
   const currentOffBonus = Number(attackerActor.system.combat?.offensiveBonus ?? 0);
   const combatBonus = Number(attackerActor.system.combat?.combatBonus
     ?? attackerActor.system.combat?.offensiveBonus
@@ -89,7 +90,7 @@ export async function openAttackDialog(attackerActor) {
           <label>Situationsmodifikator
             <span class="hint">(negativ = Erschwernis)</span>
           </label>
-          <input type="number" name="situMod" value="0" />
+          <input type="number" name="situMod" value="${globalSituMod}" />
         </div>
         ${targetHtml}
       </form>`,
@@ -256,6 +257,16 @@ export function applyDamage(targetActorId, damage) {
 // ══════════════════════════════════════════════════════════════════
 
 export function registerCombatHooks() {
+  // Global situational modifier setting (GM-only, world scope)
+  game.settings.register("aborea-v7", "globalSituMod", {
+    name: "Globaler Situationsmodifikator",
+    hint: "Wird im Angriffsdialog als Voreinstellung verwendet. Negativer Wert = Erschwernis.",
+    scope: "world",
+    config: false,        // managed via Combat Tracker UI, not settings menu
+    type: Number,
+    default: 0
+  });
+
   // "Apply Damage" button in chat cards
   // Foundry v13: html is a plain HTMLElement
   Hooks.on("renderChatMessage", (_message, html) => {
@@ -275,9 +286,50 @@ export function registerCombatHooks() {
     });
   });
 
-  // Add "Attack" button to active combatant row in Combat Tracker
+  // Add "Attack" button + global situ-mod row to Combat Tracker
   // Foundry v13: hook passes a plain HTMLElement, not a jQuery object
   Hooks.on("renderCombatTracker", (_tracker, html) => {
+    const root = html instanceof HTMLElement ? html : html[0];
+    if (!root) return;
+
+    // ── Global situational modifier (GM only) ───────────────────
+    if (game.user.isGM) {
+      const footer = root.querySelector("#combat-controls") ?? root.querySelector(".combat-controls") ?? null;
+      const currentMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+
+      const modBar = document.createElement("div");
+      modBar.className = "aborea-situ-mod-bar";
+      modBar.innerHTML = `
+        <label class="situ-mod-label" title="Voreinstellung im Angriffsdialog">⚠ Situationsmod.</label>
+        <button type="button" class="situ-mod-step" data-delta="-1">−</button>
+        <input  type="number"  class="situ-mod-input" value="${currentMod}" />
+        <button type="button" class="situ-mod-step" data-delta="1">+</button>
+        <button type="button" class="situ-mod-reset" title="Zurücksetzen">✕</button>
+      `;
+
+      const updateMod = async (val) => {
+        const clamped = Math.max(-10, Math.min(10, Number(val) || 0));
+        await game.settings.set("aborea-v7", "globalSituMod", clamped);
+        modBar.querySelector(".situ-mod-input").value = clamped;
+      };
+
+      modBar.querySelector(".situ-mod-input").addEventListener("change", ev => {
+        updateMod(ev.target.value);
+      });
+      modBar.querySelectorAll(".situ-mod-step").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const cur = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+          updateMod(cur + Number(btn.dataset.delta));
+        });
+      });
+      modBar.querySelector(".situ-mod-reset").addEventListener("click", () => updateMod(0));
+
+      // Insert before the footer controls, or append to tracker
+      if (footer) footer.before(modBar);
+      else root.appendChild(modBar);
+    }
+
+    // ── Attack button on active combatant ───────────────────────
     const combat = game.combat;
     if (!combat) return;
     const activeCombatant = combat.combatants.get(combat.current?.combatantId);
@@ -286,8 +338,6 @@ export function registerCombatHooks() {
     const isOwner = activeCombatant.actor?.isOwner ?? false;
     if (!isOwner && !game.user.isGM) return;
 
-    const root = html instanceof HTMLElement ? html : html[0];
-    if (!root) return;
     const li = root.querySelector(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
     if (!li) return;
     const controls = li.querySelector(".combatant-controls");
