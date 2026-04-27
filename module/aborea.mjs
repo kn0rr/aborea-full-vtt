@@ -6,6 +6,12 @@ import { importAboreaPackSources, importSingleAboreaPack, listAboreaWorldPacks, 
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
 import { AboreaCombat, openAttackDialog, registerCombatHooks } from "./combat.mjs";
+import {
+  CharacterDataModel, NpcDataModel, CreatureDataModel,
+  RaceDataModel, ClassDataModel, SkillDataModel,
+  WeaponDataModel, ArmorDataModel, SpellDataModel,
+  MiracleDataModel, GearDataModel, GodDataModel
+} from "./data-models.mjs";
 
 async function cleanupExpiredSummons() {
   if (!game.user?.isGM) return [];
@@ -44,6 +50,25 @@ Hooks.once("init", async function () {
     attack: openAttackDialog,
   };
   CONFIG.ABOREA = ABOREA;
+
+  // Register TypeDataModels (replaces template.json)
+  CONFIG.Actor.dataModels = {
+    character: CharacterDataModel,
+    npc:       NpcDataModel,
+    creature:  CreatureDataModel
+  };
+  CONFIG.Item.dataModels = {
+    race:    RaceDataModel,
+    class:   ClassDataModel,
+    skill:   SkillDataModel,
+    weapon:  WeaponDataModel,
+    armor:   ArmorDataModel,
+    spell:   SpellDataModel,
+    miracle: MiracleDataModel,
+    gear:    GearDataModel,
+    god:     GodDataModel
+  };
+
   CONFIG.Combat.documentClass = AboreaCombat;
   CONFIG.Combat.initiative = { formula: "1d10", decimals: 0 };
   AboreaSoundboard.registerSettings();
