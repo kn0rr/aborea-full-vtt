@@ -531,6 +531,39 @@
 .aborea-chat-card h2 { font-size: 1rem; margin: 0 0 6px; color: var(--aborea-red); }
 .aborea-chat-card h3 { font-size: .9rem; margin: 8px 0 4px; }
 
+/* ── Attack Chat Card ───────────────────────────────── */
+.aborea-attack-card { padding: 8px 10px; }
+.ac-header { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: .95rem;
+             margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--aborea-border-light); }
+.ac-attacker { color: var(--aborea-red); }
+.ac-arrow { opacity: .5; }
+.ac-target { color: var(--aborea-blue); }
+.ac-body { display: flex; flex-direction: column; gap: 3px; font-size: .82rem; }
+.ac-row { display: flex; justify-content: space-between; }
+.ac-row.ac-total { font-weight: 700; border-top: 1px solid var(--aborea-border-light); margin-top: 3px; padding-top: 3px; }
+.ac-result { margin-top: 8px; padding: 5px 10px; border-radius: 6px; font-weight: 700; text-align: center; font-size: .9rem; }
+.ac-result.hit    { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.ac-result.miss   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.ac-result.patzer { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.ac-note.critical { color: var(--aborea-gold); font-weight: 700; margin-top: 4px; font-size: .82rem; }
+.ac-damage { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--aborea-border-light); font-size: .82rem; }
+.apply-damage-btn { margin-top: 8px; width: 100%; padding: 5px; cursor: pointer;
+                    background: var(--aborea-red); color: #fff; border: none;
+                    border-radius: 5px; font-weight: 700; font-size: .85rem; }
+.apply-damage-btn:hover:not(:disabled) { background: #a01414; }
+.apply-damage-btn:disabled { opacity: .6; cursor: default; }
+
+/* ── Combat Tracker ─────────────────────────────────── */
+.combat-attack-btn { padding: 2px 6px; font-size: .8rem; cursor: pointer;
+                     background: var(--aborea-red); color: #fff;
+                     border: none; border-radius: 4px; }
+.combat-attack-btn:hover { background: #a01414; }
+
+/* ── Attack Dialog ──────────────────────────────────── */
+.aborea-attack-form .target-info { background: #e8f4e8; border-radius: 5px;
+                                   padding: 4px 8px; font-size: .85rem; }
+.aborea-attack-form .hint { font-size: .75rem; opacity: .7; font-weight: 400; }
+
 /* ── Würfel-Overlay ─────────────────────────────────── */
 .aborea-dice-overlay.hidden { display: none; }
 .aborea-dice-overlay.visible { display: block; }

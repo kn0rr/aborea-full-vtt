@@ -4,6 +4,7 @@
  */
 import { ABOREA } from "./config.mjs";
 import { rollAttack, rollInitiative, rollSkill } from "./dice.mjs";
+import { openAttackDialog } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
   makeHistoryEntry, logListPush,
@@ -183,10 +184,8 @@ export class AboreaActorSheet extends ActorSheet {
     if (!this.isEditable) return;
     html.find(".roll-initiative").on("click", () => rollInitiative(this.actor));
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
-    html.find(".roll-attack").on("click", ev => {
-      const item = this.actor.items.get(ev.currentTarget.closest("[data-item-id]")?.dataset.itemId);
-      rollAttack(this.actor, item, { targetDefense: this.actor.system.combat?.targetDefense ?? 5 });
-    });
+    html.find(".roll-attack").on("click", () => openAttackDialog(this.actor));
+    html.find(".open-attack-dialog").on("click", () => openAttackDialog(this.actor));
     html.find(".item-create").on("click", this._onItemCreate.bind(this));
     html.find(".item-edit").on("click", ev => this.actor.items.get(ev.currentTarget.closest("[data-item-id]")?.dataset.itemId)?.sheet?.render(true));
     html.find(".item-delete").on("click", async ev => {
