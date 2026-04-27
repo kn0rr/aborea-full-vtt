@@ -126,6 +126,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, situMod, target
   if (roll.naturalOne) {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
+      rolls: roll.rolls,
       content: _buildAttackCard({
         attacker: attackerActor.name,
         target: targetActor?.name,
@@ -150,6 +151,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, situMod, target
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
+    rolls: roll.rolls,
     content: _buildAttackCard({
       attacker: attackerActor.name,
       target: targetActor?.name,
