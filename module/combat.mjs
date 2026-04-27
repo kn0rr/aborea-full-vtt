@@ -294,6 +294,9 @@ export function registerCombatHooks() {
 
     // ── Global situational modifier (GM only) ───────────────────
     if (game.user.isGM) {
+      // Remove stale bar from previous renders before re-adding
+      root.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
+
       const footer = root.querySelector("#combat-controls") ?? root.querySelector(".combat-controls") ?? null;
       const currentMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
 
