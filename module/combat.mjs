@@ -255,38 +255,51 @@ export function applyDamage(targetActorId, damage) {
 
 export function registerCombatHooks() {
   // "Apply Damage" button in chat cards
+  // Foundry v13: html is a plain HTMLElement
   Hooks.on("renderChatMessage", (_message, html) => {
-    html.find(".apply-damage-btn").on("click", ev => {
-      if (!game.user.isGM && !game.user.isTrusted) {
-        ui.notifications.warn("ABOREA: Nur GM oder vertraute Spieler können Schaden anwenden.");
-        return;
-      }
-      const btn = ev.currentTarget;
-      applyDamage(btn.dataset.targetId, Number(btn.dataset.damage));
-      btn.disabled = true;
-      btn.textContent = `✓ Angewandt (${btn.dataset.damage})`;
+    const root = html instanceof HTMLElement ? html : html[0];
+    if (!root) return;
+    root.querySelectorAll(".apply-damage-btn").forEach(btn => {
+      btn.addEventListener("click", ev => {
+        if (!game.user.isGM && !game.user.isTrusted) {
+          ui.notifications.warn("ABOREA: Nur GM oder vertraute Spieler können Schaden anwenden.");
+          return;
+        }
+        const b = ev.currentTarget;
+        applyDamage(b.dataset.targetId, Number(b.dataset.damage));
+        b.disabled = true;
+        b.textContent = `✓ Angewandt (${b.dataset.damage})`;
+      });
     });
   });
 
   // Add "Attack" button to active combatant row in Combat Tracker
+  // Foundry v13: hook passes a plain HTMLElement, not a jQuery object
   Hooks.on("renderCombatTracker", (_tracker, html) => {
     const combat = game.combat;
     if (!combat) return;
     const activeCombatant = combat.combatants.get(combat.current?.combatantId);
     if (!activeCombatant) return;
 
-    // Only show the button to the owner or GM
     const isOwner = activeCombatant.actor?.isOwner ?? false;
     if (!isOwner && !game.user.isGM) return;
 
-    const li = html.find(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
-    if (!li.length) return;
+    const root = html instanceof HTMLElement ? html : html[0];
+    if (!root) return;
+    const li = root.querySelector(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
+    if (!li) return;
+    const controls = li.querySelector(".combatant-controls");
+    if (!controls) return;
 
-    const btn = $(`<button type="button" class="combat-attack-btn" title="Angreifen">⚔</button>`);
-    btn.on("click", () => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "combat-attack-btn";
+    btn.title = "Angreifen";
+    btn.textContent = "⚔";
+    btn.addEventListener("click", () => {
       const actor = activeCombatant.actor;
       if (actor) openAttackDialog(actor);
     });
-    li.find(".combatant-controls").prepend(btn);
+    controls.prepend(btn);
   });
 }
