@@ -5,6 +5,24 @@ import { AboreaItemSheet } from "./item-sheet.mjs";
 import { importAboreaPackSources, importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
+import { rollInitiative } from "./dice.mjs";
+
+class AboreaCombat extends Combat {
+  async rollInitiative(ids, { updateTurn = true, messageOptions = {} } = {}) {
+    const combatantIds = typeof ids === "string" ? [ids] : ids;
+    const updates = [];
+    for (const id of combatantIds) {
+      const combatant = this.combatants.get(id);
+      if (!combatant) continue;
+      const actor = combatant.actor;
+      const total = actor ? await rollInitiative(actor) : await (new Roll("1d10")).evaluate().then(r => r.total);
+      updates.push({ _id: id, initiative: total });
+    }
+    if (updates.length) await this.updateEmbeddedDocuments("Combatant", updates);
+    if (updateTurn && this.started) await this.update({ turn: 0 });
+    return this;
+  }
+}
 
 async function cleanupExpiredSummons() {
   if (!game.user?.isGM) return [];
@@ -42,6 +60,8 @@ Hooks.once("init", async function () {
     openSoundboard: () => AboreaSoundboard.openDialog()
   };
   CONFIG.ABOREA = ABOREA;
+  CONFIG.Combat.documentClass = AboreaCombat;
+  CONFIG.Combat.initiative = { formula: "1d10", decimals: 0 };
   AboreaSoundboard.registerSettings();
   AboreaSoundboard.registerSceneControl();
 
