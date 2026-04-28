@@ -96,7 +96,8 @@ async function _evaluateOpenD10({ label = "ABOREA.RollOpenD10" } = {}) {
   };
 }
 
-export async function rollOpenD10({ label = "ABOREA.RollOpenD10" } = {}) {
+export async function rollOpenD10({ label = "ABOREA.RollOpenD10", skipVisual = false } = {}) {
+  if (skipVisual) return _evaluateOpenD10({ label });
   return showVisualRoll(game.i18n.localize(label), () => _evaluateOpenD10({ label }));
 }
 

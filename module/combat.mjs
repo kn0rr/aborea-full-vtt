@@ -121,7 +121,8 @@ export async function openAttackDialog(attackerActor) {
 // ── Internal: roll + chat ────────────────────────────────────────
 
 async function _executeAttack(attackerActor, { weapon, offBonus, situMod, targetActor, targetDefense }) {
-  const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack") });
+  // skipVisual: Foundry triggers Dice So Nice automatically via rolls in ChatMessage
+  const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
 
   // Natural 1 → Patzer, automatic failure
   if (roll.naturalOne) {
