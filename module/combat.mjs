@@ -39,38 +39,39 @@ export async function openAttackDialog(attackerActor) {
     return;
   }
 
-  const targetToken = game.user.targets.first() ?? null;
-  const targetActor = targetToken?.actor ?? null;
-
-  const globalSituMod  = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+  const globalSituMod   = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
   const currentOffBonus = Number(attackerActor.system.combat?.offensiveBonus ?? 0);
-  const combatBonus = Number(attackerActor.system.combat?.combatBonus
-    ?? attackerActor.system.combat?.offensiveBonus
-    ?? 0)
+  const combatBonus     = Number(attackerActor.system.combat?.combatBonus
+    ?? attackerActor.system.combat?.offensiveBonus ?? 0)
     + Number(attackerActor.system.combat?.defensiveBonus ?? 0);
 
-  const targetDefenseValue = targetActor
+  // All tokens on the scene except the attacker's own token
+  const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === attackerActor.id)?.id;
+  const targetCandidates = (canvas?.tokens?.placeables ?? [])
+    .filter(t => t.actor && t.id !== attackerTokenId)
+    .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
+
+  const preselectedId = game.user.targets.first()?.id ?? "";
+
+  const _dv = actor => actor
     ? ABOREA.defenseValue(
-        Number(targetActor.system.combat?.totalArmorValue ?? 5),
-        Number(targetActor.system.combat?.defensiveBonus ?? 0))
-    : null;
+        Number(actor.system.combat?.totalArmorValue ?? 5),
+        Number(actor.system.combat?.defensiveBonus  ?? 0))
+    : 5;
+
+  const targetOptions = [
+    `<option value="">— Kein Ziel (VW manuell) —</option>`,
+    ...targetCandidates.map(t => {
+      const dv = _dv(t.actor);
+      const hp = t.actor.system.resources?.hp?.value ?? "?";
+      return `<option value="${t.id}" ${t.id === preselectedId ? "selected" : ""}>`
+           + `${t.name} · RW ${dv} · HP ${hp}</option>`;
+    })
+  ].join("");
 
   const weaponOptions = weapons
     .map(w => `<option value="${w.id}">${w.name} &nbsp;(+${w.system.damage ?? 0} Schaden, ${w.system.skill ?? "—"})</option>`)
     .join("");
-
-  const targetHtml = targetActor
-    ? `<div class="form-group target-info">
-         <label>Ziel</label>
-         <span><strong>${targetActor.name}</strong>
-           &nbsp;·&nbsp; RW&nbsp;${targetDefenseValue}
-           &nbsp;·&nbsp; HP&nbsp;${targetActor.system.resources?.hp?.value ?? "?"}
-         </span>
-       </div>`
-    : `<div class="form-group">
-         <label>Ziel-Verteidigungswert <span class="hint">(kein Token ausgewählt)</span></label>
-         <input type="number" name="manualDefense" value="5" min="1" />
-       </div>`;
 
   const params = await new Promise(resolve => {
     new Dialog({
@@ -92,25 +93,49 @@ export async function openAttackDialog(attackerActor) {
           </label>
           <input type="number" name="situMod" value="${globalSituMod}" />
         </div>
-        ${targetHtml}
+        <div class="form-group">
+          <label>Ziel</label>
+          <select name="targetTokenId">${targetOptions}</select>
+        </div>
+        <div class="form-group manual-dv-row">
+          <label>Verteidigungswert <span class="hint">(manuell)</span></label>
+          <input type="number" name="manualDefense" value="5" min="1" />
+        </div>
       </form>`,
       buttons: {
         attack: {
           icon: `<i class="fas fa-dice-d10"></i>`,
           label: "Angreifen",
-          callback: html => resolve({
-            weapon:        attackerActor.items.get(html.find("[name=weaponId]").val()),
-            offBonus:      Number(html.find("[name=offBonus]").val() || 0),
-            situMod:       Number(html.find("[name=situMod]").val() || 0),
-            targetActor,
-            targetDefense: targetDefenseValue
-              ?? Number(html.find("[name=manualDefense]").val() || 5),
-          })
+          callback: html => {
+            const root = html instanceof HTMLElement ? html : html[0];
+            const tokenId     = root.querySelector("[name=targetTokenId]").value;
+            const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
+            const targetActor = targetToken?.actor ?? null;
+            resolve({
+              weapon:        attackerActor.items.get(root.querySelector("[name=weaponId]").value),
+              offBonus:      Number(root.querySelector("[name=offBonus]").value  || 0),
+              situMod:       Number(root.querySelector("[name=situMod]").value   || 0),
+              targetActor,
+              targetDefense: targetActor
+                ? _dv(targetActor)
+                : Number(root.querySelector("[name=manualDefense]").value || 5),
+            });
+          }
         },
         cancel: { label: "Abbruch", callback: () => resolve(null) }
       },
       default: "attack",
-      close: () => resolve(null)
+      close: () => resolve(null),
+      render: html => {
+        const root       = html instanceof HTMLElement ? html : html[0];
+        const select     = root.querySelector("[name=targetTokenId]");
+        const manualRow  = root.querySelector(".manual-dv-row");
+        const toggleManual = () => {
+          manualRow.style.display = select.value ? "none" : "";
+        };
+        select.addEventListener("change", toggleManual);
+        toggleManual(); // set initial state
+      }
     }).render(true);
   });
 
