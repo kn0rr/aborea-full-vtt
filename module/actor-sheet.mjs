@@ -4,7 +4,7 @@
  */
 import { ABOREA } from "./config.mjs";
 import { rollAttack, rollInitiative, rollSkill } from "./dice.mjs";
-import { openAttackDialog } from "./combat.mjs";
+import { openAttackDialog, openSpellAttackDialog } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
   makeHistoryEntry, logListPush,
@@ -681,9 +681,29 @@ export class AboreaActorSheet extends ActorSheet {
     const mpCost = await chooseMpCost(item); if (mpCost==null) return;
     const currentMp = Number(this.actor.system.resources?.mp?.value??0);
     if (currentMp<mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
-    const targets = Array.from(game.user.targets||[]).map(t=>t.actor).filter(Boolean);
     await this._cleanupExpiredCompanions();
     await this.actor.update({"system.resources.mp.value":Math.max(0,currentMp-mpCost)});
+
+    // Gezielte Zauber: Angriffswurf notwendig
+    if (item.system.targeted) {
+      const result = await openSpellAttackDialog(this.actor, item, mpCost);
+      if (!result || !result.hit) return; // cancelled or missed — MP already spent
+      // Apply effects only to the single target from the spell dialog
+      const targets = result.targetActor ? [result.targetActor] : [];
+      const hp = inferDirectHp(item, mpCost);
+      const effects = inferEffects(item, mpCost).map(e => ({...e, origin: item.uuid}));
+      let extra = "";
+      for (const target of targets) {
+        if (hp?.type==="heal")   { const cur=Number(target.system.resources?.hp?.value??0); const max=Number(target.system.resources?.hp?.max??cur); await target.update({"system.resources.hp.value":Math.min(max,cur+hp.amount)}); extra+=`<p><strong>${target.name}</strong>: +${hp.amount} HP</p>`; }
+        if (hp?.type==="damage") { const cur=Number(target.system.resources?.hp?.value??0); await target.update({"system.resources.hp.value":Math.max(0,cur-hp.amount)}); extra+=`<p><strong>${target.name}</strong>: -${hp.amount} HP</p>`; }
+        if (effects.length) { await applyEffectsToActor(target,effects); extra+=`<p><strong>${target.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</p>`; }
+      }
+      if (extra) await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content:buildPowerCard(this.actor,item,mpCost,targets,extra)});
+      return;
+    }
+
+    // Nicht-gezielte Zauber: direkt wirken
+    const targets = Array.from(game.user.targets||[]).map(t=>t.actor).filter(Boolean);
     const hp = inferDirectHp(item,mpCost);
     const effects = inferEffects(item,mpCost).map(e=>({...e,origin:item.uuid}));
     let extra="";

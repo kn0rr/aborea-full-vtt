@@ -5,7 +5,7 @@ import { AboreaItemSheet } from "./item-sheet.mjs";
 import { importAboreaPackSources, importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
-import { AboreaCombat, openAttackDialog, registerCombatHooks } from "./combat.mjs";
+import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHooks } from "./combat.mjs";
 import {
   CharacterDataModel, NpcDataModel, CreatureDataModel,
   RaceDataModel, ClassDataModel, SkillDataModel,

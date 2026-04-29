@@ -143,6 +143,157 @@ export async function openAttackDialog(attackerActor) {
   await _executeAttack(attackerActor, params);
 }
 
+// ══════════════════════════════════════════════════════════════════
+//  Targeted Spell Attack Dialog
+// ══════════════════════════════════════════════════════════════════
+
+/**
+ * Called from _castPower when item.system.targeted === true.
+ * MP has already been deducted. Rolls an attack; on hit the caller
+ * applies the spell effects, on miss nothing happens.
+ * Returns true if the spell hit, false if it missed.
+ */
+export async function openSpellAttackDialog(attackerActor, item, mpCost) {
+  const globalSituMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+
+  // Spell attack bonus = IN-bonus + Gezielte Sprüche rank + class bonus
+  const inValue    = Number(attackerActor.system.finalAttributes?.in?.value
+                         ?? attackerActor.system.attributes?.in?.value ?? 5);
+  const attrBonus  = ABOREA.attributeBonus(inValue);
+  const skillRank  = Number(attackerActor.system.skills?.gezielteSprueche?.rank ?? 0);
+  const classBonus = Number(attackerActor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
+  const spellAttackBonus = attrBonus + skillRank + classBonus;
+
+  // Scene token dropdown (same logic as openAttackDialog)
+  const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === attackerActor.id)?.id;
+  const targetCandidates = (canvas?.tokens?.placeables ?? [])
+    .filter(t => t.actor && t.id !== attackerTokenId)
+    .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
+  const preselectedId = game.user.targets.first()?.id ?? "";
+
+  const _dv = actor => actor
+    ? ABOREA.defenseValue(
+        Number(actor.system.combat?.totalArmorValue ?? 5),
+        Number(actor.system.combat?.defensiveBonus  ?? 0))
+    : 5;
+
+  const targetOptions = [
+    `<option value="">— Kein Ziel (VW manuell) —</option>`,
+    ...targetCandidates.map(t => {
+      const dv = _dv(t.actor);
+      const hp = t.actor.system.resources?.hp?.value ?? "?";
+      return `<option value="${t.id}" ${t.id === preselectedId ? "selected" : ""}>`
+           + `${t.name} · RW ${dv} · HP ${hp}</option>`;
+    })
+  ].join("");
+
+  const params = await new Promise(resolve => {
+    new Dialog({
+      title: `✨ Gezielter Zauber — ${item.name}`,
+      content: `<form class="aborea-attack-form">
+        <div class="form-group target-info">
+          <label>Zauber</label>
+          <span><strong>${item.name}</strong> &nbsp;·&nbsp; ${mpCost} MP</span>
+        </div>
+        <div class="form-group">
+          <label>Angriffsbonus
+            <span class="hint">(IN ${attrBonus >= 0 ? "+" : ""}${attrBonus}
+             + Gezielte Sprüche ${skillRank >= 0 ? "+" : ""}${skillRank}
+             + Klasse ${classBonus >= 0 ? "+" : ""}${classBonus})</span>
+          </label>
+          <input type="number" name="spellBonus" value="${spellAttackBonus}" />
+        </div>
+        <div class="form-group">
+          <label>Situationsmodifikator
+            <span class="hint">(negativ = Erschwernis)</span>
+          </label>
+          <input type="number" name="situMod" value="${globalSituMod}" />
+        </div>
+        <div class="form-group">
+          <label>Ziel</label>
+          <select name="targetTokenId">${targetOptions}</select>
+        </div>
+        <div class="form-group manual-dv-row">
+          <label>Verteidigungswert <span class="hint">(manuell)</span></label>
+          <input type="number" name="manualDefense" value="5" min="1" />
+        </div>
+      </form>`,
+      buttons: {
+        cast: {
+          icon: `<i class="fas fa-dice-d10"></i>`,
+          label: "Angriffswurf",
+          callback: html => {
+            const root    = html instanceof HTMLElement ? html : html[0];
+            const tokenId = root.querySelector("[name=targetTokenId]").value;
+            const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
+            const targetActor = targetToken?.actor ?? null;
+            resolve({
+              spellBonus:    Number(root.querySelector("[name=spellBonus]").value  || 0),
+              situMod:       Number(root.querySelector("[name=situMod]").value     || 0),
+              targetActor,
+              targetDefense: targetActor
+                ? _dv(targetActor)
+                : Number(root.querySelector("[name=manualDefense]").value || 5),
+            });
+          }
+        },
+        cancel: { label: "Abbruch", callback: () => resolve(null) }
+      },
+      default: "cast",
+      close: () => resolve(null),
+      render: html => {
+        const root      = html instanceof HTMLElement ? html : html[0];
+        const select    = root.querySelector("[name=targetTokenId]");
+        const manualRow = root.querySelector(".manual-dv-row");
+        const toggle    = () => { manualRow.style.display = select.value ? "none" : ""; };
+        select.addEventListener("change", toggle);
+        toggle();
+      }
+    }).render(true);
+  });
+
+  if (!params) return null;   // cancelled
+
+  const roll = await rollOpenD10({ label: `Gezielter Zauber: ${item.name}`, skipVisual: true });
+  const attackValue = roll.total + params.spellBonus - params.situMod;
+  const hit = !roll.naturalOne && attackValue > params.targetDefense;
+
+  // Build chat card
+  const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
+  const resultLabel = roll.naturalOne
+    ? "⛔ Patzer — automatischer Fehlschlag"
+    : (hit ? "✅ Treffer — Zauber wirkt!" : "❌ Kein Treffer — Zauber verpufft");
+
+  const critNote = roll.critical
+    ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>` : "";
+
+  const cardContent = `<div class="aborea-chat-card aborea-attack-card">
+    <div class="ac-header">
+      <span class="ac-attacker">✨ ${attackerActor.name}</span>
+      ${params.targetActor ? `<span class="ac-arrow">→</span><span class="ac-target">${params.targetActor.name}</span>` : ""}
+    </div>
+    <div class="ac-body">
+      <div class="ac-row"><span>Zauber</span><span>${item.name} (${mpCost} MP)</span></div>
+      <div class="ac-row"><span>Würfelwurf</span><span>${roll.formula}</span></div>
+      <div class="ac-row"><span>Angriffsbonus</span><span>${params.spellBonus >= 0 ? "+" : ""}${params.spellBonus}</span></div>
+      ${params.situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${params.situMod >= 0 ? "+" : ""}${-params.situMod}</span></div>` : ""}
+      <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${roll.naturalOne ? "—" : attackValue}</strong></span></div>
+      <div class="ac-row"><span>Verteidigungswert</span><span>${params.targetDefense}</span></div>
+    </div>
+    <div class="ac-result ${resultClass}">${resultLabel}</div>
+    ${critNote}
+  </div>`;
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
+    rolls:   roll.rolls,
+    content: cardContent,
+    flags: { "aborea-v7": { spellAttackResult: { hit, targetActorId: params.targetActor?.id ?? null, itemId: item.id, mpCost } } }
+  });
+
+  return { hit, targetActor: params.targetActor };
+}
+
 // ── Internal: roll + chat ────────────────────────────────────────
 
 async function _executeAttack(attackerActor, { weapon, offBonus, situMod, targetActor, targetDefense }) {
