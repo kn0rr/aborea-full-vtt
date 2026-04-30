@@ -12,8 +12,22 @@ export class AboreaSoundboard {
     if (this._presets) return this._presets;
     const response = await foundry.utils.fetchWithTimeout(PRESETS_PATH);
     const json = await response.json();
-    this._presets = json.presets || [];
+    // Support grouped structure { groups: [...] } and legacy flat { presets: [...] }
+    if (json.groups) {
+      this._groups  = json.groups;
+      this._presets = json.groups.flatMap(g =>
+        g.presets.map(p => ({ ...p, group: g.id, groupLabel: g.label }))
+      );
+    } else {
+      this._groups  = [{ id: "default", label: "Presets", presets: json.presets || [] }];
+      this._presets = json.presets || [];
+    }
     return this._presets;
+  }
+
+  static async loadGroups() {
+    await this.loadPresets();
+    return this._groups ?? [];
   }
 
   static randomFrom(list) {
@@ -98,9 +112,10 @@ export class AboreaSoundboard {
   }
 
   static async openDialog() {
+    const groups  = await this.loadGroups();
     const presets = await this.loadPresets();
     const activeId = this.state.presetId || presets[0]?.id || "";
-    const html = await renderTemplate(`${ROOT}/templates/audio/soundboard.html`, { presets, activeId });
+    const html = await renderTemplate(`${ROOT}/templates/audio/soundboard.html`, { groups, presets, activeId });
     new Dialog({
       title: "ABOREA Audio",
       content: html,

@@ -1,96 +1,501 @@
 {
-  "presets": [
+  "groups": [
     {
-      "id": "leet-village",
-      "label": "Leet / Dorf",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/leet_village_theme.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/village_day.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/market_bell.ogg"
+      "id": "wetter",
+      "label": "🌦 Wetter",
+      "presets": [
+        {
+          "id": "wetter-regen-leicht",
+          "label": "Leichter Regen",
+          "music":    ["assets/audio/wetter/musik/regen_sanft.ogg"],
+          "ambience": ["assets/audio/wetter/ambiente/regen_leicht.ogg"],
+          "oneshots": ["assets/audio/wetter/oneshots/tropfen.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=rain",
+            "ambiente": "https://freesound.org/search/?q=light+rain+loop",
+            "oneshots": "https://freesound.org/search/?q=rain+drop"
+          }
+        },
+        {
+          "id": "wetter-gewitter",
+          "label": "Gewitter",
+          "music":    ["assets/audio/wetter/musik/gewitter_dramatisch.ogg"],
+          "ambience": ["assets/audio/wetter/ambiente/gewitter_regen.ogg"],
+          "oneshots": ["assets/audio/wetter/oneshots/donner_nah.ogg", "assets/audio/wetter/oneshots/blitz_einschlag.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=storm",
+            "ambiente": "https://freesound.org/search/?q=thunderstorm+loop",
+            "oneshots": "https://freesound.org/search/?q=thunder+crack"
+          }
+        },
+        {
+          "id": "wetter-schneesturm",
+          "label": "Schneesturm",
+          "music":    ["assets/audio/wetter/musik/schnee_kalt.ogg"],
+          "ambience": ["assets/audio/wetter/ambiente/schneesturm.ogg"],
+          "oneshots": ["assets/audio/wetter/oneshots/windstoss.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/winter%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=blizzard+wind+loop",
+            "oneshots": "https://freesound.org/search/?q=wind+gust"
+          }
+        },
+        {
+          "id": "wetter-wind",
+          "label": "Wind / Sturm",
+          "music":    ["assets/audio/wetter/musik/weiter_wind.ogg"],
+          "ambience": ["assets/audio/wetter/ambiente/wind_offen.ogg"],
+          "oneshots": ["assets/audio/wetter/oneshots/windstoss_stark.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=wind",
+            "ambiente": "https://freesound.org/search/?q=strong+wind+outdoor",
+            "oneshots": "https://zapsplat.com/sound-effect-category/wind/"
+          }
+        },
+        {
+          "id": "wetter-hagel",
+          "label": "Hagel",
+          "music":    ["assets/audio/wetter/musik/regen_sanft.ogg"],
+          "ambience": ["assets/audio/wetter/ambiente/hagel_dach.ogg"],
+          "oneshots": ["assets/audio/wetter/oneshots/hagel_einschlag.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/rain%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=hail+roof",
+            "oneshots": "https://freesound.org/search/?q=hailstorm"
+          }
+        },
+        {
+          "id": "wetter-nebel",
+          "label": "Nebel / Stille",
+          "music":    ["assets/audio/wetter/musik/nebel_mystisch.ogg"],
+          "ambience": ["assets/audio/wetter/ambiente/nebel_stille.ogg"],
+          "oneshots": ["assets/audio/wetter/oneshots/rascheln.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=mystery",
+            "ambiente": "https://freesound.org/search/?q=foggy+atmosphere",
+            "oneshots": "https://freesound.org/search/?q=leaves+rustle"
+          }
+        }
       ]
     },
     {
-      "id": "forest-travel",
-      "label": "Wald / Reise",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/forest_journey.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/forest_day.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/wolf_howl.ogg",
-        "systems/aborea-v7/assets/audio/oneshots/branch_snap.ogg"
+      "id": "umgebung",
+      "label": "🏠 Umgebung",
+      "presets": [
+        {
+          "id": "umgebung-taverne",
+          "label": "Taverne",
+          "music":    ["assets/audio/umgebung/musik/taverne_abend.ogg", "assets/audio/umgebung/musik/taverne_laut.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/taverne_gemurmel.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/krug_abstellen.ogg", "assets/audio/umgebung/oneshots/gelächter.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/tavern/",
+            "ambiente": "https://freesound.org/search/?q=tavern+crowd+ambience",
+            "oneshots": "https://freesound.org/search/?q=tankard+clink"
+          }
+        },
+        {
+          "id": "umgebung-tempel",
+          "label": "Tempel / Heiligtum",
+          "music":    ["assets/audio/umgebung/musik/tempel_chor.ogg", "assets/audio/umgebung/musik/tempel_orgel.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/tempel_halle.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/glocke.ogg", "assets/audio/umgebung/oneshots/gebet.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=sacred",
+            "ambiente": "https://freesound.org/search/?q=church+hall+reverb",
+            "oneshots": "https://freesound.org/search/?q=bell+chime"
+          }
+        },
+        {
+          "id": "umgebung-markt",
+          "label": "Markt / Stadt",
+          "music":    ["assets/audio/umgebung/musik/markt_heiter.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/markt_larm.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/stadtglocke.ogg", "assets/audio/umgebung/oneshots/ausrufer.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=medieval",
+            "ambiente": "https://freesound.org/search/?q=market+crowd+medieval",
+            "oneshots": "https://freesound.org/search/?q=market+bell"
+          }
+        },
+        {
+          "id": "umgebung-kerker",
+          "label": "Kerker / Gefängnis",
+          "music":    ["assets/audio/umgebung/musik/kerker_dunkel.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/kerker_tropfen.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/ketten.ogg", "assets/audio/umgebung/oneshots/tuer_eisen.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=dungeon",
+            "ambiente": "https://freesound.org/search/?q=dungeon+drip+loop",
+            "oneshots": "https://freesound.org/search/?q=chain+rattle"
+          }
+        },
+        {
+          "id": "umgebung-bibliothek",
+          "label": "Bibliothek / Archiv",
+          "music":    ["assets/audio/umgebung/musik/bibliothek_ruhig.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/bibliothek_stille.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/seiten_blaettern.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=peaceful",
+            "ambiente": "https://freesound.org/search/?q=quiet+room+ambience",
+            "oneshots": "https://freesound.org/search/?q=book+page+turn"
+          }
+        },
+        {
+          "id": "umgebung-schmiede",
+          "label": "Schmiede",
+          "music":    ["assets/audio/umgebung/musik/schmiede_rhythmus.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/schmiede_feuer.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/hammer_amboss.ogg", "assets/audio/umgebung/oneshots/blasbalg.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/forge%20blacksmith/",
+            "ambiente": "https://freesound.org/search/?q=blacksmith+forge+fire",
+            "oneshots": "https://freesound.org/search/?q=hammer+anvil"
+          }
+        },
+        {
+          "id": "umgebung-thronsaal",
+          "label": "Schloss / Thronsaal",
+          "music":    ["assets/audio/umgebung/musik/thronsaal_majestaet.ogg", "assets/audio/umgebung/musik/hofball.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/schloss_halle.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/fanfare.ogg", "assets/audio/umgebung/oneshots/applaus.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=royal",
+            "ambiente": "https://freesound.org/search/?q=great+hall+ambience",
+            "oneshots": "https://freesound.org/search/?q=fanfare+trumpet"
+          }
+        },
+        {
+          "id": "umgebung-stall",
+          "label": "Stall / Scheune",
+          "music":    ["assets/audio/umgebung/musik/landleben_heiter.ogg"],
+          "ambience": ["assets/audio/umgebung/ambiente/stall_tiere.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/pferd_wiehern.ogg", "assets/audio/umgebung/oneshots/hahn.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/countryside%20folk/",
+            "ambiente": "https://freesound.org/search/?q=barn+animals+ambience",
+            "oneshots": "https://freesound.org/search/?q=horse+neigh"
+          }
+        }
       ]
     },
     {
-      "id": "troll-cave",
-      "label": "Trollhöhle",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/dark_cave.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/cave_drips.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/rock_fall.ogg"
+      "id": "landschaft",
+      "label": "🌿 Landschaft",
+      "presets": [
+        {
+          "id": "landschaft-dorf-tag",
+          "label": "Dorf (Tag)",
+          "music":    ["assets/audio/landschaft/musik/dorf_heiter.ogg", "assets/audio/landschaft/musik/dorf_idyll.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/dorf_tag.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/dorfglocke.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=village",
+            "ambiente": "https://freesound.org/search/?q=village+daytime+ambience",
+            "oneshots": "https://freesound.org/search/?q=village+bell"
+          }
+        },
+        {
+          "id": "landschaft-dorf-nacht",
+          "label": "Dorf (Nacht)",
+          "music":    ["assets/audio/landschaft/musik/dorf_nacht.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/dorf_nacht_grillen.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/eule.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=night",
+            "ambiente": "https://freesound.org/search/?q=village+night+crickets",
+            "oneshots": "https://freesound.org/search/?q=owl+hoot"
+          }
+        },
+        {
+          "id": "landschaft-wald-tag",
+          "label": "Wald (Tag)",
+          "music":    ["assets/audio/landschaft/musik/wald_reise.ogg", "assets/audio/landschaft/musik/wald_entspannt.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/wald_voegel.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/wolf_heul.ogg", "assets/audio/landschaft/oneshots/ast_brechen.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=forest",
+            "ambiente": "https://freesound.org/search/?q=forest+birds+ambience+loop",
+            "oneshots": "https://freesound.org/search/?q=wolf+howl"
+          }
+        },
+        {
+          "id": "landschaft-wald-nacht",
+          "label": "Wald (Nacht)",
+          "music":    ["assets/audio/landschaft/musik/wald_nacht_mystisch.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/wald_nacht_grillen.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/rascheln_nacht.ogg", "assets/audio/landschaft/oneshots/eule_nacht.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/dark%20forest%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=night+forest+loop",
+            "oneshots": "https://freesound.org/search/?q=night+rustling"
+          }
+        },
+        {
+          "id": "landschaft-see",
+          "label": "See / Fluss",
+          "music":    ["assets/audio/landschaft/musik/wasser_ruhig.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/see_wellen.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/frosch.ogg", "assets/audio/landschaft/oneshots/platschen.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=water",
+            "ambiente": "https://freesound.org/search/?q=lake+water+loop",
+            "oneshots": "https://freesound.org/search/?q=water+splash"
+          }
+        },
+        {
+          "id": "landschaft-gebirge",
+          "label": "Gebirge",
+          "music":    ["assets/audio/landschaft/musik/gebirge_episch.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/gebirge_wind.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/steinfall.ogg", "assets/audio/landschaft/oneshots/adler.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=epic",
+            "ambiente": "https://freesound.org/search/?q=mountain+wind+ambience",
+            "oneshots": "https://freesound.org/search/?q=rock+slide"
+          }
+        },
+        {
+          "id": "landschaft-eis",
+          "label": "Eislandschaft / Tundra",
+          "music":    ["assets/audio/landschaft/musik/eis_kalt.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/eis_wind.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/eis_brechen.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/ice%20winter%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=arctic+wind+loop",
+            "oneshots": "https://freesound.org/search/?q=ice+crack"
+          }
+        },
+        {
+          "id": "landschaft-meer",
+          "label": "Meeresküste",
+          "music":    ["assets/audio/landschaft/musik/meer_abenteuer.ogg", "assets/audio/landschaft/musik/meer_melancholie.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/meer_wellen.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/moewe.ogg", "assets/audio/landschaft/oneshots/schiff_knarren.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=ocean",
+            "ambiente": "https://freesound.org/search/?q=ocean+waves+loop",
+            "oneshots": "https://freesound.org/search/?q=seagull"
+          }
+        },
+        {
+          "id": "landschaft-hoehle",
+          "label": "Höhle / Grotte",
+          "music":    ["assets/audio/landschaft/musik/hoehle_dunkel.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/hoehle_tropfen.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/steinfall.ogg", "assets/audio/landschaft/oneshots/flattern.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=cave",
+            "ambiente": "https://freesound.org/search/?q=cave+drip+echo",
+            "oneshots": "https://freesound.org/search/?q=bat+flutter"
+          }
+        },
+        {
+          "id": "landschaft-wueste",
+          "label": "Wüste",
+          "music":    ["assets/audio/landschaft/musik/wueste_weite.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/wueste_wind.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/sand_wehen.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/desert%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=desert+wind+sand",
+            "oneshots": "https://freesound.org/search/?q=sand+wind"
+          }
+        },
+        {
+          "id": "landschaft-sumpf",
+          "label": "Sumpf / Moor",
+          "music":    ["assets/audio/landschaft/musik/sumpf_unheimlich.ogg"],
+          "ambience": ["assets/audio/landschaft/ambiente/sumpf_frosche.ogg"],
+          "oneshots": ["assets/audio/landschaft/oneshots/frosch_quaken.ogg", "assets/audio/landschaft/oneshots/schlamm.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/swamp%20dark%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=swamp+frogs+ambience",
+            "oneshots": "https://freesound.org/search/?q=mud+squelch"
+          }
+        }
       ]
     },
     {
-      "id": "tavern",
-      "label": "Taverne",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/tavern_evening.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/tavern_room.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/tankard_clink.ogg"
+      "id": "situation",
+      "label": "⚔ Situation",
+      "presets": [
+        {
+          "id": "situation-kampf",
+          "label": "Kampf",
+          "music":    ["assets/audio/situation/musik/kampf_intensiv.ogg", "assets/audio/situation/musik/kampf_drums.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/kampf_schlachtfeld.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/schwert_ziehen.ogg", "assets/audio/situation/oneshots/kampfschrei.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=battle",
+            "ambiente": "https://freesound.org/search/?q=battle+ambience+swords",
+            "oneshots": "https://freesound.org/search/?q=sword+draw"
+          }
+        },
+        {
+          "id": "situation-bossfight",
+          "label": "Bossfight",
+          "music":    ["assets/audio/situation/musik/boss_episch.ogg", "assets/audio/situation/musik/boss_final.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/boss_duster.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/bruellen_monster.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/epic%20boss%20battle/",
+            "ambiente": "https://freesound.org/search/?q=dark+ominous+drone",
+            "oneshots": "https://freesound.org/search/?q=monster+roar"
+          }
+        },
+        {
+          "id": "situation-verfolgung",
+          "label": "Verfolgungsjagd",
+          "music":    ["assets/audio/situation/musik/verfolgung_hektisch.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/rennen_atem.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/tuer_knallen.ogg", "assets/audio/situation/oneshots/sprung.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=chase",
+            "ambiente": "https://freesound.org/search/?q=running+chase+ambience",
+            "oneshots": "https://freesound.org/search/?q=door+slam"
+          }
+        },
+        {
+          "id": "situation-schleichen",
+          "label": "Schleichen / Infiltration",
+          "music":    ["assets/audio/situation/musik/schleichen_leise.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/schleichen_stille.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/stufe_knarren.ogg", "assets/audio/situation/oneshots/schloss_knacken.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=stealth",
+            "ambiente": "https://freesound.org/search/?q=quiet+tense+ambience",
+            "oneshots": "https://freesound.org/search/?q=creaking+floorboard"
+          }
+        },
+        {
+          "id": "situation-gefangen",
+          "label": "Gefangen / Verhör",
+          "music":    ["assets/audio/situation/musik/gefangen_beklemmend.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/gefangen_ketten.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/ketten_rascheln.ogg", "assets/audio/situation/oneshots/schrei_fern.ogg"],
+          "sources": {
+            "musik":    "https://pixabay.com/music/search/dark%20tension%20ambient/",
+            "ambiente": "https://freesound.org/search/?q=dungeon+chains+ambience",
+            "oneshots": "https://freesound.org/search/?q=distant+scream"
+          }
+        },
+        {
+          "id": "situation-sieg",
+          "label": "Sieg / Triumph",
+          "music":    ["assets/audio/situation/musik/sieg_triumphant.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/sieg_jubel.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/fanfare_kurz.ogg", "assets/audio/situation/oneshots/jubel.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=victory",
+            "ambiente": "https://freesound.org/search/?q=crowd+cheer",
+            "oneshots": "https://freesound.org/search/?q=victory+fanfare"
+          }
+        },
+        {
+          "id": "situation-trauer",
+          "label": "Trauer / Abschied",
+          "music":    ["assets/audio/situation/musik/trauer_elegie.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/trauer_regen.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/glocke_trauernd.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=sad",
+            "ambiente": "https://freesound.org/search/?q=soft+rain+sad",
+            "oneshots": "https://freesound.org/search/?q=funeral+bell"
+          }
+        },
+        {
+          "id": "situation-entdeckung",
+          "label": "Entdeckung / Staunen",
+          "music":    ["assets/audio/situation/musik/entdeckung_wunder.ogg"],
+          "ambience": ["assets/audio/situation/ambiente/entdeckung_leuchten.ogg"],
+          "oneshots": ["assets/audio/situation/oneshots/aha_streich.ogg", "assets/audio/situation/oneshots/magie_shimmer.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=discovery",
+            "ambiente": "https://freesound.org/search/?q=magical+shimmer+ambience",
+            "oneshots": "https://freesound.org/search/?q=discovery+chime"
+          }
+        }
       ]
     },
     {
-      "id": "combat",
-      "label": "Kampf",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/combat_drums.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/battlefield_wind.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/sword_draw.ogg",
-        "systems/aborea-v7/assets/audio/oneshots/battle_cry.ogg"
-      ]
-    },
-    {
-      "id": "rain-night",
-      "label": "Nacht / Regen",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/night_watch.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/rain_night.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/thunder_close.ogg"
-      ]
-    },
-    {
-      "id": "temple",
-      "label": "Tempel",
-      "music": [
-        "systems/aborea-v7/assets/audio/music/temple_choir.ogg"
-      ],
-      "ambience": [
-        "systems/aborea-v7/assets/audio/ambience/temple_hall.ogg"
-      ],
-      "oneshots": [
-        "systems/aborea-v7/assets/audio/oneshots/chime.ogg"
+      "id": "allgemein",
+      "label": "🎵 Allgemein",
+      "presets": [
+        {
+          "id": "allgemein-intro",
+          "label": "Einleitung / Intro",
+          "music":    ["assets/audio/allgemein/musik/intro_majestaet.ogg", "assets/audio/allgemein/musik/intro_episch.ogg"],
+          "ambience": ["assets/audio/allgemein/ambiente/intro_stille.ogg"],
+          "oneshots": ["assets/audio/allgemein/oneshots/gong.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=epic+intro",
+            "ambiente": "https://freesound.org/search/?q=ambient+drone+intro",
+            "oneshots": "https://freesound.org/search/?q=gong"
+          }
+        },
+        {
+          "id": "allgemein-ruhig",
+          "label": "Ruhig / Entspannt",
+          "music":    ["assets/audio/allgemein/musik/ruhig_entspannt.ogg", "assets/audio/allgemein/musik/pastoral.ogg"],
+          "ambience": ["assets/audio/allgemein/ambiente/ruhig_natur.ogg"],
+          "oneshots": ["assets/audio/allgemein/oneshots/vogelzwitscher.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=peaceful",
+            "ambiente": "https://freesound.org/search/?q=peaceful+nature+loop",
+            "oneshots": "https://freesound.org/search/?q=birdsong"
+          }
+        },
+        {
+          "id": "allgemein-mysterium",
+          "label": "Mysterium / Geheimnis",
+          "music":    ["assets/audio/allgemein/musik/mysterium_dunkel.ogg", "assets/audio/allgemein/musik/mysterium_leise.ogg"],
+          "ambience": ["assets/audio/allgemein/ambiente/mysterium_drone.ogg"],
+          "oneshots": ["assets/audio/allgemein/oneshots/fluestern.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=mystery",
+            "ambiente": "https://pixabay.com/music/search/mystery%20ambient/",
+            "oneshots": "https://freesound.org/search/?q=whispering"
+          }
+        },
+        {
+          "id": "allgemein-dramatisch",
+          "label": "Dramatisch / Spannend",
+          "music":    ["assets/audio/allgemein/musik/dramatisch_orchester.ogg", "assets/audio/allgemein/musik/dramatisch_steigerung.ogg"],
+          "ambience": ["assets/audio/allgemein/ambiente/dramatisch_stille.ogg"],
+          "oneshots": ["assets/audio/allgemein/oneshots/paukenschlag.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=dramatic",
+            "ambiente": "https://pixabay.com/music/search/tense%20orchestral/",
+            "oneshots": "https://freesound.org/search/?q=dramatic+sting"
+          }
+        },
+        {
+          "id": "allgemein-melancholie",
+          "label": "Melancholie",
+          "music":    ["assets/audio/allgemein/musik/melancholie_klavier.ogg", "assets/audio/allgemein/musik/melancholie_streicher.ogg"],
+          "ambience": ["assets/audio/allgemein/ambiente/melancholie_regen.ogg"],
+          "oneshots": ["assets/audio/allgemein/oneshots/seufzen.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=melancholy",
+            "ambiente": "https://freesound.org/search/?q=melancholy+rain+ambient",
+            "oneshots": "https://freesound.org/search/?q=sigh"
+          }
+        },
+        {
+          "id": "allgemein-feier",
+          "label": "Feier / Fest",
+          "music":    ["assets/audio/allgemein/musik/feier_tanzmusik.ogg", "assets/audio/allgemein/musik/feier_festlich.ogg"],
+          "ambience": ["assets/audio/allgemein/ambiente/feier_gemurmel.ogg"],
+          "oneshots": ["assets/audio/allgemein/oneshots/jubel_kurz.ogg", "assets/audio/allgemein/oneshots/feuerwerk.ogg"],
+          "sources": {
+            "musik":    "https://incompetech.com/music/royalty-free/index.html?keywords=celebration",
+            "ambiente": "https://freesound.org/search/?q=party+crowd+ambience",
+            "oneshots": "https://freesound.org/search/?q=fireworks"
+          }
+        }
       ]
     }
   ]
