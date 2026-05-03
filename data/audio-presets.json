@@ -1,4 +1,4 @@
-{
+﻿{
   "groups": [
     {
       "id": "wetter",
@@ -7,7 +7,7 @@
         {
           "id": "wetter-regen-leicht",
           "label": "Leichter Regen",
-          "music":    ["assets/audio/wetter/musik/regen_sanft.ogg"],
+          "music":    ["assets/audio/wetter/musik/luminous_rain.mp3"],
           "ambience": ["assets/audio/wetter/ambiente/regen_leicht.ogg"],
           "oneshots": ["assets/audio/wetter/oneshots/tropfen.ogg"],
           "sources": {
@@ -19,7 +19,7 @@
         {
           "id": "wetter-gewitter",
           "label": "Gewitter",
-          "music":    ["assets/audio/wetter/musik/gewitter_dramatisch.ogg"],
+          "music":    ["assets/audio/wetter/musik/danger_storm.mp3"],
           "ambience": ["assets/audio/wetter/ambiente/gewitter_regen.ogg"],
           "oneshots": ["assets/audio/wetter/oneshots/donner_nah.ogg", "assets/audio/wetter/oneshots/blitz_einschlag.ogg"],
           "sources": {
@@ -31,7 +31,7 @@
         {
           "id": "wetter-schneesturm",
           "label": "Schneesturm",
-          "music":    ["assets/audio/wetter/musik/schnee_kalt.ogg"],
+          "music":    ["assets/audio/wetter/musik/frozen_star.mp3"],
           "ambience": ["assets/audio/wetter/ambiente/schneesturm.ogg"],
           "oneshots": ["assets/audio/wetter/oneshots/windstoss.ogg"],
           "sources": {
@@ -43,7 +43,7 @@
         {
           "id": "wetter-wind",
           "label": "Wind / Sturm",
-          "music":    ["assets/audio/wetter/musik/weiter_wind.ogg"],
+          "music":    ["assets/audio/wetter/musik/arid_foothills.mp3"],
           "ambience": ["assets/audio/wetter/ambiente/wind_offen.ogg"],
           "oneshots": ["assets/audio/wetter/oneshots/windstoss_stark.ogg"],
           "sources": {
@@ -55,7 +55,7 @@
         {
           "id": "wetter-hagel",
           "label": "Hagel",
-          "music":    ["assets/audio/wetter/musik/regen_sanft.ogg"],
+          "music":    ["assets/audio/wetter/musik/luminous_rain.mp3"],
           "ambience": ["assets/audio/wetter/ambiente/hagel_dach.ogg"],
           "oneshots": ["assets/audio/wetter/oneshots/hagel_einschlag.ogg"],
           "sources": {
@@ -67,7 +67,7 @@
         {
           "id": "wetter-nebel",
           "label": "Nebel / Stille",
-          "music":    ["assets/audio/wetter/musik/nebel_mystisch.ogg"],
+          "music":    ["assets/audio/wetter/musik/nightdreams.mp3"],
           "ambience": ["assets/audio/wetter/ambiente/nebel_stille.ogg"],
           "oneshots": ["assets/audio/wetter/oneshots/rascheln.ogg"],
           "sources": {
@@ -85,9 +85,9 @@
         {
           "id": "umgebung-taverne",
           "label": "Taverne",
-          "music":    ["assets/audio/umgebung/musik/taverne_abend.ogg", "assets/audio/umgebung/musik/taverne_laut.ogg"],
+          "music":    ["assets/audio/umgebung/musik/barroom_ballet.mp3", "assets/audio/umgebung/musik/cantina_blues.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/taverne_gemurmel.ogg"],
-          "oneshots": ["assets/audio/umgebung/oneshots/krug_abstellen.ogg", "assets/audio/umgebung/oneshots/gelächter.ogg"],
+          "oneshots": ["assets/audio/umgebung/oneshots/krug_abstellen.ogg", "assets/audio/umgebung/oneshots/gelaechter.ogg"],
           "sources": {
             "musik":    "https://pixabay.com/music/search/tavern/",
             "ambiente": "https://freesound.org/search/?q=tavern+crowd+ambience",
@@ -97,7 +97,7 @@
         {
           "id": "umgebung-tempel",
           "label": "Tempel / Heiligtum",
-          "music":    ["assets/audio/umgebung/musik/tempel_chor.ogg", "assets/audio/umgebung/musik/tempel_orgel.ogg"],
+          "music":    ["assets/audio/umgebung/musik/heroic_reception.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/tempel_halle.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/glocke.ogg", "assets/audio/umgebung/oneshots/gebet.ogg"],
           "sources": {
@@ -109,7 +109,7 @@
         {
           "id": "umgebung-markt",
           "label": "Markt / Stadt",
-          "music":    ["assets/audio/umgebung/musik/markt_heiter.ogg"],
+          "music":    ["assets/audio/umgebung/musik/glee_club_polka.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/markt_larm.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/stadtglocke.ogg", "assets/audio/umgebung/oneshots/ausrufer.ogg"],
           "sources": {
@@ -121,7 +121,7 @@
         {
           "id": "umgebung-kerker",
           "label": "Kerker / Gefängnis",
-          "music":    ["assets/audio/umgebung/musik/kerker_dunkel.ogg"],
+          "music":    ["assets/audio/umgebung/musik/night_cave.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/kerker_tropfen.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/ketten.ogg", "assets/audio/umgebung/oneshots/tuer_eisen.ogg"],
           "sources": {
@@ -133,7 +133,7 @@
         {
           "id": "umgebung-bibliothek",
           "label": "Bibliothek / Archiv",
-          "music":    ["assets/audio/umgebung/musik/bibliothek_ruhig.ogg"],
+          "music":    ["assets/audio/umgebung/musik/clear_waters.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/bibliothek_stille.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/seiten_blaettern.ogg"],
           "sources": {
@@ -145,7 +145,7 @@
         {
           "id": "umgebung-schmiede",
           "label": "Schmiede",
-          "music":    ["assets/audio/umgebung/musik/schmiede_rhythmus.ogg"],
+          "music":    ["assets/audio/umgebung/musik/neo_western.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/schmiede_feuer.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/hammer_amboss.ogg", "assets/audio/umgebung/oneshots/blasbalg.ogg"],
           "sources": {
@@ -157,7 +157,7 @@
         {
           "id": "umgebung-thronsaal",
           "label": "Schloss / Thronsaal",
-          "music":    ["assets/audio/umgebung/musik/thronsaal_majestaet.ogg", "assets/audio/umgebung/musik/hofball.ogg"],
+          "music":    ["assets/audio/umgebung/musik/despair_and_triumph.mp3", "assets/audio/umgebung/musik/heroic_reception.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/schloss_halle.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/fanfare.ogg", "assets/audio/umgebung/oneshots/applaus.ogg"],
           "sources": {
@@ -169,7 +169,7 @@
         {
           "id": "umgebung-stall",
           "label": "Stall / Scheune",
-          "music":    ["assets/audio/umgebung/musik/landleben_heiter.ogg"],
+          "music":    ["assets/audio/umgebung/musik/hamster_march.mp3"],
           "ambience": ["assets/audio/umgebung/ambiente/stall_tiere.ogg"],
           "oneshots": ["assets/audio/umgebung/oneshots/pferd_wiehern.ogg", "assets/audio/umgebung/oneshots/hahn.ogg"],
           "sources": {
@@ -187,7 +187,7 @@
         {
           "id": "landschaft-dorf-tag",
           "label": "Dorf (Tag)",
-          "music":    ["assets/audio/landschaft/musik/dorf_heiter.ogg", "assets/audio/landschaft/musik/dorf_idyll.ogg"],
+          "music":    ["assets/audio/landschaft/musik/cherry_blossom.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/dorf_tag.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/dorfglocke.ogg"],
           "sources": {
@@ -199,7 +199,7 @@
         {
           "id": "landschaft-dorf-nacht",
           "label": "Dorf (Nacht)",
-          "music":    ["assets/audio/landschaft/musik/dorf_nacht.ogg"],
+          "music":    ["assets/audio/landschaft/musik/ghost_dance.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/dorf_nacht_grillen.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/eule.ogg"],
           "sources": {
@@ -211,7 +211,7 @@
         {
           "id": "landschaft-wald-tag",
           "label": "Wald (Tag)",
-          "music":    ["assets/audio/landschaft/musik/wald_reise.ogg", "assets/audio/landschaft/musik/wald_entspannt.ogg"],
+          "music":    ["assets/audio/landschaft/musik/magic_forest.mp3", "assets/audio/landschaft/musik/birch_run.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/wald_voegel.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/wolf_heul.ogg", "assets/audio/landschaft/oneshots/ast_brechen.ogg"],
           "sources": {
@@ -223,7 +223,7 @@
         {
           "id": "landschaft-wald-nacht",
           "label": "Wald (Nacht)",
-          "music":    ["assets/audio/landschaft/musik/wald_nacht_mystisch.ogg"],
+          "music":    ["assets/audio/landschaft/musik/darkening_developments.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/wald_nacht_grillen.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/rascheln_nacht.ogg", "assets/audio/landschaft/oneshots/eule_nacht.ogg"],
           "sources": {
@@ -235,7 +235,7 @@
         {
           "id": "landschaft-see",
           "label": "See / Fluss",
-          "music":    ["assets/audio/landschaft/musik/wasser_ruhig.ogg"],
+          "music":    ["assets/audio/landschaft/musik/at_the_shore.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/see_wellen.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/frosch.ogg", "assets/audio/landschaft/oneshots/platschen.ogg"],
           "sources": {
@@ -247,7 +247,7 @@
         {
           "id": "landschaft-gebirge",
           "label": "Gebirge",
-          "music":    ["assets/audio/landschaft/musik/gebirge_episch.ogg"],
+          "music":    ["assets/audio/landschaft/musik/mountain_emperor.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/gebirge_wind.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/steinfall.ogg", "assets/audio/landschaft/oneshots/adler.ogg"],
           "sources": {
@@ -259,7 +259,7 @@
         {
           "id": "landschaft-eis",
           "label": "Eislandschaft / Tundra",
-          "music":    ["assets/audio/landschaft/musik/eis_kalt.ogg"],
+          "music":    ["assets/audio/landschaft/musik/cattails.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/eis_wind.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/eis_brechen.ogg"],
           "sources": {
@@ -271,7 +271,7 @@
         {
           "id": "landschaft-meer",
           "label": "Meeresküste",
-          "music":    ["assets/audio/landschaft/musik/meer_abenteuer.ogg", "assets/audio/landschaft/musik/meer_melancholie.ogg"],
+          "music":    ["assets/audio/landschaft/musik/chee_zee_cave.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/meer_wellen.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/moewe.ogg", "assets/audio/landschaft/oneshots/schiff_knarren.ogg"],
           "sources": {
@@ -283,7 +283,7 @@
         {
           "id": "landschaft-hoehle",
           "label": "Höhle / Grotte",
-          "music":    ["assets/audio/landschaft/musik/hoehle_dunkel.ogg"],
+          "music":    ["assets/audio/landschaft/musik/darkest_child.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/hoehle_tropfen.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/steinfall.ogg", "assets/audio/landschaft/oneshots/flattern.ogg"],
           "sources": {
@@ -295,7 +295,7 @@
         {
           "id": "landschaft-wueste",
           "label": "Wüste",
-          "music":    ["assets/audio/landschaft/musik/wueste_weite.ogg"],
+          "music":    ["assets/audio/landschaft/musik/ghost_dance.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/wueste_wind.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/sand_wehen.ogg"],
           "sources": {
@@ -307,7 +307,7 @@
         {
           "id": "landschaft-sumpf",
           "label": "Sumpf / Moor",
-          "music":    ["assets/audio/landschaft/musik/sumpf_unheimlich.ogg"],
+          "music":    ["assets/audio/landschaft/musik/darkening_developments.mp3"],
           "ambience": ["assets/audio/landschaft/ambiente/sumpf_frosche.ogg"],
           "oneshots": ["assets/audio/landschaft/oneshots/frosch_quaken.ogg", "assets/audio/landschaft/oneshots/schlamm.ogg"],
           "sources": {
@@ -325,7 +325,7 @@
         {
           "id": "situation-kampf",
           "label": "Kampf",
-          "music":    ["assets/audio/situation/musik/kampf_intensiv.ogg", "assets/audio/situation/musik/kampf_drums.ogg"],
+          "music":    ["assets/audio/situation/musik/exotic_battle.mp3", "assets/audio/situation/musik/feral_chase.mp3"],
           "ambience": ["assets/audio/situation/ambiente/kampf_schlachtfeld.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/schwert_ziehen.ogg", "assets/audio/situation/oneshots/kampfschrei.ogg"],
           "sources": {
@@ -337,7 +337,7 @@
         {
           "id": "situation-bossfight",
           "label": "Bossfight",
-          "music":    ["assets/audio/situation/musik/boss_episch.ogg", "assets/audio/situation/musik/boss_final.ogg"],
+          "music":    ["assets/audio/situation/musik/final_battle.mp3", "assets/audio/situation/musik/deep_noise.mp3"],
           "ambience": ["assets/audio/situation/ambiente/boss_duster.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/bruellen_monster.ogg"],
           "sources": {
@@ -349,7 +349,7 @@
         {
           "id": "situation-verfolgung",
           "label": "Verfolgungsjagd",
-          "music":    ["assets/audio/situation/musik/verfolgung_hektisch.ogg"],
+          "music":    ["assets/audio/situation/musik/hot_pursuit.mp3"],
           "ambience": ["assets/audio/situation/ambiente/rennen_atem.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/tuer_knallen.ogg", "assets/audio/situation/oneshots/sprung.ogg"],
           "sources": {
@@ -361,7 +361,7 @@
         {
           "id": "situation-schleichen",
           "label": "Schleichen / Infiltration",
-          "music":    ["assets/audio/situation/musik/schleichen_leise.ogg"],
+          "music":    ["assets/audio/situation/musik/cryptic_sorrow.mp3"],
           "ambience": ["assets/audio/situation/ambiente/schleichen_stille.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/stufe_knarren.ogg", "assets/audio/situation/oneshots/schloss_knacken.ogg"],
           "sources": {
@@ -373,7 +373,7 @@
         {
           "id": "situation-gefangen",
           "label": "Gefangen / Verhör",
-          "music":    ["assets/audio/situation/musik/gefangen_beklemmend.ogg"],
+          "music":    ["assets/audio/situation/musik/deep_noise.mp3"],
           "ambience": ["assets/audio/situation/ambiente/gefangen_ketten.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/ketten_rascheln.ogg", "assets/audio/situation/oneshots/schrei_fern.ogg"],
           "sources": {
@@ -385,7 +385,7 @@
         {
           "id": "situation-sieg",
           "label": "Sieg / Triumph",
-          "music":    ["assets/audio/situation/musik/sieg_triumphant.ogg"],
+          "music":    ["assets/audio/situation/musik/atlantean_twilight.mp3"],
           "ambience": ["assets/audio/situation/ambiente/sieg_jubel.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/fanfare_kurz.ogg", "assets/audio/situation/oneshots/jubel.ogg"],
           "sources": {
@@ -397,7 +397,7 @@
         {
           "id": "situation-trauer",
           "label": "Trauer / Abschied",
-          "music":    ["assets/audio/situation/musik/trauer_elegie.ogg"],
+          "music":    ["assets/audio/situation/musik/loss.mp3", "assets/audio/situation/musik/heartbreaking.mp3"],
           "ambience": ["assets/audio/situation/ambiente/trauer_regen.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/glocke_trauernd.ogg"],
           "sources": {
@@ -409,7 +409,7 @@
         {
           "id": "situation-entdeckung",
           "label": "Entdeckung / Staunen",
-          "music":    ["assets/audio/situation/musik/entdeckung_wunder.ogg"],
+          "music":    ["assets/audio/situation/musik/atlantean_twilight.mp3"],
           "ambience": ["assets/audio/situation/ambiente/entdeckung_leuchten.ogg"],
           "oneshots": ["assets/audio/situation/oneshots/aha_streich.ogg", "assets/audio/situation/oneshots/magie_shimmer.ogg"],
           "sources": {
@@ -427,7 +427,7 @@
         {
           "id": "allgemein-intro",
           "label": "Einleitung / Intro",
-          "music":    ["assets/audio/allgemein/musik/intro_majestaet.ogg", "assets/audio/allgemein/musik/intro_episch.ogg"],
+          "music":    ["assets/audio/allgemein/musik/baba_yaga.mp3"],
           "ambience": ["assets/audio/allgemein/ambiente/intro_stille.ogg"],
           "oneshots": ["assets/audio/allgemein/oneshots/gong.ogg"],
           "sources": {
@@ -439,7 +439,7 @@
         {
           "id": "allgemein-ruhig",
           "label": "Ruhig / Entspannt",
-          "music":    ["assets/audio/allgemein/musik/ruhig_entspannt.ogg", "assets/audio/allgemein/musik/pastoral.ogg"],
+          "music":    ["assets/audio/allgemein/musik/autumn_day.mp3", "assets/audio/allgemein/musik/at_rest.mp3"],
           "ambience": ["assets/audio/allgemein/ambiente/ruhig_natur.ogg"],
           "oneshots": ["assets/audio/allgemein/oneshots/vogelzwitscher.ogg"],
           "sources": {
@@ -451,7 +451,7 @@
         {
           "id": "allgemein-mysterium",
           "label": "Mysterium / Geheimnis",
-          "music":    ["assets/audio/allgemein/musik/mysterium_dunkel.ogg", "assets/audio/allgemein/musik/mysterium_leise.ogg"],
+          "music":    ["assets/audio/allgemein/musik/baba_yaga.mp3"],
           "ambience": ["assets/audio/allgemein/ambiente/mysterium_drone.ogg"],
           "oneshots": ["assets/audio/allgemein/oneshots/fluestern.ogg"],
           "sources": {
@@ -463,7 +463,7 @@
         {
           "id": "allgemein-dramatisch",
           "label": "Dramatisch / Spannend",
-          "music":    ["assets/audio/allgemein/musik/dramatisch_orchester.ogg", "assets/audio/allgemein/musik/dramatisch_steigerung.ogg"],
+          "music":    ["assets/audio/allgemein/musik/beachfront_celebration.mp3"],
           "ambience": ["assets/audio/allgemein/ambiente/dramatisch_stille.ogg"],
           "oneshots": ["assets/audio/allgemein/oneshots/paukenschlag.ogg"],
           "sources": {
@@ -475,7 +475,7 @@
         {
           "id": "allgemein-melancholie",
           "label": "Melancholie",
-          "music":    ["assets/audio/allgemein/musik/melancholie_klavier.ogg", "assets/audio/allgemein/musik/melancholie_streicher.ogg"],
+          "music":    ["assets/audio/allgemein/musik/at_rest.mp3"],
           "ambience": ["assets/audio/allgemein/ambiente/melancholie_regen.ogg"],
           "oneshots": ["assets/audio/allgemein/oneshots/seufzen.ogg"],
           "sources": {
@@ -487,7 +487,7 @@
         {
           "id": "allgemein-feier",
           "label": "Feier / Fest",
-          "music":    ["assets/audio/allgemein/musik/feier_tanzmusik.ogg", "assets/audio/allgemein/musik/feier_festlich.ogg"],
+          "music":    ["assets/audio/allgemein/musik/beachfront_celebration.mp3", "assets/audio/allgemein/musik/autumn_day.mp3"],
           "ambience": ["assets/audio/allgemein/ambiente/feier_gemurmel.ogg"],
           "oneshots": ["assets/audio/allgemein/oneshots/jubel_kurz.ogg", "assets/audio/allgemein/oneshots/feuerwerk.ogg"],
           "sources": {
