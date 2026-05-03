@@ -602,10 +602,21 @@
   font-size: .75rem; color: #999; white-space: nowrap; font-family: monospace;
 }
 
-.aborea-seek-row { padding: 2px 0; }
-.aborea-seek-slider {
-  width: 100%; height: 6px; cursor: pointer;
+.aborea-seek-row {
+  padding: 4px 0;
+  display: block !important;
+}
+.aborea-seek-row input[type="range"].aborea-seek-slider {
+  display: block !important;
+  width: 100% !important;
+  height: 18px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer;
   accent-color: #c8a84b;
+  background: transparent;
+  -webkit-appearance: slider-horizontal;
+  appearance: auto;
 }
 
 .aborea-audio-buttons {
