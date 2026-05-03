@@ -11,6 +11,13 @@
       {{/each}}
     </select>
   </div>
+  <div class="aborea-track-display">
+    <span class="aborea-track-name">—</span>
+    <span class="aborea-track-time">0:00 / 0:00</span>
+  </div>
+  <div class="aborea-seek-row">
+    <input type="range" class="aborea-seek-slider" min="0" max="1000" value="0" step="1">
+  </div>
   <div class="aborea-soundboard-info">
     <p>Audiodateien unter <code>systems/aborea-v7/assets/audio/[gruppe]/musik|ambiente|oneshots/</code> ablegen.</p>
     <p>Quellen (kostenlos, CC-lizenziert):
@@ -20,9 +27,11 @@
     </p>
   </div>
   <div class="aborea-audio-buttons">
+    <button type="button" data-audio-action="prev" title="Vorheriger Track"><i class="fas fa-step-backward"></i></button>
     <button type="button" data-audio-action="start"><i class="fas fa-play"></i> Start</button>
     <button type="button" data-audio-action="oneshot"><i class="fas fa-bolt"></i> One-Shot</button>
     <button type="button" data-audio-action="stop"><i class="fas fa-stop"></i> Stop</button>
+    <button type="button" data-audio-action="next" title="Nächster Track"><i class="fas fa-step-forward"></i></button>
     <button type="button" data-audio-action="playlist"><i class="fas fa-list"></i> Playlists anlegen</button>
   </div>
 </form>
