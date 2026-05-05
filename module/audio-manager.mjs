@@ -47,7 +47,7 @@ export class AboreaSoundboard {
   static async playFile(src, { loop = false, volume = 0.5, fade = 500 } = {}) {
     src = this.normalizePath(src);
     if (!src) return null;
-    return await AudioHelper.play({ src, loop, volume, fade, autoplay: true }, true);
+    return await foundry.audio.AudioHelper.play({ src, loop, volume, fade, autoplay: true }, true);
   }
 
   static async stopSound(sound, fade = 500) {
