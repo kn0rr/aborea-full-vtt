@@ -51,7 +51,7 @@
                                                             "assets/audio/wetter/ambiente/schneesturm.ogg"
                                                         ],
                                            "oneshots":  [
-                                                            "assets/audio/wetter/oneshots/windstoss.ogg"
+
                                                         ],
                                            "sources":  {
                                                            "musik":  "https://pixabay.com/music/search/winter%20ambient/",
@@ -66,10 +66,10 @@
                                                          "assets/audio/wetter/musik/arid_foothills.mp3"
                                                      ],
                                            "ambience":  [
-                                                            "assets/audio/wetter/ambiente/wind_offen.ogg"
+
                                                         ],
                                            "oneshots":  [
-                                                            "assets/audio/wetter/oneshots/windstoss_stark.ogg"
+
                                                         ],
                                            "sources":  {
                                                            "musik":  "https://incompetech.com/music/royalty-free/index.html?keywords=wind",
@@ -369,7 +369,7 @@
                                                          "assets/audio/landschaft/musik/mountain_emperor.mp3"
                                                      ],
                                            "ambience":  [
-                                                            "assets/audio/landschaft/ambiente/gebirge_wind.ogg"
+
                                                         ],
                                            "oneshots":  [
 
@@ -387,7 +387,7 @@
                                                          "assets/audio/landschaft/musik/cattails.mp3"
                                                      ],
                                            "ambience":  [
-                                                            "assets/audio/landschaft/ambiente/eis_wind.ogg"
+
                                                         ],
                                            "oneshots":  [
 
@@ -441,10 +441,10 @@
                                                          "assets/audio/landschaft/musik/ghost_dance.mp3"
                                                      ],
                                            "ambience":  [
-                                                            "assets/audio/landschaft/ambiente/wueste_wind.ogg"
+
                                                         ],
                                            "oneshots":  [
-                                                            "assets/audio/landschaft/oneshots/sand_wehen.ogg"
+
                                                         ],
                                            "sources":  {
                                                            "musik":  "https://pixabay.com/music/search/desert%20ambient/",
