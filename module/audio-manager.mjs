@@ -141,20 +141,54 @@ export class AboreaSoundboard {
 
   // ── Seek / Position helpers ──────────────────────────────────────────────────
 
+  // Foundry v13 Sound wraps audio in different containers depending on file size.
+  // We probe multiple property paths to find the real HTMLAudioElement or AudioBuffer.
+  static _getAudioElement(sound) {
+    if (!sound) return null;
+    return sound.element
+      ?? sound.container?.element
+      ?? sound.node?.mediaElement
+      ?? sound.source?.mediaElement
+      ?? null;
+  }
+
   static _getSoundPosition(sound) {
     if (!sound) return 0;
-    try { return sound.currentTime ?? 0; } catch (_) { return 0; }
+    try {
+      // v13 computed getter (WebAudio path)
+      const t = sound.currentTime;
+      if (t != null && isFinite(t) && t >= 0) return t;
+      // HTMLAudioElement path
+      const el = this._getAudioElement(sound);
+      if (el?.currentTime >= 0) return el.currentTime;
+      return 0;
+    } catch (_) { return 0; }
   }
 
   static _getSoundDuration(sound) {
     if (!sound) return 0;
-    try { return sound.duration ?? sound.buffer?.duration ?? 0; } catch (_) { return 0; }
+    try {
+      // v13 Sound.duration
+      let d = sound.duration;
+      if (d > 0 && isFinite(d)) return d;
+      // via container
+      d = sound.container?.duration ?? sound.buffer?.duration;
+      if (d > 0 && isFinite(d)) return d;
+      // HTMLAudioElement
+      const el = this._getAudioElement(sound);
+      d = el?.duration;
+      if (d > 0 && isFinite(d)) return d;
+      return 0;
+    } catch (_) { return 0; }
   }
 
   static _seekSound(sound, seconds) {
     if (!sound) return;
     try {
       if (typeof sound.seek === "function") { sound.seek(seconds); return; }
+      // HTMLAudioElement path
+      const el = this._getAudioElement(sound);
+      if (el) { el.currentTime = seconds; return; }
       sound.currentTime = seconds;
     } catch (_) {}
   }
@@ -180,11 +214,17 @@ export class AboreaSoundboard {
       if (sound) {
         const cur = this._getSoundPosition(sound);
         const dur = this._getSoundDuration(sound);
-        if (dur > 0 && !slider.dataset.seeking) {
-          slider.max   = 1000;
-          slider.value = Math.round((cur / dur) * 1000);
+        if (!slider.dataset.seeking) {
+          if (dur > 0) {
+            slider.max   = 1000;
+            slider.value = Math.round((cur / dur) * 1000);
+          }
         }
-        if (timeEl) timeEl.textContent = `${this._formatTime(cur)} / ${this._formatTime(dur)}`;
+        if (timeEl) {
+          timeEl.textContent = dur > 0
+            ? `${this._formatTime(cur)} / ${this._formatTime(dur)}`
+            : `${this._formatTime(cur)} / —:——`;
+        }
         if (nameEl) {
           const src   = this.state.musicList[this.state.musicIndex] ?? "";
           const fname = src.split("/").pop().replace(/\.[^.]+$/, "").replace(/_/g, " ");
