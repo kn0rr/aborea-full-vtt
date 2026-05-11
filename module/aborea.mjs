@@ -2,7 +2,7 @@
 import { ABOREA } from "./config.mjs";
 import { AboreaActorSheet, AboreaCharacterSheet, AboreaNpcSheet, AboreaCreatureSheet } from "./actor-sheet.mjs";
 import { AboreaItemSheet } from "./item-sheet.mjs";
-import { importAboreaPackSources, importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
+import { importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
 import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHooks } from "./combat.mjs";
@@ -38,7 +38,6 @@ Hooks.once("init", async function () {
 
   game.aborea = {
     config: ABOREA,
-    importPackSources: importAboreaPackSources,
     importPack: importSingleAboreaPack,
     listWorldPacks: listAboreaWorldPacks,
     resetWorldPacks: resetAboreaWorldPacks,

@@ -1,1 +1,1 @@
-await game.aborea.importPackSources();
+await game.aborea.buildSystemPacks();

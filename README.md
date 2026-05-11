@@ -36,7 +36,6 @@ Foundry erkennt neue Releases und bietet das Update in den Systemeinstellungen a
 ```js
 await game.aborea.buildSystemPacks();   // Kompendien befüllen
 await game.aborea.resetSystemPacks();   // Kompendien leeren
-await game.aborea.importPackSources();  // Alternativ: World-Packs importieren
 ```
 
 ---
