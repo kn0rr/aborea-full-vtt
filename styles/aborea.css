@@ -250,6 +250,62 @@
 .xp-hint     { display: block; font-size: .75rem; color: var(--aborea-brown); opacity: .8; margin-top: 2px; }
 .xp-hint.xp-max { color: #8a6a00; font-weight: 600; }
 
+/* ── Header Traits & Wallet ─────────────────────────── */
+.header-traits { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.trait-badge-sm { font-size: .7rem; padding: 1px 6px; border-radius: 99px;
+                  background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+.header-wallet { font-size: .8rem; color: var(--aborea-brown); font-weight: 500; align-self: center; }
+
+/* ── Level-Up Banner ────────────────────────────────── */
+.levelup-banner-prominent { background: linear-gradient(135deg, #fef9c3, #fde68a);
+  border: 2px solid #f59e0b; border-radius: 8px; padding: 10px 16px;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 12px;
+  font-size: .95rem; }
+.levelup-banner-prominent .btn-primary { margin-left: auto; }
+
+/* ── Erschaffung: Abgeschlossen-Banner ──────────────── */
+.creation-done-banner { background: #f0fdf4; border: 1px solid #86efac;
+  border-radius: 8px; padding: 10px 16px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px; font-size: .95rem; color: #166534; }
+.creation-summary-panel { padding: 12px; }
+.creation-summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 8px; }
+.summary-attr-row { display: flex; flex-direction: column; align-items: center;
+  background: var(--aborea-panel-bg); border-radius: 6px; padding: 8px; }
+.summary-attr-label { font-size: .75rem; color: var(--aborea-brown); }
+.summary-attr-value { font-size: 1.4rem; font-weight: 700; }
+.summary-attr-bonus { font-size: .8rem; }
+
+/* ── HP/MP Fortschrittsbalken ───────────────────────── */
+.resource-bar-wrap { height: 6px; background: var(--aborea-border-light);
+  border-radius: 3px; margin: 3px 0 8px; overflow: hidden; }
+.resource-bar { height: 100%; border-radius: 3px; transition: width .3s; }
+.resource-bar-hp { background: #ef4444; }
+.resource-bar-mp { background: #3b82f6; }
+
+/* ── Kampfwerte: editierbar vs. berechnet ───────────── */
+.combat-editable label,
+.combat-editable { }
+.combat-computed label,
+.combat-computed { opacity: .75; }
+.combat-computed input { background: var(--aborea-panel-bg); font-style: italic; }
+
+/* ── Fertigkeiten: Gesamtbonus ──────────────────────── */
+.skill-total-display { font-size: .8rem; color: var(--aborea-brown); font-weight: 600;
+  min-width: 2.5em; text-align: center; }
+.trait-bonus-tag { font-size: .7rem; background: #f0fdf4; color: #166534;
+  border: 1px solid #86efac; border-radius: 4px; padding: 1px 5px; }
+
+/* ── Besonderes: Rassenmerkmale ─────────────────────── */
+.racial-traits-full { display: flex; flex-wrap: wrap; gap: 8px; }
+.feature-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.feature-desc { font-size: .82rem; color: var(--aborea-brown); }
+
+/* ── Notizen-Textarea ───────────────────────────────── */
+.notes-textarea { min-height: 120px; width: 100%; }
+
+/* ── Inventar: Preisanzeige ─────────────────────────── */
+.gear-price { color: #92400e; font-size: .8rem; }
+
 /* ── Buttons (globale Typen) ────────────────────────── */
 .aborea-sheet button, .btn-sm {
   border-radius: var(--aborea-radius-sm);

@@ -88,6 +88,11 @@ export class AboreaActorSheet extends ActorSheet {
     system.combat.totalArmorValue = baseArmor + armorBonus;
     system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
     system.combat.initiative = ABOREA.initiativeBonus({ system: { attributes: system.displayAttributes } });
+    // HP/MP Prozent für Fortschrittsbalken
+    const _hpMax = Number(system.resources?.hp?.max || 1);
+    const _mpMax = Number(system.resources?.mp?.max || 1);
+    system.resources.hp.pct = Math.round(Math.min(100, Math.max(0, (Number(system.resources.hp.value) / _hpMax) * 100)));
+    system.resources.mp.pct = Math.round(Math.min(100, Math.max(0, (Number(system.resources.mp.value) / _mpMax) * 100)));
     const budget = Number(system.creation?.pointsBudget ?? ABOREA.attributeBudget);
     const spent = ABOREA.attributeCostTotal(system.baseAttributes || {});
     const remaining = budget - spent;
@@ -168,8 +173,22 @@ export class AboreaActorSheet extends ActorSheet {
       validationErrors, canFinalize: validationErrors.length === 0 && remaining === 0 && trainingRemaining >= 0 && !!system.details?.race && !!system.details?.class
     };
     system.wallet = normalizeWallet(system.wallet);
+    // Kurzanzeige Geldbeutel für den Header
+    const _currencies = system.wallet?.currencies ?? [];
+    system.wallet.summary = _currencies
+      .filter(c => Number(c.amount) > 0)
+      .map(c => `${c.amount} ${c.label}`)
+      .join(" · ") || "—";
+
     system.inventoryHistory = Array.isArray(system.inventoryHistory) ? foundry.utils.deepClone(system.inventoryHistory) : [];
-    system.skillDisplayRows = buildSkillDisplayRows(system);
+
+    // Skill-Zeilen mit Rassenbonus ergänzen
+    const _skillBonuses = system.traits?.skillBonuses ?? {};
+    system.skillDisplayRows = buildSkillDisplayRows(system).map(row => ({
+      ...row,
+      traitBonus: Number(_skillBonuses[row.key] ?? 0),
+      totalBonus: row.rank + Number(row.bonus ?? 0) + Number(_skillBonuses[row.key] ?? 0)
+    }));
     system.companions = system.companions || { list: [] };
     system.companions.list = (system.companions.list || []).map(comp => ({
       ...comp, expiresLabel: formatExpiry(comp.expiresAt), levelLabel: comp.summonLevel ? `Stufe ${comp.summonLevel}` : "",
