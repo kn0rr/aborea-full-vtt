@@ -11,6 +11,9 @@
 # production
 /build
 
+# Foundry VTT – Kompendium-Laufzeitdaten (werden von buildSystemPacks() befüllt)
+/packs/
+
 # misc
 .DS_Store
 .env.local
