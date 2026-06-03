@@ -129,8 +129,22 @@ export async function rollSkill(actor, skillKey) {
   const attrBonus = ABOREA.attributeBonus(attrValue);
   const rank = Number(skill.rank ?? 0);
   const classBonus = Number(actor.system.classFeatures?.bonuses?.[skillKey] ?? skill.bonus ?? 0);
+
+  // Rassentraits: Mechanik- und Geheimtüren-Bonus
+  const traits = actor.system.traits ?? {};
+  let traitBonus = 0;
+  let traitLabel = "";
+  if (traits.mechanicsBonus && skillKey === "mechanik") {
+    traitBonus += 1; traitLabel = game.i18n.localize("ABOREA.TraitMechanicsBonus");
+  }
+  if (traits.secretDoorsBonus && (skillKey === "mechanik" || skillKey === "wahrnehmung")) {
+    traitBonus += 1; traitLabel = traitLabel
+      ? `${traitLabel}, ${game.i18n.localize("ABOREA.TraitSecretDoorsBonus")}`
+      : game.i18n.localize("ABOREA.TraitSecretDoorsBonus");
+  }
+
   const roll = await rollOpenD10({ label: skill.label ?? skill.name ?? skillKey });
-  const total = roll.total + attrBonus + rank + classBonus;
+  const total = roll.total + attrBonus + rank + classBonus + traitBonus;
   const label = skill.label ?? skill.name ?? ABOREA.skills?.[skillKey]?.label ?? skillKey;
 
   await ChatMessage.create({
@@ -142,6 +156,7 @@ export async function rollSkill(actor, skillKey) {
         <p>${game.i18n.localize(ABOREA.attributes[attrKey])}: ${attrBonus >= 0 ? "+" : ""}${attrBonus}</p>
         <p>${game.i18n.localize("ABOREA.Rank")}: ${rank >= 0 ? "+" : ""}${rank}</p>
         <p>${game.i18n.localize("ABOREA.ClassBonus")}: ${classBonus >= 0 ? "+" : ""}${classBonus}</p>
+        ${traitBonus ? `<p>${traitLabel}: +${traitBonus}</p>` : ""}
         <p><strong>${game.i18n.localize("ABOREA.Total")}: ${total}</strong></p>
       </div>
     `

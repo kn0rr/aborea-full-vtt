@@ -156,7 +156,8 @@ export class RaceDataModel extends foundry.abstract.TypeDataModel {
       })}),
       special:       new fields.StringField({ initial: "" }),
       restrictions:  new fields.StringField({ initial: "" }),
-      allowedClasses: new fields.ArrayField(new fields.StringField())
+      allowedClasses: new fields.ArrayField(new fields.StringField()),
+      traits: new fields.ObjectField({ initial: () => ({}) })
     };
   }
 }

@@ -188,5 +188,12 @@
   "ABOREA.TraitModifierHint": "Modified by an active effect",
   "ABOREA.LastResetDay": "Last reset",
   "ABOREA.MaxLevelReached": "Max. level reached",
-  "ABOREA.NextLevel": "Next level"
+  "ABOREA.NextLevel": "Next level",
+  "ABOREA.RacialTraits": "Racial Traits",
+  "ABOREA.TraitThermalVision": "Thermal Vision",
+  "ABOREA.TraitDiseaseImmunity": "Disease Immunity",
+  "ABOREA.TraitSpellResistance": "Spell Resistance",
+  "ABOREA.TraitSecretDoorsBonus": "Secret Doors/Traps +1",
+  "ABOREA.TraitMechanicsBonus": "Mechanics +1",
+  "ABOREA.TraitManeuverBonus": "Maneuver Bonus"
 }

@@ -140,6 +140,22 @@ export class AboreaActorSheet extends ActorSheet {
     const levelUpPending = targetLevel > level;
     const xpNext = xpForNextLevel(level);
     system.levelUp = { pending: levelUpPending, targetLevel, xpNext, atMax: xpNext === null };
+
+    // Rassentraits als beschriftete Badge-Liste für das Template aufbereiten
+    const traitLabelMap = {
+      thermalVision:    "ABOREA.TraitThermalVision",
+      diseaseImmunity:  "ABOREA.TraitDiseaseImmunity",
+      spellResistance:  "ABOREA.TraitSpellResistance",
+      secretDoorsBonus: "ABOREA.TraitSecretDoorsBonus",
+      mechanicsBonus:   "ABOREA.TraitMechanicsBonus"
+    };
+    const traits = system.traits ?? {};
+    system.racialTraits = Object.entries(traitLabelMap)
+      .filter(([key]) => !!traits[key])
+      .map(([key, locKey]) => ({ key, label: game.i18n.localize(locKey) }));
+    if (Number(traits.maneuverBonus ?? 0) !== 0) {
+      system.racialTraits.push({ key: "maneuverBonus", label: `${game.i18n.localize("ABOREA.TraitManeuverBonus")} ${traits.maneuverBonus > 0 ? "+" : ""}${traits.maneuverBonus}` });
+    }
     const creationDone = !!system.creation?.completed;
     system.skillsLocked = creationDone && !levelUpPending;
     system.creation = {
@@ -492,11 +508,9 @@ export class AboreaActorSheet extends ActorSheet {
     else if (remaining < 0) errors.push(`${Math.abs(remaining)} Eigenschaftspunkte zu viel vergeben (Budget: ${budget}).`);
     if (race && cls && !ABOREA.classAllowedForRace(race.system, cls.name)) errors.push(`${race.name} darf den Beruf ${cls.name} nicht wählen.`);
     const traits = emptyTraits();
-    if (["zwerg","halbling","gnom"].includes(raceName)) traits.racialArmorBonus = 1;
-    if (raceName === "zwerg")    { traits.thermalVision = true; traits.secretDoorsBonus = true; }
-    if (raceName === "elf")      { traits.diseaseImmunity = true; traits.maneuverBonus = 1; }
-    if (raceName === "halbling") traits.spellResistance = true;
-    if (raceName === "gnom")     { traits.mechanicsBonus = true; traits.secretDoorsBonus = true; }
+    // Rassentraits aus dem Item lesen statt hard zu kodieren
+    const raceTraits = race?.system?.traits ?? {};
+    Object.assign(traits, raceTraits);
     const classFeatures = ABOREA.activeClassFeatures(cls?.system || {}, level);
     const featureState = {
       list: classFeatures, labels: classFeatures.map(f => `[Stufe ${f.level}] ${f.label}`),

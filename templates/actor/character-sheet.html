@@ -394,6 +394,14 @@
           {{#each itemLists.races as |item|}}<span class="pill pill-race">{{item.name}}</span>{{/each}}
           {{#each itemLists.classes as |item|}}<span class="pill pill-class">{{item.name}}</span>{{/each}}
         </div>
+        {{#if system.racialTraits.length}}
+        <div class="racial-traits">
+          <strong>{{localize "ABOREA.RacialTraits"}}:</strong>
+          {{#each system.racialTraits as |trait|}}
+          <span class="trait-badge" title="{{trait.description}}">{{trait.label}}</span>
+          {{/each}}
+        </div>
+        {{/if}}
       </section>
     </div>
 
