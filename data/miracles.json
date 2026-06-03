@@ -728,7 +728,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "naturgeist",
       "externalId": "schamanenmagie-leitmagie--naturgeist--5",
-      "domain": "Schamanenmagie (Leitmagie)"
+      "domain": "Schamanenmagie (Leitmagie)",
+      "summonRule": { "templateName": "Naturgeist", "summonType": "nature-spirit", "levelFormula": "min(mpCost,floor(actorLevel/2))", "permanent": false }
     }
   },
   {

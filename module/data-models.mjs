@@ -237,7 +237,8 @@ export class SpellDataModel extends foundry.abstract.TypeDataModel {
       slug:        new fields.StringField({ initial: "" }),
       externalId:  new fields.StringField({ initial: "" }),
       effects:     new fields.ArrayField(new fields.ObjectField()),
-      hpEffect:    new fields.ObjectField({ initial: () => ({}) })
+      hpEffect:    new fields.ObjectField({ initial: () => ({}) }),
+      summonRule:  new fields.ObjectField({ initial: () => ({}) })
     };
   }
 }
@@ -260,7 +261,8 @@ export class MiracleDataModel extends foundry.abstract.TypeDataModel {
       slug:        new fields.StringField({ initial: "" }),
       externalId:  new fields.StringField({ initial: "" }),
       effects:     new fields.ArrayField(new fields.ObjectField()),
-      hpEffect:    new fields.ObjectField({ initial: () => ({}) })
+      hpEffect:    new fields.ObjectField({ initial: () => ({}) }),
+      summonRule:  new fields.ObjectField({ initial: () => ({}) })
     };
   }
 }

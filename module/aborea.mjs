@@ -106,6 +106,20 @@ Hooks.once("ready", async function () {
       ui.notifications.warn("ABOREA: Die System-Packs sind noch leer. Entsperre die Packs und führe game.aborea.buildSystemPacks() als GM aus.");
     }
     setInterval(() => cleanupExpiredSummons().catch(err => console.error("ABOREA summon cleanup failed", err)), 30000);
+
+    // Begleiter-Status abgleichen: Tokens könnten nach Neustart fehlen
+    for (const actor of game.actors.filter(a => a.type === "character")) {
+      const list = actor.system?.companions?.list ?? [];
+      if (!list.length) continue;
+      const updated = list.map(c => {
+        if (c.status !== "summoned") return c;
+        const hasToken = game.scenes.some(s => s.tokens.some(t => t.actorId === c.actorId));
+        return hasToken ? c : { ...c, status: "available" };
+      });
+      if (updated.some((c, i) => c.status !== list[i].status)) {
+        await actor.update({ "system.companions.list": updated });
+      }
+    }
   }
 });
 

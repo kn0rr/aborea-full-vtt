@@ -342,21 +342,25 @@ function parseDurationMeta(item, mpCost) {
   return { raw, label: raw || "Permanent", seconds, rounds, permanent: !raw || (!seconds && !rounds) };
 }
 
+function _resolveSummonLevel(formula, mpCost, actorLevel) {
+  switch (formula) {
+    case "floor(mpCost/2)":               return Math.max(1, Math.floor(mpCost / 2));
+    case "floor(mpCost/3)":               return Math.max(1, Math.floor(mpCost / 3));
+    case "min(mpCost,floor(actorLevel/2))": return Math.max(1, Math.min(mpCost, Math.floor(actorLevel / 2) || 1));
+    default:                               return Math.max(1, mpCost); // "mpCost" und Fallback
+  }
+}
+
 export function summarizeSummonRule(item, actor, mpCost) {
-  const name = normalizeText(item.name);
-  const list = normalizeText(item.system?.list);
+  const rule = item.system?.summonRule;
+  if (!rule?.templateName || !rule?.summonType) return null;
   const actorLevel = Number(actor.system?.resources?.level || 1);
-  if (name.includes("beschworung"))  return { templateName: "Beschworene Kreatur",  summonType: "conjured",       level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "helfer")             return { templateName: "Tierischer Helfer",     summonType: "animal-helper",  level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "animation")          return { templateName: "Animierte Pflanze",     summonType: "animated-plant", level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "tierfreund")         return { templateName: "Tierfreund",            summonType: "animal-friend",  level: Math.max(1, Math.floor(mpCost / 3)),           duration: { label: "Dauerhaft", seconds: 0, rounds: 0, permanent: true }, permanent: true };
-  if (name === "erde")               return { templateName: "Erdelementar",          summonType: "earth-elemental",level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "elemente" && list.includes("wilde")) return { templateName: "Elementar", summonType: "elemental",  level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "elementar")          return { templateName: "Elementar",             summonType: "elemental",      level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "naturgeist")         return { templateName: "Naturgeist",            summonType: "nature-spirit",  level: Math.max(1, Math.min(mpCost, Math.floor(actorLevel / 2) || 1)), duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "belebung")           return { templateName: "Untoter Diener",        summonType: "undead",         level: Math.max(1, mpCost),                           duration: parseDurationMeta(item, mpCost), permanent: false };
-  if (name === "dauerhafte belebung") return { templateName: "Untoter Diener",       summonType: "undead",         level: Math.max(1, Math.floor(mpCost / 2)),           duration: { label: "Dauerhaft", seconds: 0, rounds: 0, permanent: true }, permanent: true };
-  return null;
+  const level    = _resolveSummonLevel(rule.levelFormula ?? "mpCost", mpCost, actorLevel);
+  const permanent = !!rule.permanent;
+  const duration = permanent
+    ? { label: "Dauerhaft", seconds: 0, rounds: 0, permanent: true }
+    : parseDurationMeta(item, mpCost);
+  return { templateName: rule.templateName, summonType: rule.summonType, level, duration, permanent };
 }
 
 function summonedBaseStats(kind, level) {

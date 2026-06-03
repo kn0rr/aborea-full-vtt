@@ -90,7 +90,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "beschwoerung",
       "externalId": "schwarze-magie--beschwoerung--4",
-      "school": "Schwarze Magie"
+      "school": "Schwarze Magie",
+      "summonRule": { "templateName": "Beschworene Kreatur", "summonType": "conjured", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
@@ -200,7 +201,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "belebung",
       "externalId": "schwarze-magie--belebung--9",
-      "school": "Schwarze Magie"
+      "school": "Schwarze Magie",
+      "summonRule": { "templateName": "Untoter Diener", "summonType": "undead", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
@@ -222,7 +224,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "dauerhafte-belebung",
       "externalId": "schwarze-magie--dauerhafte-belebung--10",
-      "school": "Schwarze Magie"
+      "school": "Schwarze Magie",
+      "summonRule": { "templateName": "Untoter Diener", "summonType": "undead", "levelFormula": "floor(mpCost/2)", "permanent": true }
     }
   },
   {
@@ -266,7 +269,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "helfer",
       "externalId": "wilde-magie--helfer--2",
-      "school": "Wilde Magie"
+      "school": "Wilde Magie",
+      "summonRule": { "templateName": "Tierischer Helfer", "summonType": "animal-helper", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
@@ -288,7 +292,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "animation",
       "externalId": "wilde-magie--animation--3",
-      "school": "Wilde Magie"
+      "school": "Wilde Magie",
+      "summonRule": { "templateName": "Animierte Pflanze", "summonType": "animated-plant", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
@@ -333,7 +338,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "tierfreund",
       "externalId": "wilde-magie--tierfreund--5",
-      "school": "Wilde Magie"
+      "school": "Wilde Magie",
+      "summonRule": { "templateName": "Tierfreund", "summonType": "animal-friend", "levelFormula": "floor(mpCost/3)", "permanent": true }
     }
   },
   {
@@ -399,7 +405,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "erde",
       "externalId": "wilde-magie--erde--8",
-      "school": "Wilde Magie"
+      "school": "Wilde Magie",
+      "summonRule": { "templateName": "Erdelementar", "summonType": "earth-elemental", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
@@ -421,7 +428,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "elemente",
       "externalId": "wilde-magie--elemente--9",
-      "school": "Wilde Magie"
+      "school": "Wilde Magie",
+      "summonRule": { "templateName": "Elementar", "summonType": "elemental", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
@@ -604,7 +612,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "elementar",
       "externalId": "elementare-magie--elementar--7",
-      "school": "Elementare Magie"
+      "school": "Elementare Magie",
+      "summonRule": { "templateName": "Elementar", "summonType": "elemental", "levelFormula": "mpCost", "permanent": false }
     }
   },
   {
