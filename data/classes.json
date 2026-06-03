@@ -138,7 +138,7 @@
           "key": "heimlichkeit",
           "label": "Heimlichkeit +1",
           "type": "situationalBonus",
-          "target": "stealth",
+          "target": "heimlichkeit",
           "value": 1,
           "description": "Bonus von +1 auf Schleichen, Tarnung, Verstecken und Untertauchen."
         },
