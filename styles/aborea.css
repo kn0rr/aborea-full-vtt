@@ -550,6 +550,7 @@
 .ac-body { display: flex; flex-direction: column; gap: 3px; font-size: .82rem; }
 .ac-row { display: flex; justify-content: space-between; }
 .ac-row.ac-total { font-weight: 700; border-top: 1px solid var(--aborea-border-light); margin-top: 3px; padding-top: 3px; }
+.ac-row.ac-penalty { color: #b91c1c; font-style: italic; }
 .ac-result { margin-top: 8px; padding: 5px 10px; border-radius: 6px; font-weight: 700; text-align: center; font-size: .9rem; }
 .ac-result.hit    { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 .ac-result.miss   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }

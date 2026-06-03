@@ -29,6 +29,22 @@ export class AboreaCombat extends Combat {
 // ══════════════════════════════════════════════════════════════════
 
 /**
+ * Berechnet den Malus für ungelernte Waffen (-2).
+ * Gibt 0 zurück wenn die Waffe gelernt ist oder die Klasse den Malus aufhebt.
+ */
+function _getUntrainedPenalty(actor, weapon) {
+  if (!weapon) return 0;
+  const skillKey = weapon.system?.skill;
+  if (!skillKey) return 0;
+  const rank = Number(actor.system.skills?.[skillKey]?.rank ?? 0);
+  if (rank > 0) return 0;
+  const minimums = actor.system.classFeatures?.weaponMinimums ?? {};
+  if ("all" in minimums) return 0;                                        // Krieger: Waffenkundig
+  if (skillKey === "boegen" && "bows-crossbows" in minimums) return 0;   // Waldläufer: Bogenschütze
+  return -2;
+}
+
+/**
  * Open the attack dialog for the given actor.
  * Reads Foundry's current token target automatically.
  */
@@ -73,6 +89,8 @@ export async function openAttackDialog(attackerActor) {
     .map(w => `<option value="${w.id}">${w.name} &nbsp;(+${w.system.damage ?? 0} Schaden, ${w.system.skill ?? "—"})</option>`)
     .join("");
 
+  const initialPenalty = _getUntrainedPenalty(attackerActor, weapons[0]);
+
   const params = await new Promise(resolve => {
     new Dialog({
       title: `⚔ Angriff — ${attackerActor.name}`,
@@ -86,6 +104,10 @@ export async function openAttackDialog(attackerActor) {
             <span class="hint">(Kampfbonus: ${combatBonus})</span>
           </label>
           <input type="number" name="offBonus" value="${currentOffBonus}" min="0" max="${combatBonus}" />
+        </div>
+        <div class="form-group untrained-row" style="display:${initialPenalty ? '' : 'none'}">
+          <label>Ungelernt <span class="hint">(Waffenfertigkeit Rang 0)</span></label>
+          <input type="number" name="untrainedPenalty" value="${initialPenalty}" disabled />
         </div>
         <div class="form-group">
           <label>Situationsmodifikator
@@ -111,10 +133,12 @@ export async function openAttackDialog(attackerActor) {
             const tokenId     = root.querySelector("[name=targetTokenId]").value;
             const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
             const targetActor = targetToken?.actor ?? null;
+            const untrainedPenalty = Number(root.querySelector("[name=untrainedPenalty]")?.value ?? 0);
             resolve({
-              weapon:        attackerActor.items.get(root.querySelector("[name=weaponId]").value),
-              offBonus:      Number(root.querySelector("[name=offBonus]").value  || 0),
-              situMod:       Number(root.querySelector("[name=situMod]").value   || 0),
+              weapon:          attackerActor.items.get(root.querySelector("[name=weaponId]").value),
+              offBonus:        Number(root.querySelector("[name=offBonus]").value  || 0),
+              untrainedPenalty,
+              situMod:         Number(root.querySelector("[name=situMod]").value   || 0),
               targetActor,
               targetDefense: targetActor
                 ? _dv(targetActor)
@@ -127,14 +151,26 @@ export async function openAttackDialog(attackerActor) {
       default: "attack",
       close: () => resolve(null),
       render: html => {
-        const root       = html instanceof HTMLElement ? html : html[0];
-        const select     = root.querySelector("[name=targetTokenId]");
-        const manualRow  = root.querySelector(".manual-dv-row");
+        const root          = html instanceof HTMLElement ? html : html[0];
+        const targetSelect  = root.querySelector("[name=targetTokenId]");
+        const weaponSelect  = root.querySelector("[name=weaponId]");
+        const manualRow     = root.querySelector(".manual-dv-row");
+        const untrainedRow  = root.querySelector(".untrained-row");
+        const penaltyInput  = root.querySelector("[name=untrainedPenalty]");
+
         const toggleManual = () => {
-          manualRow.style.display = select.value ? "none" : "";
+          manualRow.style.display = targetSelect.value ? "none" : "";
         };
-        select.addEventListener("change", toggleManual);
-        toggleManual(); // set initial state
+        targetSelect.addEventListener("change", toggleManual);
+        toggleManual();
+
+        const updatePenalty = () => {
+          const weapon  = attackerActor.items.get(weaponSelect.value);
+          const penalty = _getUntrainedPenalty(attackerActor, weapon);
+          penaltyInput.value         = penalty;
+          untrainedRow.style.display = penalty ? "" : "none";
+        };
+        weaponSelect.addEventListener("change", updatePenalty);
       }
     }).render(true);
   });
@@ -296,8 +332,8 @@ export async function openSpellAttackDialog(attackerActor, item, mpCost) {
 
 // ── Internal: roll + chat ────────────────────────────────────────
 
-async function _executeAttack(attackerActor, { weapon, offBonus, situMod, targetActor, targetDefense }) {
-  // skipVisual: Foundry triggers Dice So Nice automatically via rolls in ChatMessage
+async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalty = 0, situMod, targetActor, targetDefense }) {
+  const effectiveOffBonus = offBonus + untrainedPenalty;
   const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
 
   // Natural 1 → Patzer, automatic failure
@@ -311,7 +347,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, situMod, target
         weapon: weapon.name,
         rollFormula: roll.formula,
         rollTotal: 0,
-        offBonus, situMod,
+        offBonus, untrainedPenalty, situMod,
         attackValue: 0,
         defenseValue: targetDefense,
         hit: false, damage: 0,
@@ -321,7 +357,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, situMod, target
     return;
   }
 
-  const attackValue = roll.total + offBonus - situMod;
+  const attackValue = roll.total + effectiveOffBonus - situMod;
   const hit = attackValue > targetDefense;
   const damage = hit
     ? Math.max(1, (attackValue - targetDefense) + Number(weapon.system.damage ?? 0))
@@ -337,7 +373,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, situMod, target
       weapon: weapon.name,
       rollFormula: roll.formula,
       rollTotal: roll.total,
-      offBonus, situMod,
+      offBonus, untrainedPenalty, situMod,
       attackValue,
       defenseValue: targetDefense,
       hit, damage,
@@ -353,13 +389,17 @@ function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
 
 function _buildAttackCard({
   attacker, target, targetActorId,
-  weapon, rollFormula, rollTotal, offBonus, situMod,
+  weapon, rollFormula, rollTotal, offBonus, untrainedPenalty = 0, situMod,
   attackValue, defenseValue, hit, damage, patzer, critical, weaponDamage = 0
 }) {
   const resultClass = patzer ? "patzer" : (hit ? "hit" : "miss");
   const resultLabel = patzer
     ? "⛔ Patzer — automatischer Fehlschlag"
     : (hit ? "✅ Treffer" : "❌ Kein Treffer");
+
+  const untrainedRow = untrainedPenalty
+    ? `<div class="ac-row ac-penalty"><span>Ungelernt</span><span>${_sign(untrainedPenalty)}</span></div>`
+    : "";
 
   const modRow = situMod !== 0
     ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(-situMod)}</span></div>`
@@ -399,6 +439,7 @@ function _buildAttackCard({
       <div class="ac-row"><span>Waffe</span><span>${weapon}</span></div>
       <div class="ac-row"><span>Würfelwurf</span><span>${rollFormula}${patzer ? " (Patzer!)" : ""}</span></div>
       <div class="ac-row"><span>Offensivbonus</span><span>${_sign(offBonus)}</span></div>
+      ${untrainedRow}
       ${modRow}
       <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${patzer ? "—" : attackValue}</strong></span></div>
       <div class="ac-row"><span>Verteidigungswert</span><span>${defenseValue}</span></div>
