@@ -318,6 +318,8 @@
 .btn-danger:hover { background: #fca5a5; }
 .btn-primary { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
 .btn-primary:hover { background: #bfdbfe; }
+.btn-warn { background: #fef9c3; color: #92400e; border-color: #fde68a; }
+.btn-warn:hover { background: #fde68a; }
 .aborea-sheet button:hover:not(:disabled) { filter: brightness(0.92); }
 .aborea-sheet button:disabled { opacity: .45; cursor: not-allowed; }
 .button-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }

@@ -106,7 +106,10 @@
       <section class="panel creation-summary-panel">
         <div class="creation-done-banner">
           ✅ <strong>Charaktererschaffung abgeschlossen</strong>
-          {{#if isGM}}<button type="button" class="recalc-character btn-sm">🔄 Neu berechnen (GM)</button>{{/if}}
+          {{#if isGM}}
+          <button type="button" class="recalc-character btn-sm">🔄 Neu berechnen</button>
+          <button type="button" class="unlock-creation btn-sm btn-warn">🔓 Entsperren (GM)</button>
+          {{/if}}
         </div>
         <div class="creation-summary-grid">
           {{#each system.creation.attributeRows as |attr|}}

@@ -303,6 +303,11 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".wallet-add-currency").on("click", async () => await this._addWalletCurrency());
     html.find(".wallet-remove-currency").on("click", async ev => await this._removeWalletCurrency(ev.currentTarget.dataset.currencyKey));
     html.find(".recalc-character").on("click", async () => { await this._recalculateCharacter(); ui.notifications.info("ABOREA: Charakterwerte neu berechnet."); });
+    html.find(".unlock-creation").on("click", async () => {
+      if (!game.user.isGM) return;
+      await this.actor.update({ "system.creation.completed": false, "system.creation.status": "draft" });
+      ui.notifications.info(`ABOREA: Charaktererschaffung für ${this.actor.name} entsperrt.`);
+    });
     html.find(".finalize-character").on("click", async () => {
       const result = await this._recalculateCharacter();
       if (!result.valid) { ui.notifications.error("ABOREA: Charaktererstellung ist noch nicht gültig."); return; }
