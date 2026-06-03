@@ -246,30 +246,39 @@ export function parseSimpleDuration(item, mpCost) {
 }
 
 export function inferEffects(item, mpCost) {
-  const name = String(item.name || "").toLowerCase();
+  const rawEffects = Array.isArray(item.system?.effects) ? item.system.effects : [];
+  if (!rawEffects.length) return [];
   const duration = parseSimpleDuration(item, mpCost);
-  const effects = [];
-  if (name.includes("blend"))    effects.push({ name: item.name, statuses: ["blind"],       duration, description: item.system?.description, changes: [] });
-  if (name.includes("schlaf"))   effects.push({ name: item.name, statuses: ["unconscious"], duration, description: item.system?.description, changes: [] });
-  if (name.includes("unsicht"))  effects.push({ name: item.name, statuses: ["invisible"],   duration, description: item.system?.description, changes: [] });
-  if (name.includes("segn"))     effects.push({ name: item.name, duration, description: item.system?.description, changes: [{ key: "system.traits.maneuverBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 1 }] });
-  if (name.includes("beistand")) effects.push({ name: item.name, duration, description: item.system?.description, changes: [{ key: "system.traits.maneuverBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: Math.min(3, Math.max(1, mpCost)) }] });
-  if (name.includes("freundliche weise")) effects.push({ name: item.name, duration, description: item.system?.description, changes: [{ key: "system.classFeatures.bonuses.influence", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }] });
-  if (name.includes("trüb"))     effects.push({ name: item.name, duration, description: item.system?.description, changes: [{ key: "system.traits.maneuverBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -1 }] });
-  if (name === "fluch" || name.includes("verfluchen")) effects.push({ name: item.name, duration, description: item.system?.description, changes: [{ key: "system.traits.maneuverBonus", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -1 }] });
-  return effects;
+  return rawEffects.map(e => {
+    const statuses = [];
+    const changes  = [];
+    if (e.type === "status") {
+      statuses.push(e.status);
+    } else if (e.type === "attribute") {
+      const raw = e.valuePerMp != null
+        ? Math.round(e.valuePerMp * mpCost)
+        : (e.value ?? 0);
+      const value = (e.min != null || e.max != null)
+        ? Math.min(e.max ?? Infinity, Math.max(e.min ?? -Infinity, raw))
+        : raw;
+      changes.push({ key: e.key, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value });
+    }
+    return {
+      name: item.name,
+      statuses,
+      duration,
+      description: item.system?.description ?? "",
+      changes
+    };
+  });
 }
 
 export function inferDirectHp(item, mpCost) {
-  const name = String(item.name || "").toLowerCase();
-  if (name.includes("heilung"))  return { type: "heal",   amount: 4 * mpCost };
-  if (name === "heilen")         return { type: "heal",   amount: 1 * mpCost };
-  if (name.includes("feuerball")) return { type: "damage", amount: Math.min(5, mpCost) };
-  if (name === "blitz")          return { type: "damage", amount: mpCost };
-  if (name.includes("explosion")) return { type: "damage", amount: mpCost };
-  if (name.includes("stoßwelle")) return { type: "damage", amount: Math.min(5, Math.floor(mpCost / 2)) };
-  if (name.includes("flammenschwert")) return { type: "buffDamage", amount: Math.min(5, Math.floor(mpCost / 2)) };
-  return null;
+  const hpEffect = item.system?.hpEffect;
+  if (!hpEffect?.type) return null;
+  const raw    = Math.round((hpEffect.multiplier ?? 1) * mpCost);
+  const amount = hpEffect.max != null ? Math.min(hpEffect.max, raw) : raw;
+  return { type: hpEffect.type, amount };
 }
 
 export async function applyEffectsToActor(actor, effects) {

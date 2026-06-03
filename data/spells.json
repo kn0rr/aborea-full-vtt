@@ -42,7 +42,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "truebung",
       "externalId": "schwarze-magie--truebung--2",
-      "school": "Schwarze Magie"
+      "school": "Schwarze Magie",
+      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": -1 }]
     }
   },
   {
@@ -511,7 +512,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "feuerball",
       "externalId": "elementare-magie--feuerball--3",
-      "school": "Elementare Magie"
+      "school": "Elementare Magie",
+      "hpEffect": { "type": "damage", "multiplier": 1, "max": 5 }
     }
   },
   {
@@ -533,7 +535,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "blitz",
       "externalId": "elementare-magie--blitz--4",
-      "school": "Elementare Magie"
+      "school": "Elementare Magie",
+      "hpEffect": { "type": "damage", "multiplier": 1 }
     }
   },
   {
@@ -698,7 +701,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "blenden",
       "externalId": "freie-magie--blenden--1",
-      "school": "Freie Magie"
+      "school": "Freie Magie",
+      "effects": [{ "type": "status", "status": "blind" }]
     }
   },
   {
@@ -767,7 +771,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "explosion",
       "externalId": "freie-magie--explosion--4",
-      "school": "Freie Magie"
+      "school": "Freie Magie",
+      "hpEffect": { "type": "damage", "multiplier": 1 }
     }
   },
   {
@@ -814,7 +819,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "schlaf",
       "externalId": "freie-magie--schlaf--6",
-      "school": "Freie Magie"
+      "school": "Freie Magie",
+      "effects": [{ "type": "status", "status": "unconscious" }]
     }
   },
   {
@@ -837,7 +843,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "unsichtbarkeit",
       "externalId": "freie-magie--unsichtbarkeit--7",
-      "school": "Freie Magie"
+      "school": "Freie Magie",
+      "effects": [{ "type": "status", "status": "invisible" }]
     }
   },
   {
@@ -886,7 +893,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "stosswelle",
       "externalId": "freie-magie--stosswelle--9",
-      "school": "Freie Magie"
+      "school": "Freie Magie",
+      "hpEffect": { "type": "damage", "multiplier": 0.5, "max": 5 }
     }
   },
   {
@@ -910,7 +918,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "flammenschwert",
       "externalId": "freie-magie--flammenschwert--10",
-      "school": "Freie Magie"
+      "school": "Freie Magie",
+      "hpEffect": { "type": "buffDamage", "multiplier": 0.5, "max": 5 }
     }
   }
 ]

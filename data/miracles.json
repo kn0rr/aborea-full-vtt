@@ -223,7 +223,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "blitz",
       "externalId": "zeichen-leitmagie--blitz--10",
-      "domain": "Zeichen (Leitmagie)"
+      "domain": "Zeichen (Leitmagie)",
+      "hpEffect": { "type": "damage", "multiplier": 1 }
     }
   },
   {
@@ -246,7 +247,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "heilung",
       "externalId": "wunder-leitmagie--heilung--1",
-      "domain": "Wunder (Leitmagie)"
+      "domain": "Wunder (Leitmagie)",
+      "hpEffect": { "type": "heal", "multiplier": 4 }
     }
   },
   {
@@ -319,7 +321,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "beistand",
       "externalId": "wunder-leitmagie--beistand--4",
-      "domain": "Wunder (Leitmagie)"
+      "domain": "Wunder (Leitmagie)",
+      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "valuePerMp": 1, "min": 1, "max": 3 }]
     }
   },
   {
@@ -339,7 +342,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "segnung",
       "externalId": "wunder-leitmagie--segnung--5",
-      "domain": "Wunder (Leitmagie)"
+      "domain": "Wunder (Leitmagie)",
+      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": 1 }]
     }
   },
   {
@@ -361,7 +365,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "fluch",
       "externalId": "wunder-leitmagie--fluch--6",
-      "domain": "Wunder (Leitmagie)"
+      "domain": "Wunder (Leitmagie)",
+      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": -1 }]
     }
   },
   {
@@ -473,7 +478,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "freundliche-weise",
       "externalId": "bardenmagie-leitmagie--freundliche-weise--1",
-      "domain": "Bardenmagie (Leitmagie)"
+      "domain": "Bardenmagie (Leitmagie)",
+      "effects": [{ "type": "attribute", "key": "system.classFeatures.bonuses.influence", "value": 2 }]
     }
   },
   {
@@ -631,7 +637,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "heilen",
       "externalId": "schamanenmagie-leitmagie--heilen--1",
-      "domain": "Schamanenmagie (Leitmagie)"
+      "domain": "Schamanenmagie (Leitmagie)",
+      "hpEffect": { "type": "heal", "multiplier": 1 }
     }
   },
   {
@@ -744,7 +751,8 @@
       "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
       "slug": "verfluchen",
       "externalId": "schamanenmagie-leitmagie--verfluchen--6",
-      "domain": "Schamanenmagie (Leitmagie)"
+      "domain": "Schamanenmagie (Leitmagie)",
+      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": -1 }]
     }
   },
   {
