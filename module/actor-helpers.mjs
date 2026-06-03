@@ -12,6 +12,31 @@ export function xpForNextLevel(level) {
   return ABOREA.xpTable[idx];
 }
 
+// ── Custom Skills ────────────────────────────────────────────────────────────
+
+/**
+ * Normalisiert customSkills auf ein sauberes Array.
+ * Foundry kann Arrays bei Formularübermittlung als {0:{…},1:{…}} serialisieren.
+ * Stellt außerdem sicher, dass jeder Eintrag alle Pflichtfelder enthält
+ * und dass doppelte keys entfernt werden.
+ */
+export function normalizeCustomSkills(raw) {
+  const arr = Array.isArray(raw) ? raw : Object.values(raw ?? {});
+  const seen = new Set();
+  return arr.filter(Boolean).map(s => ({
+    key:       String(s.key  ?? `custom-${Math.random().toString(36).slice(2)}`),
+    name:      String(s.name ?? ""),
+    attribute: String(s.attribute ?? "in"),
+    rank:      Math.max(0, Number(s.rank ?? 0)),
+    cost:      String(s.cost ?? "1"),
+    source:    String(s.source ?? "custom")
+  })).filter(s => {
+    if (seen.has(s.key)) return false;
+    seen.add(s.key);
+    return true;
+  });
+}
+
 // ── Compendium helpers ───────────────────────────────────────────────────────
 
 export async function findPackDocumentByTypeAndName(type, name, preferredPack = null) {

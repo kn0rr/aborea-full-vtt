@@ -17,7 +17,8 @@ import {
   summarizeSummonRule, buildSummonedCreatureSource,
   findPackDocumentByTypeAndName, openCompendiumPickerDialog,
   parsePackSelection, resolveDroppedActorDocument,
-  levelForXp, xpForNextLevel
+  levelForXp, xpForNextLevel,
+  normalizeCustomSkills
 } from "./actor-helpers.mjs";
 
 function duplicateItemObject(item) {
@@ -80,10 +81,7 @@ export class AboreaActorSheet extends ActorSheet {
       c.key = key; c.label = cfg.label; c.attribute = c.attribute || cfg.attribute;
       system.skills[key] = c;
     }
-    // Foundry may deserialize array-via-form-fields as a plain object {0:{…},1:{…}}
-    system.customSkills = Array.isArray(system.customSkills)
-      ? system.customSkills
-      : Object.values(system.customSkills || {});
+    system.customSkills = normalizeCustomSkills(system.customSkills);
     const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
     const armorBonus = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0) - 5, 0);
     const baseArmor = Number(system.combat?.armorValue ?? 5) + Number(system.traits?.racialArmorBonus ?? 0) + Number(system.classFeatures?.armorBonus ?? 0);
@@ -347,10 +345,7 @@ export class AboreaActorSheet extends ActorSheet {
     const cls = this.actor.items.find(i => i.type === "class");
     if (!cls) return ui.notifications.warn("ABOREA: Wähle zuerst einen Beruf.");
 
-    const rawCustom = system.customSkills;
-    const customList = foundry.utils.deepClone(
-      Array.isArray(rawCustom) ? rawCustom : Object.values(rawCustom || {})
-    );
+    const customList = foundry.utils.deepClone(normalizeCustomSkills(system.customSkills));
     const customIdx = customList.findIndex(s => s.key === skillKey);
     if (customIdx !== -1) {
       const costParts = String(customList[customIdx].cost ?? "1").split("/").filter(Boolean);
@@ -407,8 +402,7 @@ export class AboreaActorSheet extends ActorSheet {
       }).render(true);
     });
     if (!result) return;
-    const raw = this.actor.system.customSkills;
-    const list = foundry.utils.deepClone(Array.isArray(raw) ? raw : Object.values(raw || []));
+    const list = foundry.utils.deepClone(normalizeCustomSkills(this.actor.system.customSkills));
     const uid = `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     list.push({ key: uid, name: result.name, attribute: result.attr, rank: 0, cost: result.cost, source: "custom" });
     await this.actor.update({ "system.customSkills": list });
@@ -420,8 +414,7 @@ export class AboreaActorSheet extends ActorSheet {
     const skillKey = el.closest("[data-skill-key]")?.dataset.skillKey;
     const field = el.dataset.field;
     if (!skillKey || !field) return;
-    const raw = this.actor.system.customSkills;
-    const list = foundry.utils.deepClone(Array.isArray(raw) ? raw : Object.values(raw || {}));
+    const list = foundry.utils.deepClone(normalizeCustomSkills(this.actor.system.customSkills));
     const idx = list.findIndex(s => s.key === skillKey);
     if (idx === -1) return;
     // Validate cost field
@@ -441,9 +434,7 @@ export class AboreaActorSheet extends ActorSheet {
 
   async _removeCustomSkill(skillKey) {
     if (this.actor.type !== "character") return;
-    const rawR = this.actor.system.customSkills;
-    const currentList = Array.isArray(rawR) ? rawR : Object.values(rawR || {});
-    await this.actor.update({ "system.customSkills": currentList.filter(s => s.key !== skillKey) });
+    await this.actor.update({ "system.customSkills": normalizeCustomSkills(this.actor.system.customSkills).filter(s => s.key !== skillKey) });
   }
 
   async _doLevelUp() {
@@ -461,8 +452,7 @@ export class AboreaActorSheet extends ActorSheet {
     const newFeatures = ABOREA.activeClassFeatures(cls?.system || {}, targetLvl).filter(f => Number(f.level) > currentLvl && Number(f.level) <= targetLvl);
     const humanBonus = (system.details?.race || "").toLowerCase() === "mensch" ? 2 : 0;
     const totalAP = ABOREA.baseTrainingPoints * targetLvl + humanBonus;
-    const rawCS2 = this.actor.system.customSkills;
-    const spentAP = ABOREA.skillTrainingSpent(this.actor.system.skills || {}, cls?.system, Array.isArray(rawCS2) ? rawCS2 : Object.values(rawCS2 || {}));
+    const spentAP = ABOREA.skillTrainingSpent(this.actor.system.skills || {}, cls?.system, normalizeCustomSkills(this.actor.system.customSkills));
     const freeAP = totalAP - spentAP;
     const featureList = newFeatures.length ? `<ul>${newFeatures.map(f => `<li><strong>${f.label}</strong>: ${f.description || ""}</li>`).join("")}</ul>` : "<p>Keine neuen Klassenfähigkeiten.</p>";
     await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: `<section class="aborea-chat-card"><h2>🎉 Stufenaufstieg: Stufe ${targetLvl}</h2><p><strong>${this.actor.name}</strong> ist auf Stufe ${targetLvl} aufgestiegen!</p><p><strong>Freie AP:</strong> ${freeAP}</p><h3>Neue Klassenfähigkeiten</h3>${featureList}</section>` });
@@ -519,8 +509,7 @@ export class AboreaActorSheet extends ActorSheet {
     }
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
-    const rawCS = actorSystem.customSkills;
-    const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, Array.isArray(rawCS) ? rawCS : Object.values(rawCS || {}));
+    const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, normalizeCustomSkills(actorSystem.customSkills));
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
     const spruchlistenRank = Number(actorSystem.skills?.spruchlisten?.rank ?? 0);
