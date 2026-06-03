@@ -975,7 +975,7 @@
     "folder": null
   },
   {
-    "name": "Scherge",
+    "name": "Goblin-Scherge",
     "type": "creature",
     "img": "icons/svg/mystery-man.svg",
     "system": {
@@ -1050,7 +1050,7 @@
     "folder": null
   },
   {
-    "name": "Redelsführer",
+    "name": "Goblin-Redelsführer",
     "type": "creature",
     "img": "icons/svg/mystery-man.svg",
     "system": {
@@ -1125,7 +1125,7 @@
     "folder": null
   },
   {
-    "name": "Scharlatan",
+    "name": "Goblin-Scharlatan",
     "type": "creature",
     "img": "icons/svg/mystery-man.svg",
     "system": {
@@ -1200,7 +1200,7 @@
     "folder": null
   },
   {
-    "name": "Häuptling",
+    "name": "Goblin-Häuptling",
     "type": "creature",
     "img": "icons/svg/mystery-man.svg",
     "system": {
@@ -1275,7 +1275,7 @@
     "folder": null
   },
   {
-    "name": "Schamane",
+    "name": "Goblin-Schamane",
     "type": "creature",
     "img": "icons/svg/mystery-man.svg",
     "system": {
