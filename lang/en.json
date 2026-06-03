@@ -174,5 +174,14 @@
   "ABOREA.ImportFromCompendium": "From Compendium",
   "ABOREA.TransactionHistory": "History",
   "ABOREA.CompanionDropHint": "Drag a creature directly from a compendium onto this area to create it as a companion.",
-  "ABOREA.DiceSoNiceActive": "3D dice via Dice So Nice active."
+  "ABOREA.DiceSoNiceActive": "3D dice via Dice So Nice active.",
+  "ABOREA.Hands": "Hands",
+  "ABOREA.Price": "Price",
+  "ABOREA.LinkedAttribute": "Linked Attribute",
+  "ABOREA.School": "School",
+  "ABOREA.Targeted": "Targeted Spell",
+  "ABOREA.Domain": "Domain",
+  "ABOREA.AllowedClasses": "Allowed Classes",
+  "ABOREA.AttributeMods": "Attribute Modifiers",
+  "ABOREA.MagicFormula": "Magic Formula"
 }

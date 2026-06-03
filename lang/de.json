@@ -194,5 +194,14 @@
   "ABOREA.LevelUp": "Stufe aufsteigen",
   "ABOREA.LevelUpAvailable": "Stufenaufstieg verfügbar",
   "ABOREA.SkillsLocked": "Fertigkeiten gesperrt (kein Stufenaufstieg)",
-  "ABOREA.Muena": "Muena"
+  "ABOREA.Muena": "Muena",
+  "ABOREA.Hands": "Hände",
+  "ABOREA.Price": "Preis",
+  "ABOREA.LinkedAttribute": "Leitattribut",
+  "ABOREA.School": "Schule",
+  "ABOREA.Targeted": "Gezielter Spruch",
+  "ABOREA.Domain": "Domäne",
+  "ABOREA.AllowedClasses": "Erlaubte Berufe",
+  "ABOREA.AttributeMods": "Attributmodifikatoren",
+  "ABOREA.MagicFormula": "Magieformel"
 }
