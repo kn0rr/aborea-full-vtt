@@ -142,6 +142,17 @@
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"
       }
+    },
+    {
+      "name": "gear",
+      "label": "Ausrüstung",
+      "type": "Item",
+      "path": "packs/gear",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
   "manifest": "https://github.com/kn0rr/aborea-full-vtt/releases/latest/download/system.json",

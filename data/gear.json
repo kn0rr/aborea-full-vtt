@@ -1,0 +1,432 @@
+[
+  {
+    "name": "Rucksack",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Geräumiger Lederrucksack für Reisende. Fasst ca. 30 kg Ausrüstung.",
+      "quantity": 1, "weight": 1.0, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-rucksack" } }
+  },
+  {
+    "name": "Gürtelbeutel",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Kleiner Lederbeutel, der am Gürtel befestigt wird. Ideal für Münzen und Kleinigkeiten.",
+      "quantity": 1, "weight": 0.2, "price": "1 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-guertelbeute" } }
+  },
+  {
+    "name": "Satteltaschen",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Paar Ledertaschen für Reittiere. Fasst je ca. 15 kg.",
+      "quantity": 1, "weight": 2.0, "price": "10 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-satteltaschen" } }
+  },
+  {
+    "name": "Truhe (klein)",
+    "type": "gear",
+    "img": "icons/svg/chest.svg",
+    "system": {
+      "description": "Kleine Holztruhe mit Metallbeschlägen und Schloss. Fasst ca. 50 kg.",
+      "quantity": 1, "weight": 5.0, "price": "8 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-truhe-klein" } }
+  },
+  {
+    "name": "Fackel",
+    "type": "gear",
+    "img": "icons/svg/light.svg",
+    "system": {
+      "description": "Brennt ca. 1 Stunde. Beleuchtet einen Radius von 6 Metern.",
+      "quantity": 1, "weight": 0.5, "price": "2 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-fackel" } }
+  },
+  {
+    "name": "Laterne",
+    "type": "gear",
+    "img": "icons/svg/light.svg",
+    "system": {
+      "description": "Verschlossene Öllaterne. Beleuchtet 9 m Radius, brennt 6 Stunden pro Ölfläschchen.",
+      "quantity": 1, "weight": 1.0, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-laterne" } }
+  },
+  {
+    "name": "Laternenöl (Fläschchen)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Ein Fläschchen Öl für Laternen. Reicht für 6 Stunden Brenndauer.",
+      "quantity": 1, "weight": 0.5, "price": "5 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-laternenoel" } }
+  },
+  {
+    "name": "Feuerstahl",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Stahl und Feuerstein zum Entzünden von Feuern. Mit etwas Übung in einer Minute nutzbar.",
+      "quantity": 1, "weight": 0.2, "price": "5 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-feuerstahl" } }
+  },
+  {
+    "name": "Seil (10 m)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Hanfseil, 10 Meter lang. Trägt bis zu 250 kg.",
+      "quantity": 1, "weight": 2.0, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-seil-10m" } }
+  },
+  {
+    "name": "Enterhaken",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Vierklingiger Eisenhaken zum Klettern. Wird mit Seil kombiniert.",
+      "quantity": 1, "weight": 1.0, "price": "1 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-enterhaken" } }
+  },
+  {
+    "name": "Brecheisen",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Stabiles Eisenwerkzeug zum Aufbrechen von Türen und Kisten. Gibt +1 auf Kraft-Manöver.",
+      "quantity": 1, "weight": 2.0, "price": "3 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-brecheisen" } }
+  },
+  {
+    "name": "Schlösserknacker-Set",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Feines Werkzeugset zum Öffnen von Schlössern. Benötigt Fertigkeit Mechanik.",
+      "quantity": 1, "weight": 0.5, "price": "15 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-schloesserknacker" } }
+  },
+  {
+    "name": "Diebeswerkzeug",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Spezialwerkzeug für Fallen entschärfen und Schlösser knacken. +1 auf entsprechende Manöver.",
+      "quantity": 1, "weight": 0.5, "price": "25 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-diebeswerkzeug" } }
+  },
+  {
+    "name": "Reiseproviant (1 Tag)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Hartkäse, Brot, Dörrfleisch und getrocknete Früchte für einen Reisetag.",
+      "quantity": 1, "weight": 1.0, "price": "3 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-reiseproviant" } }
+  },
+  {
+    "name": "Wasserlauch",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Lederner Wasserschlauch, fasst ca. 2 Liter. Wichtig für lange Reisen.",
+      "quantity": 1, "weight": 0.5, "price": "1 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-wasserlauch" } }
+  },
+  {
+    "name": "Weinschlauch",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Lederner Weinschlauch für ca. 1 Liter. Gefüllt mit einfachem Tavernenwein.",
+      "quantity": 1, "weight": 1.5, "price": "5 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-weinschlauch" } }
+  },
+  {
+    "name": "Verbandszeug",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Leinenbinden und einfache Wundmittel. Ermöglicht die Erstversorgung von Wunden (1 HP stabil).",
+      "quantity": 1, "weight": 0.3, "price": "2 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-verbandszeug" } }
+  },
+  {
+    "name": "Heilkräuter",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Getrocknete Heilkräuter für einfache Wundbehandlung. Bei Anwendung mit Wissen (Heilkunst): +1 HP bei Rast.",
+      "quantity": 1, "weight": 0.2, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-heilkraeuter" } }
+  },
+  {
+    "name": "Gegengift (einfach)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Wirkt gegen einfache Gifte (Rang 1–2). Muss innerhalb einer Stunde nach Vergiftung eingenommen werden.",
+      "quantity": 1, "weight": 0.1, "price": "10 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-gegengift" } }
+  },
+  {
+    "name": "Schreibset",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Tintenfass, Federkiel und 10 Blatt Pergament. Zum Verfassen von Briefen und Notizen.",
+      "quantity": 1, "weight": 0.5, "price": "8 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-schreibset" } }
+  },
+  {
+    "name": "Karte (Region)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Pergamentkarte einer bekannten Region. Gibt +1 auf Navigations-Manöver in dieser Gegend.",
+      "quantity": 1, "weight": 0.1, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-karte-region" } }
+  },
+  {
+    "name": "Reisekleidung",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Strapazierfähige Kleidung für Reisende: wetterfeste Hose, Hemd, Umhang und Stiefel.",
+      "quantity": 1, "weight": 2.0, "price": "3 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-reisekleidung" } }
+  },
+  {
+    "name": "Feine Kleidung",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Gut verarbeitete Kleidung für städtische Umgebungen. Gibt +1 auf Einflussnahme in gehobener Gesellschaft.",
+      "quantity": 1, "weight": 1.5, "price": "15 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-feine-kleidung" } }
+  },
+  {
+    "name": "Umhang (wetterfest)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Dicker Wollumhang mit Kapuze. Schützt vor Regen und Kälte.",
+      "quantity": 1, "weight": 1.5, "price": "4 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-umhang" } }
+  },
+  {
+    "name": "Zelt (2 Personen)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Einfaches Leinenzelt für zwei Personen. Schützt vor Wind und leichtem Regen.",
+      "quantity": 1, "weight": 5.0, "price": "12 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-zelt" } }
+  },
+  {
+    "name": "Schlafsack",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Wollgefüllter Schlafsack. Ermöglicht erholsamen Schlaf auch im Freien.",
+      "quantity": 1, "weight": 2.0, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-schlafsack" } }
+  },
+  {
+    "name": "Handwerkszeug",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Grundausstattung für ein Handwerk (Schmied, Tischler, Schneider usw.). Spezifikum nach Beruf. Gibt +1 auf Handwerks-Manöver.",
+      "quantity": 1, "weight": 5.0, "price": "20 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-handwerkszeug" } }
+  },
+  {
+    "name": "Fernrohr",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Einfaches Messing-Fernrohr. Verdoppelt die Sichtweite auf freiem Gelände. Gibt +1 auf Wahrnehmung über große Distanzen.",
+      "quantity": 1, "weight": 0.5, "price": "30 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-fernrohr" } }
+  },
+  {
+    "name": "Spiegel (Stahl)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Polierter Stahlspiegel. Nützlich zum Einblicken um Ecken oder zum Signalisieren.",
+      "quantity": 1, "weight": 0.3, "price": "5 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-spiegel" } }
+  },
+  {
+    "name": "Fallenstell-Set",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Einfache Fallen für Kleintiere (Kaninchen, Vögel). Gibt +1 auf Überlebens-Manöver zum Nahrungsbeschaffen.",
+      "quantity": 1, "weight": 1.5, "price": "4 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-fallenset" } }
+  },
+  {
+    "name": "Angelrute & Köder",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Einfache Angel mit Haken und Schnur sowie etwas Köder. Ermöglicht Fischen als Nahrungsquelle.",
+      "quantity": 1, "weight": 1.0, "price": "3 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-angelrute" } }
+  },
+  {
+    "name": "Kerzen (10 Stück)",
+    "type": "gear",
+    "img": "icons/svg/light.svg",
+    "system": {
+      "description": "Zehn Wachskerzen, je ca. 4 Stunden Brenndauer. Schwaches Licht (1 m Radius).",
+      "quantity": 10, "weight": 0.5, "price": "2 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-kerzen" } }
+  },
+  {
+    "name": "Heiliges Symbol",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Symbol einer Gottheit aus Holz oder einfachem Metall. Voraussetzung für viele Wunder.",
+      "quantity": 1, "weight": 0.1, "price": "3 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-heiliges-symbol" } }
+  },
+  {
+    "name": "Heiliges Symbol (Silber)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Silbernes Symbol einer Gottheit. Voraussetzung für mächtige Wunder. Wirkt gegen bestimmte Untote.",
+      "quantity": 1, "weight": 0.2, "price": "20 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-heiliges-symbol-silber" } }
+  },
+  {
+    "name": "Zauberfokus",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Stab, Kristall oder Amulett als Fokus für magische Energie. Viele Zauber benötigen einen Fokus.",
+      "quantity": 1, "weight": 0.5, "price": "15 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-zauberfokus" } }
+  },
+  {
+    "name": "Kräuterbuch",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Illustriertes Buch über Heilpflanzen und ihre Anwendung. Gibt +1 auf Wissen (Heilkunst) bei der Kräutersuche.",
+      "quantity": 1, "weight": 1.0, "price": "12 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-kraeuter-buch" } }
+  },
+  {
+    "name": "Zauberbuch (leer)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Leeres Buch mit behandelten Seiten, geeignet zum Aufzeichnen von Zaubern und Formeln.",
+      "quantity": 1, "weight": 1.5, "price": "20 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-zauberbuch-leer" } }
+  },
+  {
+    "name": "Musikinstrument (einfach)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Einfaches Instrument nach Wahl (Flöte, Laute, Trommel). Voraussetzung für Bardenmagie.",
+      "quantity": 1, "weight": 1.5, "price": "10 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-musikinstrument" } }
+  },
+  {
+    "name": "Musikinstrument (hochwertig)",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Feines Instrument (Laute, Harfe, Fiedel). Gibt +1 auf Kunst-Manöver.",
+      "quantity": 1, "weight": 2.0, "price": "50 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-musikinstrument-hq" } }
+  },
+  {
+    "name": "Würfelset",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Set aus Knochen- oder Holzwürfeln für Glücksspiele. Gibt +1 auf List-Manöver beim Mogeln.",
+      "quantity": 1, "weight": 0.1, "price": "5 KL", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-wuerfelset" } }
+  },
+  {
+    "name": "Spitzhacke",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Schwere Spitzhacke zum Graben und Bearbeiten von Gestein. Als Waffe: Schaden 1 (unhandlich).",
+      "quantity": 1, "weight": 4.0, "price": "3 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-spitzhacke" } }
+  },
+  {
+    "name": "Schaufel",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Eiserne Schaufel zum Graben. Unverzichtbar auf Reisen und beim Lagerbau.",
+      "quantity": 1, "weight": 3.0, "price": "2 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-schaufel" } }
+  },
+  {
+    "name": "Kochgeschirr",
+    "type": "gear",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Eisentopf, Pfanne und Besteck für das Kochen im Freien. Erlaubt die Zubereitung von Mahlzeiten.",
+      "quantity": 1, "weight": 2.0, "price": "4 TT", "equipped": false
+    },
+    "flags": { "aborea-v7": { "sourceId": "gear-kochgeschirr" } }
+  }
+]
