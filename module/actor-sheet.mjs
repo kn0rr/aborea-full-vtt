@@ -143,11 +143,9 @@ export class AboreaActorSheet extends ActorSheet {
 
     // Rassentraits als beschriftete Badge-Liste für das Template aufbereiten
     const traitLabelMap = {
-      thermalVision:    "ABOREA.TraitThermalVision",
-      diseaseImmunity:  "ABOREA.TraitDiseaseImmunity",
-      spellResistance:  "ABOREA.TraitSpellResistance",
-      secretDoorsBonus: "ABOREA.TraitSecretDoorsBonus",
-      mechanicsBonus:   "ABOREA.TraitMechanicsBonus"
+      thermalVision:   "ABOREA.TraitThermalVision",
+      diseaseImmunity: "ABOREA.TraitDiseaseImmunity",
+      spellResistance: "ABOREA.TraitSpellResistance"
     };
     const traits = system.traits ?? {};
     system.racialTraits = Object.entries(traitLabelMap)
@@ -155,6 +153,11 @@ export class AboreaActorSheet extends ActorSheet {
       .map(([key, locKey]) => ({ key, label: game.i18n.localize(locKey) }));
     if (Number(traits.maneuverBonus ?? 0) !== 0) {
       system.racialTraits.push({ key: "maneuverBonus", label: `${game.i18n.localize("ABOREA.TraitManeuverBonus")} ${traits.maneuverBonus > 0 ? "+" : ""}${traits.maneuverBonus}` });
+    }
+    for (const [skillKey, bonus] of Object.entries(traits.skillBonuses ?? {})) {
+      if (!bonus) continue;
+      const skillLabel = ABOREA.skills?.[skillKey]?.label ? game.i18n.localize(ABOREA.skills[skillKey].label) : skillKey;
+      system.racialTraits.push({ key: `skill-${skillKey}`, label: `${skillLabel} ${bonus > 0 ? "+" : ""}${bonus}` });
     }
     const creationDone = !!system.creation?.completed;
     system.skillsLocked = creationDone && !levelUpPending;

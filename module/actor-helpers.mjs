@@ -171,9 +171,8 @@ export function emptyTraits() {
     maneuverBonus: 0,
     spellResistance: false,
     diseaseImmunity: false,
-    secretDoorsBonus: false,
-    mechanicsBonus: false,
-    thermalVision: false
+    thermalVision: false,
+    skillBonuses: {}
   };
 }
 

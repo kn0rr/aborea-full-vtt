@@ -130,18 +130,10 @@ export async function rollSkill(actor, skillKey) {
   const rank = Number(skill.rank ?? 0);
   const classBonus = Number(actor.system.classFeatures?.bonuses?.[skillKey] ?? skill.bonus ?? 0);
 
-  // Rassentraits: Mechanik- und Geheimtüren-Bonus
+  // Rassentraits: skillBonuses-Map (z.B. { mechanik: 1, geheimtuer: 1, fallen: 1 })
   const traits = actor.system.traits ?? {};
-  let traitBonus = 0;
-  let traitLabel = "";
-  if (traits.mechanicsBonus && skillKey === "mechanik") {
-    traitBonus += 1; traitLabel = game.i18n.localize("ABOREA.TraitMechanicsBonus");
-  }
-  if (traits.secretDoorsBonus && (skillKey === "mechanik" || skillKey === "wahrnehmung")) {
-    traitBonus += 1; traitLabel = traitLabel
-      ? `${traitLabel}, ${game.i18n.localize("ABOREA.TraitSecretDoorsBonus")}`
-      : game.i18n.localize("ABOREA.TraitSecretDoorsBonus");
-  }
+  const traitBonus = Number(traits.skillBonuses?.[skillKey] ?? 0);
+  const traitLabel = traitBonus ? game.i18n.localize("ABOREA.RacialBonus") : "";
 
   const roll = await rollOpenD10({ label: skill.label ?? skill.name ?? skillKey });
   const total = roll.total + attrBonus + rank + classBonus + traitBonus;

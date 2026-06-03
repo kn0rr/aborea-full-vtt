@@ -157,6 +157,8 @@
   "ABOREA.NextStepCost": "Next Step",
   "ABOREA.AttributeCostReference": "Attribute Cost Table",
   "ABOREA.SkillFallen": "Traps",
+  "ABOREA.SkillGeheimtuer": "Secret Doors",
+  "ABOREA.SkillMechanik": "Mechanics",
   "ABOREA.SkillGift": "Poison",
   "ABOREA.SkillHeilen": "Healing",
   "ABOREA.SkillInformation": "Information",
@@ -195,5 +197,6 @@
   "ABOREA.TraitSpellResistance": "Spell Resistance",
   "ABOREA.TraitSecretDoorsBonus": "Secret Doors/Traps +1",
   "ABOREA.TraitMechanicsBonus": "Mechanics +1",
-  "ABOREA.TraitManeuverBonus": "Maneuver Bonus"
+  "ABOREA.TraitManeuverBonus": "Maneuver Bonus",
+  "ABOREA.RacialBonus": "Racial Bonus"
 }

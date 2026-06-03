@@ -51,6 +51,8 @@ export const ABOREA = {
     stangenwaffe: { label: "ABOREA.SkillStangenwaffe", attribute: "st" },
     wurfwaffe: { label: "ABOREA.SkillWurfwaffe", attribute: "ge" },
     fallen: { label: "ABOREA.SkillFallen", attribute: "in" },
+    geheimtuer: { label: "ABOREA.SkillGeheimtuer", attribute: "in" },
+    mechanik: { label: "ABOREA.SkillMechanik", attribute: "in" },
     gift: { label: "ABOREA.SkillGift", attribute: "in" },
     heimlichkeit: { label: "ABOREA.SkillHeimlichkeit", attribute: "ge" },
     heilen: { label: "ABOREA.SkillHeilen", attribute: "ch" },

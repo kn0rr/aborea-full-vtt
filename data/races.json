@@ -50,7 +50,7 @@
       },
       "special": "Wärmesicht, einmalig +2 Trefferpunkte auf der ersten Stufe, Bonus auf Geheimtüren und Fallen, +1 Rüstung.",
       "restrictions": "Kein Zauberer",
-      "traits": { "racialArmorBonus": 1, "thermalVision": true, "secretDoorsBonus": true }
+      "traits": { "racialArmorBonus": 1, "thermalVision": true, "skillBonuses": { "geheimtuer": 1, "mechanik": 1, "fallen": 1 } }
     }
   },
   {
@@ -86,7 +86,7 @@
       },
       "special": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
       "restrictions": "",
-      "traits": { "racialArmorBonus": 1, "mechanicsBonus": true, "secretDoorsBonus": true }
+      "traits": { "racialArmorBonus": 1, "skillBonuses": { "mechanik": 1, "geheimtuer": 1 } }
     }
   }
 ]
