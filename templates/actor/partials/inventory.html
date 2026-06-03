@@ -39,6 +39,8 @@
       <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
     </div>
+    {{#if item.system.notes}}<div class="item-notes">{{item.system.notes}}</div>{{/if}}
+    <input type="text" class="item-notes-input" name="system.notes" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
   </div>
   {{/each}}
 </section>
@@ -57,6 +59,7 @@
       <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
     </div>
+    <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
   </div>
   {{/each}}
 </section>
@@ -85,6 +88,7 @@
         <button type="button" class="item-edit btn-icon">✎</button>
         <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
       </div>
+      <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
     </div>
     {{/each}}
   </div>
@@ -115,6 +119,7 @@
         <button type="button" class="item-edit btn-icon">✎</button>
         <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
       </div>
+      <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
     </div>
     {{/each}}
   </div>
@@ -139,6 +144,7 @@
       <button type="button" class="item-edit btn-icon">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
     </div>
+    <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
   </div>
   {{/each}}
 </section>

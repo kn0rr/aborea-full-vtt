@@ -426,12 +426,25 @@
 /* ── Item-Zeilen (Inventar) ─────────────────────────── */
 .item-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px 10px;
   padding: 7px 10px;
   border-bottom: 1px solid var(--aborea-border-light);
   font-size: .9rem;
 }
+.item-notes-input {
+  flex: 0 0 100%;
+  font-size: .78rem;
+  color: var(--aborea-brown);
+  border: none;
+  border-bottom: 1px dashed var(--aborea-border-light);
+  background: transparent;
+  padding: 1px 2px;
+  outline: none;
+}
+.item-notes-input:focus { border-bottom-color: var(--aborea-gold); background: rgba(255,255,255,.6); }
+.item-notes-input:placeholder-shown { opacity: .45; }
 .item-row:last-child { border-bottom: none; }
 .item-row:hover { background: rgba(255,255,255,.5); border-radius: var(--aborea-radius-sm); }
 .item-name { flex: 1; font-weight: 500; }

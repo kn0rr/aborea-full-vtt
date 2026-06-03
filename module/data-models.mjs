@@ -202,7 +202,8 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
       attrChoices: new fields.ArrayField(new fields.StringField()),
       hands:       new fields.NumberField({ initial: 1, integer: true }),
       price:       new fields.StringField({ initial: "" }),
-      weight:      new fields.NumberField({ initial: 0 })
+      weight:      new fields.NumberField({ initial: 0 }),
+      notes:       new fields.StringField({ initial: "" })
     };
   }
 }
@@ -216,7 +217,8 @@ export class ArmorDataModel extends foundry.abstract.TypeDataModel {
       armor:       new fields.NumberField({ initial: 5 }),
       maneuverMod: new fields.NumberField({ initial: 0 }),
       price:       new fields.StringField({ initial: "" }),
-      weight:      new fields.NumberField({ initial: 0 })
+      weight:      new fields.NumberField({ initial: 0 }),
+      notes:       new fields.StringField({ initial: "" })
     };
   }
 }
@@ -240,7 +242,8 @@ export class SpellDataModel extends foundry.abstract.TypeDataModel {
       externalId:  new fields.StringField({ initial: "" }),
       effects:     new fields.ArrayField(new fields.ObjectField()),
       hpEffect:    new fields.ObjectField({ initial: () => ({}) }),
-      summonRule:  new fields.ObjectField({ initial: () => ({}) })
+      summonRule:  new fields.ObjectField({ initial: () => ({}) }),
+      notes:       new fields.StringField({ initial: "" })
     };
   }
 }
@@ -264,7 +267,8 @@ export class MiracleDataModel extends foundry.abstract.TypeDataModel {
       externalId:  new fields.StringField({ initial: "" }),
       effects:     new fields.ArrayField(new fields.ObjectField()),
       hpEffect:    new fields.ObjectField({ initial: () => ({}) }),
-      summonRule:  new fields.ObjectField({ initial: () => ({}) })
+      summonRule:  new fields.ObjectField({ initial: () => ({}) }),
+      notes:       new fields.StringField({ initial: "" })
     };
   }
 }
@@ -276,7 +280,8 @@ export class GearDataModel extends foundry.abstract.TypeDataModel {
       equipped:    new fields.BooleanField({ initial: false }),
       quantity:    new fields.NumberField({ initial: 1, integer: true }),
       weight:      new fields.NumberField({ initial: 0 }),
-      price:       new fields.StringField({ initial: "" })
+      price:       new fields.StringField({ initial: "" }),
+      notes:       new fields.StringField({ initial: "" })
     };
   }
 }

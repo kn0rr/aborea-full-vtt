@@ -235,13 +235,17 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".open-attack-dialog").on("click", () => openAttackDialog(this.actor));
     html.find(".item-create").on("click", this._onItemCreate.bind(this));
     html.find(".item-edit").on("click", ev => this.actor.items.get(ev.currentTarget.closest("[data-item-id]")?.dataset.itemId)?.sheet?.render(true));
+    html.find(".item-notes-input").on("change", async ev => {
+      const itemId = ev.currentTarget.dataset.itemId;
+      const item = this.actor.items.get(itemId);
+      if (item) await item.update({ "system.notes": ev.currentTarget.value });
+    });
     html.find(".item-delete").on("click", async ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
       if (!itemId) return;
       const item = this.actor.items.get(itemId);
       if (item) {
-        const note = await this._promptNote(`${itemHistoryLabel(item)} entfernen`);
-        await this._logInventoryEntry("item-remove", itemHistoryLabel(item), { itemType: item.type, note });
+        await this._logInventoryEntry("item-remove", itemHistoryLabel(item), { itemType: item.type });
       }
       await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
       if (this.actor.type === "character") await this._recalculateCharacter();
@@ -260,8 +264,7 @@ export class AboreaActorSheet extends ActorSheet {
       const obj = duplicateItemObject(doc);
       this._checkSpellListCapacity(obj);
       await this.actor.createEmbeddedDocuments("Item", [obj]);
-      const note = await this._promptNote(`${itemHistoryLabel(obj)} hinzufügen`);
-      await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack, note });
+      await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack });
     });
     html.find(".combat-balance").on("change", async ev => {
       const offensive = Number(ev.currentTarget.value ?? 0);
@@ -777,8 +780,7 @@ export class AboreaActorSheet extends ActorSheet {
     event.preventDefault();
     const type=event.currentTarget.dataset.type; const name=game.i18n.format("ABOREA.NewItem",{type});
     const created=await this.actor.createEmbeddedDocuments("Item",[{name,type,system:{}}]);
-    const note = await this._promptNote(`${name} hinzufügen`);
-    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual",note});
+    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual"});
     return created;
   }
 
