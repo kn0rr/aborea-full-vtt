@@ -454,6 +454,8 @@ export class AboreaActorSheet extends ActorSheet {
     if (targetLvl <= currentLvl) { ui.notifications.warn("ABOREA: Kein Stufenaufstieg verfügbar."); return; }
     await this.actor.update({ "system.resources.level": targetLvl, "system.creation.completed": false, "system.creation.status": "leveling" });
     const result = await this._recalculateCharacter();
+    // Tagesnutzungen beim Stufenaufstieg zurücksetzen
+    await this._resetDailyClassFeatures();
     const cls = this.actor.items.find(i => i.type === "class");
     const newFeatures = ABOREA.activeClassFeatures(cls?.system || {}, targetLvl).filter(f => Number(f.level) > currentLvl && Number(f.level) <= targetLvl);
     const humanBonus = (system.details?.race || "").toLowerCase() === "mensch" ? 2 : 0;
@@ -550,6 +552,8 @@ export class AboreaActorSheet extends ActorSheet {
     if (!feature) return ui.notifications.warn(`ABOREA: Klassenfähigkeit ${featureKey} nicht gefunden.`);
     const path = `system.classFeatures.activations.${featureKey}`;
     const state = foundry.utils.deepClone(foundry.utils.getProperty(this.actor, path) || {});
+    // Neuer Tag → Nutzungszähler zurücksetzen bevor weitergemacht wird
+    if (state.day && state.day !== currentDayStamp()) { state.used = 0; }
     if (feature.usesPerDay && Number(state.used || 0) >= Number(feature.usesPerDay || 0)) return ui.notifications.warn(`${feature.label} ist für heute verbraucht.`);
     state.used = Number(state.used || 0) + (feature.usesPerDay ? 1 : 0);
     state.lastActivated = nowStamp(); state.day = currentDayStamp();

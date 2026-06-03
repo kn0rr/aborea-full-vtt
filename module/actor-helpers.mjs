@@ -175,13 +175,17 @@ export function isActivatableFeature(feature) {
 
 export function featureUsesLabel(feature, state = {}) {
   if (!feature?.usesPerDay) return "—";
+  const max = Number(feature.usesPerDay || 0);
+  // Neuer Tag → alle Nutzungen wieder verfügbar (Anzeige)
+  if (state.day && state.day !== currentDayStamp()) return `${max}/${max}`;
   const used = Number(state.used || 0);
-  const max  = Number(feature.usesPerDay || 0);
   return `${Math.max(0, max - used)}/${max}`;
 }
 
 export function featureReady(feature, state = {}) {
   if (!feature?.usesPerDay) return true;
+  // Neuer Tag → Feature ist bereit, auch ohne manuellen Reset
+  if (state.day && state.day !== currentDayStamp()) return true;
   return Number(state.used || 0) < Number(feature.usesPerDay || 0);
 }
 
