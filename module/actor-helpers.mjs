@@ -1,5 +1,32 @@
 import { ABOREA } from "./config.mjs";
 
+// ── Manöverschwierigkeit beim Zaubern ────────────────────────────────────────
+
+const MANEUVER_LEVELS = [
+  { key: "routine",           label: "Routine",            value: 5  },
+  { key: "sehrEinfach",       label: "Sehr Einfach",       value: 7  },
+  { key: "einfach",           label: "Einfach",            value: 8  },
+  { key: "schwer",            label: "Schwer",             value: 10 },
+  { key: "sehrSchwer",        label: "Sehr Schwer",        value: 12 },
+  { key: "aeusserstSchwer",   label: "Äußerst Schwer",    value: 14 },
+  { key: "blankerLeichtsinn", label: "Blanker Leichtsinn", value: 16 },
+  { key: "absurd",            label: "Absurd",             value: 18 }
+];
+const MANEUVER_BASELINE = 2; // Index von "einfach" (diff=0)
+
+/**
+ * Berechnet die Manöverschwierigkeit für einen Zauber.
+ * Basis: diff = Zauberrang - Rang Magie entwickeln
+ * diff=0 → einfach; +1 → schwer; -1 → sehr einfach usw.
+ */
+export function spellManeuverDifficulty(spell, actor) {
+  const spellRank  = Number(spell?.system?.rank ?? 1);
+  const casterRank = Number(actor?.system?.skills?.magieEntwickeln?.rank ?? 0);
+  const diff = spellRank - casterRank;
+  const idx  = Math.max(0, Math.min(MANEUVER_LEVELS.length - 1, MANEUVER_BASELINE + diff));
+  return { ...MANEUVER_LEVELS[idx], diff };
+}
+
 // ── XP / Level ──────────────────────────────────────────────────────────────
 
 export function levelForXp(xp) {
@@ -349,7 +376,20 @@ export async function applyEffectsToActor(actor, effects) {
 }
 
 export function buildPowerCard(actor, item, mpCost, targets, extra = "") {
-  return `<section class="aborea-chat-card"><h2>${game.i18n.localize("ABOREA.SpellCast")}: ${item.name}</h2><p><strong>${actor.name}</strong> wirkt ${item.type === "miracle" ? game.i18n.localize("ABOREA.Miracle") : game.i18n.localize("ABOREA.Spell")}.</p><p><strong>${game.i18n.localize("ABOREA.MPCost")}:</strong> ${mpCost}</p><p><strong>${game.i18n.localize("ABOREA.Range")}:</strong> ${item.system?.range || "—"}</p><p><strong>${game.i18n.localize("ABOREA.Duration")}:</strong> ${item.system?.duration || "—"}</p><p><strong>${game.i18n.localize("ABOREA.Targets")}:</strong> ${targets.length ? targets.map(t => t.name).join(", ") : "—"}</p><p>${item.system?.description || ""}</p>${extra}</section>`;
+  const difficulty = spellManeuverDifficulty(item, actor);
+  const diffColor  = difficulty.diff > 0 ? "#b91c1c" : difficulty.diff < 0 ? "#166534" : "#1e40af";
+  const diffLine   = `<p><strong>Manöver:</strong> <span style="color:${diffColor}">${difficulty.label} (${difficulty.value})</span></p>`;
+  return `<section class="aborea-chat-card">
+    <h2>${game.i18n.localize("ABOREA.SpellCast")}: ${item.name}</h2>
+    <p><strong>${actor.name}</strong> wirkt ${item.type === "miracle" ? game.i18n.localize("ABOREA.Miracle") : game.i18n.localize("ABOREA.Spell")}.</p>
+    <p><strong>${game.i18n.localize("ABOREA.MPCost")}:</strong> ${mpCost}</p>
+    ${diffLine}
+    <p><strong>${game.i18n.localize("ABOREA.Range")}:</strong> ${item.system?.range || "—"}</p>
+    <p><strong>${game.i18n.localize("ABOREA.Duration")}:</strong> ${item.system?.duration || "—"}</p>
+    <p><strong>${game.i18n.localize("ABOREA.Targets")}:</strong> ${targets.length ? targets.map(t => t.name).join(", ") : "—"}</p>
+    <p>${item.system?.description || ""}</p>
+    ${extra}
+  </section>`;
 }
 
 // ── Summons ───────────────────────────────────────────────────────────────────

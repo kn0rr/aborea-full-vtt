@@ -14,6 +14,7 @@ import {
   buildSkillDisplayRows, itemHistoryLabel,
   applyEffectsToActor, chooseMpCost,
   parseSimpleDuration, inferEffects, inferDirectHp, buildPowerCard,
+  spellManeuverDifficulty,
   summarizeSummonRule, buildSummonedCreatureSource,
   findPackDocumentByTypeAndName, openCompendiumPickerDialog,
   parsePackSelection, resolveDroppedActorDocument,
