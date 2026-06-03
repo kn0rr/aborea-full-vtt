@@ -183,5 +183,7 @@
   "ABOREA.Domain": "Domain",
   "ABOREA.AllowedClasses": "Allowed Classes",
   "ABOREA.AttributeMods": "Attribute Modifiers",
-  "ABOREA.MagicFormula": "Magic Formula"
+  "ABOREA.MagicFormula": "Magic Formula",
+  "ABOREA.EffectiveOffensiveBonus": "Offensive Bonus (active)",
+  "ABOREA.TraitModifierHint": "Modified by an active effect"
 }

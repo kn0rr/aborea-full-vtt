@@ -203,5 +203,7 @@
   "ABOREA.Domain": "Domäne",
   "ABOREA.AllowedClasses": "Erlaubte Berufe",
   "ABOREA.AttributeMods": "Attributmodifikatoren",
-  "ABOREA.MagicFormula": "Magieformel"
+  "ABOREA.MagicFormula": "Magieformel",
+  "ABOREA.EffectiveOffensiveBonus": "Offensivbonus (aktiv)",
+  "ABOREA.TraitModifierHint": "Durch einen aktiven Effekt modifiziert"
 }

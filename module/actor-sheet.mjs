@@ -164,7 +164,17 @@ export class AboreaActorSheet extends ActorSheet {
     const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
     const armorBonus = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0) - 5, 0);
     system.combat.totalArmorValue = Number(system.combat?.armorValue ?? 5) + armorBonus;
-    system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
+
+    // Trait-Boni aus Active Effects (z.B. Beistand, Fluch, Trübung)
+    const maneuverBonus = Number(system.traits?.maneuverBonus ?? 0);
+    system.combat.maneuverBonus          = maneuverBonus;
+    system.combat.effectiveOffensiveBonus = Number(system.combat?.offensiveBonus ?? 0) + maneuverBonus;
+
+    // Verteidigungswert inklusive Manöverbonus
+    system.combat.defenseValue = ABOREA.defenseValue(
+      system.combat.totalArmorValue,
+      Number(system.combat?.defensiveBonus ?? 0) + maneuverBonus
+    );
     system.combat.initiative = ABOREA.initiativeBonus(actor);
   }
 
