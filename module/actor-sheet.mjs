@@ -268,7 +268,14 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".finalize-character").on("click", async () => {
       const result = await this._recalculateCharacter();
       if (!result.valid) { ui.notifications.error("ABOREA: Charaktererstellung ist noch nicht gültig."); return; }
-      await this.actor.update({ "system.creation.completed": true, "system.creation.status": "ready" });
+      const hpMax = this.actor.system.resources.hp.max;
+      const mpMax = this.actor.system.resources.mp.max;
+      await this.actor.update({
+        "system.creation.completed": true,
+        "system.creation.status": "ready",
+        "system.resources.hp.value": hpMax,
+        "system.resources.mp.value": mpMax
+      });
       ui.notifications.info("ABOREA: Charakter abgeschlossen.");
     });
     html.find(".do-level-up").on("click", async () => await this._doLevelUp());
