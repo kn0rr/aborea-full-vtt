@@ -531,6 +531,10 @@ export class AboreaActorSheet extends ActorSheet {
       const tgt = String(f.target || "").toLowerCase();
       if (tgt && Number(f.value)) featureState.bonuses[tgt] = (featureState.bonuses[tgt] || 0) + Number(f.value);
     }
+    // Statische Klassen-Skillboni einmergen (zusätzlich zu Level-Features)
+    for (const [skillKey, bonus] of Object.entries(cls?.system?.skillBonuses ?? {})) {
+      if (bonus) featureState.bonuses[skillKey] = (featureState.bonuses[skillKey] || 0) + Number(bonus);
+    }
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
     const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, normalizeCustomSkills(actorSystem.customSkills));

@@ -172,6 +172,7 @@ export class ClassDataModel extends foundry.abstract.TypeDataModel {
       special:        new fields.StringField({ initial: "" }),
       magicFormula:   new fields.StringField({ initial: "" }),
       skillCosts:     new fields.ObjectField({ initial: () => ({}) }),
+      skillBonuses:   new fields.ObjectField({ initial: () => ({}) }),
       features:       new fields.ArrayField(new fields.ObjectField())
     };
   }

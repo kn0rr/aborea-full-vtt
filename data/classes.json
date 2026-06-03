@@ -9,6 +9,7 @@
       "magicAttribute": "ch",
       "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
       "special": "Leitmagie-Beruf.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "2",
         "einflussnahme": "1",
@@ -75,6 +76,7 @@
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Fokus auf List, Heimlichkeit und Waffen.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "1",
         "einflussnahme": "1",
@@ -183,6 +185,7 @@
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Fokus auf Waffen und Kampf.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "1",
         "einflussnahme": "2",
@@ -280,6 +283,7 @@
       "magicAttribute": "ch",
       "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
       "special": "Leitmagie-Beruf.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "2",
         "einflussnahme": "1",
@@ -372,6 +376,7 @@
       "magicAttribute": "ch",
       "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
       "special": "Leitmagie-Beruf.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "2",
         "einflussnahme": "1",
@@ -429,6 +434,7 @@
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Fokus auf Natur, Bogen und Bewegung.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "2",
         "einflussnahme": "2",
@@ -496,6 +502,7 @@
       "magicAttribute": "in",
       "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Arkaner Magieberuf.",
+      "skillBonuses": {},
       "skillCosts": {
         "athletik": "3",
         "einflussnahme": "2",
