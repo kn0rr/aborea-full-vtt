@@ -1,0 +1,21 @@
+{
+  "name": "Lindwurm",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": { "st": { "value": 8 }, "ge": { "value": 5 }, "ko": { "value": 8 }, "in": { "value": 3 }, "ch": { "value": 3 } },
+    "resources": { "hp": { "value": 40, "max": 40 }, "mp": { "value": 0, "max": 0 } },
+    "combat": { "combatBonus": 7, "offensiveBonus": 7, "defensiveBonus": 0, "armorValue": 7, "defenseValue": 7, "targetDefense": 7, "initiative": 1 },
+    "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Drache\nWaffen: Klauen (S 2); Giftstachel (S 2 + Gift)\nBesonderes: Gift – KO-Probe bei Stacheltreffer; Misserfolg: 2W4 Schaden über 1W4 Runden; Fliegen; groß" },
+    "skills": {},
+    "creature": { "kind": "Drache", "size": "groß", "threat": 4, "regeneration": 0, "resistances": "Schuppen (zäh)", "vulnerabilities": "", "special": "Gift (KO-Probe); Fliegen" }
+  },
+  "items": [
+    { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+    { "name": "Giftstachel", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+  ],
+  "_id": "e1f2a3b4c5d6e7f8",
+  "flags": { "aborea-v7": { "sourceId": "creature-lindwurm", "sourcePath": "systems/aborea-v7/packs/creatures/_source/creature-lindwurm.json", "generated": true } },
+  "ownership": { "default": 0 },
+  "folder": null
+}

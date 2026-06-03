@@ -1348,5 +1348,325 @@
       "default": 0
     },
     "folder": null
+  },
+
+  {
+    "name": "Wolf",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 5 }, "ge": { "value": 7 }, "ko": { "value": 5 }, "in": { "value": 2 }, "ch": { "value": 2 } },
+      "resources": { "hp": { "value": 8, "max": 8 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 3, "offensiveBonus": 3, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 3 },
+      "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Biss (S 1)\nBesonderes: Rudel (bei 3+ Wölfen im Kampf +1 AB)" },
+      "skills": {},
+      "creature": { "kind": "Tier", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Rudel (+1AB)" }
+    },
+    "items": [
+      { "name": "Biss", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "a1b2c3d4e5f6a7b8",
+    "flags": { "aborea-v7": { "sourceId": "creature-wolf", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Bär",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 7 }, "ge": { "value": 4 }, "ko": { "value": 7 }, "in": { "value": 2 }, "ch": { "value": 2 } },
+      "resources": { "hp": { "value": 22, "max": 22 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
+      "details": { "level": 2, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Klauen (S 2), Biss (S 2)\nBesonderes: Umklammerung – nach Treffer mit Klauen Manöver-Probe; Gegner verliert Handlungen solange umklammert" },
+      "skills": {},
+      "creature": { "kind": "Tier", "size": "groß", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Umklammerung" }
+    },
+    "items": [
+      { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+      { "name": "Biss", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "e5f6a7b8c9d0e1f2",
+    "flags": { "aborea-v7": { "sourceId": "creature-baer", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Skelett",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 4 }, "ge": { "value": 4 }, "ko": { "value": 4 }, "in": { "value": 1 }, "ch": { "value": 1 } },
+      "resources": { "hp": { "value": 6, "max": 6 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 2, "offensiveBonus": 2, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
+      "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Knochen/Hieb (S 1)\nBesonderes: Immun gegen Gift und Schlaf; halber Schaden durch Stich- und Pfeilwaffen; kein Manöver möglich" },
+      "skills": {},
+      "creature": { "kind": "Untot", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "Gift, Schlaf, Stich (½)", "vulnerabilities": "Wucht", "special": "Immun Gift/Schlaf; ½ Schaden Stich/Pfeil" }
+    },
+    "items": [
+      { "name": "Knochen (Hieb)", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "b2c3d4e5f6a7b8c9",
+    "flags": { "aborea-v7": { "sourceId": "creature-skelett", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Zombie",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 6 }, "ge": { "value": 2 }, "ko": { "value": 7 }, "in": { "value": 1 }, "ch": { "value": 1 } },
+      "resources": { "hp": { "value": 15, "max": 15 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 2, "offensiveBonus": 2, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": -3 },
+      "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 1)\nBesonderes: Immun gegen Gift und Schlaf; Angst (GE-Probe beim ersten Anblick oder -1 auf alle Proben)" },
+      "skills": {},
+      "creature": { "kind": "Untot", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "Gift, Schlaf", "vulnerabilities": "Heilmagie", "special": "Immun Gift/Schlaf; Angst" }
+    },
+    "items": [
+      { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "c3d4e5f6a7b8c9d0",
+    "flags": { "aborea-v7": { "sourceId": "creature-zombie", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Ork",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 6 }, "ge": { "value": 4 }, "ko": { "value": 6 }, "in": { "value": 3 }, "ch": { "value": 2 } },
+      "resources": { "hp": { "value": 18, "max": 18 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
+      "details": { "level": 2, "xp": 0, "race": "Ork", "class": "Krieger", "notes": "Kategorie: Ork\nFertigkeiten: Wuchtwaffe 4, Waffenlos 2; Wahrnehmung 1\nWaffen: Kriegsaxt (S 2); Waffenlos\nBesonderes: Angsteinflößend (GE-Probe beim ersten Kontakt)" },
+      "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+      "creature": { "kind": "Ork", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Angsteinflößend" }
+    },
+    "items": [
+      { "name": "Kriegsaxt", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 6, "equipped": true } }
+    ],
+    "_id": "d4e5f6a7b8c9d0e1",
+    "flags": { "aborea-v7": { "sourceId": "creature-ork", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Ghul",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 5 }, "ge": { "value": 6 }, "ko": { "value": 5 }, "in": { "value": 2 }, "ch": { "value": 2 } },
+      "resources": { "hp": { "value": 12, "max": 12 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 5, "offensiveBonus": 5, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 2 },
+      "details": { "level": 2, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 1)\nBesonderes: Lähmender Biss – bei Treffer GE-Probe, Misserfolg: Lähmung 1W4 Runden; Immun gegen Gift und Schlaf" },
+      "skills": {},
+      "creature": { "kind": "Untot", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "Gift, Schlaf", "vulnerabilities": "Heilmagie", "special": "Lähmender Biss (GE-Probe)" }
+    },
+    "items": [
+      { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "f6a7b8c9d0e1f2a3",
+    "flags": { "aborea-v7": { "sourceId": "creature-ghul", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Gnoll",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 6 }, "ge": { "value": 5 }, "ko": { "value": 6 }, "in": { "value": 3 }, "ch": { "value": 3 } },
+      "resources": { "hp": { "value": 16, "max": 16 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 1 },
+      "details": { "level": 2, "xp": 0, "race": "Gnoll", "class": "Krieger", "notes": "Kategorie: Gnoll\nFertigkeiten: Stichwaffe 3, Wurfwaffe 2; Wahrnehmung 2\nWaffen: Lanze (S 2); Wurfspeer (S 1, Fernkampf)\nBesonderes: Blutwitterung – bei verwundetem Gegner +1 AB für alle Gnolls im Kampf" },
+      "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+      "creature": { "kind": "Gnoll", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Blutwitterung (+1AB)" }
+    },
+    "items": [
+      { "name": "Lanze", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 5, "equipped": true } }
+    ],
+    "_id": "a7b8c9d0e1f2a3b4",
+    "flags": { "aborea-v7": { "sourceId": "creature-gnoll", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Troll",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 8 }, "ge": { "value": 3 }, "ko": { "value": 8 }, "in": { "value": 2 }, "ch": { "value": 2 } },
+      "resources": { "hp": { "value": 30, "max": 30 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 2, "offensiveBonus": 2, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": -2 },
+      "details": { "level": 3, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Troll\nWaffen: Keule (S 2)\nBesonderes: Regeneration – heilt 2 HP pro Runde außer durch Feuer; Angst vor Feuer (-2 AB wenn Feuer sichtbar)" },
+      "skills": {},
+      "creature": { "kind": "Troll", "size": "groß", "threat": 3, "regeneration": 2, "resistances": "zäh", "vulnerabilities": "Feuer", "special": "Regeneration 2HP/R; Angst vor Feuer" }
+    },
+    "items": [
+      { "name": "Keule", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "b5c397072d9e1dac",
+    "flags": { "aborea-v7": { "sourceId": "creature-troll", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Oger",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 9 }, "ge": { "value": 3 }, "ko": { "value": 8 }, "in": { "value": 2 }, "ch": { "value": 2 } },
+      "resources": { "hp": { "value": 28, "max": 28 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 5, "offensiveBonus": 5, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": -2 },
+      "details": { "level": 3, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Riese\nWaffen: Keule groß (S 3)\nBesonderes: Erschütternd – bei Treffer muss Gegner KO-Probe ablegen oder verliert nächste Runde -1 AB" },
+      "skills": {},
+      "creature": { "kind": "Riese", "size": "groß", "threat": 3, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Erschütternd (KO-Probe)" }
+    },
+    "items": [
+      { "name": "Keule (groß)", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 3, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 7, "equipped": true } }
+    ],
+    "_id": "b8c9d0e1f2a3b4c5",
+    "flags": { "aborea-v7": { "sourceId": "creature-oger", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Riesenspinne",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 6 }, "ge": { "value": 5 }, "ko": { "value": 6 }, "in": { "value": 1 }, "ch": { "value": 1 } },
+      "resources": { "hp": { "value": 20, "max": 20 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 5, "offensiveBonus": 5, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": 2 },
+      "details": { "level": 3, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Biss (S 1 + Gift)\nBesonderes: Gift – KO-Probe bei Bisstreffer; Misserfolg: -2 ST für 1W4 Stunden; Spinnennetz (Manöver: verlangsamt Gegner); Klettern an Wänden" },
+      "skills": {},
+      "creature": { "kind": "Tier", "size": "groß", "threat": 3, "regeneration": 0, "resistances": "", "vulnerabilities": "Feuer", "special": "Gift (KO-Probe); Spinnennetz; Klettern" }
+    },
+    "items": [
+      { "name": "Biss (giftig)", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "c9d0e1f2a3b4c5d6",
+    "flags": { "aborea-v7": { "sourceId": "creature-riesenspinne", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Orkschamane",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 5 }, "ge": { "value": 5 }, "ko": { "value": 5 }, "in": { "value": 5 }, "ch": { "value": 4 } },
+      "resources": { "hp": { "value": 18, "max": 18 }, "mp": { "value": 12, "max": 12 } },
+      "combat": { "combatBonus": 3, "offensiveBonus": 3, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 0 },
+      "details": { "level": 3, "xp": 0, "race": "Ork", "class": "Schamane", "notes": "Kategorie: Ork\nFertigkeiten: ME 5, S(Schamane) 2, S(wild) 2; Speer 3, Wahrnehmung 2\nWaffen: Speer (S 1); Waffenlos\nZauber: Ranken; Naturgeist beschwören; Trübung\nBesonderes: Angsteinflößend; Naturgeist (Begleiter, Bedrohung 2)" },
+      "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+      "creature": { "kind": "Ork", "size": "mittel", "threat": 3, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Wilde Magie; Naturgeist (Begleiter)" }
+    },
+    "items": [
+      { "name": "Speer", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 4, "equipped": true } }
+    ],
+    "_id": "d0e1f2a3b4c5d6e7",
+    "flags": { "aborea-v7": { "sourceId": "creature-orkschamane", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Lindwurm",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 8 }, "ge": { "value": 5 }, "ko": { "value": 8 }, "in": { "value": 3 }, "ch": { "value": 3 } },
+      "resources": { "hp": { "value": 40, "max": 40 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 7, "offensiveBonus": 7, "defensiveBonus": 0, "armorValue": 7, "defenseValue": 7, "targetDefense": 7, "initiative": 1 },
+      "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Drache\nWaffen: Klauen (S 2); Giftstachel (S 2 + Gift)\nBesonderes: Gift – KO-Probe bei Stacheltreffer; Misserfolg: 2W4 Schaden über 1W4 Runden; Fliegen; groß" },
+      "skills": {},
+      "creature": { "kind": "Drache", "size": "groß", "threat": 4, "regeneration": 0, "resistances": "Schuppen (zäh)", "vulnerabilities": "", "special": "Gift (KO-Probe); Fliegen" }
+    },
+    "items": [
+      { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+      { "name": "Giftstachel", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "e1f2a3b4c5d6e7f8",
+    "flags": { "aborea-v7": { "sourceId": "creature-lindwurm", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Vampir",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 7 }, "ge": { "value": 7 }, "ko": { "value": 7 }, "in": { "value": 7 }, "ch": { "value": 7 } },
+      "resources": { "hp": { "value": 35, "max": 35 }, "mp": { "value": 10, "max": 10 } },
+      "combat": { "combatBonus": 8, "offensiveBonus": 8, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": 3 },
+      "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 2); Biss (S 1 + Blutleer)\nBesonderes: Blutleer – KO-Probe bei Bisstreffer; Misserfolg: -1 MaxHP permanent bis geheilt; Immun gegen Gift/Schlaf; Lichtschwäche (-3 AB in Sonnenlicht); Silber – doppelter Schaden; Verwandlung (Fledermaus/Wolf möglich)" },
+      "skills": {},
+      "creature": { "kind": "Untot", "size": "mittel", "threat": 4, "regeneration": 1, "resistances": "Gift, Schlaf, normale Waffen (½)", "vulnerabilities": "Sonnenlicht, Silber, Heilmagie", "special": "Blutleer (KO-Probe); Lichtschwäche; Verwandlung" }
+    },
+    "items": [
+      { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+      { "name": "Biss (Blutleer)", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "f2a3b4c5d6e7f8a9",
+    "flags": { "aborea-v7": { "sourceId": "creature-vampir", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Riese",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 10 }, "ge": { "value": 3 }, "ko": { "value": 9 }, "in": { "value": 3 }, "ch": { "value": 3 } },
+      "resources": { "hp": { "value": 50, "max": 50 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 6, "offensiveBonus": 6, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": -3 },
+      "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Riese\nWaffen: Fausthieb (S 4); Felsblock (S 3, Fernkampf kurz–mittel)\nBesonderes: Erschütternd (KO-Probe bei Fausthieb); Riesig – nimmt doppelten Trefferschaden durch Fernkampf; Wurfangriff" },
+      "skills": {},
+      "creature": { "kind": "Riese", "size": "riesig", "threat": 4, "regeneration": 0, "resistances": "Hieb (zäh)", "vulnerabilities": "Fernkampf", "special": "Erschütternd; Wurfangriff; Riesig" }
+    },
+    "items": [
+      { "name": "Fausthieb", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 4, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+      { "name": "Felsblock (Wurf)", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 3, "range": "mittel", "initiativeMod": -2, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "a3b4c5d6e7f8a9b0",
+    "flags": { "aborea-v7": { "sourceId": "creature-riese", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+
+  {
+    "name": "Drache",
+    "type": "creature",
+    "img": "icons/svg/mystery-man.svg",
+    "system": {
+      "attributes": { "st": { "value": 10 }, "ge": { "value": 4 }, "ko": { "value": 10 }, "in": { "value": 6 }, "ch": { "value": 6 } },
+      "resources": { "hp": { "value": 60, "max": 60 }, "mp": { "value": 20, "max": 20 } },
+      "combat": { "combatBonus": 8, "offensiveBonus": 8, "defensiveBonus": 0, "armorValue": 9, "defenseValue": 9, "targetDefense": 9, "initiative": 1 },
+      "details": { "level": 5, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Drache\nWaffen: Klauen (S 3); Biss (S 4); Feueratem (4W4 Feuer, Flächenangriff, 1×/Kampf)\nBesonderes: Feueratem – Flächenangriff (kurz-Radius); Fliegen; Furchteinflößend (GE-Probe oder -2 auf alle Proben); Magieresistenz (Zauberproben gegen Drachen -2); riesig" },
+      "skills": {},
+      "creature": { "kind": "Drache", "size": "riesig", "threat": 5, "regeneration": 0, "resistances": "Drachenschuppen (sehr zäh), Feuer (immun)", "vulnerabilities": "Kältemagie", "special": "Feueratem (1×/Kampf); Fliegen; Furchteinflößend; Magieresistenz" }
+    },
+    "items": [
+      { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 3, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+      { "name": "Biss", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 4, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+    ],
+    "_id": "b4c5d6e7f8a9b0c1",
+    "flags": { "aborea-v7": { "sourceId": "creature-drache", "generated": true } },
+    "ownership": { "default": 0 },
+    "folder": null
   }
 ]

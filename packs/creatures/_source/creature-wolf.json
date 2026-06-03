@@ -1,0 +1,20 @@
+{
+  "name": "Wolf",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": { "st": { "value": 5 }, "ge": { "value": 7 }, "ko": { "value": 5 }, "in": { "value": 2 }, "ch": { "value": 2 } },
+    "resources": { "hp": { "value": 8, "max": 8 }, "mp": { "value": 0, "max": 0 } },
+    "combat": { "combatBonus": 3, "offensiveBonus": 3, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 3 },
+    "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Biss (S 1)\nBesonderes: Rudel (bei 3+ Wölfen im Kampf +1 AB)" },
+    "skills": {},
+    "creature": { "kind": "Tier", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Rudel (+1AB)" }
+  },
+  "items": [
+    { "name": "Biss", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+  ],
+  "_id": "a1b2c3d4e5f6a7b8",
+  "flags": { "aborea-v7": { "sourceId": "creature-wolf", "sourcePath": "systems/aborea-v7/packs/creatures/_source/creature-wolf.json", "generated": true } },
+  "ownership": { "default": 0 },
+  "folder": null
+}

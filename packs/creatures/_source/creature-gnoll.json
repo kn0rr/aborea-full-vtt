@@ -1,0 +1,20 @@
+{
+  "name": "Gnoll",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": { "st": { "value": 6 }, "ge": { "value": 5 }, "ko": { "value": 6 }, "in": { "value": 3 }, "ch": { "value": 3 } },
+    "resources": { "hp": { "value": 16, "max": 16 }, "mp": { "value": 0, "max": 0 } },
+    "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 1 },
+    "details": { "level": 2, "xp": 0, "race": "Gnoll", "class": "Krieger", "notes": "Kategorie: Gnoll\nFertigkeiten: Stichwaffe 3, Wurfwaffe 2; Wahrnehmung 2\nWaffen: Lanze (S 2); Wurfspeer (S 1, Fernkampf)\nBesonderes: Blutwitterung – bei verwundetem Gegner +1 AB für alle Gnolls im Kampf" },
+    "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+    "creature": { "kind": "Gnoll", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Blutwitterung (+1AB)" }
+  },
+  "items": [
+    { "name": "Lanze", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 5, "equipped": true } }
+  ],
+  "_id": "a7b8c9d0e1f2a3b4",
+  "flags": { "aborea-v7": { "sourceId": "creature-gnoll", "sourcePath": "systems/aborea-v7/packs/creatures/_source/creature-gnoll.json", "generated": true } },
+  "ownership": { "default": 0 },
+  "folder": null
+}

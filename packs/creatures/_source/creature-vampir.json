@@ -1,0 +1,21 @@
+{
+  "name": "Vampir",
+  "type": "creature",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "attributes": { "st": { "value": 7 }, "ge": { "value": 7 }, "ko": { "value": 7 }, "in": { "value": 7 }, "ch": { "value": 7 } },
+    "resources": { "hp": { "value": 35, "max": 35 }, "mp": { "value": 10, "max": 10 } },
+    "combat": { "combatBonus": 8, "offensiveBonus": 8, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": 3 },
+    "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 2); Biss (S 1 + Blutleer)\nBesonderes: Blutleer – KO-Probe bei Bisstreffer; Misserfolg: -1 MaxHP permanent bis geheilt; Immun gegen Gift/Schlaf; Lichtschwäche (-3 AB in Sonnenlicht); Silber – doppelter Schaden; Verwandlung (Fledermaus/Wolf möglich)" },
+    "skills": {},
+    "creature": { "kind": "Untot", "size": "mittel", "threat": 4, "regeneration": 1, "resistances": "Gift, Schlaf, normale Waffen (½)", "vulnerabilities": "Sonnenlicht, Silber, Heilmagie", "special": "Blutleer (KO-Probe); Lichtschwäche; Verwandlung" }
+  },
+  "items": [
+    { "name": "Klauen", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 2, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } },
+    { "name": "Biss (Blutleer)", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+  ],
+  "_id": "f2a3b4c5d6e7f8a9",
+  "flags": { "aborea-v7": { "sourceId": "creature-vampir", "sourcePath": "systems/aborea-v7/packs/creatures/_source/creature-vampir.json", "generated": true } },
+  "ownership": { "default": 0 },
+  "folder": null
+}

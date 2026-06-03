@@ -80,7 +80,7 @@
   "_id": "b5c397072d9e1dac",
   "flags": {
     "aborea-v7": {
-      "sourceId": "troll",
+      "sourceId": "creature-troll",
       "sourcePath": "systems/aborea-v7/packs/creatures/_source/troll.json",
       "generated": true
     }
