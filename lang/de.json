@@ -205,5 +205,6 @@
   "ABOREA.AttributeMods": "Attributmodifikatoren",
   "ABOREA.MagicFormula": "Magieformel",
   "ABOREA.EffectiveOffensiveBonus": "Offensivbonus (aktiv)",
-  "ABOREA.TraitModifierHint": "Durch einen aktiven Effekt modifiziert"
+  "ABOREA.TraitModifierHint": "Durch einen aktiven Effekt modifiziert",
+  "ABOREA.LastResetDay": "Zuletzt zurückgesetzt"
 }

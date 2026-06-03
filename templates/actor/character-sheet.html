@@ -363,7 +363,7 @@
       <section class="panel">
         <div class="panel-header">
           <h2>{{localize "ABOREA.FeatureActivation"}}</h2>
-          <button type="button" class="class-feature-reset btn-sm">{{localize "ABOREA.ResetDailyUses"}}</button>
+          <button type="button" class="class-feature-reset btn-sm" title="{{#if system.classFeatures.lastResetDay}}{{localize "ABOREA.LastResetDay"}}: {{system.classFeatures.lastResetDay}}{{/if}}">{{localize "ABOREA.ResetDailyUses"}}</button>
         </div>
         {{#if system.activatableClassFeatures.length}}
         <div class="skill-list">

@@ -73,12 +73,33 @@ export async function resolveDroppedActorDocument(data) {
 
 // ── Timestamps ───────────────────────────────────────────────────────────────
 
+/**
+ * Gibt einen Tages-Stamp zurück, der einen Spieltag eindeutig identifiziert.
+ * Wenn Simple Calendar Reborn aktiv ist, wird der In-Game-Kalender verwendet.
+ * Fallback: Echtzeit-Datum des Servers (YYYY-MM-DD).
+ */
 export function currentDayStamp() {
+  try {
+    if (typeof SimpleCalendar !== "undefined" && SimpleCalendar?.api?.currentDateTime) {
+      const dt = SimpleCalendar.api.currentDateTime();
+      if (dt && dt.year != null && dt.month != null && dt.day != null) {
+        // SimpleCalendar liefert month 0-basiert
+        return `sc-${dt.year}-${String(dt.month + 1).padStart(2, "0")}-${String(dt.day).padStart(2, "0")}`;
+      }
+    }
+  } catch (_) {}
+  // Fallback: Echtzeit-Serverdatum
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
 export function nowStamp() {
+  try {
+    if (typeof SimpleCalendar !== "undefined" && SimpleCalendar?.api?.currentDateTime) {
+      const dt = SimpleCalendar.api.currentDateTime();
+      if (dt?.display?.date && dt?.display?.time) return `${dt.display.date} ${dt.display.time}`;
+    }
+  } catch (_) {}
   return new Date().toLocaleString(game.i18n.lang || undefined);
 }
 
