@@ -1,12 +1,15 @@
 import { ABOREA } from "./config.mjs";
-import { rollOpenD10, rollInitiative as rollInitiativeForActor } from "./dice.mjs";
+import { rollOpenD10 } from "./dice.mjs";
 
 // ══════════════════════════════════════════════════════════════════
 //  AboreaCombat — Combat Document
 // ══════════════════════════════════════════════════════════════════
 
 export class AboreaCombat extends Combat {
-  /** Roll initiative for one or multiple combatants using ABOREA's open d10. */
+  /**
+   * Setzt Initiative als fixen Wert: GE-Bonus + bester Waffen-Initiative-Mod.
+   * Kein Würfelwurf — bei Gleichstand muss manuell ein W10 geworfen werden.
+   */
   async rollInitiative(ids, { updateTurn = true } = {}) {
     const combatantIds = typeof ids === "string" ? [ids] : ids;
     const updates = [];
@@ -14,10 +17,30 @@ export class AboreaCombat extends Combat {
       const combatant = this.combatants.get(id);
       if (!combatant) continue;
       const actor = combatant.actor;
-      const total = actor
-        ? await rollInitiativeForActor(actor)
-        : await new Roll("1d10").evaluate().then(r => r.total);
+      const total = actor ? ABOREA.initiativeBonus(actor) : 0;
       updates.push({ _id: id, initiative: total });
+
+      if (actor) {
+        const geBonus = ABOREA.attributeBonus(
+          actor.system?.attributes?.ge?.value ??
+          actor.system?.finalAttributes?.ge?.value ?? 5
+        );
+        const weapons = actor.items?.filter(i => i.type === "weapon" && i.system.equipped) ?? [];
+        const bestWeapon = weapons.reduce((b, w) =>
+          Number(w.system.initiative ?? 0) > Number(b?.system?.initiative ?? -Infinity) ? w : b
+        , null);
+        const weaponMod = bestWeapon ? Number(bestWeapon.system.initiative ?? 0) : 0;
+        const lines = [
+          `<strong>${game.i18n.localize("ABOREA.Initiative")}: ${total}</strong>`,
+          `${game.i18n.localize("ABOREA.AttributeGE")}: ${geBonus >= 0 ? "+" : ""}${geBonus}`,
+          weaponMod !== 0 ? `${bestWeapon.name}: ${weaponMod >= 0 ? "+" : ""}${weaponMod}` : null,
+          `<em>Bei Gleichstand: W10 würfeln</em>`
+        ].filter(Boolean).map(l => `<p>${l}</p>`).join("");
+        ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor }),
+          content: `<div class="aborea-chat-card">${lines}</div>`
+        });
+      }
     }
     if (updates.length) await this.updateEmbeddedDocuments("Combatant", updates);
     return this;

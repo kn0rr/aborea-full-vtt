@@ -3,7 +3,7 @@
  * Alle Hilfsfunktionen → actor-helpers.mjs ausgelagert.
  */
 import { ABOREA } from "./config.mjs";
-import { rollAttack, rollInitiative, rollSkill } from "./dice.mjs";
+import { rollAttack, rollSkill } from "./dice.mjs";
 import { openAttackDialog, openSpellAttackDialog } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
@@ -229,7 +229,6 @@ export class AboreaActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
-    html.find(".roll-initiative").on("click", () => rollInitiative(this.actor));
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
     html.find(".roll-attack").on("click", () => openAttackDialog(this.actor));
     html.find(".open-attack-dialog").on("click", () => openAttackDialog(this.actor));

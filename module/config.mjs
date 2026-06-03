@@ -138,7 +138,13 @@ export const ABOREA = {
     return features.filter(f => Number(f.level ?? 1) <= Number(level ?? 1)).sort((a, b) => Number(a.level ?? 1) - Number(b.level ?? 1));
   },
   initiativeBonus(actor) {
-    return this.attributeBonus(actor?.system?.attributes?.ge?.value ?? actor?.system?.finalAttributes?.ge?.value ?? 5);
+    const geBonus = this.attributeBonus(
+      actor?.system?.attributes?.ge?.value ??
+      actor?.system?.finalAttributes?.ge?.value ?? 5
+    );
+    const weapons = actor?.items?.filter(i => i.type === "weapon" && i.system.equipped) ?? [];
+    const weaponMod = weapons.reduce((best, w) => Math.max(best, Number(w.system.initiative ?? 0)), 0);
+    return geBonus + weaponMod;
   },
   combatBonus(attributeBonus, skillRank = 0) {
     const learnedPenalty = Number(skillRank) > 0 ? 0 : -2;
