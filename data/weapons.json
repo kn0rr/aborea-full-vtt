@@ -1,4 +1,23 @@
 [
+   {
+    "name": "Armbrust",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "Armbrust",
+      "minStrength": 0,
+      "damage": 1,
+      "initiative": 2,
+      "range": "long",
+      "price": "14 GF",
+      "weight": 5,
+      "attrChoices": [
+        "ge"
+      ],
+      "hands": 2
+    }
+  },
   {
     "name": "Kurzschwert",
     "type": "weapon",
@@ -6,12 +25,12 @@
     "system": {
       "description": "",
       "skill": "kurzeKlingenwaffe",
-      "minStrength": 2,
-      "damage": 1,
+      "minStrength": 0,
+      "damage": -1,
       "initiative": 1,
       "range": "kurz",
       "price": "14 TT",
-      "weight": null,
+      "weight": 2,
       "attrChoices": [
         "st",
         "ge"
@@ -27,11 +46,11 @@
       "description": "",
       "skill": "boegen",
       "minStrength": 6,
-      "damage": 2,
+      "damage": 0,
       "initiative": 0,
       "range": "lang",
       "price": "2 GF",
-      "weight": null,
+      "weight": 2,
       "attrChoices": [
         "st",
         "ge"
@@ -47,11 +66,11 @@
       "description": "",
       "skill": "langeKlingenwaffe",
       "minStrength": 5,
-      "damage": 4,
+      "damage": 1,
       "initiative": 0,
       "range": "mittel",
       "price": "26 TT",
-      "weight": null,
+      "weight": 4,
       "attrChoices": [
         "st"
       ],
@@ -66,11 +85,11 @@
       "description": "Im Spielerheft als Wuchtwaffe geführt; hier als Platzhalter einer Nahkampffertigkeit zugeordnet.",
       "skill": "stangenwaffe",
       "minStrength": 0,
-      "damage": 4,
+      "damage": 1,
       "initiative": 0,
       "range": "mittel",
       "price": "24 TT",
-      "weight": null,
+      "weight": 4,
       "attrChoices": [
         "st",
         "ge"
@@ -86,11 +105,11 @@
       "description": "",
       "skill": "kurzeKlingenwaffe",
       "minStrength": 0,
-      "damage": 1.5,
+      "damage": 0,
       "initiative": 1,
       "range": "mittel",
       "price": "44 TT",
-      "weight": null,
+      "weight": 1.5,
       "attrChoices": [
         "st",
         "ge"
@@ -106,11 +125,11 @@
       "description": "",
       "skill": "wurfwaffe",
       "minStrength": 0,
-      "damage": 0,
+      "damage": -1,
       "initiative": 1,
       "range": "lang",
       "price": "2 MU",
-      "weight": null,
+      "weight": 0,
       "attrChoices": [
         "st",
         "ge"
@@ -126,11 +145,11 @@
       "description": "",
       "skill": "stangenwaffe",
       "minStrength": 0,
-      "damage": 4,
+      "damage": 0,
       "initiative": 0,
       "range": "lang",
       "price": "46 KL",
-      "weight": null,
+      "weight": 4,
       "attrChoices": [
         "st",
         "ge"
@@ -146,16 +165,16 @@
       "description": "",
       "skill": "stangenwaffe",
       "minStrength": 0,
-      "damage": 3,
+      "damage": -1,
       "initiative": 1,
       "range": "lang",
       "price": "1 KL",
-      "weight": null,
+      "weight": 3,
       "attrChoices": [
         "st",
         "ge"
       ],
-      "hands": 1
+      "hands": 2
     }
   },
   {
@@ -166,13 +185,14 @@
       "description": "",
       "skill": "waffenlos",
       "minStrength": 0,
-      "damage": 0,
+      "damage": -2,
       "initiative": 1,
       "range": "kurz",
       "price": "0",
       "weight": 0,
       "attrChoices": [
-        "st"
+        "st",
+        "ge"
       ],
       "hands": 1
     }
@@ -185,11 +205,11 @@
       "description": "",
       "skill": "aexte",
       "minStrength": 6,
-      "damage": 6,
+      "damage": 2,
       "initiative": -1,
       "range": "lang",
       "price": "4 GF",
-      "weight": null,
+      "weight": 6,
       "attrChoices": [
         "st"
       ],
@@ -204,15 +224,36 @@
       "description": "",
       "skill": "langeKlingenwaffe",
       "minStrength": 6,
-      "damage": 4,
+      "damage": 2,
       "initiative": 0,
       "range": "lang",
       "price": "4 GF",
-      "weight": null,
+      "weight": 4,
       "attrChoices": [
         "st"
       ],
-      "hands": 1
+      "hands": 2
     }
+  },
+  {
+  "name": "Dolch",
+  "type": "weapon",
+  "img": "icons/svg/sword.svg",
+  "system": {
+    "description": "",
+    "skill": "kurzeKlingenwaffe",
+    "minStrength": 0,
+    "damage": -2,
+    "initiative": 2,
+    "range": "kurz",
+    "price": "6 TT",
+    "weight": 0.5,
+    "attrChoices": [
+      "st",
+      "ge"
+    ],
+    "hands": 1
   }
+}
+  
 ]
