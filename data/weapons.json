@@ -5,7 +5,7 @@
     "img": "icons/svg/sword.svg",
     "system": {
       "description": "",
-      "skill": "Armbrust",
+      "skill": "boegen",
       "minStrength": 0,
       "damage": 1,
       "initiative": 2,
