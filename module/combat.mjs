@@ -41,6 +41,11 @@ function _getUntrainedPenalty(actor, weapon) {
   const minimums = actor.system.classFeatures?.weaponMinimums ?? {};
   if ("all" in minimums) return 0;                                        // Krieger: Waffenkundig
   if (skillKey === "boegen" && "bows-crossbows" in minimums) return 0;   // Waldläufer: Bogenschütze
+  if ("deityWeapon" in minimums) {                                        // Priester: Gotteswaffe
+    const godItem = actor.items.find(i => i.type === "god");
+    const deitySkills = godItem?.system?.weaponSkills ?? [];
+    if (deitySkills.includes(skillKey)) return 0;
+  }
   return -2;
 }
 

@@ -286,12 +286,13 @@ export class GodDataModel extends foundry.abstract.TypeDataModel {
     return {
       description: new fields.StringField({ initial: "" }),
       equipped:    new fields.BooleanField({ initial: false }),
-      pantheon:    new fields.StringField({ initial: "" }),
-      rank:        new fields.StringField({ initial: "" }),
-      aspects:     new fields.StringField({ initial: "" }),
-      weapon:      new fields.StringField({ initial: "" }),
-      symbol:      new fields.StringField({ initial: "" }),
-      miracleList: new fields.StringField({ initial: "" })
+      pantheon:     new fields.StringField({ initial: "" }),
+      rank:         new fields.StringField({ initial: "" }),
+      aspects:      new fields.StringField({ initial: "" }),
+      weapon:       new fields.StringField({ initial: "" }),
+      weaponSkills: new fields.ArrayField(new fields.StringField()),
+      symbol:       new fields.StringField({ initial: "" }),
+      miracleList:  new fields.StringField({ initial: "" })
     };
   }
 }
