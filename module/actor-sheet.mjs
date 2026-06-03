@@ -140,7 +140,8 @@ export class AboreaActorSheet extends ActorSheet {
     const xp = Number(system.resources?.xp ?? 0);
     const targetLevel = ABOREA.levelForXp(xp);
     const levelUpPending = targetLevel > level;
-    system.levelUp = { pending: levelUpPending, targetLevel, xpNext: xpForNextLevel(level) };
+    const xpNext = xpForNextLevel(level);
+    system.levelUp = { pending: levelUpPending, targetLevel, xpNext, atMax: xpNext === null };
     const creationDone = !!system.creation?.completed;
     system.skillsLocked = creationDone && !levelUpPending;
     system.creation = {

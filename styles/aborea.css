@@ -247,6 +247,8 @@
 
 /* ── Hint-Texte ─────────────────────────────────────── */
 .hint-text { font-size: .85rem; color: var(--aborea-brown); margin: 0 0 8px; }
+.xp-hint     { display: block; font-size: .75rem; color: var(--aborea-brown); opacity: .8; margin-top: 2px; }
+.xp-hint.xp-max { color: #8a6a00; font-weight: 600; }
 
 /* ── Buttons (globale Typen) ────────────────────────── */
 .aborea-sheet button, .btn-sm {

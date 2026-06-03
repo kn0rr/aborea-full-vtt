@@ -9,6 +9,11 @@
         </label>
         <label>{{localize "ABOREA.XP"}}
           <input type="number" name="system.resources.xp" value="{{system.resources.xp}}" />
+          {{#if system.levelUp.atMax}}
+          <span class="xp-hint xp-max">{{localize "ABOREA.MaxLevelReached"}}</span>
+          {{else}}
+          <span class="xp-hint">{{localize "ABOREA.NextLevel"}}: {{system.levelUp.xpNext}}</span>
+          {{/if}}
         </label>
         <label>{{localize "ABOREA.Race"}}
           <input type="text" name="system.details.race" value="{{system.details.race}}" readonly />

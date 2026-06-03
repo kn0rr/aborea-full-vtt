@@ -186,5 +186,7 @@
   "ABOREA.MagicFormula": "Magic Formula",
   "ABOREA.EffectiveOffensiveBonus": "Offensive Bonus (active)",
   "ABOREA.TraitModifierHint": "Modified by an active effect",
-  "ABOREA.LastResetDay": "Last reset"
+  "ABOREA.LastResetDay": "Last reset",
+  "ABOREA.MaxLevelReached": "Max. level reached",
+  "ABOREA.NextLevel": "Next level"
 }

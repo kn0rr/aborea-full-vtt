@@ -8,7 +8,8 @@ export function levelForXp(xp) {
 
 export function xpForNextLevel(level) {
   const idx = Math.max(0, Number(level));
-  return ABOREA.xpTable[idx] ?? idx * 10000;
+  if (idx >= ABOREA.xpTable.length) return null; // Max. Stufe erreicht
+  return ABOREA.xpTable[idx];
 }
 
 // ── Compendium helpers ───────────────────────────────────────────────────────

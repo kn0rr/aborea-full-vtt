@@ -206,5 +206,7 @@
   "ABOREA.MagicFormula": "Magieformel",
   "ABOREA.EffectiveOffensiveBonus": "Offensivbonus (aktiv)",
   "ABOREA.TraitModifierHint": "Durch einen aktiven Effekt modifiziert",
-  "ABOREA.LastResetDay": "Zuletzt zurückgesetzt"
+  "ABOREA.LastResetDay": "Zuletzt zurückgesetzt",
+  "ABOREA.MaxLevelReached": "Max. Stufe erreicht",
+  "ABOREA.NextLevel": "Nächste Stufe"
 }
