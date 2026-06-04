@@ -301,3 +301,27 @@ export class GodDataModel extends foundry.abstract.TypeDataModel {
     };
   }
 }
+
+export class MagicItemDataModel extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    return {
+      description:   new fields.StringField({ initial: "" }),
+      equipped:      new fields.BooleanField({ initial: false }),
+      notes:         new fields.StringField({ initial: "" }),
+      price:         new fields.StringField({ initial: "" }),
+      weight:        new fields.NumberField({ initial: 0 }),
+      // Fertigkeits-Boni (identisch mit Rassen/Klassen-System)
+      skillBonuses:  new fields.ObjectField({ initial: () => ({}) }),
+      // Attribut-Modifikatoren (Anzeige, kein Einfluss auf Würfe)
+      attributeMods: new fields.ObjectField({ initial: () => ({ st: 0, ge: 0, ko: 0, in: 0, ch: 0 }) }),
+      // Passive Traits (regeneration, spellResistance, etc.)
+      passiveTraits: new fields.ObjectField({ initial: () => ({}) }),
+      // Foundry Active Effect Status-IDs (z.B. ["fear"])
+      statusEffects: new fields.ArrayField(new fields.StringField()),
+      // Verliehene Zauber mit optionaler Tageslimitierung
+      grantedSpells: new fields.ArrayField(new fields.ObjectField()),
+      // Nutzungs-Tracking für verliehene Zauber (wie classFeatures.activations)
+      activations:   new fields.ObjectField({ initial: () => ({}) })
+    };
+  }
+}

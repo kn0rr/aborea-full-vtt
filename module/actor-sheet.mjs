@@ -57,7 +57,8 @@ export class AboreaActorSheet extends ActorSheet {
       spells: actor.items.filter(i => i.type === "spell"),
       miracles: actor.items.filter(i => i.type === "miracle"),
       gear: actor.items.filter(i => i.type === "gear"),
-      skills: actor.items.filter(i => i.type === "skill")
+      skills: actor.items.filter(i => i.type === "skill"),
+      magics: actor.items.filter(i => i.type === "magic")
     };
     context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
     context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
@@ -134,7 +135,41 @@ export class AboreaActorSheet extends ActorSheet {
       if (tgt && Number(f.value)) liveSkillBonuses[tgt] = (liveSkillBonuses[tgt] || 0) + Number(f.value);
     }
     system.classFeatures = system.classFeatures || {};
+
+    // Magische Ausrüstung: Skill-Boni + passive Traits einmergen
+    const equippedMagicItems = actor.items.filter(i => i.type === "magic" && i.system.equipped);
+    for (const mItem of equippedMagicItems) {
+      for (const [key, val] of Object.entries(mItem.system.skillBonuses ?? {})) {
+        if (val) liveSkillBonuses[key] = (liveSkillBonuses[key] || 0) + Number(val);
+      }
+      for (const [key, val] of Object.entries(mItem.system.passiveTraits ?? {})) {
+        if (key === "regeneration" && val) system.traits.regeneration = (Number(system.traits?.regeneration) || 0) + Number(val);
+        else if (val) system.traits[key] = true;
+      }
+    }
     system.classFeatures.bonuses = liveSkillBonuses;
+
+    // Attribut-Modifikatoren aus magischen Items (nur Anzeige)
+    system.magicAttributeMods = { st: 0, ge: 0, ko: 0, in: 0, ch: 0 };
+    for (const mItem of equippedMagicItems) {
+      for (const [attr, val] of Object.entries(mItem.system.attributeMods ?? {})) {
+        if (attr in system.magicAttributeMods) system.magicAttributeMods[attr] += Number(val ?? 0);
+      }
+    }
+
+    // Granted Spells mit Use-Tracking für Template aufbereiten
+    system.magicGrantedSpells = [];
+    for (const mItem of equippedMagicItems) {
+      const activations = mItem.system.activations ?? {};
+      for (const s of (mItem.system.grantedSpells ?? [])) {
+        const state   = activations[s.key] ?? {};
+        const newDay  = state.day && state.day !== currentDayStamp();
+        const used    = newDay ? 0 : Number(state.used ?? 0);
+        const ready   = s.usesPerDay == null || used < s.usesPerDay;
+        const usesLabel = s.usesPerDay == null ? "∞" : `${Math.max(0, s.usesPerDay - used)}/${s.usesPerDay}`;
+        system.magicGrantedSpells.push({ ...s, magicItemId: mItem.id, ready, usesLabel });
+      }
+    }
 
     system.creation.skillRows = ABOREA.getCreationSkills().map(({ key, label, attribute }) => {
       const skill = system.skills[key] || { rank: 0, attribute };
@@ -239,6 +274,15 @@ export class AboreaActorSheet extends ActorSheet {
       const itemId = ev.currentTarget.dataset.itemId;
       const item = this.actor.items.get(itemId);
       if (item) await item.update({ "system.notes": ev.currentTarget.value });
+    });
+    html.find(".magic-item-equip").on("change", async ev => {
+      const itemId = ev.currentTarget.closest("[data-item-id]").dataset.itemId;
+      const item = this.actor.items.get(itemId);
+      if (item) await item.update({ "system.equipped": ev.currentTarget.checked });
+    });
+    html.find(".cast-granted-spell").on("click", async ev => {
+      const btn = ev.currentTarget;
+      await this._castGrantedSpell(btn.dataset.magicItemId, btn.dataset.spellKey);
     });
     html.find(".item-delete").on("click", async ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
@@ -733,6 +777,53 @@ export class AboreaActorSheet extends ActorSheet {
     Object.assign(entry,{actorId:summoned.id,name:summoned.name,kind:rule.templateName,sourceName:item.name,summonType:rule.summonType,summonLevel:rule.level,mpCost,permanent:!!rule.permanent,durationLabel:rule.duration?.label||"Permanent",expiresAt:rule.expiresAt,status:"summoned"});
     await this.actor.update({"system.companions.list":list}); await this._summonCompanion(summoned.id);
     return { extra:`<p><strong>Beschwörung:</strong> ${rule.templateName}</p><p><strong>Stufe:</strong> ${rule.level}</p><p><strong>Dauer:</strong> ${rule.duration?.label||"Permanent"}</p><p><strong>Ablauf:</strong> ${formatExpiry(rule.expiresAt)}</p>` };
+  }
+
+  async _castGrantedSpell(magicItemId, spellKey) {
+    const magicItem = this.actor.items.get(magicItemId);
+    if (!magicItem) return;
+    const entry = (magicItem.system.grantedSpells ?? []).find(s => s.key === spellKey);
+    if (!entry) return;
+
+    // Tageslimit prüfen
+    const activations = foundry.utils.deepClone(magicItem.system.activations ?? {});
+    const state = activations[spellKey] ?? {};
+    if (state.day && state.day !== currentDayStamp()) state.used = 0;
+    if (entry.usesPerDay != null && Number(state.used ?? 0) >= entry.usesPerDay) {
+      return ui.notifications.warn(`${entry.spellName} ist für heute verbraucht.`);
+    }
+
+    // MP abziehen
+    const mpCost = Number(entry.mpCost ?? 0);
+    const currentMp = Number(this.actor.system.resources?.mp?.value ?? 0);
+    if (mpCost > 0 && currentMp < mpCost) return ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP"));
+    if (mpCost > 0) await this.actor.update({ "system.resources.mp.value": currentMp - mpCost });
+
+    // Nutzung tracken
+    if (entry.usesPerDay != null) {
+      state.used = Number(state.used ?? 0) + 1;
+      state.day  = currentDayStamp();
+      activations[spellKey] = state;
+      await magicItem.update({ "system.activations": activations });
+    }
+
+    // Proxy-Item für buildPowerCard
+    const proxyItem = {
+      name: entry.spellName, type: "spell", uuid: magicItem.uuid,
+      system: {
+        description: entry.description ?? "",
+        range: entry.range ?? "—",
+        duration: entry.duration ?? "—",
+        rank: entry.rank ?? 1,
+        effects: [], hpEffect: {}, summonRule: {}
+      }
+    };
+    const targets = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean);
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: buildPowerCard(this.actor, proxyItem, mpCost, targets,
+        `<p><em>Quelle: ${magicItem.name}</em></p>`)
+    });
   }
 
   async _castPower(itemId) {

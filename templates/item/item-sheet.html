@@ -261,5 +261,73 @@
       {{/if}}
     {{/if}}
 
+    {{!-- ── Magisches Item ────────────────────────────────── --}}
+    {{#if (aboreaEq item.type "magic")}}
+      <div class="form-grid">
+        <label>{{localize "ABOREA.Price"}}
+          <input type="text" name="system.price" value="{{system.price}}" />
+        </label>
+        <label>{{localize "ABOREA.Weight"}}
+          <input type="number" step="0.1" name="system.weight" value="{{system.weight}}" />
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="system.equipped" {{checked system.equipped}} />
+          {{localize "ABOREA.Equipped"}}
+        </label>
+      </div>
+
+      <fieldset class="magic-fieldset">
+        <legend>{{localize "ABOREA.AttributeMods"}}</legend>
+        <div class="form-grid">
+          {{#each system.attributeMods as |val key|}}
+          <label>{{key}}
+            <input type="number" name="system.attributeMods.{{key}}" value="{{val}}" />
+          </label>
+          {{/each}}
+        </div>
+      </fieldset>
+
+      <fieldset class="magic-fieldset">
+        <legend>{{localize "ABOREA.SkillBonusesLabel"}}</legend>
+        <p class="hint-text">Format: Fertigkeits-Schlüssel → Bonus (z.B. wahrnehmung: 1)</p>
+        {{#each system.skillBonuses as |val key|}}
+        <div class="form-group">
+          <label>{{key}} <input type="number" name="system.skillBonuses.{{key}}" value="{{val}}" /></label>
+        </div>
+        {{/each}}
+      </fieldset>
+
+      <fieldset class="magic-fieldset">
+        <legend>{{localize "ABOREA.PassiveTraits"}}</legend>
+        <div class="form-grid">
+          <label>Regeneration (HP/R)
+            <input type="number" name="system.passiveTraits.regeneration" value="{{system.passiveTraits.regeneration}}" min="0" />
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="system.passiveTraits.spellResistance" {{checked system.passiveTraits.spellResistance}} />
+            {{localize "ABOREA.TraitSpellResistance"}}
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="system.passiveTraits.thermalVision" {{checked system.passiveTraits.thermalVision}} />
+            {{localize "ABOREA.TraitThermalVision"}}
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="system.passiveTraits.diseaseImmunity" {{checked system.passiveTraits.diseaseImmunity}} />
+            {{localize "ABOREA.TraitDiseaseImmunity"}}
+          </label>
+        </div>
+        <label>{{localize "ABOREA.StatusEffects"}} <span class="hint">(Foundry-IDs, kommagetrennt: fear, blind)</span>
+          <input type="text" name="system.statusEffects" value="{{aboreaJoin system.statusEffects ", "}}" placeholder="z.B. fear, blind" />
+        </label>
+      </fieldset>
+
+      <label class="full-width">{{localize "ABOREA.Description"}}
+        <textarea name="system.description">{{system.description}}</textarea>
+      </label>
+      <label class="full-width">{{localize "ABOREA.Notes"}}
+        <input type="text" name="system.notes" value="{{system.notes}}" />
+      </label>
+    {{/if}}
+
   </section>
 </form>

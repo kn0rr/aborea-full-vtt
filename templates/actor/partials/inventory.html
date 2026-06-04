@@ -150,6 +150,51 @@
 </section>
 
 <section class="panel">
+  <div class="panel-header">
+    <h2>{{localize "ABOREA.MagicItems"}}</h2>
+    <button type="button" class="import-pack-item btn-sm" data-type="magic">📦 {{localize "ABOREA.ImportFromCompendium"}}</button>
+    <button type="button" class="item-create btn-sm" data-type="magic">+ Neu</button>
+  </div>
+  {{#each itemLists.magics as |item|}}
+  <div class="item-row magic-item-row" data-item-id="{{item.id}}">
+    <label class="magic-equip-label" title="{{localize "ABOREA.Equipped"}}">
+      <input type="checkbox" class="magic-item-equip" data-item-id="{{item.id}}" {{#if item.system.equipped}}checked{{/if}} />
+    </label>
+    <span class="item-name">{{item.name}}</span>
+    {{#if item.system.price}}<span class="item-detail gear-price">{{item.system.price}}</span>{{/if}}
+    <div class="item-actions">
+      <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
+      <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
+    </div>
+    <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
+    {{#if item.system.equipped}}
+    {{!-- Skill-Boni anzeigen --}}
+    {{#each item.system.skillBonuses as |val key|}}{{#if val}}<span class="magic-bonus-tag">{{key}} +{{val}}</span>{{/if}}{{/each}}
+    {{!-- Attribut-Mods anzeigen --}}
+    {{#each item.system.attributeMods as |val key|}}{{#if val}}<span class="magic-bonus-tag attr-mod">{{key}} +{{val}}</span>{{/if}}{{/each}}
+    {{!-- Passive Traits --}}
+    {{#each item.system.passiveTraits as |val key|}}{{#if val}}<span class="magic-bonus-tag trait-tag">{{key}}{{#if (aboreaEq key "regeneration")}} {{val}}{{/if}}</span>{{/if}}{{/each}}
+    {{/if}}
+  </div>
+  {{/each}}
+  {{!-- Verliehene Zauber (nur ausgerüstete Items) --}}
+  {{#if system.magicGrantedSpells.length}}
+  <div class="magic-granted-spells">
+    <strong>{{localize "ABOREA.GrantedSpells"}}:</strong>
+    {{#each system.magicGrantedSpells as |spell|}}
+    <div class="granted-spell-row">
+      <span class="granted-spell-name">✨ {{spell.spellName}}</span>
+      <span class="uses-badge {{#unless spell.ready}}uses-spent{{/unless}}">{{spell.usesLabel}}</span>
+      <button type="button" class="cast-granted-spell btn-sm" data-magic-item-id="{{spell.magicItemId}}" data-spell-key="{{spell.key}}" {{#unless spell.ready}}disabled{{/unless}}>
+        {{localize "ABOREA.Cast"}}
+      </button>
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
+</section>
+
+<section class="panel">
   <h2>{{localize "ABOREA.TransactionHistory"}}</h2>
   <div class="history-list">
     {{#each system.wallet.history as |entry|}}

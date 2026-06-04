@@ -45,7 +45,8 @@
       "spell": {},
       "miracle": {},
       "gear": {},
-      "god": {}
+      "god": {},
+      "magic": {}
     }
   },
   "grid": {
@@ -148,6 +149,17 @@
       "label": "Ausrüstung",
       "type": "Item",
       "path": "packs/gear",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "magics",
+      "label": "Magisches",
+      "type": "Item",
+      "path": "packs/magics",
       "system": "aborea-v7",
       "ownership": {
         "PLAYER": "OBSERVER",

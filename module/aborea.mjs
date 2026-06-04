@@ -10,7 +10,8 @@ import {
   CharacterDataModel, NpcDataModel, CreatureDataModel,
   RaceDataModel, ClassDataModel, SkillDataModel,
   WeaponDataModel, ArmorDataModel, SpellDataModel,
-  MiracleDataModel, GearDataModel, GodDataModel
+  MiracleDataModel, GearDataModel, GodDataModel,
+  MagicItemDataModel
 } from "./data-models.mjs";
 
 async function cleanupExpiredSummons() {
@@ -65,7 +66,8 @@ Hooks.once("init", async function () {
     spell:   SpellDataModel,
     miracle: MiracleDataModel,
     gear:    GearDataModel,
-    god:     GodDataModel
+    god:     GodDataModel,
+    magic:   MagicItemDataModel
   };
 
   CONFIG.Combat.documentClass = AboreaCombat;
@@ -120,6 +122,31 @@ Hooks.once("ready", async function () {
         await actor.update({ "system.companions.list": updated });
       }
     }
+  }
+});
+
+// Statuseffekte aus magischen Items anwenden / entfernen wenn equipped-Status wechselt
+Hooks.on("updateItem", async (item, changes) => {
+  if (item.type !== "magic") return;
+  if (!foundry.utils.hasProperty(changes, "system.equipped")) return;
+  const statuses = item.system?.statusEffects ?? [];
+  if (!statuses.length) return;
+  const actor = item.parent;
+  if (!actor) return;
+  if (changes.system.equipped) {
+    const docs = statuses.map(status => ({
+      name: `${item.name} (${status})`,
+      statuses: [status],
+      origin: item.uuid,
+      disabled: false,
+      duration: {}
+    }));
+    await actor.createEmbeddedDocuments("ActiveEffect", docs);
+  } else {
+    const toDelete = actor.effects
+      .filter(e => e.origin === item.uuid)
+      .map(e => e.id);
+    if (toDelete.length) await actor.deleteEmbeddedDocuments("ActiveEffect", toDelete);
   }
 });
 

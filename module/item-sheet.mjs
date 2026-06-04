@@ -31,4 +31,13 @@ export class AboreaItemSheet extends ItemSheet {
 
     return context;
   }
+
+  async _updateObject(event, formData) {
+    // statusEffects: Komma-getrennter String → Array
+    if (this.item.type === "magic" && typeof formData["system.statusEffects"] === "string") {
+      formData["system.statusEffects"] = formData["system.statusEffects"]
+        .split(",").map(s => s.trim()).filter(Boolean);
+    }
+    return super._updateObject(event, formData);
+  }
 }

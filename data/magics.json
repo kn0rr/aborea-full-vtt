@@ -1,0 +1,139 @@
+[
+  {
+    "name": "Ring der Scharfsicht",
+    "type": "magic",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Ein magischer Ring, der die Sinne des Trägers schärft. Verleiht +1 auf Wahrnehmungs-Manöver.",
+      "equipped": false,
+      "notes": "",
+      "price": "50 TT",
+      "weight": 0.1,
+      "skillBonuses": { "wahrnehmung": 1 },
+      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "passiveTraits": {},
+      "statusEffects": [],
+      "grantedSpells": [],
+      "activations": {}
+    },
+    "flags": { "aborea-v7": { "sourceId": "magic-ring-scharfsicht" } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Amulett der Geschwindigkeit",
+    "type": "magic",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Dieses Amulett beschleunigt die Reflexe des Trägers. Verleiht +1 GE und verbessert Initiative.",
+      "equipped": false,
+      "notes": "",
+      "price": "120 TT",
+      "weight": 0.2,
+      "skillBonuses": {},
+      "attributeMods": { "st": 0, "ge": 1, "ko": 0, "in": 0, "ch": 0 },
+      "passiveTraits": {},
+      "statusEffects": [],
+      "grantedSpells": [],
+      "activations": {}
+    },
+    "flags": { "aborea-v7": { "sourceId": "magic-amulett-geschwindigkeit" } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Gürtel der Regeneration",
+    "type": "magic",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Ein verzauberter Gürtel, der die natürliche Heilung des Trägers beschleunigt. Regeneriert 1 HP pro Runde.",
+      "equipped": false,
+      "notes": "",
+      "price": "200 TT",
+      "weight": 0.5,
+      "skillBonuses": {},
+      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "passiveTraits": { "regeneration": 1 },
+      "statusEffects": [],
+      "grantedSpells": [],
+      "activations": {}
+    },
+    "flags": { "aborea-v7": { "sourceId": "magic-guertel-regeneration" } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Stab des Feuers",
+    "type": "magic",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Ein mächtiger Stab, der dem Träger erlaubt Feuerball und Blitz zu wirken — einmal pro Tag je Zauber.",
+      "equipped": false,
+      "notes": "",
+      "price": "500 TT",
+      "weight": 2.0,
+      "skillBonuses": {},
+      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "passiveTraits": {},
+      "statusEffects": [],
+      "grantedSpells": [
+        {
+          "key": "stab-feuerball",
+          "spellName": "Feuerball",
+          "usesPerDay": 1,
+          "mpCost": 3,
+          "rank": 3,
+          "range": "Sichtweite",
+          "duration": "",
+          "description": "Schafft einen Ball aus Feuer; Schaden/1 MP – max. +5."
+        },
+        {
+          "key": "stab-blitz",
+          "spellName": "Blitz",
+          "usesPerDay": 1,
+          "mpCost": 2,
+          "rank": 4,
+          "range": "Sichtweite",
+          "duration": "",
+          "description": "Schießt einen Blitz; Schaden/1 MP."
+        }
+      ],
+      "activations": {}
+    },
+    "flags": { "aborea-v7": { "sourceId": "magic-stab-des-feuers" } },
+    "ownership": { "default": 0 },
+    "folder": null
+  },
+  {
+    "name": "Umhang der Unsichtbarkeit",
+    "type": "magic",
+    "img": "icons/svg/item-bag.svg",
+    "system": {
+      "description": "Ein legendärer Umhang, der den Träger unsichtbar macht. Einmal täglich nutzbar, hält eine Stunde.",
+      "equipped": false,
+      "notes": "",
+      "price": "800 TT",
+      "weight": 1.0,
+      "skillBonuses": { "heimlichkeit": 2 },
+      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "passiveTraits": {},
+      "statusEffects": [],
+      "grantedSpells": [
+        {
+          "key": "umhang-unsichtbarkeit",
+          "spellName": "Unsichtbarkeit",
+          "usesPerDay": 1,
+          "mpCost": 0,
+          "rank": 7,
+          "range": "Berührung",
+          "duration": "eine Stunde",
+          "description": "Macht den Träger für eine Stunde unsichtbar. Kein MP-Kosten — der Umhang übernimmt die Wirkung."
+        }
+      ],
+      "activations": {}
+    },
+    "flags": { "aborea-v7": { "sourceId": "magic-umhang-unsichtbarkeit" } },
+    "ownership": { "default": 0 },
+    "folder": null
+  }
+]

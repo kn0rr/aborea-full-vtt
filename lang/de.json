@@ -218,5 +218,10 @@
   "ABOREA.TraitSecretDoorsBonus": "Geheimtüren/Fallen +1",
   "ABOREA.TraitMechanicsBonus": "Mechanik +1",
   "ABOREA.TraitManeuverBonus": "Manöverbonus",
-  "ABOREA.RacialBonus": "Rassenbonus"
+  "ABOREA.RacialBonus": "Rassenbonus",
+  "ABOREA.MagicItems": "Magisches",
+  "ABOREA.GrantedSpells": "Verliehene Zauber",
+  "ABOREA.PassiveTraits": "Passive Eigenschaften",
+  "ABOREA.StatusEffects": "Statuseffekte",
+  "ABOREA.SkillBonusesLabel": "Fertigkeits-Boni"
 }

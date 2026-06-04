@@ -198,5 +198,10 @@
   "ABOREA.TraitSecretDoorsBonus": "Secret Doors/Traps +1",
   "ABOREA.TraitMechanicsBonus": "Mechanics +1",
   "ABOREA.TraitManeuverBonus": "Maneuver Bonus",
-  "ABOREA.RacialBonus": "Racial Bonus"
+  "ABOREA.RacialBonus": "Racial Bonus",
+  "ABOREA.MagicItems": "Magical Items",
+  "ABOREA.GrantedSpells": "Granted Spells",
+  "ABOREA.PassiveTraits": "Passive Traits",
+  "ABOREA.StatusEffects": "Status Effects",
+  "ABOREA.SkillBonusesLabel": "Skill Bonuses"
 }
