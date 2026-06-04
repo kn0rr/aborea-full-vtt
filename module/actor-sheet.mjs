@@ -423,7 +423,8 @@ export class AboreaActorSheet extends ActorSheet {
         "system.creation.completed": true,
         "system.creation.status": "ready",
         "system.resources.hp.value": hpMax,
-        "system.resources.mp.value": mpMax
+        "system.resources.mp.value": mpMax,
+        "system.creation.levelingRankSnapshot": {}
       });
       ui.notifications.info("ABOREA: Charakter abgeschlossen.");
     });
@@ -506,14 +507,27 @@ export class AboreaActorSheet extends ActorSheet {
     const cls = this.actor.items.find(i => i.type === "class");
     if (!cls) return ui.notifications.warn("ABOREA: Wähle zuerst einen Beruf.");
 
-    // Beim Leveln kein Erschaffungs-Cap — nur bei echter Erschaffung (status draft)
-    const applyCreationCap = !creationDone && !isLeveling;
+    const creationCap  = ABOREA.skillMaxCreationRank(skillKey, cls.system);
+    const snapshot     = system.creation?.levelingRankSnapshot ?? {};
+    const rankAtLevelStart = Number(snapshot[skillKey] ?? 0);
+
+    // Cap-Berechnung:
+    // Erschaffung (draft): Erschaffungs-Cap
+    // Leveln:              Erschaffungs-Cap + Rang bei Stufenaufstiegs-Beginn
+    let maxRank;
+    if (isLeveling) {
+      maxRank = creationCap + rankAtLevelStart;
+    } else if (!creationDone) {
+      maxRank = creationCap;
+    } else {
+      maxRank = 99;
+    }
 
     const customList = foundry.utils.deepClone(normalizeCustomSkills(system.customSkills));
-    const customIdx = customList.findIndex(s => s.key === skillKey);
+    const customIdx  = customList.findIndex(s => s.key === skillKey);
     if (customIdx !== -1) {
-      const costParts = String(customList[customIdx].cost ?? "1").split("/").filter(Boolean);
-      const maxRankCustom = applyCreationCap ? costParts.length : 99;
+      const costParts    = String(customList[customIdx].cost ?? "1").split("/").filter(Boolean);
+      const maxRankCustom = isLeveling ? 99 : costParts.length;
       customList[customIdx].rank = Math.max(0, Math.min(maxRankCustom, Number(customList[customIdx].rank ?? 0) + Number(delta)));
       const newStatus = isLeveling ? "leveling" : "draft";
       await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": newStatus });
@@ -522,8 +536,7 @@ export class AboreaActorSheet extends ActorSheet {
     }
 
     const current = Number(system.skills?.[skillKey]?.rank ?? 0);
-    const maxRank = applyCreationCap ? ABOREA.skillMaxCreationRank(skillKey, cls.system) : 99;
-    const next = Math.max(0, Math.min(maxRank, current + Number(delta)));
+    const next    = Math.max(0, Math.min(maxRank, current + Number(delta)));
     const newStatus = isLeveling ? "leveling" : "draft";
     await this.actor.update({ [`system.skills.${skillKey}.rank`]: next, "system.creation.completed": false, "system.creation.status": newStatus });
     await this._recalculateCharacter();
@@ -610,7 +623,15 @@ export class AboreaActorSheet extends ActorSheet {
     const currentLvl = Number(system.resources?.level ?? 1);
     const targetLvl = ABOREA.levelForXp(xp);
     if (targetLvl <= currentLvl) { ui.notifications.warn("ABOREA: Kein Stufenaufstieg verfügbar."); return; }
-    await this.actor.update({ "system.resources.level": targetLvl, "system.creation.completed": false, "system.creation.status": "leveling" });
+    // Rang-Snapshot speichern bevor Spieler Fertigkeiten verteilt
+    const rankSnapshot = {};
+    for (const [key, skill] of Object.entries(system.skills ?? {})) rankSnapshot[key] = Number(skill.rank ?? 0);
+    await this.actor.update({
+      "system.resources.level": targetLvl,
+      "system.creation.completed": false,
+      "system.creation.status": "leveling",
+      "system.creation.levelingRankSnapshot": rankSnapshot
+    });
     const result = await this._recalculateCharacter();
     // Tagesnutzungen beim Stufenaufstieg zurücksetzen
     await this._resetDailyClassFeatures();
