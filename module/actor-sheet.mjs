@@ -136,6 +136,13 @@ export class AboreaActorSheet extends ActorSheet {
     }
     system.classFeatures = system.classFeatures || {};
 
+    // Talente: Skill-Boni einmergen
+    for (const talent of (system.talents ?? [])) {
+      for (const [key, val] of Object.entries(talent.skillBonuses ?? {})) {
+        if (val) liveSkillBonuses[key] = (liveSkillBonuses[key] || 0) + Number(val);
+      }
+    }
+
     // Magische Ausrüstung: Skill-Boni + passive Traits einmergen
     const equippedMagicItems = actor.items.filter(i => i.type === "magic" && i.system.equipped);
     for (const mItem of equippedMagicItems) {
@@ -148,6 +155,17 @@ export class AboreaActorSheet extends ActorSheet {
       }
     }
     system.classFeatures.bonuses = liveSkillBonuses;
+
+    // Talente für Template aufbereiten
+    system.talentList = (system.talents ?? []).map(t => ({
+      ...t,
+      bonusSummary: [
+        ...Object.entries(t.skillBonuses ?? {}).filter(([,v]) => v).map(([k,v]) => `${k} +${v}`),
+        ...Object.entries(t.attributeMods ?? {}).filter(([,v]) => v).map(([k,v]) => `${k.toUpperCase()} +${v}`),
+        t.hpBonus ? `HP +${t.hpBonus}` : null,
+        t.mpBonus ? `MP +${t.mpBonus}` : null
+      ].filter(Boolean).join(", ")
+    }));
 
     // Attribut-Modifikatoren aus magischen Items (nur Anzeige)
     system.magicAttributeMods = { st: 0, ge: 0, ko: 0, in: 0, ch: 0 };
@@ -267,6 +285,15 @@ export class AboreaActorSheet extends ActorSheet {
     if (!this.isEditable) return;
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
     html.find(".roll-attribute").on("click", ev => rollAttribute(this.actor, ev.currentTarget.dataset.attribute));
+    if (game.user.isGM) {
+      html.find(".add-talent").on("click", () => this._addTalentDialog());
+      html.find(".remove-talent").on("click", async ev => {
+        const key = ev.currentTarget.dataset.talentKey;
+        const talents = (this.actor.system.talents ?? []).filter(t => t.key !== key);
+        await this.actor.update({ "system.talents": talents });
+        await this._recalculateCharacter();
+      });
+    }
     html.find(".roll-attack").on("click", () => openAttackDialog(this.actor));
     html.find(".open-attack-dialog").on("click", () => openAttackDialog(this.actor));
     html.find(".item-create").on("click", this._onItemCreate.bind(this));
@@ -617,10 +644,12 @@ export class AboreaActorSheet extends ActorSheet {
     if (knownLists.length > spruchlistenRank && knownLists.length > 0) errors.push(`Spruchlisten: ${knownLists.length} bekannt, Rang Spruchlisten erlaubt aber nur ${spruchlistenRank}.`);
     const hpBase = Number(cls?.system?.hitPointsBase ?? 5);
     const zwergBonus = raceName === "zwerg" ? 2 : 0;
-    const hpMax = Math.max(1, (hpBase + ABOREA.attributeBonus(finalAttrs.ko.value)) * level + zwergBonus);
+    const talentHpBonus = (actorSystem.talents ?? []).reduce((s, t) => s + Number(t.hpBonus ?? 0), 0);
+    const talentMpBonus = (actorSystem.talents ?? []).reduce((s, t) => s + Number(t.mpBonus ?? 0), 0);
+    const hpMax = Math.max(1, (hpBase + ABOREA.attributeBonus(finalAttrs.ko.value)) * level + zwergBonus) + talentHpBonus;
     const magicAttr = cls?.system?.magicAttribute || "in";
     const magicDevelop = Number(actorSystem.skills?.magieEntwickeln?.rank ?? 0);
-    const mpMax = Math.max(0, (ABOREA.attributeBonus(finalAttrs[magicAttr]?.value ?? 5) + 3) * magicDevelop);
+    const mpMax = Math.max(0, (ABOREA.attributeBonus(finalAttrs[magicAttr]?.value ?? 5) + 3) * magicDevelop) + talentMpBonus;
     const baseWeaponRank = Number(actorSystem.skills?.waffen?.rank ?? 0);
     const skillUpdates = {};
     for (const key of ABOREA.weaponSkillKeys) skillUpdates[`system.skills.${key}.rank`] = Math.max(Number(actorSystem.skills?.[key]?.rank ?? 0), baseWeaponRank);
@@ -914,6 +943,68 @@ export class AboreaActorSheet extends ActorSheet {
   }
 
   _attributeValue(key) { return Number(this.actor.system?.finalAttributes?.[key]?.value??this.actor.system?.attributes?.[key]?.value??5); }
+
+  async _addTalentDialog() {
+    if (!game.user.isGM) return;
+    const result = await new Promise(resolve => {
+      new Dialog({
+        title: `Talent hinzufügen — ${this.actor.name}`,
+        content: `<form style="display:grid;gap:6px">
+          <div class="form-group"><label>Name</label>
+            <input type="text" name="name" style="width:100%" placeholder="Talentname" /></div>
+          <div class="form-group"><label>Beschreibung</label>
+            <input type="text" name="description" style="width:100%" placeholder="Kurzbeschreibung" /></div>
+          <div class="form-group"><label>Fertigkeits-Boni <small>(z.B. wahrnehmung:1, athletik:2)</small></label>
+            <input type="text" name="skillBonuses" style="width:100%" placeholder="schlüssel:wert, ..." /></div>
+          <div class="form-group"><label>Attribut-Modifikatoren</label>
+            <div style="display:flex;gap:8px">
+              ${["st","ge","ko","in","ch"].map(a => `<label>${a.toUpperCase()}<input type="number" name="attr_${a}" value="0" style="width:4em" /></label>`).join("")}
+            </div>
+          </div>
+          <div class="form-group"><label>HP-Bonus</label>
+            <input type="number" name="hpBonus" value="0" style="width:6em" /></div>
+          <div class="form-group"><label>MP-Bonus</label>
+            <input type="number" name="mpBonus" value="0" style="width:6em" /></div>
+        </form>`,
+        buttons: {
+          ok: {
+            label: "Talent zuweisen",
+            callback: html => {
+              const f = el => html.find(`[name=${el}]`).val();
+              const name = f("name").trim();
+              if (!name) return resolve(null);
+              const skillBonuses = {};
+              for (const part of f("skillBonuses").split(",")) {
+                const [k, v] = part.split(":").map(s => s.trim());
+                if (k && v && !isNaN(Number(v))) skillBonuses[k] = Number(v);
+              }
+              const attributeMods = {};
+              for (const a of ["st","ge","ko","in","ch"]) {
+                const v = Number(f(`attr_${a}`) ?? 0);
+                if (v) attributeMods[a] = v;
+              }
+              resolve({
+                key: `talent-${Date.now()}`,
+                name,
+                description: f("description").trim(),
+                skillBonuses,
+                attributeMods,
+                hpBonus: Number(f("hpBonus") ?? 0),
+                mpBonus: Number(f("mpBonus") ?? 0)
+              });
+            }
+          },
+          cancel: { label: "Abbrechen", callback: () => resolve(null) }
+        },
+        default: "ok", close: () => resolve(null)
+      }).render(true);
+    });
+    if (!result) return;
+    const talents = [...(this.actor.system.talents ?? []), result];
+    await this.actor.update({ "system.talents": talents });
+    await this._recalculateCharacter();
+    ui.notifications.info(`Talent „${result.name}" zugewiesen.`);
+  }
 }
 
 export class AboreaCharacterSheet extends AboreaActorSheet { get template() { return "systems/aborea-v7/templates/actor/character-sheet.html"; } }

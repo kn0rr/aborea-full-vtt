@@ -203,5 +203,7 @@
   "ABOREA.GrantedSpells": "Granted Spells",
   "ABOREA.PassiveTraits": "Passive Traits",
   "ABOREA.StatusEffects": "Status Effects",
-  "ABOREA.SkillBonusesLabel": "Skill Bonuses"
+  "ABOREA.SkillBonusesLabel": "Skill Bonuses",
+  "ABOREA.Talents": "Talents",
+  "ABOREA.AddTalent": "Add Talent"
 }

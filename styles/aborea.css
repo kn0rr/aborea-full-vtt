@@ -433,6 +433,14 @@
   border-bottom: 1px solid var(--aborea-border-light);
   font-size: .9rem;
 }
+/* ── Talente ────────────────────────────────────────── */
+.talent-list { display: flex; flex-direction: column; gap: 4px; }
+.talent-row  { display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+               background: #fafaf7; border-radius: 6px; border: 1px solid var(--aborea-border-light); }
+.talent-info { flex: 1; font-size: .88rem; }
+.talent-desc { color: var(--aborea-brown); margin-left: 4px; }
+.talent-bonus { display: block; font-size: .75rem; color: #7e22ce; margin-top: 2px; }
+
 /* ── Magische Items ─────────────────────────────────── */
 .magic-equip-label { display: flex; align-items: center; cursor: pointer; }
 .magic-bonus-tag { background: #fdf4ff; border: 1px solid #d8b4fe; color: #7e22ce;

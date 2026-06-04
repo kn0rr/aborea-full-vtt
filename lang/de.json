@@ -223,5 +223,7 @@
   "ABOREA.GrantedSpells": "Verliehene Zauber",
   "ABOREA.PassiveTraits": "Passive Eigenschaften",
   "ABOREA.StatusEffects": "Statuseffekte",
-  "ABOREA.SkillBonusesLabel": "Fertigkeits-Boni"
+  "ABOREA.SkillBonusesLabel": "Fertigkeits-Boni",
+  "ABOREA.Talents": "Talente",
+  "ABOREA.AddTalent": "Talent hinzufügen"
 }

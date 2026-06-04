@@ -452,6 +452,31 @@
       </section>
 
       <section class="panel">
+        <div class="panel-header">
+          <h2>{{localize "ABOREA.Talents"}}</h2>
+          {{#if isGM}}<button type="button" class="add-talent btn-sm btn-primary">+ {{localize "ABOREA.AddTalent"}}</button>{{/if}}
+        </div>
+        {{#if system.talentList.length}}
+        <div class="talent-list">
+          {{#each system.talentList as |talent|}}
+          <div class="talent-row">
+            <div class="talent-info">
+              <strong>{{talent.name}}</strong>
+              {{#if talent.description}}<span class="talent-desc">— {{talent.description}}</span>{{/if}}
+              {{#if talent.bonusSummary}}<span class="talent-bonus">{{talent.bonusSummary}}</span>{{/if}}
+            </div>
+            {{#if ../isGM}}
+            <button type="button" class="remove-talent btn-icon btn-danger" data-talent-key="{{talent.key}}" title="Talent entfernen">🗑</button>
+            {{/if}}
+          </div>
+          {{/each}}
+        </div>
+        {{else}}
+        <p class="hint-text">Keine Talente vorhanden.</p>
+        {{/if}}
+      </section>
+
+      <section class="panel">
         <h2>{{localize "ABOREA.EmbeddedRaceClass"}}</h2>
         <p class="hint-text">{{localize "ABOREA.DropHint"}}</p>
         <div class="pill-list">

@@ -59,6 +59,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       })}),
       skills:       new fields.ObjectField({ initial: () => ({}) }),
       customSkills: new fields.ArrayField(new fields.ObjectField()),
+      talents:      new fields.ArrayField(new fields.ObjectField()),
       classFeatures: new fields.ObjectField({ initial: () => ({
         list: [], labels: [], notes: [], flags: {}, bonuses: {},
         armorBonus: 0, weaponMinimums: {}, followers: 0,
