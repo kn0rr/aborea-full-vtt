@@ -32,7 +32,7 @@
 /* ── Header Pro ─────────────────────────────────────── */
 .sheet-header-pro {
   display: grid;
-  grid-template-columns: 100px 1fr auto;
+  grid-template-columns: 100px 1fr minmax(220px, auto);
   gap: 12px;
   align-items: start;
   margin-bottom: 10px;
@@ -92,9 +92,9 @@
 .header-wallet { font-size: .78rem; color: var(--aborea-brown); }
 
 /* Picker (Erschaffung) */
-.header-pickers { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+.header-pickers { display: flex; flex-direction: column; gap: 4px; min-width: 220px; }
 .picker-row { display: flex; gap: 4px; align-items: center; }
-.picker-row select { flex: 1; font-size: .8rem; }
+.picker-row select { flex: 1; font-size: .8rem; min-width: 0; max-width: 100%; }
 
 /* ── Header (legacy compat) ─────────────────────────── */
 .aborea-sheet .sheet-header {
