@@ -1043,41 +1043,70 @@ export class AboreaActorSheet extends ActorSheet {
 
   async _addTalentDialog() {
     if (!game.user.isGM) return;
+
+    // Fertigkeit-Dropdown aus config.mjs aufbauen
+    const skillOptions = Object.entries(ABOREA.skills)
+      .sort((a, b) => game.i18n.localize(a[1].label).localeCompare(game.i18n.localize(b[1].label), game.i18n.lang))
+      .map(([key, cfg]) => `<option value="${key}">${game.i18n.localize(cfg.label)}</option>`)
+      .join("");
+
     const result = await new Promise(resolve => {
       new Dialog({
         title: `Talent hinzufügen — ${this.actor.name}`,
-        content: `<form style="display:grid;gap:6px">
+        content: `<form style="display:grid;gap:8px;min-width:380px">
           <div class="form-group"><label>Name</label>
             <input type="text" name="name" style="width:100%" placeholder="Talentname" /></div>
           <div class="form-group"><label>Beschreibung</label>
             <input type="text" name="description" style="width:100%" placeholder="Kurzbeschreibung" /></div>
-          <div class="form-group"><label>Fertigkeits-Boni <small>(z.B. wahrnehmung:1, athletik:2)</small></label>
-            <input type="text" name="skillBonuses" style="width:100%" placeholder="schlüssel:wert, ..." /></div>
-          <div class="form-group"><label>Attribut-Modifikatoren</label>
-            <div style="display:flex;gap:8px">
-              ${["st","ge","ko","in","ch"].map(a => `<label>${a.toUpperCase()}<input type="number" name="attr_${a}" value="0" style="width:4em" /></label>`).join("")}
+
+          <fieldset style="border:1px solid #ccc;border-radius:6px;padding:8px">
+            <legend style="font-weight:600;padding:0 4px">Fertigkeits-Boni</legend>
+            <div id="skill-bonus-list" style="display:flex;flex-direction:column;gap:3px;margin-bottom:6px"></div>
+            <div style="display:flex;gap:4px;align-items:center">
+              <select id="new-skill-key" style="flex:1">${skillOptions}</select>
+              <input type="number" id="new-skill-val" value="1" min="1" max="10" style="width:4em;text-align:center" />
+              <button type="button" id="add-skill-bonus" class="btn-primary" style="width:32px;height:28px;padding:0">+</button>
             </div>
+          </fieldset>
+
+          <fieldset style="border:1px solid #ccc;border-radius:6px;padding:8px">
+            <legend style="font-weight:600;padding:0 4px">Attribut-Modifikatoren</legend>
+            <div style="display:flex;gap:10px;justify-content:center">
+              ${["st","ge","ko","in","ch"].map(a =>
+                `<label style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.82rem">
+                  <span style="font-weight:600">${a.toUpperCase()}</span>
+                  <input type="number" name="attr_${a}" value="0" style="width:42px;text-align:center" />
+                </label>`).join("")}
+            </div>
+          </fieldset>
+
+          <div style="display:flex;gap:16px">
+            <div class="form-group" style="flex:1"><label>HP-Bonus</label>
+              <input type="number" name="hpBonus" value="0" style="width:100%" /></div>
+            <div class="form-group" style="flex:1"><label>MP-Bonus</label>
+              <input type="number" name="mpBonus" value="0" style="width:100%" /></div>
           </div>
-          <div class="form-group"><label>HP-Bonus</label>
-            <input type="number" name="hpBonus" value="0" style="width:6em" /></div>
-          <div class="form-group"><label>MP-Bonus</label>
-            <input type="number" name="mpBonus" value="0" style="width:6em" /></div>
         </form>`,
         buttons: {
           ok: {
             label: "Talent zuweisen",
             callback: html => {
-              const f = el => html.find(`[name=${el}]`).val();
+              const root = html instanceof HTMLElement ? html : html[0];
+              const f = n => root.querySelector(`[name="${n}"]`)?.value ?? "";
               const name = f("name").trim();
               if (!name) return resolve(null);
+
+              // Fertigkeits-Boni aus den Zeilen lesen
               const skillBonuses = {};
-              for (const part of f("skillBonuses").split(",")) {
-                const [k, v] = part.split(":").map(s => s.trim());
-                if (k && v && !isNaN(Number(v))) skillBonuses[k] = Number(v);
-              }
+              root.querySelectorAll(".talent-skill-row").forEach(row => {
+                const key = row.dataset.skillKey;
+                const val = Number(row.dataset.skillVal);
+                if (key && val) skillBonuses[key] = (skillBonuses[key] || 0) + val;
+              });
+
               const attributeMods = {};
               for (const a of ["st","ge","ko","in","ch"]) {
-                const v = Number(f(`attr_${a}`) ?? 0);
+                const v = Number(f(`attr_${a}`));
                 if (v) attributeMods[a] = v;
               }
               resolve({
@@ -1086,16 +1115,45 @@ export class AboreaActorSheet extends ActorSheet {
                 description: f("description").trim(),
                 skillBonuses,
                 attributeMods,
-                hpBonus: Number(f("hpBonus") ?? 0),
-                mpBonus: Number(f("mpBonus") ?? 0)
+                hpBonus: Number(f("hpBonus")) || 0,
+                mpBonus: Number(f("mpBonus")) || 0
               });
             }
           },
           cancel: { label: "Abbrechen", callback: () => resolve(null) }
         },
-        default: "ok", close: () => resolve(null)
+        default: "ok",
+        close: () => resolve(null),
+        render: html => {
+          const root   = html instanceof HTMLElement ? html : html[0];
+          const list   = root.querySelector("#skill-bonus-list");
+          const addBtn = root.querySelector("#add-skill-bonus");
+
+          const addRow = (skillKey, skillLabel, val) => {
+            const row = document.createElement("div");
+            row.className = "talent-skill-row";
+            row.dataset.skillKey = skillKey;
+            row.dataset.skillVal = val;
+            row.style.cssText = "display:flex;align-items:center;gap:6px;padding:3px 6px;background:#f0fdf4;border-radius:4px;border:1px solid #86efac";
+            row.innerHTML = `<span style="flex:1;font-size:.85rem">${skillLabel}</span>
+              <span style="font-weight:700;color:#166534;min-width:24px;text-align:center">+${val}</span>
+              <button type="button" style="width:22px;height:22px;padding:0;background:#fee2e2;border:1px solid #fca5a5;border-radius:4px;color:#b91c1c;cursor:pointer">×</button>`;
+            row.querySelector("button").addEventListener("click", () => row.remove());
+            list.appendChild(row);
+          };
+
+          addBtn.addEventListener("click", () => {
+            const keyEl   = root.querySelector("#new-skill-key");
+            const valEl   = root.querySelector("#new-skill-val");
+            const key     = keyEl.value;
+            const val     = Math.max(1, Number(valEl.value) || 1);
+            const label   = keyEl.options[keyEl.selectedIndex]?.text ?? key;
+            if (key) addRow(key, label, val);
+          });
+        }
       }).render(true);
     });
+
     if (!result) return;
     const talents = [...(this.actor.system.talents ?? []), result];
     await this.actor.update({ "system.talents": talents });
