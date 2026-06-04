@@ -85,9 +85,9 @@ export class AboreaActorSheet extends ActorSheet {
     }
     system.customSkills = normalizeCustomSkills(system.customSkills);
     const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-    const armorBonus = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0) - 5, 0);
-    const baseArmor = Number(system.combat?.armorValue ?? 5) + Number(system.traits?.racialArmorBonus ?? 0) + Number(system.classFeatures?.armorBonus ?? 0);
-    system.combat.totalArmorValue = baseArmor + armorBonus;
+    const armorFromItems = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+    const baseArmor = Number(system.combat?.armorValue ?? 0) + Number(system.traits?.racialArmorBonus ?? 0) + Number(system.classFeatures?.armorBonus ?? 0);
+    system.combat.totalArmorValue = baseArmor + armorFromItems;
     system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
     system.combat.initiative = ABOREA.initiativeBonus({ system: { attributes: system.displayAttributes } });
     // HP/MP Prozent für Fortschrittsbalken
@@ -253,8 +253,8 @@ export class AboreaActorSheet extends ActorSheet {
   _prepareNpcData(actor, system) {
     for (const [key, data] of Object.entries(system.attributes ?? {})) { data.bonus = ABOREA.attributeBonus(data.value); data.label = ABOREA.attributes[key]; }
     const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-    const armorBonus = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0) - 5, 0);
-    system.combat.totalArmorValue = Number(system.combat?.armorValue ?? 5) + armorBonus;
+    const armorFromItems = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+    system.combat.totalArmorValue = Number(system.combat?.armorValue ?? 0) + armorFromItems;
 
     // Trait-Boni aus Active Effects (z.B. Beistand, Fluch, Trübung)
     const maneuverBonus = Number(system.traits?.maneuverBonus ?? 0);
