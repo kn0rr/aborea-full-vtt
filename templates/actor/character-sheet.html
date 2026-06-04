@@ -52,12 +52,12 @@
   <div class="pickers-bar">
     <div class="picker-row">
       <label class="picker-label">{{localize "ABOREA.ApplyRace"}}</label>
-      <select name="selectedRace"><option value=""></option>{{#each availablePacks.races as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
+      <select name="selectedRace"><option value=""></option>{{#each availablePacks.races as |e|}}<option value="{{e.name}}" {{#if (aboreaEq e.name ../system.details.race)}}selected{{/if}}>{{e.name}}</option>{{/each}}</select>
       <button type="button" class="apply-race btn-sm">{{localize "ABOREA.Apply"}}</button>
     </div>
     <div class="picker-row">
       <label class="picker-label">{{localize "ABOREA.ApplyClass"}}</label>
-      <select name="selectedClass"><option value=""></option>{{#each availablePacks.classes as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
+      <select name="selectedClass"><option value=""></option>{{#each availablePacks.classes as |e|}}<option value="{{e.name}}" {{#if (aboreaEq e.name ../system.details.class)}}selected{{/if}}>{{e.name}}</option>{{/each}}</select>
       <button type="button" class="apply-class btn-sm">{{localize "ABOREA.Apply"}}</button>
     </div>
     {{#if system.isLeitmagieClass}}
