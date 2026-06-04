@@ -91,18 +91,18 @@
 .xp-label { font-size: .75rem; color: var(--aborea-brown); white-space: nowrap; }
 .header-wallet { font-size: .78rem; color: var(--aborea-brown); }
 
-/* Pickers-Bar (Volk/Klasse/Gott) — volle Breite unter dem Header */
+/* Pickers-Bar (Volk/Klasse/Gott) — volle Breite, jede Zeile separat */
 .pickers-bar {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  padding: 6px 8px;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 8px 10px;
   background: var(--aborea-parchment-2);
   border: 1px solid var(--aborea-border-light);
   border-radius: var(--aborea-radius-sm);
   margin-bottom: 6px;
 }
-.picker-row { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 200px; }
-.picker-label { font-size: .78rem; color: var(--aborea-brown); white-space: nowrap; font-weight: 500; min-width: 70px; }
-.picker-row select { flex: 1; font-size: .85rem; min-width: 0; }
+.picker-row { display: flex; align-items: center; gap: 8px; width: 100%; }
+.picker-label { font-size: .8rem; color: var(--aborea-brown); white-space: nowrap; font-weight: 600; width: 80px; flex-shrink: 0; }
+.picker-row select { flex: 1; font-size: .88rem; min-width: 0; height: 28px; }
 
 /* ── Header (legacy compat) ─────────────────────────── */
 .aborea-sheet .sheet-header {
