@@ -243,7 +243,10 @@ export class AboreaActorSheet extends ActorSheet {
       diseaseImmunity: "ABOREA.TraitDiseaseImmunity",
       spellResistance: "ABOREA.TraitSpellResistance"
     };
-    const traits = system.traits ?? {};
+    // Traits direkt vom Race-Item lesen (zuverlässiger als gecachtes system.traits)
+    const raceItemForTraits = actor.items.find(i => i.type === "race");
+    const liveRaceTraits    = raceItemForTraits?.system?.traits ?? {};
+    const traits = { ...system.traits, ...liveRaceTraits };
     system.racialTraits = Object.entries(traitLabelMap)
       .filter(([key]) => !!traits[key])
       .map(([key, locKey]) => ({ key, label: game.i18n.localize(locKey) }));
@@ -274,7 +277,9 @@ export class AboreaActorSheet extends ActorSheet {
     system.inventoryHistory = Array.isArray(system.inventoryHistory) ? foundry.utils.deepClone(system.inventoryHistory) : [];
 
     // Skill-Zeilen mit Rassenbonus ergänzen
-    const _skillBonuses = system.traits?.skillBonuses ?? {};
+    // Direkt vom Race-Item lesen — system.traits kann durch Foundry-Merge veraltet sein
+    const _raceItem = actor.items.find(i => i.type === "race");
+    const _skillBonuses = _raceItem?.system?.traits?.skillBonuses ?? system.traits?.skillBonuses ?? {};
     system.skillDisplayRows = buildSkillDisplayRows(system).map(row => ({
       ...row,
       traitBonus: Number(_skillBonuses[row.key] ?? 0),

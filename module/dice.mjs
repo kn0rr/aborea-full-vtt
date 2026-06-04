@@ -132,9 +132,11 @@ export async function rollSkill(actor, skillKey) {
   const rank = Number(skill.rank ?? 0);
   const classBonus = Number(actor.system.classFeatures?.bonuses?.[skillKey] ?? skill.bonus ?? 0);
 
-  // Rassentraits: skillBonuses-Map (z.B. { mechanik: 1, geheimtuer: 1, fallen: 1 })
-  const traits = actor.system.traits ?? {};
-  const traitBonus = Number(traits.skillBonuses?.[skillKey] ?? 0);
+  // Rassentraits: direkt vom Race-Item lesen (system.traits kann veraltet sein)
+  const raceItem  = actor.items?.find(i => i.type === "race");
+  const raceSkillBonuses = raceItem?.system?.traits?.skillBonuses
+                        ?? actor.system.traits?.skillBonuses ?? {};
+  const traitBonus = Number(raceSkillBonuses[skillKey] ?? 0);
   const traitLabel = traitBonus ? game.i18n.localize("ABOREA.RacialBonus") : "";
 
   const roll = await rollOpenD10({ label: skill.label ?? skill.name ?? skillKey });
