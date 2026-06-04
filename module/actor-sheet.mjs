@@ -39,11 +39,14 @@ export class AboreaActorSheet extends ActorSheet {
     const context = await super.getData(options);
     const actor = context.actor;
     const system = foundry.utils.deepClone(actor.system);
-    // Für Charaktere in der Erschaffung (draft): baseAttributes zeigen,
-    // da finalAttributes erst nach _recalculateCharacter() korrekt befüllt ist.
-    const isCreationDraft = actor.type === "character" && system.creation?.status === "draft";
+    // Während der Charaktererschaffung (nicht abgeschlossen, kein Levelaufstieg):
+    // baseAttributes zeigen — finalAttributes enthält bereits Rassenmod und
+    // würde den gesetzten Basiswert verschleiern.
+    const isCreationPhase = actor.type === "character"
+      && !system.creation?.completed
+      && system.creation?.status !== "leveling";
     const attrSource = actor.type === "character"
-      ? (isCreationDraft
+      ? (isCreationPhase
           ? system.baseAttributes || system.attributes || {}
           : system.finalAttributes || system.baseAttributes || system.attributes || {})
       : (system.attributes || {});
