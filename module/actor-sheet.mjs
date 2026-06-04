@@ -39,7 +39,14 @@ export class AboreaActorSheet extends ActorSheet {
     const context = await super.getData(options);
     const actor = context.actor;
     const system = foundry.utils.deepClone(actor.system);
-    const attrSource = actor.type === "character" ? (system.finalAttributes || system.attributes || {}) : (system.attributes || {});
+    // Für Charaktere in der Erschaffung (draft): baseAttributes zeigen,
+    // da finalAttributes erst nach _recalculateCharacter() korrekt befüllt ist.
+    const isCreationDraft = actor.type === "character" && system.creation?.status === "draft";
+    const attrSource = actor.type === "character"
+      ? (isCreationDraft
+          ? system.baseAttributes || system.attributes || {}
+          : system.finalAttributes || system.baseAttributes || system.attributes || {})
+      : (system.attributes || {});
     const displayAttributes = {};
     for (const [key, data] of Object.entries(attrSource)) {
       displayAttributes[key] = { value: Number(data?.value ?? 5), bonus: ABOREA.attributeBonus(data?.value ?? 5), label: ABOREA.attributes[key] };
