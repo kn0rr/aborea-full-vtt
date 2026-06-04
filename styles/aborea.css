@@ -623,6 +623,12 @@
                   padding: 8px 10px; margin: 6px 0; }
 .magic-fieldset legend { font-weight: 600; font-size: .82rem; padding: 0 6px; color: var(--aborea-brown); }
 
+/* ── Ausgerüstet-Toggle ─────────────────────────────── */
+.equip-toggle { display: flex; align-items: center; cursor: pointer; flex-shrink: 0; }
+.item-equip-toggle { width: 16px; height: 16px; cursor: pointer; accent-color: var(--aborea-green); }
+.item-row.item-equipped { border-left: 3px solid var(--aborea-green); padding-left: 7px; }
+.item-row.item-equipped .item-name { color: var(--aborea-green); font-weight: 600; }
+
 .item-notes-input {
   flex: 0 0 100%;
   font-size: .78rem;

@@ -341,10 +341,13 @@ export class AboreaActorSheet extends ActorSheet {
       const item = this.actor.items.get(itemId);
       if (item) await item.update({ "system.notes": ev.currentTarget.value });
     });
-    html.find(".magic-item-equip").on("change", async ev => {
+    html.find(".item-equip-toggle, .magic-item-equip").on("change", async ev => {
       const itemId = ev.currentTarget.closest("[data-item-id]").dataset.itemId;
       const item = this.actor.items.get(itemId);
-      if (item) await item.update({ "system.equipped": ev.currentTarget.checked });
+      if (item) {
+        await item.update({ "system.equipped": ev.currentTarget.checked });
+        if (this.actor.type === "character") await this._recalculateCharacter();
+      }
     });
     html.find(".cast-granted-spell").on("click", async ev => {
       const btn = ev.currentTarget;

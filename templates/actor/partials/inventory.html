@@ -31,7 +31,10 @@
     <button type="button" class="item-create btn-sm" data-type="weapon">+ Neu</button>
   </div>
   {{#each itemLists.weapons as |item|}}
-  <div class="item-row" data-item-id="{{item.id}}">
+  <div class="item-row {{#if item.system.equipped}}item-equipped{{/if}}" data-item-id="{{item.id}}">
+    <label class="equip-toggle" title="{{localize "ABOREA.Equipped"}}">
+      <input type="checkbox" class="item-equip-toggle" data-item-id="{{item.id}}" {{#if item.system.equipped}}checked{{/if}} />
+    </label>
     <span class="item-name">{{item.name}}</span>
     <span class="item-detail">{{localize "ABOREA.Damage"}} {{item.system.damage}}</span>
     <div class="item-actions">
@@ -39,8 +42,7 @@
       <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
     </div>
-    {{#if item.system.notes}}<div class="item-notes">{{item.system.notes}}</div>{{/if}}
-    <input type="text" class="item-notes-input" name="system.notes" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
+    <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
   </div>
   {{/each}}
 </section>
@@ -52,7 +54,10 @@
     <button type="button" class="item-create btn-sm" data-type="armor">+ Neu</button>
   </div>
   {{#each itemLists.armors as |item|}}
-  <div class="item-row" data-item-id="{{item.id}}">
+  <div class="item-row {{#if item.system.equipped}}item-equipped{{/if}}" data-item-id="{{item.id}}">
+    <label class="equip-toggle" title="{{localize "ABOREA.Equipped"}}">
+      <input type="checkbox" class="item-equip-toggle" data-item-id="{{item.id}}" {{#if item.system.equipped}}checked{{/if}} />
+    </label>
     <span class="item-name">{{item.name}}</span>
     <span class="item-detail">{{localize "ABOREA.ArmorValue"}} {{item.system.armor}}</span>
     <div class="item-actions">
