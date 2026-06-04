@@ -495,27 +495,37 @@ export class AboreaActorSheet extends ActorSheet {
   async _adjustCreationSkill(skillKey, delta) {
     if (this.actor.type !== "character") return;
     const system = this.actor.system;
-    const creationDone = !!system.creation?.completed;
+    const creationDone   = !!system.creation?.completed;
+    const isLeveling     = system.creation?.status === "leveling";
     const levelUpPending = ABOREA.levelForXp(Number(system.resources?.xp ?? 0)) > Number(system.resources?.level ?? 1);
-    if (creationDone && !levelUpPending) { ui.notifications.warn("ABOREA: Fertigkeiten können erst nach einem Stufenaufstieg verbessert werden."); return; }
+
+    if (creationDone && !levelUpPending) {
+      ui.notifications.warn("ABOREA: Fertigkeiten können erst nach einem Stufenaufstieg verbessert werden.");
+      return;
+    }
     const cls = this.actor.items.find(i => i.type === "class");
     if (!cls) return ui.notifications.warn("ABOREA: Wähle zuerst einen Beruf.");
+
+    // Beim Leveln kein Erschaffungs-Cap — nur bei echter Erschaffung (status draft)
+    const applyCreationCap = !creationDone && !isLeveling;
 
     const customList = foundry.utils.deepClone(normalizeCustomSkills(system.customSkills));
     const customIdx = customList.findIndex(s => s.key === skillKey);
     if (customIdx !== -1) {
       const costParts = String(customList[customIdx].cost ?? "1").split("/").filter(Boolean);
-      const maxRankCustom = creationDone ? 99 : costParts.length;
+      const maxRankCustom = applyCreationCap ? costParts.length : 99;
       customList[customIdx].rank = Math.max(0, Math.min(maxRankCustom, Number(customList[customIdx].rank ?? 0) + Number(delta)));
-      await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": "draft" });
+      const newStatus = isLeveling ? "leveling" : "draft";
+      await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": newStatus });
       await this._recalculateCharacter();
       return;
     }
 
     const current = Number(system.skills?.[skillKey]?.rank ?? 0);
-    const maxRank = creationDone ? 99 : ABOREA.skillMaxCreationRank(skillKey, cls.system);
+    const maxRank = applyCreationCap ? ABOREA.skillMaxCreationRank(skillKey, cls.system) : 99;
     const next = Math.max(0, Math.min(maxRank, current + Number(delta)));
-    await this.actor.update({ [`system.skills.${skillKey}.rank`]: next, "system.creation.completed": false, "system.creation.status": "draft" });
+    const newStatus = isLeveling ? "leveling" : "draft";
+    await this.actor.update({ [`system.skills.${skillKey}.rank`]: next, "system.creation.completed": false, "system.creation.status": newStatus });
     await this._recalculateCharacter();
   }
 
