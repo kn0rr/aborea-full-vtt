@@ -270,6 +270,7 @@
               <label>{{localize attr.label}}</label>
               <input type="number" value="{{attr.value}}" disabled />
               <span class="badge">{{#if (aboreaEq attr.bonus 0)}}±0{{else}}{{attr.bonus}}{{/if}}</span>
+              <button type="button" class="roll-attribute btn-sm" data-attribute="{{key}}" title="{{localize attr.label}} würfeln">🎲</button>
             </div>
             {{/each}}
           </div>

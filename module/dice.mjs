@@ -101,6 +101,28 @@ export async function rollOpenD10({ label = "ABOREA.RollOpenD10", skipVisual = f
   return showVisualRoll(game.i18n.localize(label), () => _evaluateOpenD10({ label }));
 }
 
+export async function rollAttribute(actor, attrKey) {
+  const attrValue = actor.system.finalAttributes?.[attrKey]?.value
+                 ?? actor.system.attributes?.[attrKey]?.value ?? 5;
+  const bonus  = ABOREA.attributeBonus(attrValue);
+  const label  = ABOREA.attributes[attrKey] ?? attrKey;
+  const roll   = await rollOpenD10({ label });
+  const total  = roll.total + bonus;
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `
+      <div class="aborea-chat-card">
+        <h3>${game.i18n.localize(label)}</h3>
+        <p>${game.i18n.localize("ABOREA.Roll")}: ${roll.formula}</p>
+        <p>${game.i18n.localize("ABOREA.Bonus")}: ${bonus >= 0 ? "+" : ""}${bonus}</p>
+        <p><strong>${game.i18n.localize("ABOREA.Total")}: ${total}</strong></p>
+      </div>
+    `
+  });
+  return total;
+}
+
 export async function rollSkill(actor, skillKey) {
   const custom = (actor.system.customSkills || []).find(s => s.key === skillKey);
   const skill = custom ?? actor.system.skills?.[skillKey] ?? { rank: 0, attribute: "in" };
