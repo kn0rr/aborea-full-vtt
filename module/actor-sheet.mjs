@@ -415,13 +415,19 @@ export class AboreaActorSheet extends ActorSheet {
     html.find(".wallet-adjust").on("click", async ev => { await this._adjustWalletCurrency(ev.currentTarget.dataset.currencyKey, ev.currentTarget.dataset.mode); });
     html.find(".wallet-add-currency").on("click", async () => await this._addWalletCurrency());
     html.find(".wallet-remove-currency").on("click", async ev => await this._removeWalletCurrency(ev.currentTarget.dataset.currencyKey));
-    html.find(".recalc-character").on("click", async () => { await this._recalculateCharacter(); ui.notifications.info("ABOREA: Charakterwerte neu berechnet."); });
+    html.find(".recalc-character").on("click", async ev => {
+      await this._flushBaseAttributes(ev.currentTarget.closest("form"));
+      await this._recalculateCharacter();
+      ui.notifications.info("ABOREA: Charakterwerte neu berechnet.");
+    });
     html.find(".unlock-creation").on("click", async () => {
       if (!game.user.isGM) return;
       await this.actor.update({ "system.creation.completed": false, "system.creation.status": "draft" });
       ui.notifications.info(`ABOREA: Charaktererschaffung für ${this.actor.name} entsperrt.`);
     });
-    html.find(".finalize-character").on("click", async () => {
+    html.find(".finalize-character").on("click", async ev => {
+      // Ungespeicherte Attribut-Eingaben vor der Berechnung persistieren
+      await this._flushBaseAttributes(ev.currentTarget.closest("form"));
       const result = await this._recalculateCharacter();
       if (!result.valid) { ui.notifications.error("ABOREA: Charaktererstellung ist noch nicht gültig."); return; }
       const hpMax = this.actor.system.resources.hp.max;
@@ -1040,6 +1046,21 @@ export class AboreaActorSheet extends ActorSheet {
   }
 
   _attributeValue(key) { return Number(this.actor.system?.finalAttributes?.[key]?.value??this.actor.system?.attributes?.[key]?.value??5); }
+
+  /** Liest Attribut-Inputs direkt aus dem DOM und speichert sie in baseAttributes,
+   *  damit ungespeicherte Tippvorgänge vor _recalculateCharacter() persistiert werden. */
+  async _flushBaseAttributes(formEl) {
+    if (!formEl) return;
+    const updates = {};
+    for (const key of ["st","ge","ko","in","ch"]) {
+      const input = formEl.querySelector(`[name="system.baseAttributes.${key}.value"]`);
+      if (input) {
+        const val = Math.max(1, Math.min(10, Number(input.value) || 5));
+        updates[`system.baseAttributes.${key}.value`] = val;
+      }
+    }
+    if (Object.keys(updates).length) await this.actor.update(updates);
+  }
 
   async _addTalentDialog() {
     if (!game.user.isGM) return;
