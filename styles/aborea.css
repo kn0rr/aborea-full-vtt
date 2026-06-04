@@ -172,6 +172,14 @@
   width: 3em; text-align: center; border: none; background: transparent;
   font-weight: 700; font-size: .9rem;
 }
+.combat-bonus-info {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--aborea-blue); color: #fff;
+  font-size: .65rem; font-style: normal; font-weight: 700;
+  cursor: help; margin-left: 4px; vertical-align: middle;
+  flex-shrink: 0;
+}
 .combat-computed label, label.combat-computed {
   background: rgba(0,0,0,.04); border-radius: 4px; padding: 2px 4px;
 }

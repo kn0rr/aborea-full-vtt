@@ -292,7 +292,11 @@
           {{!-- Kampfbonus-Splitter --}}
           <div class="combat-split-section">
             <div class="combat-split-label">
-              <span>{{localize "ABOREA.CombatBonus"}}: <strong>{{system.combat.combatBonus}}</strong></span>
+              <span>{{localize "ABOREA.CombatBonus"}}: <strong>{{system.combat.combatBonus}}</strong>
+                {{#if system.combat.combatBonusTooltip}}
+                <span class="combat-bonus-info" title="{{system.combat.combatBonusTooltip}}">ℹ</span>
+                {{/if}}
+              </span>
             </div>
             <div class="combat-split-bars">
               <div class="split-bar-off" style="flex:{{system.combat.offensiveBonus}}">

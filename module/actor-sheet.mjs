@@ -104,6 +104,24 @@ export class AboreaActorSheet extends ActorSheet {
     system.combat.totalArmorValue = baseArmor + armorFromItems;
     system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
     system.combat.initiative = ABOREA.initiativeBonus({ system: { attributes: system.displayAttributes } });
+
+    // Kampfbonus-Tooltip: beste Waffenfertigkeit mit vollständiger Aufschlüsselung
+    {
+      const baseWR = Number(system.skills?.waffen?.rank ?? 0);
+      let best = { cb: -99, label: "", attrKey: "st", rank: 0, attrBonus: 0 };
+      for (const key of ABOREA.weaponSkillKeys) {
+        const rank     = Math.max(Number(system.skills?.[key]?.rank ?? 0), baseWR);
+        const attrKey  = ABOREA.skills?.[key]?.attribute ?? "st";
+        const attrBonus = ABOREA.attributeBonus(system.displayAttributes?.[attrKey]?.value ?? 5);
+        const cb = ABOREA.combatBonus(attrBonus, rank);
+        if (cb > best.cb) best = { cb, label: game.i18n.localize(ABOREA.skills[key]?.label ?? key), attrKey, rank, attrBonus };
+      }
+      const sign = n => n >= 0 ? `+${n}` : `${n}`;
+      const penalty = best.rank > 0 ? "" : " − 2 (ungelernt)";
+      system.combat.combatBonusTooltip = best.label
+        ? `${best.label}: ${sign(best.attrBonus)} (${best.attrKey.toUpperCase()}) + ${best.rank} (Rang)${penalty} = ${best.cb}`
+        : "";
+    }
     // HP/MP Prozent für Fortschrittsbalken
     const _hpMax = Number(system.resources?.hp?.max || 1);
     const _mpMax = Number(system.resources?.mp?.max || 1);
