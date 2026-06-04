@@ -139,13 +139,27 @@
             {{#each system.creation.attributeRows as |attr|}}
             <div class="attribute-row creation-attribute-row">
               <label>{{localize attr.label}}</label>
+              {{#if ../system.creation.completed}}
+              <input type="number" value="{{attr.value}}" disabled />
+              {{else}}
               <input type="number" name="system.baseAttributes.{{attr.key}}.value" value="{{attr.value}}" min="1" max="10" />
+              {{/if}}
               <span class="center">{{attr.totalCost}}</span>
               <span class="center">{{#if attr.nextStepCost}}+{{attr.nextStepCost}}{{else}}—{{/if}}</span>
               <span class="center badge">{{#if (aboreaEq attr.bonus 0)}}±0{{else}}{{attr.bonus}}{{/if}}</span>
             </div>
             {{/each}}
           </div>
+
+          {{#if system.creation.completed}}
+          <div class="creation-done-banner">
+            ✅ <strong>{{localize "ABOREA.FinalizeCharacter"}} abgeschlossen</strong>
+            {{#if isGM}}
+            <button type="button" class="recalc-character btn-sm">🔄 {{localize "ABOREA.Recalculate"}}</button>
+            <button type="button" class="unlock-creation btn-sm btn-warn">🔓 Entsperren (GM)</button>
+            {{/if}}
+          </div>
+          {{else}}
           <div class="creation-metrics">
             <div class="metric-card">
               <label>{{localize "ABOREA.AttributeBudget"}}</label>
@@ -164,6 +178,7 @@
             <button type="button" class="recalc-character">{{localize "ABOREA.Recalculate"}}</button>
             <button type="button" class="finalize-character btn-primary">{{localize "ABOREA.FinalizeCharacter"}}</button>
           </div>
+          {{/if}}
         </div>
 
         <div class="panel inset cost-reference-panel">
