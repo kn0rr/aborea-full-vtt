@@ -62,6 +62,13 @@ export class AboreaActorSheet extends ActorSheet {
     };
     context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
     context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
+    context.isGM = game.user.isGM;
+
+    // Inventar-Totals
+    const weightItems = actor.items.filter(i => ["weapon","armor","gear","magic"].includes(i.type));
+    context.inventoryTotals = {
+      weight: Math.round(weightItems.reduce((s, i) => s + Number(i.system.weight ?? 0) * Number(i.system.quantity ?? 1), 0) * 10) / 10
+    };
     context.availablePacks = {
       races: await this._packChoices("race"),
       classes: await this._packChoices("class"),
@@ -199,6 +206,11 @@ export class AboreaActorSheet extends ActorSheet {
     const levelUpPending = targetLevel > level;
     const xpNext = xpForNextLevel(level);
     system.levelUp = { pending: levelUpPending, targetLevel, xpNext, atMax: xpNext === null };
+    // XP-Fortschritt für Leiste (0-100%)
+    const prevLevelXp = ABOREA.xpTable[level - 1] ?? 0;
+    const nextLevelXp = xpNext ?? (prevLevelXp + 1);
+    system.resources.xpPct = xpNext === null ? 100
+      : Math.round(Math.min(100, Math.max(0, (xp - prevLevelXp) / (nextLevelXp - prevLevelXp) * 100)));
 
     // Rassentraits als beschriftete Badge-Liste für das Template aufbereiten
     const traitLabelMap = {
@@ -243,6 +255,20 @@ export class AboreaActorSheet extends ActorSheet {
       traitBonus: Number(_skillBonuses[row.key] ?? 0),
       totalBonus: row.rank + Number(row.bonus ?? 0) + Number(_skillBonuses[row.key] ?? 0)
     }));
+    // Fertigkeiten nach Gruppe sortieren
+    const KAMPF_KEYS = new Set(["waffenlos","boegen","aexte","langeKlingenwaffe","kurzeKlingenwaffe","stangenwaffe","wurfwaffe","waffen"]);
+    const MAGIE_KEYS = new Set(["magieEntwickeln","spruchlisten","gezielteSprueche","magieWahrnehmen"]);
+    system.skillGroups = [
+      { key: "kampf",     label: "Kampf",     icon: "⚔",
+        rows: system.skillDisplayRows.filter(r => !r.isCustom && KAMPF_KEYS.has(r.key)) },
+      { key: "magie",     label: "Magie",     icon: "✨",
+        rows: system.skillDisplayRows.filter(r => !r.isCustom && MAGIE_KEYS.has(r.key)) },
+      { key: "allgemein", label: "Allgemein", icon: "📖",
+        rows: system.skillDisplayRows.filter(r => !r.isCustom && !KAMPF_KEYS.has(r.key) && !MAGIE_KEYS.has(r.key)) },
+      { key: "custom",    label: "Eigene",    icon: "⭐",
+        rows: system.skillDisplayRows.filter(r => r.isCustom) }
+    ].filter(g => g.rows.length > 0);
+
     system.companions = system.companions || { list: [] };
     system.companions.list = (system.companions.list || []).map(comp => ({
       ...comp, expiresLabel: formatExpiry(comp.expiresAt), levelLabel: comp.summonLevel ? `Stufe ${comp.summonLevel}` : "",
@@ -285,6 +311,11 @@ export class AboreaActorSheet extends ActorSheet {
     if (!this.isEditable) return;
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
     html.find(".roll-attribute").on("click", ev => rollAttribute(this.actor, ev.currentTarget.dataset.attribute));
+    html.find(".toggle-zero-skills").on("click", ev => {
+      const list = ev.currentTarget.closest(".tab").querySelector(".skill-groups");
+      if (list) list.classList.toggle("hide-zero");
+      ev.currentTarget.classList.toggle("active");
+    });
     if (game.user.isGM) {
       html.find(".add-talent").on("click", () => this._addTalentDialog());
       html.find(".remove-talent").on("click", async ev => {

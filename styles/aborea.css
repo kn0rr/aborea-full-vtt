@@ -29,7 +29,74 @@
   font-family: var(--font-primary, "Signika", sans-serif);
 }
 
-/* ── Header ─────────────────────────────────────────── */
+/* ── Header Pro ─────────────────────────────────────── */
+.sheet-header-pro {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+/* Portrait mit HP-Ring */
+.portrait-ring {
+  --hp-pct: 100; --mp-pct: 100;
+  position: relative; width: 96px; height: 96px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #22c55e calc(var(--hp-pct) * 1%),
+    #e5e7eb calc(var(--hp-pct) * 1%)
+  );
+  padding: 4px;
+  flex-shrink: 0;
+}
+.portrait-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  overflow: hidden; background: var(--aborea-parchment);
+}
+.portrait-ring .profile-img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+  border: none; box-shadow: none;
+}
+.portrait-hp-label {
+  position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+  font-size: .7rem; font-weight: 700; white-space: nowrap;
+  background: #22c55e; color: #fff; border-radius: 99px; padding: 1px 6px;
+}
+
+/* Header Mitte */
+.header-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.header-top  { display: flex; align-items: center; gap: 8px; }
+.header-top h1 input { font-size: 1.25rem; font-weight: 700; flex: 1; }
+.level-badge {
+  background: var(--aborea-gold); color: #fff; font-weight: 700;
+  border-radius: 99px; padding: 2px 10px; font-size: .9rem; white-space: nowrap;
+  min-width: 32px; text-align: center;
+}
+.level-up-badge {
+  background: #f59e0b; color: #fff; border-radius: 99px;
+  padding: 2px 8px; font-size: .85rem; animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+/* Identity pills in header */
+.header-identity { display: flex; flex-wrap: wrap; gap: 4px; }
+.pill-god { background: #fef3c7; border: 1px solid #f59e0b; color: #78350f; border-radius: 99px; padding: 2px 10px; font-size: .8rem; font-weight: 500; }
+
+/* XP bar */
+.header-xp { display: flex; align-items: center; gap: 6px; }
+.xp-bar-wrap { flex: 1; height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden; }
+.xp-bar { height: 100%; background: var(--aborea-gold); border-radius: 99px; transition: width .4s; }
+.xp-bar-max { background: #22c55e; }
+.xp-label { font-size: .75rem; color: var(--aborea-brown); white-space: nowrap; }
+.header-wallet { font-size: .78rem; color: var(--aborea-brown); }
+
+/* Picker (Erschaffung) */
+.header-pickers { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+.picker-row { display: flex; gap: 4px; align-items: center; }
+.picker-row select { flex: 1; font-size: .8rem; }
+
+/* ── Header (legacy compat) ─────────────────────────── */
 .aborea-sheet .sheet-header {
   display: grid;
   grid-template-columns: 110px 1fr;
@@ -44,19 +111,113 @@
   border-radius: var(--aborea-radius);
   box-shadow: var(--aborea-shadow);
 }
-.aborea-sheet .header-fields h1 input {
-  font-size: 1.3rem; font-weight: 700;
-}
+.aborea-sheet .header-fields h1 input { font-size: 1.3rem; font-weight: 700; }
 .aborea-sheet .header-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-  gap: 6px;
-  margin-bottom: 6px;
+  display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 6px;
 }
 .aborea-sheet .header-grid.compact {
-  grid-template-columns: minmax(160px,1fr) auto minmax(160px,1fr) auto;
-  gap: 6px;
+  grid-template-columns: minmax(160px,1fr) auto minmax(160px,1fr) auto; gap: 6px;
 }
+
+/* ── Attribut-Karten ────────────────────────────────── */
+.attr-cards { display: grid; grid-template-columns: repeat(5,1fr); gap: 6px; }
+.attr-card {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: var(--aborea-parchment-2); border: 1px solid var(--aborea-border-light);
+  border-radius: var(--aborea-radius-sm); padding: 8px 4px;
+}
+.attr-card-label { font-size: .7rem; color: var(--aborea-brown); font-weight: 600; text-transform: uppercase; }
+.attr-card-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.attr-card-bonus { font-size: .85rem; font-weight: 600; }
+.attr-card-bonus.pos { color: var(--aborea-green); }
+.attr-card-bonus.neg { color: var(--aborea-red); }
+.attr-card-bonus.neutral { color: var(--aborea-brown); }
+.attr-magic-mod { font-size: .68rem; color: #7e22ce; background: #fdf4ff; border-radius: 99px; padding: 0 4px; }
+.attr-card .roll-attribute { margin-top: 2px; }
+
+/* ── Ressourcen-Karte ───────────────────────────────── */
+.resource-card { margin-bottom: 8px; }
+.resource-header { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+.resource-label { font-weight: 700; font-size: .9rem; width: 32px; }
+.resource-inputs { display: flex; align-items: center; gap: 4px; }
+.xp-section { margin-top: 8px; }
+
+/* ── Kampf Pro ──────────────────────────────────────── */
+.combat-pro { display: flex; flex-direction: column; gap: 10px; }
+.combat-split-section { }
+.combat-split-label { font-size: .82rem; margin-bottom: 4px; }
+.combat-split-bars {
+  display: flex; height: 40px; border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--aborea-border-light);
+}
+.split-bar-off {
+  background: #dbeafe; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1px;
+  font-size: .72rem; color: #1e40af; padding: 2px; min-width: 60px;
+}
+.split-bar-def {
+  background: #dcfce7; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1px;
+  font-size: .72rem; color: #166534; padding: 2px; min-width: 60px;
+}
+.split-bar-off input, .split-bar-def input {
+  width: 3em; text-align: center; border: none; background: transparent;
+  font-weight: 700; font-size: .9rem;
+}
+.combat-computed label, label.combat-computed {
+  background: rgba(0,0,0,.04); border-radius: 4px; padding: 2px 4px;
+}
+.combat-computed input:disabled { color: var(--aborea-brown); font-style: italic; }
+
+/* ── Fertigkeiten-Gruppen ───────────────────────────── */
+.skill-groups { display: flex; flex-direction: column; gap: 4px; }
+.skill-group { border: 1px solid var(--aborea-border-light); border-radius: var(--aborea-radius-sm); overflow: hidden; }
+.skill-group-header {
+  cursor: pointer; padding: 6px 10px; font-weight: 600; font-size: .85rem;
+  background: var(--aborea-parchment-2); display: flex; align-items: center; gap: 6px;
+  list-style: none; user-select: none;
+}
+.skill-group-header::-webkit-details-marker { display: none; }
+.skill-group-count { color: var(--aborea-brown); font-weight: 400; font-size: .8rem; margin-left: auto; }
+.skill-total-badge {
+  font-size: .75rem; font-weight: 700; padding: 1px 6px;
+  border-radius: 99px; background: #f3f4f6; color: #374151;
+}
+.skill-total-badge.has-bonus { background: #dbeafe; color: #1e40af; }
+.skill-groups.hide-zero .skill-row[data-rank="0"] { display: none; }
+.toggle-zero-skills.active { background: var(--aborea-gold); color: #fff; }
+
+/* ── Besonderes — Akkordeon ─────────────────────────── */
+.special-section { border: 1px solid var(--aborea-border-light); border-radius: var(--aborea-radius-sm); margin-bottom: 6px; overflow: hidden; }
+.special-section > summary {
+  padding: 8px 12px; cursor: pointer; font-weight: 600;
+  background: var(--aborea-parchment-2); display: flex; align-items: center; gap: 8px;
+  list-style: none;
+}
+.special-section > summary::-webkit-details-marker { display: none; }
+.special-section > summary::before { content: "▶"; font-size: .7rem; transition: transform .2s; }
+.special-section[open] > summary::before { transform: rotate(90deg); }
+.special-section > .panel { border: none; border-top: 1px solid var(--aborea-border-light); border-radius: 0; }
+
+/* Feature-Karten */
+.feature-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.feature-card {
+  border: 1px solid var(--aborea-border-light); border-radius: var(--aborea-radius-sm);
+  padding: 10px; background: var(--aborea-parchment-2);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.feature-card.feature-spent { opacity: .6; }
+.feature-card-name { font-weight: 700; font-size: .88rem; }
+.feature-card-desc { font-size: .78rem; color: var(--aborea-brown); flex: 1; }
+.feature-card-footer { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.feature-uses-bar-wrap { flex: 1; height: 4px; background: #e5e7eb; border-radius: 99px; overflow: hidden; }
+.feature-uses-bar { height: 100%; background: var(--aborea-gold); }
+
+/* Empty states */
+.empty-state { color: var(--aborea-brown); font-style: italic; font-size: .85rem; padding: 8px 0; }
+
+/* Inventar-Total */
+.inventory-totals { text-align: right; font-size: .82rem; color: var(--aborea-brown); padding: 6px 10px; border-top: 1px solid var(--aborea-border-light); }
 
 /* ── Stufenaufstieg-Banner ──────────────────────────── */
 .levelup-banner {
