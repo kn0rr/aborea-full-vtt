@@ -340,6 +340,18 @@ export class AboreaActorSheet extends ActorSheet {
     super.activateListeners(html);
     if (!this.isEditable) return;
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
+
+    // Dropdowns für Volk/Beruf/Gott vorauswählen
+    const details = this.actor.system.details ?? {};
+    const setSelected = (name, val) => {
+      const sel = html.find(`[name="${name}"]`)[0];
+      if (!sel || !val) return;
+      const opt = Array.from(sel.options).find(o => o.value === val);
+      if (opt) opt.selected = true;
+    };
+    setSelected("selectedRace",  details.race);
+    setSelected("selectedClass", details.class);
+    setSelected("selectedGod",   details.god);
     html.find(".roll-attribute").on("click", ev => rollAttribute(this.actor, ev.currentTarget.dataset.attribute));
     html.find(".toggle-zero-skills").on("click", ev => {
       const list = ev.currentTarget.closest(".tab").querySelector(".skill-groups");
