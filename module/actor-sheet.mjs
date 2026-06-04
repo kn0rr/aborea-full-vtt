@@ -653,11 +653,29 @@ export class AboreaActorSheet extends ActorSheet {
     const baseWeaponRank = Number(actorSystem.skills?.waffen?.rank ?? 0);
     const skillUpdates = {};
     for (const key of ABOREA.weaponSkillKeys) skillUpdates[`system.skills.${key}.rank`] = Math.max(Number(actorSystem.skills?.[key]?.rank ?? 0), baseWeaponRank);
+
+    // Kampfbonus automatisch aus bester Waffenfertigkeit berechnen
+    let bestCombatBonus = ABOREA.combatBonus(ABOREA.attributeBonus(finalAttrs.st?.value ?? 5), 0);
+    for (const key of ABOREA.weaponSkillKeys) {
+      const rank    = Math.max(Number(actorSystem.skills?.[key]?.rank ?? 0), baseWeaponRank);
+      const attrKey = ABOREA.skills?.[key]?.attribute ?? "st";
+      const attrVal = finalAttrs[attrKey]?.value ?? 5;
+      const cb = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
+      if (cb > bestCombatBonus) bestCombatBonus = cb;
+    }
+    // Bestehende Offensive/Defensive-Aufteilung beibehalten, aber auf neuen Total kappen
+    const prevOff = Number(actorSystem.combat?.offensiveBonus ?? bestCombatBonus);
+    const newOff  = Math.min(prevOff, bestCombatBonus);
+    const newDef  = bestCombatBonus - newOff;
+
     await this.actor.update({
       "system.attributes": foundry.utils.deepClone(finalAttrs), "system.finalAttributes": finalAttrs,
       "system.resources.hp.max": hpMax, "system.resources.hp.value": Math.min(Number(actorSystem.resources?.hp?.value ?? hpMax), hpMax),
       "system.resources.mp.max": mpMax, "system.resources.mp.value": Math.min(Number(actorSystem.resources?.mp?.value ?? mpMax), mpMax),
       "system.resources.trainingPoints": trainingBudget, "system.traits": traits, "system.classFeatures": featureState,
+      "system.combat.combatBonus":    bestCombatBonus,
+      "system.combat.offensiveBonus": newOff,
+      "system.combat.defensiveBonus": newDef,
       "system.creation.pointsBudget": budget, "system.creation.pointsSpent": spent, "system.creation.pointsRemaining": remaining,
       "system.creation.trainingBudget": trainingBudget, "system.creation.trainingSpent": trainingSpent, "system.creation.trainingRemaining": trainingRemaining,
       "system.creation.validationErrors": errors, "system.creation.status": errors.length ? "draft" : "ready", ...skillUpdates
