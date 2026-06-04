@@ -101,8 +101,9 @@
   margin-bottom: 6px;
 }
 .picker-row { display: flex; align-items: center; gap: 8px; width: 100%; }
-.picker-label { font-size: .8rem; color: var(--aborea-brown); white-space: nowrap; font-weight: 600; width: 80px; flex-shrink: 0; }
+.picker-label { font-size: .8rem; color: var(--aborea-brown); white-space: nowrap; font-weight: 600; width: 65px; flex-shrink: 0; }
 .picker-row select { flex: 1; font-size: .88rem; min-width: 0; height: 28px; }
+.picker-btn { width: 28px; height: 28px; padding: 0; flex-shrink: 0; font-size: 1rem; }
 
 /* ── Header (legacy compat) ─────────────────────────── */
 .aborea-sheet .sheet-header {
