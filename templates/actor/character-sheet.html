@@ -45,34 +45,39 @@
       {{/if}}
     </div>
 
-    {{!-- Volk/Klasse auswählen (Erschaffung) --}}
-    {{#unless system.creation.completed}}
-    <div class="header-pickers">
-      <div class="picker-row">
-        <select name="selectedRace"><option value=""></option>{{#each availablePacks.races as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
-        <button type="button" class="apply-race btn-sm">{{localize "ABOREA.ApplyRace"}}</button>
-      </div>
-      <div class="picker-row">
-        <select name="selectedClass"><option value=""></option>{{#each availablePacks.classes as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
-        <button type="button" class="apply-class btn-sm">{{localize "ABOREA.ApplyClass"}}</button>
-      </div>
-      {{#if system.isLeitmagieClass}}
-      <div class="picker-row">
-        <select name="selectedGod"><option value=""></option>{{#each availablePacks.gods as |e|}}<option value="{{e.name}}" {{#if (aboreaEq e.name ../system.details.god)}}selected{{/if}}>{{e.name}}</option>{{/each}}</select>
-        <button type="button" class="apply-god btn-sm">{{localize "ABOREA.ApplyGod"}}</button>
-      </div>
-      {{/if}}
-    </div>
-    {{/unless}}
-    {{#if system.isLeitmagieClass}}{{#if system.creation.completed}}
-    <div class="header-pickers">
-      <div class="picker-row">
-        <select name="selectedGod"><option value=""></option>{{#each availablePacks.gods as |e|}}<option value="{{e.name}}" {{#if (aboreaEq e.name ../system.details.god)}}selected{{/if}}>{{e.name}}</option>{{/each}}</select>
-        <button type="button" class="apply-god btn-sm">{{localize "ABOREA.ApplyGod"}}</button>
-      </div>
-    </div>
-    {{/if}}{{/if}}
   </header>
+
+  {{!-- Volk/Klasse/Gottheit-Auswahl als eigene Zeile unter dem Header (volle Breite) --}}
+  {{#unless system.creation.completed}}
+  <div class="pickers-bar">
+    <div class="picker-row">
+      <label class="picker-label">{{localize "ABOREA.ApplyRace"}}</label>
+      <select name="selectedRace"><option value=""></option>{{#each availablePacks.races as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
+      <button type="button" class="apply-race btn-sm">{{localize "ABOREA.Apply"}}</button>
+    </div>
+    <div class="picker-row">
+      <label class="picker-label">{{localize "ABOREA.ApplyClass"}}</label>
+      <select name="selectedClass"><option value=""></option>{{#each availablePacks.classes as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
+      <button type="button" class="apply-class btn-sm">{{localize "ABOREA.Apply"}}</button>
+    </div>
+    {{#if system.isLeitmagieClass}}
+    <div class="picker-row">
+      <label class="picker-label">{{localize "ABOREA.ApplyGod"}}</label>
+      <select name="selectedGod"><option value=""></option>{{#each availablePacks.gods as |e|}}<option value="{{e.name}}" {{#if (aboreaEq e.name ../system.details.god)}}selected{{/if}}>{{e.name}}</option>{{/each}}</select>
+      <button type="button" class="apply-god btn-sm">{{localize "ABOREA.Apply"}}</button>
+    </div>
+    {{/if}}
+  </div>
+  {{/unless}}
+  {{#if system.isLeitmagieClass}}{{#if system.creation.completed}}
+  <div class="pickers-bar">
+    <div class="picker-row">
+      <label class="picker-label">{{localize "ABOREA.ApplyGod"}}</label>
+      <select name="selectedGod"><option value=""></option>{{#each availablePacks.gods as |e|}}<option value="{{e.name}}" {{#if (aboreaEq e.name ../system.details.god)}}selected{{/if}}>{{e.name}}</option>{{/each}}</select>
+      <button type="button" class="apply-god btn-sm">{{localize "ABOREA.Apply"}}</button>
+    </div>
+  </div>
+  {{/if}}{{/if}}
 
   {{!-- Stufenaufstieg-Banner --}}
   {{#if system.levelUp.pending}}
