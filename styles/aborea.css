@@ -482,6 +482,8 @@
 .field-with-hint label { display: flex; flex-direction: column; gap: 1px; cursor: help; }
 .field-hint { font-size: .68rem; color: var(--aborea-brown-light, #9a7c56); font-weight: 400; font-style: italic; line-height: 1.2; }
 .field-with-hint input[disabled] { opacity: .7; font-style: italic; background: var(--aborea-panel-bg); }
+.computed-hint { color: var(--aborea-green, #16a34a) !important; font-style: normal; }
+.computed-field { font-weight: 700; color: var(--aborea-green, #16a34a); }
 
 /* ── NSC Waffenfähigkeiten ──────────────────────────── */
 .npc-weapon-skills { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }

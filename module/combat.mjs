@@ -97,11 +97,22 @@ export async function openAttackDialog(attackerActor) {
 
   const preselectedId = game.user.targets.first()?.id ?? "";
 
-  const _dv = actor => actor
-    ? ABOREA.defenseValue(
-        Number(actor.system.combat?.totalArmorValue ?? 5),
-        Number(actor.system.combat?.defensiveBonus  ?? 0))
-    : 5;
+  const _dv = actor => {
+    if (!actor) return 5;
+    // Charaktere: totalArmorValue wird von _recalculateCharacter persistent gespeichert
+    // (enthält Rassen- und Klassenboni) → direkt verwenden
+    if (actor.type === "character" && actor.system.combat?.totalArmorValue != null) {
+      return ABOREA.defenseValue(
+        Number(actor.system.combat.totalArmorValue),
+        Number(actor.system.combat?.defensiveBonus ?? 0));
+    }
+    // NSCs / Kreaturen: live aus Basis + ausgerüsteten Rüstungsteilen berechnen
+    const baseArmor      = Number(actor.system.combat?.armorValue ?? 0);
+    const armorFromItems = actor.items
+      .filter(i => i.type === "armor" && i.system.equipped)
+      .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+    return ABOREA.defenseValue(baseArmor + armorFromItems, Number(actor.system.combat?.defensiveBonus ?? 0));
+  };
 
   const targetOptions = [
     `<option value="">— Kein Ziel (VW manuell) —</option>`,
@@ -235,11 +246,22 @@ export async function openSpellAttackDialog(attackerActor, item, mpCost) {
     .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
   const preselectedId = game.user.targets.first()?.id ?? "";
 
-  const _dv = actor => actor
-    ? ABOREA.defenseValue(
-        Number(actor.system.combat?.totalArmorValue ?? 5),
-        Number(actor.system.combat?.defensiveBonus  ?? 0))
-    : 5;
+  const _dv = actor => {
+    if (!actor) return 5;
+    // Charaktere: totalArmorValue wird von _recalculateCharacter persistent gespeichert
+    // (enthält Rassen- und Klassenboni) → direkt verwenden
+    if (actor.type === "character" && actor.system.combat?.totalArmorValue != null) {
+      return ABOREA.defenseValue(
+        Number(actor.system.combat.totalArmorValue),
+        Number(actor.system.combat?.defensiveBonus ?? 0));
+    }
+    // NSCs / Kreaturen: live aus Basis + ausgerüsteten Rüstungsteilen berechnen
+    const baseArmor      = Number(actor.system.combat?.armorValue ?? 0);
+    const armorFromItems = actor.items
+      .filter(i => i.type === "armor" && i.system.equipped)
+      .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+    return ABOREA.defenseValue(baseArmor + armorFromItems, Number(actor.system.combat?.defensiveBonus ?? 0));
+  };
 
   const targetOptions = [
     `<option value="">— Kein Ziel (VW manuell) —</option>`,

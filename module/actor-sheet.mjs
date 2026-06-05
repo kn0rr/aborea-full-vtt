@@ -338,14 +338,20 @@ export class AboreaActorSheet extends ActorSheet {
     );
     system.combat.initiative = ABOREA.initiativeBonus(actor);
 
-    // Waffenfähigkeiten aufbereiten
+    // Waffenfähigkeiten aufbereiten + besten Kampfbonus berechnen
     const sign = n => n >= 0 ? `+${n}` : `${n}`;
+    let bestCB = null; let bestCBLabel = ""; let bestCBDetail = "";
     system.weaponSkillRows = ABOREA.weaponSkillKeys.map(key => {
       const rank      = Number(system.weaponSkills?.[key] ?? 0);
       const attrKey   = ABOREA.skills?.[key]?.attribute ?? "st";
       const attrBonus = ABOREA.attributeBonus(Number(system.attributes?.[attrKey]?.value ?? 5));
       const cb        = ABOREA.combatBonus(attrBonus, rank);
       const penalty   = rank > 0 ? "" : " − 2";
+      // Besten Kampfbonus tracken (nur ausgebildete Fertigkeiten bevorzugen)
+      if (rank > 0 && (bestCB === null || cb > bestCB)) {
+        bestCB = cb; bestCBLabel = ABOREA.skills[key]?.label ?? key;
+        bestCBDetail = `${attrKey.toUpperCase()} ${sign(attrBonus)} + Rang ${rank} = ${sign(cb)}`;
+      }
       return {
         key,
         label:    ABOREA.skills[key]?.label ?? key,
@@ -353,6 +359,18 @@ export class AboreaActorSheet extends ActorSheet {
         tooltip: `${attrKey.toUpperCase()} ${sign(attrBonus)} + Rang ${rank}${penalty} = ${sign(cb)}`
       };
     });
+
+    // Kampfbonus: wenn weaponSkills vorhanden → berechneten Wert anzeigen
+    const hasWeaponSkills = bestCB !== null;
+    if (hasWeaponSkills) {
+      system.combat.computedCombatBonus = bestCB;
+      system.combat.combatBonusTooltip  = `${bestCBLabel}: ${bestCBDetail}`;
+      // Für Anzeige: berechneten Wert in combatBonus übernehmen
+      system.combat.combatBonus = bestCB;
+    } else {
+      system.combat.computedCombatBonus = null;
+      system.combat.combatBonusTooltip  = "Kein Waffenfertigkeits-Rang gesetzt — manuell gepflegt";
+    }
 
     // Magische Fähigkeiten aufbereiten
     const MAGIC_SKILL_KEYS = ["magieEntwickeln", "spruchlisten", "gezielteSprueche", "magieWahrnehmen"];
@@ -375,6 +393,32 @@ export class AboreaActorSheet extends ActorSheet {
           ? `MP-Pool = (${attrKey.toUpperCase()} ${sign(attrBonus)} + 3) × ${rank} = ${(attrBonus + 3) * rank}`
           : `${attrKey.toUpperCase()} ${sign(attrBonus)} + Rang ${rank} = ${sign(bonus)}`
       };
+    });
+  }
+
+  async _recomputeNpcCombatBonus() {
+    const system = this.actor.system;
+    const attributes = system.attributes ?? {};
+    let bestCB = null;
+    for (const key of ABOREA.weaponSkillKeys) {
+      const rank = Number(system.weaponSkills?.[key] ?? 0);
+      if (rank === 0) continue;
+      const attrKey   = ABOREA.skills?.[key]?.attribute ?? "st";
+      const attrBonus = ABOREA.attributeBonus(Number(attributes[attrKey]?.value ?? 5));
+      const cb        = ABOREA.combatBonus(attrBonus, rank);
+      if (bestCB === null || cb > bestCB) bestCB = cb;
+    }
+    if (bestCB === null) return; // keine ausgebildeten Fertigkeiten → manuell belassen
+    // Bestehende Off/Def-Aufteilung proportional beibehalten
+    const prevCB  = Number(system.combat?.combatBonus ?? bestCB) || bestCB;
+    const prevOff = Number(system.combat?.offensiveBonus ?? prevCB);
+    const ratio   = prevOff / prevCB;
+    const newOff  = Math.round(bestCB * ratio);
+    const newDef  = bestCB - newOff;
+    await this.actor.update({
+      "system.combat.combatBonus":    bestCB,
+      "system.combat.offensiveBonus": Math.max(0, Math.min(bestCB, newOff)),
+      "system.combat.defensiveBonus": Math.max(0, newDef)
     });
   }
 
@@ -472,6 +516,14 @@ export class AboreaActorSheet extends ActorSheet {
       const combatBonus = Number(this.actor.system.combat?.combatBonus ?? 0);
       await this.actor.update({ "system.combat.offensiveBonus": offensive, "system.combat.defensiveBonus": combatBonus - offensive });
     });
+
+    // Waffenfertigkeit geändert → Kampfbonus automatisch neu berechnen und speichern
+    if (["npc", "creature"].includes(this.actor.type)) {
+      html.find("[name^='system.weaponSkills.']").on("change", async () => {
+        // Kurz warten bis Foundry den Wert gespeichert hat, dann neu berechnen
+        setTimeout(() => this._recomputeNpcCombatBonus(), 200);
+      });
+    }
     html.find(".rest-heal").on("click", async () => {
       const healed = Math.max(0, ABOREA.naturalHealingPerDay(ABOREA.attributeBonus(this._attributeValue("ko"))));
       const cur = Number(this.actor.system.resources.hp.value ?? 0);

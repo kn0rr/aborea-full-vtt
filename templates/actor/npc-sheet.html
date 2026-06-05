@@ -49,11 +49,19 @@
         <div class="combat-grid">
 
           <div class="field-with-hint">
-            <label title="Wird beim Angriff aufgeteilt in Offensiv- und Defensivbonus. Zusammensetzung: Attributbonus (ST oder GE) + Waffenfertigkeit − 2 (wenn ungelernt).">
+            <label title="{{#if system.combat.combatBonusTooltip}}{{system.combat.combatBonusTooltip}}{{else}}Wird beim Angriff aufgeteilt in Offensiv- und Defensivbonus. Zusammensetzung: Attributbonus (ST oder GE) + Waffenfertigkeit − 2 (wenn ungelernt).{{/if}}">
               {{localize "ABOREA.CombatBonus"}}
+              {{#if system.combat.computedCombatBonus}}
+              <span class="field-hint computed-hint">⚙ berechnet aus Waffenfähigkeiten</span>
+              {{else}}
               <span class="field-hint">Attributbonus + Rang (− 2 ungelernt)</span>
+              {{/if}}
             </label>
+            {{#if system.combat.computedCombatBonus}}
+            <input type="number" value="{{system.combat.combatBonus}}" disabled class="computed-field" />
+            {{else}}
             <input type="number" name="system.combat.combatBonus" value="{{system.combat.combatBonus}}" />
+            {{/if}}
           </div>
 
           <div class="field-with-hint">
