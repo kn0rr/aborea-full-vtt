@@ -1,5 +1,6 @@
 [
-   {
+  {
+    "_id": "57aa56781e430001",
     "name": "Armbrust",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -19,6 +20,7 @@
     }
   },
   {
+    "_id": "57aa56781e430002",
     "name": "Kurzschwert",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -39,6 +41,7 @@
     }
   },
   {
+    "_id": "57aa56781e430003",
     "name": "Langbogen",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -59,6 +62,7 @@
     }
   },
   {
+    "_id": "57aa56781e430004",
     "name": "Langschwert",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -78,6 +82,7 @@
     }
   },
   {
+    "_id": "57aa56781e430005",
     "name": "Morgenstern",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -98,6 +103,7 @@
     }
   },
   {
+    "_id": "57aa56781e430006",
     "name": "Rapier",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -118,6 +124,7 @@
     }
   },
   {
+    "_id": "57aa56781e430007",
     "name": "Schleuder",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -138,6 +145,7 @@
     }
   },
   {
+    "_id": "57aa56781e430008",
     "name": "Speer",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -158,6 +166,7 @@
     }
   },
   {
+    "_id": "57aa56781e430009",
     "name": "Stab",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -178,6 +187,7 @@
     }
   },
   {
+    "_id": "57aa56781e43000a",
     "name": "Waffenlos",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -198,6 +208,7 @@
     }
   },
   {
+    "_id": "57aa56781e43000b",
     "name": "Zweihand-Axt",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -217,6 +228,7 @@
     }
   },
   {
+    "_id": "57aa56781e43000c",
     "name": "Zweihänder",
     "type": "weapon",
     "img": "icons/svg/sword.svg",
@@ -236,24 +248,60 @@
     }
   },
   {
-  "name": "Dolch",
-  "type": "weapon",
-  "img": "icons/svg/sword.svg",
-  "system": {
-    "description": "",
-    "skill": "kurzeKlingenwaffe",
-    "minStrength": 0,
-    "damage": -2,
-    "initiative": 2,
-    "range": "kurz",
-    "price": "6 TT",
-    "weight": 0.5,
-    "attrChoices": [
-      "st",
-      "ge"
-    ],
-    "hands": 1
+    "_id": "57aa56781e43000d",
+    "name": "Dolch",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "",
+      "skill": "kurzeKlingenwaffe",
+      "minStrength": 0,
+      "damage": -2,
+      "initiative": 2,
+      "range": "kurz",
+      "price": "6 TT",
+      "weight": 0.5,
+      "attrChoices": [
+        "st",
+        "ge"
+      ],
+      "hands": 1
+    }
+  },
+  {
+    "_id": "57aa56781e43000e",
+    "name": "Knüppel",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "Einfache Schlagwaffe, oft selbst gefertigt.",
+      "skill": "aexte",
+      "minStrength": 0,
+      "damage": -1,
+      "initiative": 1,
+      "range": "kurz",
+      "price": "1 KL",
+      "weight": 2,
+      "attrChoices": ["st"],
+      "hands": 1
+    }
+  },
+  {
+    "_id": "57aa56781e43000f",
+    "name": "Kriegsaxt",
+    "type": "weapon",
+    "img": "icons/svg/sword.svg",
+    "system": {
+      "description": "Schwere einschneidige Axt.",
+      "skill": "aexte",
+      "minStrength": 6,
+      "damage": 2,
+      "initiative": -1,
+      "range": "kurz",
+      "price": "3 GF",
+      "weight": 5,
+      "attrChoices": ["st"],
+      "hands": 1
+    }
   }
-}
-  
 ]

@@ -106,10 +106,12 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
       details: new fields.ObjectField({ initial: () => ({
         race: "", class: "", size: "mittel", notes: ""
       })}),
-      traits:   new fields.ObjectField({ initial: () => ({}) }),
-      creation: new fields.ObjectField({ initial: () => ({}) }),
-      role:     new fields.StringField({ initial: "" }),
-      faction:  new fields.StringField({ initial: "" })
+      traits:        new fields.ObjectField({ initial: () => ({}) }),
+      creation:      new fields.ObjectField({ initial: () => ({}) }),
+      weaponSkills:  new fields.ObjectField({ initial: () => ({}) }),
+      magicSkills:   new fields.ObjectField({ initial: () => ({}) }),
+      role:          new fields.StringField({ initial: "" }),
+      faction:       new fields.StringField({ initial: "" })
     };
   }
 }
@@ -128,8 +130,10 @@ export class CreatureDataModel extends foundry.abstract.TypeDataModel {
       details: new fields.ObjectField({ initial: () => ({
         race: "", class: "", size: "mittel", notes: ""
       })}),
-      traits:   new fields.ObjectField({ initial: () => ({}) }),
-      creation: new fields.ObjectField({ initial: () => ({}) }),
+      traits:       new fields.ObjectField({ initial: () => ({}) }),
+      creation:     new fields.ObjectField({ initial: () => ({}) }),
+      weaponSkills: new fields.ObjectField({ initial: () => ({}) }),
+      magicSkills:  new fields.ObjectField({ initial: () => ({}) }),
       creature: new fields.ObjectField({ initial: () => ({
         kind: "", threat: 1, regeneration: 0,
         resistances: "", vulnerability: "", special: ""

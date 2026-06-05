@@ -5,31 +5,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 6
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 5
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 6 },
+        "ge": { "value": 5 },
+        "ko": { "value": 5 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 10,
-          "max": 10
-        },
-        "mp": {
-          "value": 3,
-          "max": 3
-        }
+        "hp": { "value": 10, "max": 10 },
+        "mp": { "value": 3, "max": 3 }
       },
       "combat": {
         "combatBonus": 3,
@@ -48,10 +32,15 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 2, Waffenlos 2, Athletik 1; ME 1, S(Kampf) 1\nWaffen: mar. Knüppel; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -2; -3\nZusatzdaten: 1"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "aexte": 2,
+        "waffenlos": 2
+      },
+      "magicSkills": {
+        "magieEntwickeln": 1,
+        "spruchlisten": 1
       },
       "creature": {
         "kind": "Gesindel",
@@ -62,16 +51,27 @@
         "special": "-1AB/+2S; -2; -3"
       }
     },
+    "items": [
+      {
+        "name": "Knüppel",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "aexte", "attribute": "st", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000e" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "b7f99d7c4561a22d",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-raufbold-1",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-raufbold-1", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -80,31 +80,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 6
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 6 },
+        "ge": { "value": 5 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 22,
-          "max": 22
-        },
-        "mp": {
-          "value": 3,
-          "max": 3
-        }
+        "hp": { "value": 22, "max": 22 },
+        "mp": { "value": 3, "max": 3 }
       },
       "combat": {
         "combatBonus": 5,
@@ -123,10 +107,16 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 4, Waffenlos 2, Stichwaffen 2; Athletik 1, List 1, ME 1, S(Kampf) 1\nWaffen: mar. Knüppel; ros. Dolch; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -2; -3; -3\nZusatzdaten: 1"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "aexte": 4,
+        "waffenlos": 2,
+        "kurzeKlingenwaffe": 2
+      },
+      "magicSkills": {
+        "magieEntwickeln": 1,
+        "spruchlisten": 1
       },
       "creature": {
         "kind": "Gesindel",
@@ -137,16 +127,34 @@
         "special": "-1AB/+2S; -2; -3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Knüppel",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "aexte", "attribute": "st", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000e" } }
+      },
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "a32d5ea3eeecb715",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-grobian-2",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-grobian-2", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -155,37 +163,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 7
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 7 },
+        "ge": { "value": 5 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 33,
-          "max": 33
-        },
-        "mp": {
-          "value": 3,
-          "max": 3
-        }
+        "hp": { "value": 33, "max": 33 },
+        "mp": { "value": 3, "max": 3 }
       },
       "combat": {
         "combatBonus": 7,
         "offensiveBonus": 7,
         "defensiveBonus": 0,
-        "armorValue": 6,
+        "armorValue": 0,
         "defenseValue": 6,
         "targetDefense": 6,
         "initiative": -1
@@ -198,10 +190,16 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Wuchtwaffe 6, Waffenlos 2, Stichwaffen 4; Athletik 1, List 2, ME 1, S(Kampf) 1\nWaffen: Knüppel; Dolch; Waffenlos\nZauber: Heftiger Angriff\nBesonderes: -1AB/+2S; -1; -2; -3\nZusatzdaten: 1"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "aexte": 6,
+        "waffenlos": 2,
+        "kurzeKlingenwaffe": 4
+      },
+      "magicSkills": {
+        "magieEntwickeln": 1,
+        "spruchlisten": 1
       },
       "creature": {
         "kind": "Gesindel",
@@ -212,16 +210,41 @@
         "special": "-1AB/+2S; -1; -2; -3"
       }
     },
+    "items": [
+      {
+        "name": "Knüppel",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "aexte", "attribute": "st", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000e" } }
+      },
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 6, "maneuverMod": 0, "minStrength": 3, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430011" } }
+      }
+    ],
     "_id": "dcb68d4897e46217",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-schlaeger-3",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-schlaeger-3", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -230,31 +253,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 6
-        },
-        "ko": {
-          "value": 5
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 6 },
+        "ko": { "value": 5 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 6,
-          "max": 6
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 6, "max": 6 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 3,
@@ -273,10 +280,10 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 2, List 2; Athletik 2, Wahrnehmung 1\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 2
       },
       "creature": {
         "kind": "Gesindel",
@@ -287,16 +294,27 @@
         "special": "-3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "b3086bce3b2790a7",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-taugenichts-1",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-taugenichts-1", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -305,31 +323,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 6
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 6 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 14,
-          "max": 14
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 14, "max": 14 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 5,
@@ -348,10 +350,10 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 4, List 4; Athletik 3, Wahrnehmung 2\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 4
       },
       "creature": {
         "kind": "Gesindel",
@@ -362,16 +364,27 @@
         "special": "-3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "2c7e9033b6db99cf",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-bandit-2",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-bandit-2", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -380,37 +393,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 7
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 7 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 21,
-          "max": 21
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 21, "max": 21 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 7,
         "offensiveBonus": 7,
         "defensiveBonus": 0,
-        "armorValue": 6,
+        "armorValue": 0,
         "defenseValue": 6,
         "targetDefense": 6,
         "initiative": 2
@@ -423,10 +420,10 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffen 6, List 6; Athletik 4, Wahrnehmung 3\nWaffen: Dolch; Waffenlos\nBesonderes: -2; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 6
       },
       "creature": {
         "kind": "Gesindel",
@@ -437,16 +434,34 @@
         "special": "-2; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 6, "maneuverMod": 0, "minStrength": 3, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430011" } }
+      }
+    ],
     "_id": "c1c071b89018dd66",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-schurke-3",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-schurke-3", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -455,31 +470,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 5
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 6
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 5 },
+        "ko": { "value": 5 },
+        "in": { "value": 5 },
+        "ch": { "value": 6 }
       },
       "resources": {
-        "hp": {
-          "value": 6,
-          "max": 6
-        },
-        "mp": {
-          "value": 4,
-          "max": 4
-        }
+        "hp": { "value": 6, "max": 6 },
+        "mp": { "value": 4, "max": 4 }
       },
       "combat": {
         "combatBonus": 2,
@@ -498,10 +497,14 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 2, ME 1, Einfluss 2, K(Flöte) 1; S(Barde) 1\nWaffen: ros. Dolch; Waffenlos\nZauber: Bardenlied\nBesonderes: min. 5R; -3; -3\nZusatzdaten: +2; 2"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 2
+      },
+      "magicSkills": {
+        "magieEntwickeln": 1,
+        "spruchlisten": 1
       },
       "creature": {
         "kind": "Gesindel",
@@ -512,16 +515,27 @@
         "special": "min. 5R; -3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "645294febc0fb23f",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-gauner-1",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-gauner-1", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -530,31 +544,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 6
-        },
-        "ko": {
-          "value": 5
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 6
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 6 },
+        "ko": { "value": 5 },
+        "in": { "value": 5 },
+        "ch": { "value": 6 }
       },
       "resources": {
-        "hp": {
-          "value": 12,
-          "max": 12
-        },
-        "mp": {
-          "value": 8,
-          "max": 8
-        }
+        "hp": { "value": 12, "max": 12 },
+        "mp": { "value": 8, "max": 8 }
       },
       "combat": {
         "combatBonus": 4,
@@ -573,10 +571,14 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 3, ME 2, Einfluss 4, K(Flöte) 2; S(Barde) 2, List 1\nWaffen: ros. Dolch; Waffenlos\nZauber: Bardenlied; Lied \"Mut\"\nBesonderes: min. 5R; -3; +2 Mana/R; -3\nZusatzdaten: +3; 2; 3/R"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 3
+      },
+      "magicSkills": {
+        "magieEntwickeln": 2,
+        "spruchlisten": 2
       },
       "creature": {
         "kind": "Gesindel",
@@ -587,16 +589,27 @@
         "special": "min. 5R; -3; +2 Mana/R; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "a20229821291fe86",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-stadtstreicher-2",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-stadtstreicher-2", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -605,37 +618,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 6
-        },
-        "ko": {
-          "value": 5
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 7
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 6 },
+        "ko": { "value": 5 },
+        "in": { "value": 5 },
+        "ch": { "value": 7 }
       },
       "resources": {
-        "hp": {
-          "value": 18,
-          "max": 18
-        },
-        "mp": {
-          "value": 12,
-          "max": 12
-        }
+        "hp": { "value": 18, "max": 18 },
+        "mp": { "value": 12, "max": 12 }
       },
       "combat": {
         "combatBonus": 5,
         "offensiveBonus": 5,
         "defensiveBonus": 0,
-        "armorValue": 6,
+        "armorValue": 0,
         "defenseValue": 6,
         "targetDefense": 6,
         "initiative": 2
@@ -648,10 +645,14 @@
         "notes": "Kategorie: Gesindel\nFertigkeiten: Stichwaffe 4, ME 3, Einfluss 6, K(Flöte) 3; S(Barde 3), List 2\nWaffen: Dolch; Waffenlos\nZauber: Bardenlied; Lied \"Mut\"; Lied \"Beistand\"\nBesonderes: min. 5R; -2; +2 Mana/R; -3; +4 HP/R\nZusatzdaten: +4; 2; 3/R; 3/R"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 4
+      },
+      "magicSkills": {
+        "magieEntwickeln": 3,
+        "spruchlisten": 3
       },
       "creature": {
         "kind": "Gesindel",
@@ -662,16 +663,34 @@
         "special": "min. 5R; -2; +2 Mana/R; -3; +4 HP/R"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 6, "maneuverMod": 0, "minStrength": 3, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430011" } }
+      }
+    ],
     "_id": "f5ad6a046a8e8c41",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-trubadour-3",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-trubadour-3", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -680,37 +699,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 5
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 5 },
+        "ge": { "value": 5 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 11,
-          "max": 11
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 11, "max": 11 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 2,
         "offensiveBonus": 2,
         "defensiveBonus": 0,
-        "armorValue": 6,
+        "armorValue": 0,
         "defenseValue": 6,
         "targetDefense": 6,
         "initiative": 0
@@ -723,10 +726,11 @@
         "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 2, Wurfwaffe 2, Wahrnehmung 1; Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos\nBesonderes: 0; 0; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "stangenwaffe": 2,
+        "wurfwaffe": 2
       },
       "creature": {
         "kind": "Gesetzeshüter",
@@ -737,16 +741,41 @@
         "special": "0; 0; -3"
       }
     },
+    "items": [
+      {
+        "name": "Speer",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "stangenwaffe", "attribute": "st", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Speer (Wurf)",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "wurfwaffe", "attribute": "ge", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 6, "maneuverMod": 0, "minStrength": 3, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430011" } }
+      }
+    ],
     "_id": "8b6bbc8992a1225d",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-miliz-1",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-miliz-1", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -755,37 +784,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 6
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 6 },
+        "ge": { "value": 5 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 22,
-          "max": 22
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 22, "max": 22 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 5,
         "offensiveBonus": 5,
         "defensiveBonus": 0,
-        "armorValue": 6,
+        "armorValue": 0,
         "defenseValue": 6,
         "targetDefense": 6,
         "initiative": 0
@@ -798,10 +811,12 @@
         "notes": "Kategorie: Gesetzeshüter\nBeiname: (Stadtwache)\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 2, k.Klinge 2; Wahrnehmung 1, Athletik 1, Schild 1\nWaffen: Speer; Speer (w); Kurzschwert; Waffenlos\nBesonderes: 0; 0; Rundschild (H) (2/-1); -1; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "stangenwaffe": 4,
+        "wurfwaffe": 2,
+        "kurzeKlingenwaffe": 2
       },
       "creature": {
         "kind": "Gesetzeshüter",
@@ -812,16 +827,55 @@
         "special": "0; 0; Rundschild (H) (2/-1); -1; -3"
       }
     },
+    "items": [
+      {
+        "name": "Speer",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "stangenwaffe", "attribute": "st", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Speer (Wurf)",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "wurfwaffe", "attribute": "ge", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Kurzschwert",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430002" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 6, "maneuverMod": 0, "minStrength": 3, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430011" } }
+      },
+      {
+        "name": "Turmschild",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 2, "maneuverMod": -1, "minStrength": 4, "equipped": false },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430017" } }
+      }
+    ],
     "_id": "5a1d7b7dc0144b2e",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-soldat-2",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-soldat-2", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -830,37 +884,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 6
-        },
-        "ge": {
-          "value": 6
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 5
-        }
+        "st": { "value": 6 },
+        "ge": { "value": 6 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 5 }
       },
       "resources": {
-        "hp": {
-          "value": 33,
-          "max": 33
-        },
-        "mp": {
-          "value": 3,
-          "max": 3
-        }
+        "hp": { "value": 33, "max": 33 },
+        "mp": { "value": 3, "max": 3 }
       },
       "combat": {
         "combatBonus": 5,
         "offensiveBonus": 5,
         "defensiveBonus": 0,
-        "armorValue": 7,
+        "armorValue": 0,
         "defenseValue": 7,
         "targetDefense": 7,
         "initiative": 0
@@ -873,10 +911,16 @@
         "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 3, k.Klinge 3; Wahrnehmung 2, Athletik 1, Schild 1, ME 1; S(Kampf) 1, Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos; Kurzschwert\nBesonderes: 0; 0; -3; Rundschild (H) (2/-1); -1"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "stangenwaffe": 4,
+        "wurfwaffe": 3,
+        "kurzeKlingenwaffe": 3
+      },
+      "magicSkills": {
+        "magieEntwickeln": 1,
+        "spruchlisten": 1
       },
       "creature": {
         "kind": "Gesetzeshüter",
@@ -887,16 +931,55 @@
         "special": "0; 0; -3; Rundschild (H) (2/-1); -1"
       }
     },
+    "items": [
+      {
+        "name": "Speer",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "stangenwaffe", "attribute": "st", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Speer (Wurf)",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "wurfwaffe", "attribute": "ge", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Kurzschwert",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430002" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Kettenhemd",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 7, "maneuverMod": -1, "minStrength": 4, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430012" } }
+      },
+      {
+        "name": "Turmschild",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 2, "maneuverMod": -1, "minStrength": 4, "equipped": false },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430017" } }
+      }
+    ],
     "_id": "f668a20abacdf5f0",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-erf-soldat-3",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-erf-soldat-3", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -905,37 +988,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 6
-        },
-        "ge": {
-          "value": 6
-        },
-        "ko": {
-          "value": 6
-        },
-        "in": {
-          "value": 5
-        },
-        "ch": {
-          "value": 6
-        }
+        "st": { "value": 6 },
+        "ge": { "value": 6 },
+        "ko": { "value": 6 },
+        "in": { "value": 5 },
+        "ch": { "value": 6 }
       },
       "resources": {
-        "hp": {
-          "value": 44,
-          "max": 44
-        },
-        "mp": {
-          "value": 6,
-          "max": 6
-        }
+        "hp": { "value": 44, "max": 44 },
+        "mp": { "value": 6, "max": 6 }
       },
       "combat": {
         "combatBonus": 5,
         "offensiveBonus": 5,
         "defensiveBonus": 0,
-        "armorValue": 7,
+        "armorValue": 0,
         "defenseValue": 7,
         "targetDefense": 7,
         "initiative": 0
@@ -948,10 +1015,16 @@
         "notes": "Kategorie: Gesetzeshüter\nFertigkeiten: Stangenwaffe 4, Wurfwaffe 4, k.Klinge 4; Wahrnehmung 3, Athletik 2, Schild 1, ME 2; S(Kampf) 3, Einfluss 1\nWaffen: Speer; Speer (w); Waffenlos; Kurzschwert\nBesonderes: 0; 0; -3; Rundschild (H) (2/-1); 0"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "stangenwaffe": 4,
+        "wurfwaffe": 4,
+        "kurzeKlingenwaffe": 4
+      },
+      "magicSkills": {
+        "magieEntwickeln": 2,
+        "spruchlisten": 3
       },
       "creature": {
         "kind": "Gesetzeshüter",
@@ -962,16 +1035,55 @@
         "special": "0; 0; -3; Rundschild (H) (2/-1); 0"
       }
     },
+    "items": [
+      {
+        "name": "Speer",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "stangenwaffe", "attribute": "st", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Speer (Wurf)",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "wurfwaffe", "attribute": "ge", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Kurzschwert",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430002" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Kettenhemd",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 7, "maneuverMod": -1, "minStrength": 4, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430012" } }
+      },
+      {
+        "name": "Turmschild",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 2, "maneuverMod": -1, "minStrength": 4, "equipped": false },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.armors.Item.57aa56781e430017" } }
+      }
+    ],
     "_id": "4581d78fd0732f62",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-veteran-4",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-veteran-4", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -980,31 +1092,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 3
-        },
-        "ge": {
-          "value": 4
-        },
-        "ko": {
-          "value": 3
-        },
-        "in": {
-          "value": 3
-        },
-        "ch": {
-          "value": 2
-        }
+        "st": { "value": 3 },
+        "ge": { "value": 4 },
+        "ko": { "value": 3 },
+        "in": { "value": 3 },
+        "ch": { "value": 2 }
       },
       "resources": {
-        "hp": {
-          "value": 4,
-          "max": 4
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 4, "max": 4 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 1,
@@ -1023,10 +1119,11 @@
         "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 2, Wuchtwaffe 1, Wahrnehmung 1; List 1\nWaffen: ros. Dolch; Waffenlos\nBesonderes: -3; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 2,
+        "aexte": 1
       },
       "creature": {
         "kind": "Goblin",
@@ -1037,16 +1134,27 @@
         "special": "-3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "dc1ba11370969bda",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-scherge-1",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-scherge-1", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -1055,37 +1163,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 3
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 3
-        },
-        "in": {
-          "value": 3
-        },
-        "ch": {
-          "value": 2
-        }
+        "st": { "value": 3 },
+        "ge": { "value": 5 },
+        "ko": { "value": 3 },
+        "in": { "value": 3 },
+        "ch": { "value": 2 }
       },
       "resources": {
-        "hp": {
-          "value": 8,
-          "max": 8
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 8, "max": 8 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 4,
         "offensiveBonus": 4,
         "defensiveBonus": 0,
-        "armorValue": 4,
+        "armorValue": 0,
         "defenseValue": 4,
         "targetDefense": 4,
         "initiative": 2
@@ -1098,10 +1190,11 @@
         "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 4, Wuchtwaffe 2, Wahrnehmung 2; List 2\nWaffen: ros. Dolch; Waffenlos\nBesonderes: Lederflickenpanzer; -3; -3"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 4,
+        "aexte": 2
       },
       "creature": {
         "kind": "Goblin",
@@ -1112,16 +1205,33 @@
         "special": "Lederflickenpanzer; -3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederflickenpanzer",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 4, "maneuverMod": 0, "minStrength": 0, "equipped": true }
+      }
+    ],
     "_id": "3155c4c08fadf8cf",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-redelsfuehrer-2",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-redelsfuehrer-2", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -1130,31 +1240,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 3
-        },
-        "ge": {
-          "value": 4
-        },
-        "ko": {
-          "value": 3
-        },
-        "in": {
-          "value": 3
-        },
-        "ch": {
-          "value": 3
-        }
+        "st": { "value": 3 },
+        "ge": { "value": 4 },
+        "ko": { "value": 3 },
+        "in": { "value": 3 },
+        "ch": { "value": 3 }
       },
       "resources": {
-        "hp": {
-          "value": 8,
-          "max": 8
-        },
-        "mp": {
-          "value": 8,
-          "max": 8
-        }
+        "hp": { "value": 8, "max": 8 },
+        "mp": { "value": 8, "max": 8 }
       },
       "combat": {
         "combatBonus": 1,
@@ -1173,10 +1267,14 @@
         "notes": "Kategorie: Goblin\nFertigkeiten: ME 4, S(Schamane) 1, S(schwarz) 1,; Stichwaffe 2, Wahrnehmung 2\nWaffen: ros. Dolch; Waffenlos\nZauber: Ranken; Tarnung\nBesonderes: -3; -3\nZusatzdaten: 0; 0; 2/R; 0; 1/M"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 2
+      },
+      "magicSkills": {
+        "magieEntwickeln": 4,
+        "spruchlisten": 2
       },
       "creature": {
         "kind": "Goblin",
@@ -1187,16 +1285,27 @@
         "special": "-3; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
+    ],
     "_id": "551c097a02e2708d",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-scharlatan-2",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-scharlatan-2", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -1205,37 +1314,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 4
-        },
-        "ge": {
-          "value": 5
-        },
-        "ko": {
-          "value": 3
-        },
-        "in": {
-          "value": 3
-        },
-        "ch": {
-          "value": 2
-        }
+        "st": { "value": 4 },
+        "ge": { "value": 5 },
+        "ko": { "value": 3 },
+        "in": { "value": 3 },
+        "ch": { "value": 2 }
       },
       "resources": {
-        "hp": {
-          "value": 12,
-          "max": 12
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 12, "max": 12 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 5,
         "offensiveBonus": 5,
         "defensiveBonus": 0,
-        "armorValue": 5,
+        "armorValue": 0,
         "defenseValue": 5,
         "targetDefense": 5,
         "initiative": 2
@@ -1248,10 +1341,11 @@
         "notes": "Kategorie: Goblin\nFertigkeiten: Stichwaffe 5, Wuchtwaffe 4, Wahrnehmung 3; List 2, Einflussnahme 1\nWaffen: Dolch; Knüppel\nBesonderes: ros. Ringpanzer; -2; -1"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 5,
+        "aexte": 4
       },
       "creature": {
         "kind": "Goblin",
@@ -1262,16 +1356,33 @@
         "special": "ros. Ringpanzer; -2; -1"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Knüppel",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "aexte", "attribute": "st", "damage": -1, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000e" } }
+      },
+      {
+        "name": "Ringpanzer (rostig)",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 5, "maneuverMod": -1, "minStrength": 3, "equipped": true }
+      }
+    ],
     "_id": "18b9259c52b345d1",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-haeuptling-3",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-haeuptling-3", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
   {
@@ -1280,37 +1391,21 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": {
-        "st": {
-          "value": 3
-        },
-        "ge": {
-          "value": 4
-        },
-        "ko": {
-          "value": 3
-        },
-        "in": {
-          "value": 4
-        },
-        "ch": {
-          "value": 3
-        }
+        "st": { "value": 3 },
+        "ge": { "value": 4 },
+        "ko": { "value": 3 },
+        "in": { "value": 4 },
+        "ch": { "value": 3 }
       },
       "resources": {
-        "hp": {
-          "value": 12,
-          "max": 12
-        },
-        "mp": {
-          "value": 0,
-          "max": 0
-        }
+        "hp": { "value": 12, "max": 12 },
+        "mp": { "value": 0, "max": 0 }
       },
       "combat": {
         "combatBonus": 2,
         "offensiveBonus": 2,
         "defensiveBonus": 0,
-        "armorValue": 4,
+        "armorValue": 0,
         "defenseValue": 4,
         "targetDefense": 4,
         "initiative": 1
@@ -1323,10 +1418,14 @@
         "notes": "Kategorie: Goblin\nFertigkeiten: ME 5, S(Schamane) 2, S(schwarz) 2,; Stichwaffe 3, Wahrnehmung 3, W(Heilung) 1\nWaffen: Dolch; Waffenlos\nZauber: Ranken; Tarnung; Nachwachsen; Trübung\nBesonderes: Lederflickenpanzer; -2; -3\nZusatzdaten: 0; 0; 2/R; 1; 1/M; 1; 3; 1; 0; 2"
       },
       "skills": {
-        "waffenlos": {
-          "rank": 0,
-          "attribute": "st"
-        }
+        "waffenlos": { "rank": 0, "attribute": "st" }
+      },
+      "weaponSkills": {
+        "kurzeKlingenwaffe": 3
+      },
+      "magicSkills": {
+        "magieEntwickeln": 5,
+        "spruchlisten": 4
       },
       "creature": {
         "kind": "Goblin",
@@ -1337,16 +1436,33 @@
         "special": "Lederflickenpanzer; -2; -3"
       }
     },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "kurzeKlingenwaffe", "attribute": "ge", "damage": -2, "range": "kurz", "initiativeMod": 2, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000d" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      },
+      {
+        "name": "Lederflickenpanzer",
+        "type": "armor",
+        "img": "icons/svg/shield.svg",
+        "system": { "armor": 4, "maneuverMod": 0, "minStrength": 0, "equipped": true }
+      }
+    ],
     "_id": "c052c121bf26cd22",
     "flags": {
-      "aborea-v7": {
-        "sourceId": "npc-schamane-3",
-        "generated": true
-      }
+      "aborea-v7": { "sourceId": "npc-schamane-3", "generated": true }
     },
-    "ownership": {
-      "default": 0
-    },
+    "ownership": { "default": 0 },
     "folder": null
   },
 
@@ -1360,6 +1476,7 @@
       "combat": { "combatBonus": 3, "offensiveBonus": 3, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 3 },
       "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Biss (S 1)\nBesonderes: Rudel (bei 3+ Wölfen im Kampf +1 AB)" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 3 },
       "creature": { "kind": "Tier", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Rudel (+1AB)" }
     },
     "items": [
@@ -1381,6 +1498,7 @@
       "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
       "details": { "level": 2, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Klauen (S 2), Biss (S 2)\nBesonderes: Umklammerung – nach Treffer mit Klauen Manöver-Probe; Gegner verliert Handlungen solange umklammert" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 4 },
       "creature": { "kind": "Tier", "size": "groß", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Umklammerung" }
     },
     "items": [
@@ -1403,6 +1521,7 @@
       "combat": { "combatBonus": 2, "offensiveBonus": 2, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
       "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Knochen/Hieb (S 1)\nBesonderes: Immun gegen Gift und Schlaf; halber Schaden durch Stich- und Pfeilwaffen; kein Manöver möglich" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 2 },
       "creature": { "kind": "Untot", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "Gift, Schlaf, Stich (½)", "vulnerabilities": "Wucht", "special": "Immun Gift/Schlaf; ½ Schaden Stich/Pfeil" }
     },
     "items": [
@@ -1424,6 +1543,7 @@
       "combat": { "combatBonus": 2, "offensiveBonus": 2, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": -3 },
       "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 1)\nBesonderes: Immun gegen Gift und Schlaf; Angst (GE-Probe beim ersten Anblick oder -1 auf alle Proben)" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 2 },
       "creature": { "kind": "Untot", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "Gift, Schlaf", "vulnerabilities": "Heilmagie", "special": "Immun Gift/Schlaf; Angst" }
     },
     "items": [
@@ -1445,10 +1565,24 @@
       "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
       "details": { "level": 2, "xp": 0, "race": "Ork", "class": "Krieger", "notes": "Kategorie: Ork\nFertigkeiten: Wuchtwaffe 4, Waffenlos 2; Wahrnehmung 1\nWaffen: Kriegsaxt (S 2); Waffenlos\nBesonderes: Angsteinflößend (GE-Probe beim ersten Kontakt)" },
       "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+      "weaponSkills": { "aexte": 4, "waffenlos": 2 },
       "creature": { "kind": "Ork", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Angsteinflößend" }
     },
     "items": [
-      { "name": "Kriegsaxt", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 6, "equipped": true } }
+      {
+        "name": "Kriegsaxt",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "aexte", "attribute": "st", "damage": 2, "range": "kurz", "initiativeMod": -1, "maneuverMod": 0, "minStrength": 6, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000f" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
     ],
     "_id": "d4e5f6a7b8c9d0e1",
     "flags": { "aborea-v7": { "sourceId": "creature-ork", "generated": true } },
@@ -1466,6 +1600,7 @@
       "combat": { "combatBonus": 5, "offensiveBonus": 5, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 2 },
       "details": { "level": 2, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 1)\nBesonderes: Lähmender Biss – bei Treffer GE-Probe, Misserfolg: Lähmung 1W4 Runden; Immun gegen Gift und Schlaf" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 5 },
       "creature": { "kind": "Untot", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "Gift, Schlaf", "vulnerabilities": "Heilmagie", "special": "Lähmender Biss (GE-Probe)" }
     },
     "items": [
@@ -1487,6 +1622,7 @@
       "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 1 },
       "details": { "level": 2, "xp": 0, "race": "Gnoll", "class": "Krieger", "notes": "Kategorie: Gnoll\nFertigkeiten: Stichwaffe 3, Wurfwaffe 2; Wahrnehmung 2\nWaffen: Lanze (S 2); Wurfspeer (S 1, Fernkampf)\nBesonderes: Blutwitterung – bei verwundetem Gegner +1 AB für alle Gnolls im Kampf" },
       "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+      "weaponSkills": { "stangenwaffe": 3, "wurfwaffe": 2 },
       "creature": { "kind": "Gnoll", "size": "mittel", "threat": 2, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Blutwitterung (+1AB)" }
     },
     "items": [
@@ -1508,6 +1644,7 @@
       "combat": { "combatBonus": 2, "offensiveBonus": 2, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": -2 },
       "details": { "level": 3, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Troll\nWaffen: Keule (S 2)\nBesonderes: Regeneration – heilt 2 HP pro Runde außer durch Feuer; Angst vor Feuer (-2 AB wenn Feuer sichtbar)" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 2 },
       "creature": { "kind": "Troll", "size": "groß", "threat": 3, "regeneration": 2, "resistances": "zäh", "vulnerabilities": "Feuer", "special": "Regeneration 2HP/R; Angst vor Feuer" }
     },
     "items": [
@@ -1529,6 +1666,7 @@
       "combat": { "combatBonus": 5, "offensiveBonus": 5, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": -2 },
       "details": { "level": 3, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Riese\nWaffen: Keule groß (S 3)\nBesonderes: Erschütternd – bei Treffer muss Gegner KO-Probe ablegen oder verliert nächste Runde -1 AB" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 5 },
       "creature": { "kind": "Riese", "size": "groß", "threat": 3, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Erschütternd (KO-Probe)" }
     },
     "items": [
@@ -1550,6 +1688,7 @@
       "combat": { "combatBonus": 5, "offensiveBonus": 5, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": 2 },
       "details": { "level": 3, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Biss (S 1 + Gift)\nBesonderes: Gift – KO-Probe bei Bisstreffer; Misserfolg: -2 ST für 1W4 Stunden; Spinnennetz (Manöver: verlangsamt Gegner); Klettern an Wänden" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 5 },
       "creature": { "kind": "Tier", "size": "groß", "threat": 3, "regeneration": 0, "resistances": "", "vulnerabilities": "Feuer", "special": "Gift (KO-Probe); Spinnennetz; Klettern" }
     },
     "items": [
@@ -1571,10 +1710,25 @@
       "combat": { "combatBonus": 3, "offensiveBonus": 3, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 0 },
       "details": { "level": 3, "xp": 0, "race": "Ork", "class": "Schamane", "notes": "Kategorie: Ork\nFertigkeiten: ME 5, S(Schamane) 2, S(wild) 2; Speer 3, Wahrnehmung 2\nWaffen: Speer (S 1); Waffenlos\nZauber: Ranken; Naturgeist beschwören; Trübung\nBesonderes: Angsteinflößend; Naturgeist (Begleiter, Bedrohung 2)" },
       "skills": { "waffenlos": { "rank": 0, "attribute": "st" } },
+      "weaponSkills": { "stangenwaffe": 3 },
+      "magicSkills": { "magieEntwickeln": 5, "spruchlisten": 4 },
       "creature": { "kind": "Ork", "size": "mittel", "threat": 3, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Wilde Magie; Naturgeist (Begleiter)" }
     },
     "items": [
-      { "name": "Speer", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "st", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 4, "equipped": true } }
+      {
+        "name": "Speer",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "stangenwaffe", "attribute": "st", "damage": 0, "range": "lang", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e430008" } }
+      },
+      {
+        "name": "Waffenlos",
+        "type": "weapon",
+        "img": "icons/svg/sword.svg",
+        "system": { "skill": "waffenlos", "attribute": "st", "damage": -2, "range": "kurz", "initiativeMod": 1, "maneuverMod": 0, "minStrength": 0, "equipped": true },
+        "flags": { "core": { "sourceId": "Compendium.aborea-v7.weapons.Item.57aa56781e43000a" } }
+      }
     ],
     "_id": "d0e1f2a3b4c5d6e7",
     "flags": { "aborea-v7": { "sourceId": "creature-orkschamane", "generated": true } },
@@ -1592,6 +1746,7 @@
       "combat": { "combatBonus": 7, "offensiveBonus": 7, "defensiveBonus": 0, "armorValue": 7, "defenseValue": 7, "targetDefense": 7, "initiative": 1 },
       "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Drache\nWaffen: Klauen (S 2); Giftstachel (S 2 + Gift)\nBesonderes: Gift – KO-Probe bei Stacheltreffer; Misserfolg: 2W4 Schaden über 1W4 Runden; Fliegen; groß" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 7 },
       "creature": { "kind": "Drache", "size": "groß", "threat": 4, "regeneration": 0, "resistances": "Schuppen (zäh)", "vulnerabilities": "", "special": "Gift (KO-Probe); Fliegen" }
     },
     "items": [
@@ -1614,6 +1769,8 @@
       "combat": { "combatBonus": 8, "offensiveBonus": 8, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": 3 },
       "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Untot\nWaffen: Klauen (S 2); Biss (S 1 + Blutleer)\nBesonderes: Blutleer – KO-Probe bei Bisstreffer; Misserfolg: -1 MaxHP permanent bis geheilt; Immun gegen Gift/Schlaf; Lichtschwäche (-3 AB in Sonnenlicht); Silber – doppelter Schaden; Verwandlung (Fledermaus/Wolf möglich)" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 8 },
+      "magicSkills": { "magieEntwickeln": 2 },
       "creature": { "kind": "Untot", "size": "mittel", "threat": 4, "regeneration": 1, "resistances": "Gift, Schlaf, normale Waffen (½)", "vulnerabilities": "Sonnenlicht, Silber, Heilmagie", "special": "Blutleer (KO-Probe); Lichtschwäche; Verwandlung" }
     },
     "items": [
@@ -1636,6 +1793,7 @@
       "combat": { "combatBonus": 6, "offensiveBonus": 6, "defensiveBonus": 0, "armorValue": 6, "defenseValue": 6, "targetDefense": 6, "initiative": -3 },
       "details": { "level": 4, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Riese\nWaffen: Fausthieb (S 4); Felsblock (S 3, Fernkampf kurz–mittel)\nBesonderes: Erschütternd (KO-Probe bei Fausthieb); Riesig – nimmt doppelten Trefferschaden durch Fernkampf; Wurfangriff" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 6 },
       "creature": { "kind": "Riese", "size": "riesig", "threat": 4, "regeneration": 0, "resistances": "Hieb (zäh)", "vulnerabilities": "Fernkampf", "special": "Erschütternd; Wurfangriff; Riesig" }
     },
     "items": [
@@ -1658,6 +1816,8 @@
       "combat": { "combatBonus": 8, "offensiveBonus": 8, "defensiveBonus": 0, "armorValue": 9, "defenseValue": 9, "targetDefense": 9, "initiative": 1 },
       "details": { "level": 5, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Drache\nWaffen: Klauen (S 3); Biss (S 4); Feueratem (4W4 Feuer, Flächenangriff, 1×/Kampf)\nBesonderes: Feueratem – Flächenangriff (kurz-Radius); Fliegen; Furchteinflößend (GE-Probe oder -2 auf alle Proben); Magieresistenz (Zauberproben gegen Drachen -2); riesig" },
       "skills": {},
+      "weaponSkills": { "waffenlos": 8 },
+      "magicSkills": { "magieEntwickeln": 3 },
       "creature": { "kind": "Drache", "size": "riesig", "threat": 5, "regeneration": 0, "resistances": "Drachenschuppen (sehr zäh), Feuer (immun)", "vulnerabilities": "Kältemagie", "special": "Feueratem (1×/Kampf); Fliegen; Furchteinflößend; Magieresistenz" }
     },
     "items": [

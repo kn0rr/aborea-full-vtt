@@ -20,32 +20,133 @@
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
       <section class="grid grid-2col">
+
+        {{!-- Attribute --}}
         <div class="panel">
           <h2>{{localize "ABOREA.Attributes"}}</h2>
           <div class="attributes-grid">
             {{#each system.attributes as |attr key|}}
-            <div class="attribute-row"><label>{{localize attr.label}}</label><input type="number" name="system.attributes.{{key}}.value" value="{{attr.value}}" /><span>{{localize "ABOREA.Bonus"}} {{attr.bonus}}</span></div>
+            <div class="attribute-row">
+              <label>{{localize attr.label}}</label>
+              <input type="number" name="system.attributes.{{key}}.value" value="{{attr.value}}" />
+              <span>{{localize "ABOREA.Bonus"}} {{attr.bonus}}</span>
+            </div>
             {{/each}}
           </div>
         </div>
+
+        {{!-- Ressourcen --}}
         <div class="panel">
           <h2>{{localize "ABOREA.Resources"}}</h2>
           <div class="resource-row"><label>HP</label><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" /><span>/</span><input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" /></div>
           <div class="resource-row"><label>MP</label><input type="number" name="system.resources.mp.value" value="{{system.resources.mp.value}}" /><span>/</span><input type="number" name="system.resources.mp.max" value="{{system.resources.mp.max}}" /></div>
         </div>
       </section>
+
+      {{!-- Kampfwerte --}}
       <section class="panel">
         <h2>{{localize "ABOREA.Combat"}}</h2>
         <div class="combat-grid">
-          <label>{{localize "ABOREA.CombatBonus"}} <input type="number" name="system.combat.combatBonus" value="{{system.combat.combatBonus}}" /></label>
-          <label>{{localize "ABOREA.OffensiveBonus"}} <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" /></label>
+
+          <div class="field-with-hint">
+            <label title="Wird beim Angriff aufgeteilt in Offensiv- und Defensivbonus. Zusammensetzung: Attributbonus (ST oder GE) + Waffenfertigkeit − 2 (wenn ungelernt).">
+              {{localize "ABOREA.CombatBonus"}}
+              <span class="field-hint">Attributbonus + Rang (− 2 ungelernt)</span>
+            </label>
+            <input type="number" name="system.combat.combatBonus" value="{{system.combat.combatBonus}}" />
+          </div>
+
+          <div class="field-with-hint">
+            <label title="Offensivbonus = Teil des Kampfbonus, der in den Angriffswurf einfließt (max. Kampfbonus). Angriffswurf = W20 + Offensivbonus.">
+              {{localize "ABOREA.OffensiveBonus"}}
+              <span class="field-hint">Teil von Kampfbonus → Angriff</span>
+            </label>
+            <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" />
+          </div>
+
           {{#if system.combat.maneuverBonus}}
           <label class="trait-modified" title="{{localize "ABOREA.TraitModifierHint"}}">{{localize "ABOREA.EffectiveOffensiveBonus"}} <input type="number" value="{{system.combat.effectiveOffensiveBonus}}" disabled /></label>
           {{/if}}
-          <label>{{localize "ABOREA.DefensiveBonus"}} <input type="number" name="system.combat.defensiveBonus" value="{{system.combat.defensiveBonus}}" /></label>
-          <label>{{localize "ABOREA.DefenseValue"}} <input type="number" value="{{system.combat.defenseValue}}" disabled /></label>
+
+          <div class="field-with-hint">
+            <label title="Defensivbonus = Teil des Kampfbonus, der zum Verteidigungswert addiert wird. Verteidigungswert = Rüstungswert + Defensivbonus.">
+              {{localize "ABOREA.DefensiveBonus"}}
+              <span class="field-hint">Teil von Kampfbonus → Verteidigung</span>
+            </label>
+            <input type="number" name="system.combat.defensiveBonus" value="{{system.combat.defensiveBonus}}" />
+          </div>
+
+          <div class="field-with-hint">
+            <label title="Basis-Rüstungswert des NSC. Endwert = Basis + ausgerüstete Rüstungsgegenstände (Inventar). Verteidigungswert = Rüstungswert + Defensivbonus.">
+              {{localize "ABOREA.ArmorValue"}}
+              <span class="field-hint">Basis{{#if system.combat.armorFromItems}} + {{system.combat.armorFromItems}} (Ausrüstung){{/if}}</span>
+            </label>
+            <input type="number" name="system.combat.armorValue" value="{{system.combat.armorValue}}" />
+          </div>
+
+          <div class="field-with-hint">
+            <label title="Verteidigungswert = Gesamtrüstungswert (Basis + Ausrüstung) + Defensivbonus. Angriff trifft, wenn Angriffswurf ≥ Verteidigungswert.">
+              {{localize "ABOREA.DefenseValue"}}
+              <span class="field-hint">Rüstungswert {{system.combat.totalArmorValue}} + Defensivbonus {{system.combat.defensiveBonus}}</span>
+            </label>
+            <input type="number" value="{{system.combat.defenseValue}}" disabled />
+          </div>
+
         </div>
       </section>
+
+      {{!-- Waffenfähigkeiten --}}
+      <section class="panel">
+        <h2>Waffenfähigkeiten</h2>
+        <p class="hint-text">Rang 0 = −2 Ungelernt-Abzug. Kampfbonus = Attributbonus + Rang (− 2 wenn Rang 0). Beim Angriff den manuellen Kampfbonus oben entsprechend setzen.</p>
+        <div class="npc-weapon-skills">
+          <div class="npc-ws-header">
+            <span>Waffenart</span>
+            <span>Attr.</span>
+            <span>Rang</span>
+            <span>Kampfbonus</span>
+          </div>
+          {{#each system.weaponSkillRows as |row|}}
+          <div class="npc-ws-row" title="{{row.tooltip}}">
+            <span class="npc-ws-label">{{localize row.label}}</span>
+            <span class="npc-ws-attr badge">{{row.attrKey}}</span>
+            <input type="number" class="npc-ws-rank" name="system.weaponSkills.{{row.key}}" value="{{row.rank}}" min="0" max="10" />
+            <span class="npc-ws-cb badge {{#if (aboreaGt row.cb 0)}}pos{{else}}{{#if (aboreaEq row.cb 0)}}neutral{{else}}neg{{/if}}{{/if}}">
+              {{#if (aboreaGt row.cb 0)}}+{{/if}}{{row.cb}}
+            </span>
+          </div>
+          {{/each}}
+        </div>
+      </section>
+
+      {{!-- Magische Fähigkeiten --}}
+      <section class="panel">
+        <h2>Magische Fähigkeiten</h2>
+        <p class="hint-text">Rang 0 = kein Bonus. Magie entwickeln bestimmt den MP-Pool: (IN-Bonus + 3) × Rang. Spruchlisten = Anzahl bekannter Listen.</p>
+        <div class="npc-weapon-skills">
+          <div class="npc-ws-header">
+            <span>Fähigkeit</span>
+            <span>Attr.</span>
+            <span>Rang</span>
+            <span>Ergebnis</span>
+          </div>
+          {{#each system.magicSkillRows as |row|}}
+          <div class="npc-ws-row" title="{{row.tooltip}}">
+            <span class="npc-ws-label">{{localize row.label}}</span>
+            <span class="npc-ws-attr badge">{{row.attrKey}}</span>
+            <input type="number" class="npc-ws-rank" name="system.magicSkills.{{row.key}}" value="{{row.rank}}" min="0" max="10" />
+            <span class="npc-ws-cb badge {{#if (aboreaGt row.bonus 0)}}pos{{else}}{{#if (aboreaEq row.bonus 0)}}neutral{{else}}neg{{/if}}{{/if}}">
+              {{#if row.extraInfo}}
+                {{row.extraInfo}}
+              {{else}}
+                {{#if (aboreaGt row.bonus 0)}}+{{/if}}{{row.bonus}}
+              {{/if}}
+            </span>
+          </div>
+          {{/each}}
+        </div>
+      </section>
+
     </div>
     <div class="tab" data-group="primary" data-tab="inventory">{{> "systems/aborea-v7/templates/actor/partials/inventory.html"}}</div>
     <div class="tab" data-group="primary" data-tab="special"><section class="panel"><textarea name="system.details.notes">{{system.details.notes}}</textarea></section></div>

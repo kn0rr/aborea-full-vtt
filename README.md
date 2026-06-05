@@ -27,10 +27,12 @@ Foundry erkennt neue Releases und bietet das Update in den Systemeinstellungen a
 | Berufe | Krieger, Zauberer, Priester, Barde, Schamane, Waldläufer, Dieb |
 | Waffen | Standardwaffen mit Schadenswerten |
 | Rüstungen | Rüstungen mit Rüstungswerten |
+| Ausrüstung | 42 Gegenstände (Werkzeug, Kletterausrüstung, Proviant u.v.m.) |
 | Zauber | 40 Zauber in 4 Listen (Elementare, Freie, Schwarze, Wilde Magie) |
 | Wunder & Leitmagie | Wunder, Bardenmagie, Schamanenmagie, Zeichen |
 | Götter | 28 Götter aus 4 Pantheons |
-| Kreaturen | Basis-Kreaturen (z.B. Troll) |
+| Kreaturen | 33 Kreaturen (NSCs und Monster) |
+| Magische Items | 5 Beispiel-Gegenstände mit Skill- und Attribut-Boni |
 
 ### Kompendien befüllen (GM-Konsole)
 ```js
@@ -46,10 +48,11 @@ await game.aborea.resetSystemPacks();   // Kompendien leeren
 - **35 Punkte** verteilen auf 5 Attribute (ST, GE, KO, IN, CH).
 - Kosten steigen mit dem Attributwert (Wert 7 = 8 Punkte, Wert 10 = 16 Punkte gesamt).
 - Budget-Anzeige in Echtzeit; Finalisierung erst bei genau 0 verbleibenden Punkten möglich.
+- **Attribut-Aufschlüsselung**: Im Erschaffungs-Tab werden Basiswert, Volksmodifikator und Endwert getrennt angezeigt, damit sofort klar ist, welchen Wert ein Charakter nach Volksanwendung tatsächlich hat.
 
 ### Volk & Beruf
 - Volk und Beruf werden aus dem Kompendium gewählt und per „Übernehmen" angewendet.
-- Volksmodifikatoren (z.B. +1 ST für Zwerge) werden automatisch auf die Endattribute addiert.
+- Volksmodifikatoren (z.B. Elf: ST −1, GE +1) werden farbig als Badge neben dem Basiswert angezeigt.
 - Restriktionen wie `Kein Krieger` aus dem Volk werden bei der Berufswahl geprüft.
 - **Nach der Finalisierung** können Volk und Beruf nicht mehr geändert werden.
 
@@ -69,13 +72,31 @@ await game.aborea.resetSystemPacks();   // Kompendien leeren
 ### Standardfertigkeiten
 Alle Fertigkeiten aus dem Regelwerk sind vordefiniert (z.B. Athletik, Waffen, Spruchlisten). Berufsspezifische Kosten werden automatisch aus dem Beruf geladen.
 
+Fertigkeiten sind nach Gruppen gegliedert: **Kampf**, **Magie**, **Allgemein** und **Eigene**.
+
+### Fertigkeitsboni
+Boni aus mehreren Quellen werden addiert und in der Fertigkeitsliste angezeigt:
+- **Volksbonus** (direkt vom Volk-Item, z.B. Elf +1 Fernkampf)
+- **Berufsbonus** aus aktiven Berufsmerkmalen (z.B. Priester: Heilen +1)
+- **Talentbonus** aus zugewiesenen Talenten
+- **Magische Ausrüstung** (ausgerüstete magische Items mit Skill-Boni)
+
 ### Eigene Fähigkeiten
 Über `+ Eigene Fähigkeit` können beliebige Fertigkeiten mit eigenem Attribut und AP-Kosten erstellt werden.  
 Kostenangabe `2/3`: max. 2 Ränge während der Erstellung (Rang 1 = 2 AP, Rang 2 = 3 AP).  
 Kostenangabe `2`: max. 1 Rang während der Erstellung.
 
-### Berufsfertigkeitsboni
-Boni aus Berufsmerkmalen (z.B. „Heilen +1" beim Priester) werden in der Fertigkeitsliste live angezeigt.
+---
+
+## Attribute (Werte-Tab)
+
+Im Werte-Tab wird jedes Attribut als Karte angezeigt mit:
+- **Basiswert** (vom Spieler verteilt)
+- **Volksmodifikator** (farbiges Badge, nur sichtbar wenn ≠ 0)
+- **Endwert** (Basis + Volksmod)
+- **Attributbonus** (negative bis positive Stufen)
+
+Zusätzliche Boni aus ausgerüsteten magischen Items werden mit einem ✨-Badge eingeblendet.
 
 ---
 
@@ -132,10 +153,13 @@ Jeder Eintrag enthält: Aspekte, heilige Waffe, Symbol, Pantheon, Rang und Besch
 ## Kampf
 
 ### Kampfwerte
-- **Angriffswert** = Würfelergebnis + Kampfbonus (Attributbonus + Waffenfertigkeit – 2 wenn ungelernt)
+- **Kampfbonus** = Attributbonus (ST oder GE, je nach Waffe) + Waffenfertigkeit – 2 (wenn ungelernt)
 - **Verteidigungswert** = Rüstungswert + Verteidigungsbonus
 - **Schaden** = max(1, Angriff – Verteidigung + Waffenschaden)
-- **Initiative** = GE-Bonus
+- **Initiative** = GE-Bonus + Initiativmod der besten Waffe (bei Gleichstand W10)
+
+### Rüstungswert
+Setzt sich zusammen aus: Basis-Rüstungswert + Volksrüstungsbonus + Berufsrüstungsbonus + Summe aller ausgerüsteten Rüstungsgegenstände.
 
 ### Manöver
 Manöver-Schwellen (Routine 5 bis Absurd 18) sind in `config.mjs` hinterlegt und werden beim Würfeln als Referenz angezeigt.
@@ -153,6 +177,16 @@ Waffeneinträge im Inventar bieten einen `⚔ Angriff`-Button. Das Ergebnis wird
 | **MP max** | `(Attributbonus + 3) × Rang Magie entwickeln` |
 | **Natürliche Heilung** | `1 + KO-Bonus` HP pro Ruhetag |
 | **MP-Regeneration** | `1 + Attributbonus` MP pro Stunde |
+
+---
+
+## Magische Ausrüstung
+
+Magische Items können im Inventar-Tab ausgerüstet werden und gewähren dann passive Effekte:
+- **Skill-Boni**: addiert auf entsprechende Fertigkeiten
+- **Attribut-Boni**: werden im Werte-Tab als ✨-Badge angezeigt
+- **Passive Traits**: z.B. Thermalvision, Regeneration
+- **Gewährte Zauber**: pro Tag nutzbare Sprüche mit Verwendungs-Tracking
 
 ---
 

@@ -322,7 +322,9 @@ export class AboreaActorSheet extends ActorSheet {
     for (const [key, data] of Object.entries(system.attributes ?? {})) { data.bonus = ABOREA.attributeBonus(data.value); data.label = ABOREA.attributes[key]; }
     const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
     const armorFromItems = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-    system.combat.totalArmorValue = Number(system.combat?.armorValue ?? 0) + armorFromItems;
+    const baseArmorValue = Number(system.combat?.armorValue ?? 0);
+    system.combat.totalArmorValue = baseArmorValue + armorFromItems;
+    system.combat.armorFromItems  = armorFromItems;
 
     // Trait-Boni aus Active Effects (z.B. Beistand, Fluch, Trübung)
     const maneuverBonus = Number(system.traits?.maneuverBonus ?? 0);
@@ -335,6 +337,45 @@ export class AboreaActorSheet extends ActorSheet {
       Number(system.combat?.defensiveBonus ?? 0) + maneuverBonus
     );
     system.combat.initiative = ABOREA.initiativeBonus(actor);
+
+    // Waffenfähigkeiten aufbereiten
+    const sign = n => n >= 0 ? `+${n}` : `${n}`;
+    system.weaponSkillRows = ABOREA.weaponSkillKeys.map(key => {
+      const rank      = Number(system.weaponSkills?.[key] ?? 0);
+      const attrKey   = ABOREA.skills?.[key]?.attribute ?? "st";
+      const attrBonus = ABOREA.attributeBonus(Number(system.attributes?.[attrKey]?.value ?? 5));
+      const cb        = ABOREA.combatBonus(attrBonus, rank);
+      const penalty   = rank > 0 ? "" : " − 2";
+      return {
+        key,
+        label:    ABOREA.skills[key]?.label ?? key,
+        rank, attrKey, attrBonus, cb,
+        tooltip: `${attrKey.toUpperCase()} ${sign(attrBonus)} + Rang ${rank}${penalty} = ${sign(cb)}`
+      };
+    });
+
+    // Magische Fähigkeiten aufbereiten
+    const MAGIC_SKILL_KEYS = ["magieEntwickeln", "spruchlisten", "gezielteSprueche", "magieWahrnehmen"];
+    system.magicSkillRows = MAGIC_SKILL_KEYS.map(key => {
+      const rank      = Number(system.magicSkills?.[key] ?? 0);
+      const attrKey   = ABOREA.skills?.[key]?.attribute ?? "in";
+      const attrBonus = ABOREA.attributeBonus(Number(system.attributes?.[attrKey]?.value ?? 5));
+      const bonus     = rank > 0 ? attrBonus + rank : 0; // kein Bonus bei Rang 0
+      // Für magieEntwickeln: MP-Pool = (attrBonus + 3) × Rang
+      const mpPool    = key === "magieEntwickeln" && rank > 0
+        ? `MP ${(attrBonus + 3) * rank}` : null;
+      const listInfo  = key === "spruchlisten" && rank > 0
+        ? `${rank} Liste${rank !== 1 ? "n" : ""}` : null;
+      return {
+        key,
+        label:   ABOREA.skills[key]?.label ?? key,
+        rank, attrKey, attrBonus, bonus,
+        extraInfo: mpPool ?? listInfo ?? null,
+        tooltip: key === "magieEntwickeln" && rank > 0
+          ? `MP-Pool = (${attrKey.toUpperCase()} ${sign(attrBonus)} + 3) × ${rank} = ${(attrBonus + 3) * rank}`
+          : `${attrKey.toUpperCase()} ${sign(attrBonus)} + Rang ${rank} = ${sign(bonus)}`
+      };
+    });
   }
 
   async _packChoices(type) {
