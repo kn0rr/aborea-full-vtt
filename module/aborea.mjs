@@ -90,6 +90,7 @@ Hooks.once("init", async function () {
   ]);
 
   Handlebars.registerHelper("aboreaEq",  function (a, b)   { return a === b; });
+  Handlebars.registerHelper("aboreaGt",  function (a, b)   { return Number(a) > Number(b); });
   Handlebars.registerHelper("aboreaJoin",function (arr, sep) { return Array.isArray(arr) ? arr.join(sep || ", ") : ""; });
   Handlebars.registerHelper("aboreaHas", function (arr, val) { return Array.isArray(arr) && arr.includes(val); });
   Handlebars.registerHelper("array",     function (...args)  { return args.slice(0, -1); });

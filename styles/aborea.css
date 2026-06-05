@@ -143,6 +143,11 @@
 .attr-card-bonus.neutral { color: var(--aborea-brown); }
 .attr-magic-mod { font-size: .68rem; color: #7e22ce; background: #fdf4ff; border-radius: 99px; padding: 0 4px; }
 .attr-card .roll-attribute { margin-top: 2px; }
+.attr-card-breakdown { display: flex; align-items: center; gap: 3px; }
+.attr-base-value { font-size: 1rem; color: var(--aborea-brown); line-height: 1; }
+.attr-race-mod { font-size: .75rem; font-weight: 700; border-radius: 99px; padding: 0 4px; line-height: 1.4; }
+.attr-race-mod.pos { color: var(--aborea-green); background: #f0fdf4; }
+.attr-race-mod.neg { color: var(--aborea-red); background: #fef2f2; }
 
 /* ── Ressourcen-Karte ───────────────────────────────── */
 .resource-card { margin-bottom: 8px; }
@@ -346,7 +351,7 @@
   gap: 8px;
 }
 .aborea-sheet .creation-attributes-grid .attribute-row {
-  grid-template-columns: minmax(140px,1.4fr) 90px 80px 100px 70px;
+  grid-template-columns: minmax(120px,1.2fr) 80px 60px 70px 70px 90px 60px;
 }
 .aborea-sheet .creation-attributes-grid .attribute-header {
   font-weight: 700;
@@ -358,6 +363,11 @@
 .aborea-sheet .creation-attributes-grid .creation-attribute-row span {
   text-align: center;
 }
+.aborea-sheet .creation-attributes-grid .attr-race-mod { font-size: .8rem; font-weight: 700; }
+.aborea-sheet .creation-attributes-grid .attr-race-mod.pos { color: var(--aborea-green); }
+.aborea-sheet .creation-attributes-grid .attr-race-mod.neg { color: var(--aborea-red); }
+.aborea-sheet .creation-attributes-grid .attr-race-mod.neutral { color: var(--aborea-brown-light); }
+.aborea-sheet .creation-attributes-grid .attr-final-value { font-weight: 700; color: var(--aborea-brown); }
 
 /* ── Ressourcen-Zeile ───────────────────────────────── */
 .aborea-sheet .resource-row {
@@ -952,7 +962,7 @@
   .aborea-sheet .combat-grid { grid-template-columns: 1fr; }
   .creation-metrics { grid-template-columns: repeat(2, 1fr); }
   .wallet-grid { grid-template-columns: repeat(2, 1fr); }
-  .aborea-sheet .creation-attributes-grid .attribute-row { grid-template-columns: 1fr 70px 70px 80px 60px; }
+  .aborea-sheet .creation-attributes-grid .attribute-row { grid-template-columns: 1fr 65px 50px 60px 60px 70px 55px; }
 }
 @media (max-width: 560px) {
   .aborea-sheet .header-grid,

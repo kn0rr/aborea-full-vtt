@@ -134,12 +134,21 @@ export class AboreaActorSheet extends ActorSheet {
     const spent = ABOREA.attributeCostTotal(system.baseAttributes || {});
     const remaining = budget - spent;
     system.creation = system.creation || {};
+    const _raceItemForMods = actor.items.find(i => i.type === "race");
+    const _raceMods = _raceItemForMods?.system?.mods ?? {};
     system.creation.attributeRows = Object.entries(system.baseAttributes || {}).map(([key, attr]) => {
       const value = Number(attr?.value ?? 5);
       const totalCost = ABOREA.attributeCost(value);
       const nextValue = Math.min(10, value + 1);
       const nextCost = value < 10 ? (ABOREA.attributeCost(nextValue) - totalCost) : null;
-      return { key, label: ABOREA.attributes[key], value, totalCost, nextStepCost: nextCost, bonus: ABOREA.attributeBonus(value) };
+      const raceMod = Number(_raceMods[key] ?? 0);
+      return { key, label: ABOREA.attributes[key], value, totalCost, nextStepCost: nextCost, bonus: ABOREA.attributeBonus(value), raceMod, final: value + raceMod };
+    });
+    system.attributeBreakdown = ["st","ge","ko","in","ch"].map(key => {
+      const base = Number(system.baseAttributes?.[key]?.value ?? 5);
+      const raceMod = Number(_raceMods[key] ?? 0);
+      const final = base + raceMod;
+      return { key, label: ABOREA.attributes[key], base, raceMod, final, bonus: ABOREA.attributeBonus(final) };
     });
     system.creation.attributeCostTable = Array.from({ length: 10 }, (_, i) => {
       const v = i + 1; const total = ABOREA.attributeCost(v); const nv = v < 10 ? v + 1 : null;

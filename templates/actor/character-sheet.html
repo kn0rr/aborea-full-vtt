@@ -117,6 +117,7 @@
           <div class="attributes-grid creation-attributes-grid">
             <div class="attribute-row attribute-header">
               <span>{{localize "ABOREA.Attributes"}}</span><span>{{localize "ABOREA.Value"}}</span>
+              <span>Volk</span><span>Endwert</span>
               <span>{{localize "ABOREA.CostTotal"}}</span><span>{{localize "ABOREA.NextStepCost"}}</span>
               <span>{{localize "ABOREA.Bonus"}}</span>
             </div>
@@ -128,6 +129,10 @@
               {{else}}
               <input type="number" name="system.baseAttributes.{{attr.key}}.value" value="{{attr.value}}" min="1" max="10" />
               {{/if}}
+              <span class="center attr-race-mod {{#if (aboreaEq attr.raceMod 0)}}neutral{{else}}{{#if (aboreaGt attr.raceMod 0)}}pos{{else}}neg{{/if}}{{/if}}">
+                {{#if (aboreaEq attr.raceMod 0)}}—{{else}}{{#if (aboreaGt attr.raceMod 0)}}+{{/if}}{{attr.raceMod}}{{/if}}
+              </span>
+              <span class="center attr-final-value">{{attr.final}}</span>
               <span class="center">{{attr.totalCost}}</span>
               <span class="center">{{#if attr.nextStepCost}}+{{attr.nextStepCost}}{{else}}—{{/if}}</span>
               <span class="center badge">{{#if (aboreaEq attr.bonus 0)}}±0{{else}}{{attr.bonus}}{{/if}}</span>
@@ -226,17 +231,23 @@
         <div class="panel">
           <h2>{{localize "ABOREA.Attributes"}}</h2>
           <div class="attr-cards">
-            {{#each system.displayAttributes as |attr key|}}
+            {{#each system.attributeBreakdown as |attr|}}
             <div class="attr-card">
               <span class="attr-card-label">{{localize attr.label}}</span>
-              <span class="attr-card-value">{{attr.value}}</span>
-              <span class="attr-card-bonus {{#if (aboreaEq attr.bonus 0)}}neutral{{else}}{{#if (aboreaEq attr.bonus 1)}}pos{{else}}neg{{/if}}{{/if}}">
+              <div class="attr-card-breakdown">
+                <span class="attr-base-value" title="Basiswert">{{attr.base}}</span>
+                {{#unless (aboreaEq attr.raceMod 0)}}
+                <span class="attr-race-mod {{#if (aboreaGt attr.raceMod 0)}}pos{{else}}neg{{/if}}" title="Volksbonus">{{#if (aboreaGt attr.raceMod 0)}}+{{/if}}{{attr.raceMod}}</span>
+                {{/unless}}
+                <span class="attr-card-value">{{attr.final}}</span>
+              </div>
+              <span class="attr-card-bonus {{#if (aboreaEq attr.bonus 0)}}neutral{{else}}{{#if (aboreaGt attr.bonus 0)}}pos{{else}}neg{{/if}}{{/if}}">
                 {{#if (aboreaEq attr.bonus 0)}}±0{{else}}{{attr.bonus}}{{/if}}
               </span>
-              {{#if system.magicAttributeMods.[key]}}
-              <span class="attr-magic-mod" title="Magisches Item">✨+{{system.magicAttributeMods.[key]}}</span>
+              {{#if (aboreaGt system.magicAttributeMods.[attr.key] 0)}}
+              <span class="attr-magic-mod" title="Magisches Item">✨+{{system.magicAttributeMods.[attr.key]}}</span>
               {{/if}}
-              <button type="button" class="roll-attribute btn-sm" data-attribute="{{key}}" title="{{localize attr.label}} würfeln">🎲</button>
+              <button type="button" class="roll-attribute btn-sm" data-attribute="{{attr.key}}" title="{{localize attr.label}} würfeln">🎲</button>
             </div>
             {{/each}}
           </div>
