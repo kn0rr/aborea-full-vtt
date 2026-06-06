@@ -26,18 +26,19 @@ function duplicateItemObject(item) {
   const obj = item.toObject(); delete obj._id; return obj;
 }
 
-export class AboreaActorSheet extends ActorSheet {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["aborea","sheet","actor"], width: 980, height: 820, resizable: true,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "creation" }]
-    });
-  }
-  get template() { return "systems/aborea-v7/templates/actor/character-sheet.html"; }
+export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  static DEFAULT_OPTIONS = {
+    classes: ["aborea", "sheet", "actor"],
+    position: { width: 980, height: 820 },
+    window: { resizable: true },
+    form: { submitOnChange: true, closeOnSubmit: false }
+  };
 
-  async getData(options = {}) {
-    const context = await super.getData(options);
-    const actor = context.actor;
+  async _prepareContext(options = {}) {
+    const context = await super._prepareContext(options);
+    const actor = this.actor;
+    context.actor = actor;
+    context.cssClass = this.isEditable ? "editable" : "locked";
     const system = foundry.utils.deepClone(actor.system);
     // Während der Charaktererschaffung (nicht abgeschlossen, kein Levelaufstieg):
     // baseAttributes zeigen — finalAttributes enthält bereits Rassenmod und
@@ -91,6 +92,22 @@ export class AboreaActorSheet extends ActorSheet {
       gods: await this._packChoices("god")
     };
     return context;
+  }
+
+  /** Minimaler jQuery-Shim für die Migration. Gibt ein Objekt zurück das html.find(sel) nachbildet. */
+  _html() {
+    const root = this.element;
+    const wrap = (sel) => {
+      const els = Array.from(root.querySelectorAll(sel));
+      const obj = {
+        on: (evt, fn) => { els.forEach(e => e.addEventListener(evt, fn)); return obj; },
+        val: () => els[0]?.value ?? "",
+        get length() { return els.length; },
+        get 0() { return els[0]; },
+      };
+      return obj;
+    };
+    return { find: wrap };
   }
 
   async _prepareCharacterData(actor, system) {
@@ -433,8 +450,15 @@ export class AboreaActorSheet extends ActorSheet {
     return docs.filter(d => { const k = `${d.pack}:${d.name}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const html = this._html();
+    // Tabs für dieses Sheet (V1-kompatibel, V2-Shim)
+    const tabConfig = this.constructor.DEFAULT_OPTIONS?.tabs?.[0];
+    if (tabConfig) {
+      const tabs = new Tabs({ ...tabConfig, callback: () => {} });
+      tabs.bind(this.element);
+    }
     if (!this.isEditable) return;
     html.find(".roll-skill").on("click", ev => rollSkill(this.actor, ev.currentTarget.dataset.skill));
 
@@ -1326,6 +1350,15 @@ export class AboreaActorSheet extends ActorSheet {
   }
 }
 
-export class AboreaCharacterSheet extends AboreaActorSheet { get template() { return "systems/aborea-v7/templates/actor/character-sheet.html"; } }
-export class AboreaNpcSheet extends AboreaActorSheet { get template() { return "systems/aborea-v7/templates/actor/npc-sheet.html"; } }
-export class AboreaCreatureSheet extends AboreaActorSheet { get template() { return "systems/aborea-v7/templates/actor/creature-sheet.html"; } }
+export class AboreaCharacterSheet extends AboreaActorSheet {
+  static DEFAULT_OPTIONS = { tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "creation" }] };
+  static PARTS = { main: { template: "systems/aborea-v7/templates/actor/character-sheet.html" } };
+}
+export class AboreaNpcSheet extends AboreaActorSheet {
+  static DEFAULT_OPTIONS = { tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }] };
+  static PARTS = { main: { template: "systems/aborea-v7/templates/actor/npc-sheet.html" } };
+}
+export class AboreaCreatureSheet extends AboreaActorSheet {
+  static DEFAULT_OPTIONS = { tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }] };
+  static PARTS = { main: { template: "systems/aborea-v7/templates/actor/creature-sheet.html" } };
+}

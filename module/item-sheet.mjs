@@ -1,20 +1,19 @@
 
-export class AboreaItemSheet extends ItemSheet {
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["aborea", "sheet", "item"],
-      width: 620,
-      height: 480,
-      resizable: true
-    });
-  }
+export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ItemSheetV2) {
+  static DEFAULT_OPTIONS = {
+    classes: ["aborea", "sheet", "item"],
+    position: { width: 620, height: 480 },
+    window: { resizable: true },
+    form: { submitOnChange: true, closeOnSubmit: false }
+  };
+  static PARTS = { main: { template: "systems/aborea-v7/templates/item/item-sheet.html" } };
 
-  get template() { return "systems/aborea-v7/templates/item/item-sheet.html"; }
-
-  async getData(options = {}) {
-    const context = await super.getData(options);
-    const item = context.item;
+  async _prepareContext(options = {}) {
+    const context = await super._prepareContext(options);
+    const item = this.item;
+    context.item = item;
     context.system = item.system;
+    context.cssClass = this.isEditable ? "editable" : "locked";
 
     // Beschreibungstext als Rich-HTML aufbereiten
     if (item.system.description) {
@@ -32,12 +31,20 @@ export class AboreaItemSheet extends ItemSheet {
     return context;
   }
 
-  async _updateObject(event, formData) {
-    // statusEffects: Komma-getrennter String → Array
-    if (this.item.type === "magic" && typeof formData["system.statusEffects"] === "string") {
-      formData["system.statusEffects"] = formData["system.statusEffects"]
-        .split(",").map(s => s.trim()).filter(Boolean);
+  // statusEffects: Komma-String → Array (ersetzt _updateObject)
+  _onRender(context, options) {
+    super._onRender(context, options);
+    if (!this.isEditable) return;
+    if (this.item.type === "magic") {
+      const input = this.element.querySelector('[data-status-effects]');
+      if (input) {
+        input.addEventListener("change", async ev => {
+          const val = ev.currentTarget.value;
+          await this.item.update({
+            "system.statusEffects": val.split(",").map(s => s.trim()).filter(Boolean)
+          });
+        });
+      }
     }
-    return super._updateObject(event, formData);
   }
 }
