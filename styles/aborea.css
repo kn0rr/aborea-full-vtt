@@ -19,6 +19,22 @@
 }
 
 /* ── Basis-Sheet ────────────────────────────────────── */
+
+/* ApplicationV2: PARTS-Wrapper und window-content Höhenkette reparieren */
+.application:has(.aborea-sheet) .window-content {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.application:has(.aborea-sheet) [data-application-part] {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .aborea-sheet {
   color: #1f1f1f;
   background:
@@ -27,6 +43,20 @@
   border-radius: 12px;
   padding: 8px;
   font-family: var(--font-primary, "Signika", sans-serif);
+  /* V2: Flex-Column damit sheet-body den Rest bekommt */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Sheet-Body scrollt, Header und Tabs bleiben oben fixiert */
+.aborea-sheet .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 12px; /* Puffer am unteren Rand beim Scrollen */
 }
 
 /* ── Header Pro ─────────────────────────────────────── */
