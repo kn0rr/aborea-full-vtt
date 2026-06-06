@@ -536,11 +536,9 @@ export function registerCombatHooks() {
   });
 
   // "Apply Damage" button in chat cards
-  // Foundry v13: html is a plain HTMLElement
-  Hooks.on("renderChatMessage", (_message, html) => {
-    const root = html instanceof HTMLElement ? html : html[0];
-    if (!root) return;
-    root.querySelectorAll(".apply-damage-btn").forEach(btn => {
+  // renderChatMessageHTML liefert direkt ein HTMLElement (seit v13)
+  Hooks.on("renderChatMessageHTML", (_message, html) => {
+    html.querySelectorAll(".apply-damage-btn").forEach(btn => {
       btn.addEventListener("click", ev => {
         if (!game.user.isGM && !game.user.isTrusted) {
           ui.notifications.warn("ABOREA: Nur GM oder vertraute Spieler können Schaden anwenden.");
@@ -555,17 +553,15 @@ export function registerCombatHooks() {
   });
 
   // Add "Attack" button + global situ-mod row to Combat Tracker
-  // Foundry v13: hook passes a plain HTMLElement, not a jQuery object
-  Hooks.on("renderCombatTracker", (_tracker, html) => {
-    const root = html instanceof HTMLElement ? html : html[0];
-    if (!root) return;
+  // renderCombatTrackerHTML liefert direkt ein HTMLElement (seit v13)
+  Hooks.on("renderCombatTrackerHTML", (_tracker, html) => {
 
     // ── Global situational modifier (GM only) ───────────────────
     if (game.user.isGM) {
       // Remove stale bar from previous renders before re-adding
-      root.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
+      html.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
 
-      const footer = root.querySelector("#combat-controls") ?? root.querySelector(".combat-controls") ?? null;
+      const footer = html.querySelector("#combat-controls") ?? html.querySelector(".combat-controls") ?? null;
       const currentMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
 
       const modBar = document.createElement("div");
@@ -597,7 +593,7 @@ export function registerCombatHooks() {
 
       // Insert before the footer controls, or append to tracker
       if (footer) footer.before(modBar);
-      else root.appendChild(modBar);
+      else html.appendChild(modBar);
     }
 
     // ── Attack button on active combatant ───────────────────────
@@ -609,7 +605,7 @@ export function registerCombatHooks() {
     const isOwner = activeCombatant.actor?.isOwner ?? false;
     if (!isOwner && !game.user.isGM) return;
 
-    const li = root.querySelector(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
+    const li = html.querySelector(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
     if (!li) return;
     const controls = li.querySelector(".combatant-controls");
     if (!controls) return;

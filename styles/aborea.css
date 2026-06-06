@@ -51,12 +51,19 @@
   overflow: hidden;
 }
 
-/* Sheet-Body scrollt, Header und Tabs bleiben oben fixiert */
-.aborea-sheet .sheet-body {
+/* Sheet-Body (Charakter-Sheet) und Item-Body (Item-Sheet) scrollen */
+.aborea-sheet .sheet-body,
+.aborea-sheet .item-body {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
   padding-bottom: 12px; /* Puffer am unteren Rand beim Scrollen */
+}
+
+/* Tab-Inhalte: aktiver Tab als Block damit der Sheet-Body-Scroll greift.
+   Inaktive Tabs werden von Foundry's Tabs-Klasse bereits ausgeblendet. */
+.aborea-sheet .sheet-body .tab.active {
+  display: block;
 }
 
 /* ── Header Pro ─────────────────────────────────────── */

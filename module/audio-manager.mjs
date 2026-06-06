@@ -361,31 +361,38 @@ export class AboreaSoundboard {
   // ── Scene Control ─────────────────────────────────────────────────────────────
 
   static registerSceneControl() {
+    const entry = {
+      name: "aborea-audio",
+      title: "ABOREA Audio",
+      icon: "fas fa-music",
+      layer: "SoundsLayer",
+      tools: [
+        {
+          name: "open",
+          title: "Soundboard öffnen",
+          icon: "fas fa-sliders-h",
+          button: true,
+          onClick: () => AboreaSoundboard.openDialog()
+        },
+        {
+          name: "stop",
+          title: "Alles stoppen",
+          icon: "fas fa-stop",
+          button: true,
+          onClick: () => AboreaSoundboard.stopAll()
+        }
+      ]
+    };
+
+    // v13+: getSceneControlButtonsV2 übergibt ein Array (gleiche Struktur wie v12)
+    Hooks.on("getSceneControlButtonsV2", controls => {
+      if (!game.user?.isGM) return;
+      if (Array.isArray(controls)) controls.push(entry);
+    });
+
+    // v12 Fallback (kein Warning in v13 da Hook nicht mehr feuert wenn V2 Hook aktiv)
     Hooks.on("getSceneControlButtons", controls => {
       if (!game.user?.isGM) return;
-      const entry = {
-        name: "aborea-audio",
-        title: "ABOREA Audio",
-        icon: "fas fa-music",
-        layer: "SoundsLayer",
-        tools: [
-          {
-            name: "open",
-            title: "Soundboard öffnen",
-            icon: "fas fa-sliders-h",
-            button: true,
-            onClick: () => AboreaSoundboard.openDialog()
-          },
-          {
-            name: "stop",
-            title: "Alles stoppen",
-            icon: "fas fa-stop",
-            button: true,
-            onClick: () => AboreaSoundboard.stopAll()
-          }
-        ]
-      };
-      // Foundry v12: controls is an Array; v13: controls is a plain object keyed by name
       if (Array.isArray(controls)) controls.push(entry);
       else if (controls && typeof controls === "object") controls[entry.name] = entry;
     });

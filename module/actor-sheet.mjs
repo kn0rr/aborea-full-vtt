@@ -453,10 +453,15 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
   _onRender(context, options) {
     super._onRender(context, options);
     const html = this._html();
-    // Tabs für dieses Sheet (V1-kompatibel, V2-Shim)
+    // Tabs: aktiven Tab merken und beim Re-Render wiederherstellen
     const tabConfig = this.constructor.DEFAULT_OPTIONS?.tabs?.[0];
     if (tabConfig) {
-      const tabs = new Tabs({ ...tabConfig, callback: () => {} });
+      const initial = this._activeTab ?? tabConfig.initial;
+      const tabs = new Tabs({
+        ...tabConfig,
+        initial,
+        callback: (_event, _tabs, tabName) => { this._activeTab = tabName; }
+      });
       tabs.bind(this.element);
     }
     if (!this.isEditable) return;
@@ -628,7 +633,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   async _onDropItem(event, data) {
     const item = await Item.implementation.fromDropData(data);
-    if (!item) return super._onDropItem(event, data);
+    if (!item) {
+      // V2: ActorSheetV2 hat kein _onDropItem — Item direkt anlegen
+      const rawData = await Item.implementation.fromDropData(data);
+      if (rawData) await this.actor.createEmbeddedDocuments("Item", [rawData.toObject?.() ?? rawData]);
+      return;
+    }
     if (item.type === "race")  return this._applyRace(item);
     if (item.type === "class") return this._applyClass(item);
     const obj = duplicateItemObject(item);
@@ -1169,9 +1179,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   async _onItemCreate(event) {
     event.preventDefault();
-    const type=event.currentTarget.dataset.type; const name=game.i18n.format("ABOREA.NewItem",{type});
-    const created=await this.actor.createEmbeddedDocuments("Item",[{name,type,system:{}}]);
-    await this._logInventoryEntry("item-add",itemHistoryLabel({name,type}),{itemType:type,sourcePack:"manual"});
+    const type = event.currentTarget.dataset.type;
+    const name = game.i18n.format("ABOREA.NewItem", { type });
+    const created = await this.actor.createEmbeddedDocuments("Item", [{ name, type, system: {} }]);
+    await this._logInventoryEntry("item-add", itemHistoryLabel({ name, type }), { itemType: type, sourcePack: "manual" });
+    // V2: Item-Sheet nach Erstellung öffnen (in V1 war das automatisch)
+    created[0]?.sheet?.render(true);
     return created;
   }
 
