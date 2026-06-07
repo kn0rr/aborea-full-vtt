@@ -99,7 +99,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     // Kampfzustände — aktive Effekte als Set, alle Conditions mit active-Flag
     const activeStatuses = new Set(
-      actor.effects.flatMap(e => [...(e.statuses ?? [])])
+      Array.from(actor.effects).flatMap(e => [...(e.statuses ?? [])])
     );
     context.conditions = ABOREA_CONDITIONS.map(c => ({ ...c, active: activeStatuses.has(c.id) }));
 
@@ -547,7 +547,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     // Kampfzustände toggling
     html.find(".condition-toggle").on("click", async ev => {
       const condId = ev.currentTarget.dataset.conditionId;
-      const existing = this.actor.effects.find(e => e.statuses?.has(condId));
+      const existing = Array.from(this.actor.effects).find(e => e.statuses?.has(condId));
       if (existing) {
         await existing.delete();
       } else {

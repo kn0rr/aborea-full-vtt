@@ -31,7 +31,7 @@ export function registerConditionHooks() {
     const actor = combatant.actor;
     if (!actor) return;
 
-    const isBleeding = actor.effects.some(e => e.statuses?.has("aborea-bleeding"));
+    const isBleeding = Array.from(actor.effects).some(e => e.statuses?.has("aborea-bleeding"));
     if (!isBleeding) return;
 
     const curHp = Number(actor.system.resources?.hp?.value ?? 0);
