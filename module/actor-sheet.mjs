@@ -457,7 +457,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const tabConfig = this.constructor.DEFAULT_OPTIONS?.tabs?.[0];
     if (tabConfig) {
       const initial = this._activeTab ?? tabConfig.initial;
-      const tabs = new Tabs({
+      const tabs = new foundry.applications.ux.Tabs({
         ...tabConfig,
         initial,
         callback: (_event, _tabs, tabName) => { this._activeTab = tabName; }

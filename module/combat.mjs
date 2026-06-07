@@ -589,13 +589,15 @@ export function registerCombatHooks() {
     });
   });
 
-  Hooks.on("renderCombatTrackerHTML", (_tracker, html) => {
+  const _onRenderTracker = (app, html) => {
+    // v13: html kann HTMLElement (V2-App) oder jQuery (V1) sein
+    const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+    if (!root?.querySelector) return;
+
     if (game.user.isGM) {
-      html.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
+      root.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
 
-      const footer     = html.querySelector("#combat-controls") ?? html.querySelector(".combat-controls") ?? null;
       const currentMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
-
       const modBar = document.createElement("div");
       modBar.className = "aborea-situ-mod-bar";
       modBar.innerHTML = `
@@ -620,8 +622,9 @@ export function registerCombatHooks() {
       });
       modBar.querySelector(".situ-mod-reset").addEventListener("click", () => updateMod(0));
 
+      const footer = root.querySelector("#combat-controls") ?? root.querySelector(".combat-controls") ?? null;
       if (footer) footer.before(modBar);
-      else html.appendChild(modBar);
+      else root.appendChild(modBar);
     }
 
     const combat = game.combat;
@@ -632,20 +635,24 @@ export function registerCombatHooks() {
     const isOwner = activeCombatant.actor?.isOwner ?? false;
     if (!isOwner && !game.user.isGM) return;
 
-    const li = html.querySelector(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
+    const li = root.querySelector(`.combatant[data-combatant-id="${activeCombatant.id}"]`);
     if (!li) return;
     const controls = li.querySelector(".combatant-controls");
     if (!controls) return;
 
     const btn = document.createElement("button");
-    btn.type      = "button";
-    btn.className = "combat-attack-btn";
-    btn.title     = "Angreifen";
+    btn.type        = "button";
+    btn.className   = "combat-attack-btn";
+    btn.title       = "Angreifen";
     btn.textContent = "⚔";
     btn.addEventListener("click", () => {
       const actor = activeCombatant.actor;
       if (actor) openAttackDialog(actor);
     });
     controls.prepend(btn);
-  });
+  };
+
+  Hooks.on("renderCombatTrackerHTML", _onRenderTracker);
+  // Fallback für den Fall dass der CombatTracker noch V1 ist
+  Hooks.on("renderCombatTracker", _onRenderTracker);
 }
