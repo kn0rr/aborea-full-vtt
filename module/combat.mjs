@@ -134,6 +134,12 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     form: { template: "systems/aborea-v7/templates/combat/attack-dialog.html" },
   };
 
+  constructor(options = {}) {
+    const { resolve, ...rest } = options;
+    super(rest);
+    this._resolve = resolve ?? null;
+  }
+
   get title() { return `⚔ Angriff — ${this.options.attackerActor.name}`; }
 
   async _prepareContext() {
@@ -210,24 +216,24 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const targetActor = targetToken?.actor ?? null;
     const weapon      = actor.items.get(data.weaponId);
 
-    const resolve = this.options.resolve;
-    this.options.resolve = null;
+    const resolve = this._resolve;
+    this._resolve = null;
     resolve?.({
       weapon,
-      offBonus:        Number(data.offBonus || 0),
+      offBonus:         Number(data.offBonus || 0),
       untrainedPenalty: weapon ? _getUntrainedPenalty(actor, weapon) : 0,
-      situMod:         Number(data.situMod || 0),
+      situMod:          Number(data.situMod || 0),
       targetActor,
-      targetDefense:   targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
-      attackerImg:     actor.img ?? "",
-      targetImg:       targetActor?.img ?? "",
+      targetDefense:    targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
+      attackerImg:      actor.img ?? "",
+      targetImg:        targetActor?.img ?? "",
     });
   }
 
   async _onClose(options) {
     await super._onClose(options);
-    const resolve = this.options.resolve;
-    this.options.resolve = null;
+    const resolve = this._resolve;
+    this._resolve = null;
     resolve?.(null);
   }
 }
@@ -249,6 +255,12 @@ class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) 
   static PARTS = {
     form: { template: "systems/aborea-v7/templates/combat/spell-attack-dialog.html" },
   };
+
+  constructor(options = {}) {
+    const { resolve, ...rest } = options;
+    super(rest);
+    this._resolve = resolve ?? null;
+  }
 
   get title() { return `✨ Gezielter Zauber — ${this.options.item.name}`; }
 
@@ -311,8 +323,8 @@ class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) 
     const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
     const targetActor = targetToken?.actor ?? null;
 
-    const resolve = this.options.resolve;
-    this.options.resolve = null;
+    const resolve = this._resolve;
+    this._resolve = null;
     resolve?.({
       spellBonus:    Number(data.spellBonus || 0),
       situMod:       Number(data.situMod || 0),
@@ -325,8 +337,8 @@ class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) 
 
   async _onClose(options) {
     await super._onClose(options);
-    const resolve = this.options.resolve;
-    this.options.resolve = null;
+    const resolve = this._resolve;
+    this._resolve = null;
     resolve?.(null);
   }
 }
