@@ -491,21 +491,28 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
   _onRender(context, options) {
     super._onRender(context, options);
 
-    // Robuster Form-Change-Handler als Fallback für submitOnChange.
-    // Wird einmalig auf this.element (persistent, überlebt Re-Renders) registriert.
+    // Robuster Form-Change-Handler: speichert Textfelder direkt via document.update().
+    // this.element ist persistent und überlebt Part-Re-Renders — im Gegensatz zum
+    // <form>-Element selbst, das bei jedem Render ersetzt wird.
     if (!this._submitChangeHandlerBound) {
       this._submitChangeHandlerBound = true;
       this.element.addEventListener("change", async (ev) => {
         if (!this.isEditable) return;
         const field = ev.target;
         if (!field?.name) return;
-        // Felder mit eigenen Handlern überspringen — diese speichern selbst
+        // Nur gültige Dokumentenpfade weitergeben
+        const n = field.name;
+        if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
+        // Felder mit eigenen Change-Handlern überspringen
         if (field.classList.contains("item-notes-input")) return;
         if (field.classList.contains("item-equip-toggle") || field.classList.contains("magic-item-equip")) return;
         if (field.classList.contains("combat-balance")) return;
         if (field.classList.contains("custom-skill-field")) return;
         if (!field.closest("form")) return;
-        try { await this.submit(); } catch (e) { /* ignorieren — submitOnChange übernimmt ggf. */ }
+        let val = field.type === "checkbox" ? field.checked
+                : field.type === "number"   ? (Number(field.value) || 0)
+                : field.value;
+        await this.document.update({ [n]: val });
       });
     }
 
