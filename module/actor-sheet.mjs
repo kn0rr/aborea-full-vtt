@@ -78,8 +78,13 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       displayAttributes[key] = { value: Number(data?.value ?? 5), bonus: ABOREA.attributeBonus(data?.value ?? 5), label: ABOREA.attributes[key] };
     }
     system.displayAttributes = displayAttributes;
-    if (actor.type === "character") await this._prepareCharacterData(actor, system);
-    else if (actor.type !== "loot") this._prepareNpcData(actor, system);
+    if (actor.type === "character") {
+      try {
+        await this._prepareCharacterData(actor, system);
+      } catch (err) {
+        console.error("ABOREA | _prepareCharacterData fehlgeschlagen:", err);
+      }
+    } else if (actor.type !== "loot") this._prepareNpcData(actor, system);
     context.system = system;
     context.config = ABOREA;
     context.itemLists = {
@@ -98,10 +103,15 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     context.isGM = game.user.isGM;
 
     // Kampfzustände — aktive Effekte als Set, alle Conditions mit active-Flag
-    const activeStatuses = new Set(
-      Array.from(actor.effects).flatMap(e => [...(e.statuses ?? [])])
-    );
-    context.conditions = ABOREA_CONDITIONS.map(c => ({ ...c, active: activeStatuses.has(c.id) }));
+    try {
+      const activeStatuses = new Set(
+        Array.from(actor.effects).flatMap(e => [...(e.statuses ?? [])])
+      );
+      context.conditions = ABOREA_CONDITIONS.map(c => ({ ...c, active: activeStatuses.has(c.id) }));
+    } catch (err) {
+      console.error("ABOREA | Conditions-Kontext fehlgeschlagen:", err);
+      context.conditions = ABOREA_CONDITIONS.map(c => ({ ...c, active: false }));
+    }
 
     // Inventar-Totals
     const weightItems = actor.items.filter(i => ["weapon","armor","gear","magic"].includes(i.type));
@@ -480,6 +490,25 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   _onRender(context, options) {
     super._onRender(context, options);
+
+    // Robuster Form-Change-Handler als Fallback für submitOnChange.
+    // Wird einmalig auf this.element (persistent, überlebt Re-Renders) registriert.
+    if (!this._submitChangeHandlerBound) {
+      this._submitChangeHandlerBound = true;
+      this.element.addEventListener("change", async (ev) => {
+        if (!this.isEditable) return;
+        const field = ev.target;
+        if (!field?.name) return;
+        // Felder mit eigenen Handlern überspringen — diese speichern selbst
+        if (field.classList.contains("item-notes-input")) return;
+        if (field.classList.contains("item-equip-toggle") || field.classList.contains("magic-item-equip")) return;
+        if (field.classList.contains("combat-balance")) return;
+        if (field.classList.contains("custom-skill-field")) return;
+        if (!field.closest("form")) return;
+        try { await this.submit(); } catch (e) { /* ignorieren — submitOnChange übernimmt ggf. */ }
+      });
+    }
+
     // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
     this.element.querySelectorAll("img[data-edit]").forEach(img => {
       img.style.cursor = "pointer";
@@ -541,7 +570,13 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     html.find(".random-name-btn").on("click", async () => {
       const name = await _randomName(this.actor);
       if (!name) return;
-      await this.actor.update({ name });
+      const input = this.element.querySelector("input[name='name']");
+      if (input) {
+        input.value = name;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      } else {
+        await this.actor.update({ name });
+      }
     });
 
     // Kampfzustände toggling

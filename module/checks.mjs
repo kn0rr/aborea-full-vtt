@@ -31,6 +31,33 @@ class AboreaCheckDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   get title() { return `🎲 Probe — ${this.options.actor.name}`; }
 
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const root      = this.element;
+    const sel       = root.querySelector("#check-type-select");
+    const typeHid   = root.querySelector("#check-type-hidden");
+    const keyHid    = root.querySelector("#check-key-hidden");
+    const diffSel   = root.querySelector("#check-difficulty-select");
+    const diffInput = root.querySelector("#check-difficulty-input");
+
+    const syncType = () => {
+      const [type, key] = (sel.value ?? "attr::st").split("::");
+      typeHid.value = type;
+      keyHid.value  = key;
+    };
+    sel?.addEventListener("change", syncType);
+    syncType();
+
+    diffSel?.addEventListener("change", () => {
+      if (diffSel.value === "0") {
+        diffInput.removeAttribute("readonly");
+        diffInput.focus();
+      } else {
+        diffInput.value = diffSel.value;
+      }
+    });
+  }
+
   async _prepareContext() {
     const actor   = this.options.actor;
     const system  = actor.system;

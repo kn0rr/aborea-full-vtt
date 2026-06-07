@@ -1,7 +1,6 @@
 <div class="aborea-check-form">
   <div class="form-group">
     <label>Probe auf</label>
-    {{!-- Sichtbares Dropdown ohne name — aktualisiert die hidden inputs --}}
     <select id="check-type-select">
       <optgroup label="Attribute">
         {{#each attrs as |attr|}}
@@ -40,31 +39,3 @@
     <button type="submit" class="btn-primary">🎲 Würfeln</button>
   </footer>
 </div>
-
-<script>
-(function() {
-  const sel       = document.getElementById("check-type-select");
-  const typeHid   = document.getElementById("check-type-hidden");
-  const keyHid    = document.getElementById("check-key-hidden");
-  const diffSel   = document.getElementById("check-difficulty-select");
-  const diffInput = document.getElementById("check-difficulty-input");
-
-  function syncType() {
-    const val = sel.value; // "attr::st" or "skill::athletik"
-    const [type, key] = val.split("::");
-    typeHid.value = type;
-    keyHid.value  = key;
-  }
-  sel.addEventListener("change", syncType);
-  syncType();
-
-  diffSel.addEventListener("change", () => {
-    if (diffSel.value === "0") {
-      diffInput.removeAttribute("readonly");
-      diffInput.focus();
-    } else {
-      diffInput.value = diffSel.value;
-    }
-  });
-})();
-</script>
