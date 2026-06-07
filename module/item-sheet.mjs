@@ -34,6 +34,24 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
   // statusEffects: Komma-String → Array (ersetzt _updateObject)
   _onRender(context, options) {
     super._onRender(context, options);
+
+    if (!this._submitChangeHandlerBound) {
+      this._submitChangeHandlerBound = true;
+      this.element.addEventListener("change", async (ev) => {
+        if (!this.isEditable) return;
+        const field = ev.target;
+        if (!field?.name) return;
+        const n = field.name;
+        if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
+        if (field.dataset.statusEffects !== undefined) return; // eigener Handler
+        if (!field.closest("form")) return;
+        const val = field.type === "checkbox" ? field.checked
+                  : field.type === "number"   ? (Number(field.value) || 0)
+                  : field.value;
+        await this.document.update({ [n]: val });
+      });
+    }
+
     // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
     this.element.querySelectorAll("img[data-edit]").forEach(img => {
       img.style.cursor = "pointer";
