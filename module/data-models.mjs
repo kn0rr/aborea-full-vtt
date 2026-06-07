@@ -148,6 +148,20 @@ export class CreatureDataModel extends foundry.abstract.TypeDataModel {
 }
 
 // ══════════════════════════════════════════════════════════════════
+//  Loot Actor
+// ══════════════════════════════════════════════════════════════════
+
+export class LootDataModel extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    return {
+      description:     new fields.StringField({ initial: "" }),
+      locked:          new fields.BooleanField({ initial: false }),
+      lockDifficulty:  new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+    };
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
 //  Item Data Models
 // ══════════════════════════════════════════════════════════════════
 

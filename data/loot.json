@@ -1,0 +1,184 @@
+[
+  {
+    "_id": "6c6f6f740000001",
+    "name": "Truhe (leer)",
+    "type": "loot",
+    "img": "icons/containers/chest/chest-reinforced-steel-brown.webp",
+    "system": {
+      "description": "",
+      "locked": false,
+      "lockDifficulty": 0
+    },
+    "items": [],
+    "flags": { "aborea-v7": { "sourceId": "loot-truhe-leer" } }
+  },
+  {
+    "_id": "6c6f6f740000002",
+    "name": "Truhe (verschlossen)",
+    "type": "loot",
+    "img": "icons/containers/chest/chest-reinforced-steel-brown.webp",
+    "system": {
+      "description": "Die Truhe ist mit einem soliden Schloss gesichert.",
+      "locked": true,
+      "lockDifficulty": 12
+    },
+    "items": [],
+    "flags": { "aborea-v7": { "sourceId": "loot-truhe-verschlossen" } }
+  },
+  {
+    "_id": "6c6f6f740000003",
+    "name": "Schatzkiste",
+    "type": "loot",
+    "img": "icons/containers/chest/chest-reinforced-gold.webp",
+    "system": {
+      "description": "Eine schwer gesicherte Truhe mit aufwändigem Schloss. Sie scheint wertvollen Inhalt zu verwahren.",
+      "locked": true,
+      "lockDifficulty": 16
+    },
+    "items": [
+      {
+        "name": "Dolch",
+        "type": "weapon",
+        "img": "icons/weapons/daggers/dagger-curved-blue.webp",
+        "system": {
+          "description": "",
+          "skill": "kurzeKlingenwaffe",
+          "minStrength": 0,
+          "damage": -2,
+          "initiative": 2,
+          "range": "kurz",
+          "price": "5 TT",
+          "weight": 0.5,
+          "attrChoices": ["st", "ge"],
+          "hands": 1
+        }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/equipment/chest/breastplate-layered-leather-brown.webp",
+        "system": {
+          "description": "",
+          "minStrength": 3,
+          "armor": 6,
+          "maneuverMod": 0,
+          "price": "9 TT",
+          "weight": 10
+        }
+      }
+    ],
+    "flags": { "aborea-v7": { "sourceId": "loot-schatzkiste" } }
+  },
+  {
+    "_id": "6c6f6f740000004",
+    "name": "Goblin-Beute",
+    "type": "loot",
+    "img": "icons/containers/bags/pack-simple-leather-tan.webp",
+    "system": {
+      "description": "Was ein Goblin so bei sich trägt — nicht viel, aber vielleicht nützlich.",
+      "locked": false,
+      "lockDifficulty": 0
+    },
+    "items": [
+      {
+        "name": "Knüppel",
+        "type": "weapon",
+        "img": "icons/weapons/clubs/club-simple.webp",
+        "system": {
+          "description": "",
+          "skill": "waffenlos",
+          "minStrength": 0,
+          "damage": -2,
+          "initiative": 1,
+          "range": "kurz",
+          "price": "1 TT",
+          "weight": 1,
+          "attrChoices": ["st"],
+          "hands": 1
+        }
+      },
+      {
+        "name": "Fackel",
+        "type": "gear",
+        "img": "icons/sundries/lights/torch-brown.webp",
+        "system": {
+          "description": "Brennt ca. 1 Stunde.",
+          "quantity": 2,
+          "weight": 0.5,
+          "price": "2 KL",
+          "equipped": false
+        }
+      }
+    ],
+    "flags": { "aborea-v7": { "sourceId": "loot-goblin-beute" } }
+  },
+  {
+    "_id": "6c6f6f740000005",
+    "name": "Banditenbeute",
+    "type": "loot",
+    "img": "icons/containers/bags/pack-simple-leather-tan.webp",
+    "system": {
+      "description": "Ausrüstung eines gefallenen Banditen.",
+      "locked": false,
+      "lockDifficulty": 0
+    },
+    "items": [
+      {
+        "name": "Kurzschwert",
+        "type": "weapon",
+        "img": "icons/weapons/swords/shortsword-guard-brass.webp",
+        "system": {
+          "description": "",
+          "skill": "kurzeKlingenwaffe",
+          "minStrength": 0,
+          "damage": -1,
+          "initiative": 1,
+          "range": "kurz",
+          "price": "14 TT",
+          "weight": 2,
+          "attrChoices": ["st", "ge"],
+          "hands": 1
+        }
+      },
+      {
+        "name": "Lederrüstung",
+        "type": "armor",
+        "img": "icons/equipment/chest/breastplate-layered-leather-brown.webp",
+        "system": {
+          "description": "",
+          "minStrength": 3,
+          "armor": 6,
+          "maneuverMod": 0,
+          "price": "9 TT",
+          "weight": 10
+        }
+      },
+      {
+        "name": "Gürtelbeutel",
+        "type": "gear",
+        "img": "icons/containers/bags/pouch-simple-brown.webp",
+        "system": {
+          "description": "Kleiner Lederbeutel.",
+          "quantity": 1,
+          "weight": 0.2,
+          "price": "1 TT",
+          "equipped": false
+        }
+      }
+    ],
+    "flags": { "aborea-v7": { "sourceId": "loot-banditenbeute" } }
+  },
+  {
+    "_id": "6c6f6f740000006",
+    "name": "Händler-Regal (leer)",
+    "type": "loot",
+    "img": "icons/containers/chest/chest-wooden-stacked.webp",
+    "system": {
+      "description": "Ein leeres Händlerregal. Fülle es mit Waren aus dem Kompendium.",
+      "locked": false,
+      "lockDifficulty": 0
+    },
+    "items": [],
+    "flags": { "aborea-v7": { "sourceId": "loot-haendler-regal" } }
+  }
+]

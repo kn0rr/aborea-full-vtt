@@ -57,7 +57,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     }
     system.displayAttributes = displayAttributes;
     if (actor.type === "character") await this._prepareCharacterData(actor, system);
-    else this._prepareNpcData(actor, system);
+    else if (actor.type !== "loot") this._prepareNpcData(actor, system);
     context.system = system;
     context.config = ABOREA;
     context.itemLists = {
@@ -1374,4 +1374,146 @@ export class AboreaNpcSheet extends AboreaActorSheet {
 export class AboreaCreatureSheet extends AboreaActorSheet {
   static DEFAULT_OPTIONS = { tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "stats" }] };
   static PARTS = { main: { template: "systems/aborea-v7/templates/actor/creature-sheet.html" } };
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  AboreaLootSheet
+// ══════════════════════════════════════════════════════════════════
+
+export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2) {
+  static DEFAULT_OPTIONS = {
+    classes: ["aborea", "sheet", "actor", "loot-sheet"],
+    position: { width: 500, height: 580 },
+    window: { resizable: true },
+    form: { submitOnChange: true, closeOnSubmit: false },
+  };
+
+  static PARTS = {
+    main: { template: "systems/aborea-v7/templates/actor/loot-sheet.html" },
+  };
+
+  async _prepareContext(options = {}) {
+    const context = await super._prepareContext(options);
+    const actor   = this.actor;
+    context.actor     = actor;
+    context.system    = foundry.utils.deepClone(actor.system);
+    context.isGM      = game.user.isGM;
+    context.cssClass  = this.isEditable ? "editable" : "locked";
+    context.itemLists = {
+      weapons: actor.items.filter(i => i.type === "weapon"),
+      armors:  actor.items.filter(i => i.type === "armor"),
+      gear:    actor.items.filter(i => i.type === "gear"),
+      magics:  actor.items.filter(i => i.type === "magic"),
+    };
+    context.hasItems = actor.items.size > 0;
+    context.canTake  = !!game.user.character && !actor.system.locked;
+    return context;
+  }
+
+  _onRender(context, options) {
+    const html = this.element;
+
+    html.querySelectorAll(".item-edit").forEach(btn =>
+      btn.addEventListener("click", ev => {
+        const id = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+        this.actor.items.get(id)?.sheet?.render(true);
+      })
+    );
+
+    html.querySelectorAll(".item-delete").forEach(btn =>
+      btn.addEventListener("click", async ev => {
+        if (!game.user.isGM) return;
+        const id = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+        if (id) await this.actor.deleteEmbeddedDocuments("Item", [id]);
+      })
+    );
+
+    html.querySelectorAll(".loot-take-item").forEach(btn =>
+      btn.addEventListener("click", async ev => {
+        const id = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+        if (id) await this._takeItem(id);
+      })
+    );
+
+    html.querySelector(".loot-take-all")
+      ?.addEventListener("click", () => this._takeAll());
+
+    html.querySelector(".loot-toggle-lock")
+      ?.addEventListener("click", async () => {
+        if (!game.user.isGM) return;
+        await this.actor.update({ "system.locked": !this.actor.system.locked });
+      });
+  }
+
+  async _onDrop(event) {
+    if (!this.isEditable) return;
+    const data = TextEditor.getDragEventData(event);
+    if (data?.type !== "Item") return;
+    const item = await Item.implementation.fromDropData(data);
+    if (!item) return;
+    const obj = item.toObject();
+    delete obj._id;
+    await this.actor.createEmbeddedDocuments("Item", [obj]);
+  }
+
+  async _takeItem(itemId) {
+    const character = game.user.character;
+    if (!character) {
+      ui.notifications.warn("ABOREA: Kein Charakter zugewiesen (Nutzereinstellungen → Charakter).");
+      return;
+    }
+    if (this.actor.system.locked) {
+      ui.notifications.warn("ABOREA: Der Container ist verschlossen.");
+      return;
+    }
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+    const obj = item.toObject(); delete obj._id;
+    await character.createEmbeddedDocuments("Item", [obj]);
+    await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+    await this._logLootEntry(character, item.name, item.type, this.actor.name);
+  }
+
+  async _takeAll() {
+    const character = game.user.character;
+    if (!character) {
+      ui.notifications.warn("ABOREA: Kein Charakter zugewiesen.");
+      return;
+    }
+    if (this.actor.system.locked) {
+      ui.notifications.warn("ABOREA: Der Container ist verschlossen.");
+      return;
+    }
+    if (!this.actor.items.size) {
+      ui.notifications.info("ABOREA: Container ist leer.");
+      return;
+    }
+    const items = this.actor.items.map(i => i);
+    const objs  = items.map(i => { const o = i.toObject(); delete o._id; return o; });
+    await character.createEmbeddedDocuments("Item", objs);
+    await this.actor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
+
+    const current = Array.isArray(character.system.inventoryHistory)
+      ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
+    const scene = game.scenes?.active?.name ?? "";
+    const entries = items.map(i =>
+      makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i), {
+        itemType: i.type, note: `aus ${this.actor.name}`, scene
+      })
+    );
+    const updated = entries.reduce((list, e) => logListPush(list, e), current);
+    await character.update({ "system.inventoryHistory": updated });
+    ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
+  }
+
+  async _logLootEntry(character, itemName, itemType, containerName) {
+    if (character.type !== "character") return;
+    const current = Array.isArray(character.system.inventoryHistory)
+      ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
+    const scene = game.scenes?.active?.name ?? "";
+    const entry = makeHistoryEntry("inventory", "item-add", itemName, {
+      itemType, note: `aus ${containerName}`, scene
+    });
+    await character.update({ "system.inventoryHistory": logListPush(current, entry) });
+  }
 }

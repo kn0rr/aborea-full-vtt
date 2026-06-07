@@ -358,6 +358,7 @@ export async function openAttackDialog(attackerActor) {
   });
   if (!params?.weapon) return;
   await _executeAttack(attackerActor, params);
+  if (game.combat?.started) await game.combat.nextTurn();
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -371,7 +372,7 @@ export async function openSpellAttackDialog(attackerActor, item, mpCost) {
   if (!params) return null;
 
   const roll = await rollOpenD10({ label: `Gezielter Zauber: ${item.name}`, skipVisual: true });
-  const attackValue = roll.total + params.spellBonus - params.situMod;
+  const attackValue = roll.total + params.spellBonus + params.situMod;
   const hit = !roll.naturalOne && attackValue > params.targetDefense;
 
   const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
@@ -388,7 +389,7 @@ export async function openSpellAttackDialog(attackerActor, item, mpCost) {
       <div class="ac-row"><span>Zauber</span><span>${item.name} (${mpCost} MP)</span></div>
       <div class="ac-row"><span>Würfelwurf</span><span>${roll.formula}</span></div>
       <div class="ac-row"><span>Angriffsbonus</span><span>${_sign(params.spellBonus)}</span></div>
-      ${params.situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(-params.situMod)}</span></div>` : ""}
+      ${params.situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(params.situMod)}</span></div>` : ""}
       <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${roll.naturalOne ? "—" : attackValue}</strong></span></div>
       <div class="ac-row"><span>Verteidigungswert</span><span>${params.targetDefense}</span></div>
     </div>
@@ -429,7 +430,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
     return;
   }
 
-  const attackValue = roll.total + effectiveOffBonus - situMod;
+  const attackValue = roll.total + effectiveOffBonus + situMod;
   const hit    = attackValue > targetDefense;
   const damage = hit ? Math.max(1, (attackValue - targetDefense) + Number(weapon.system.damage ?? 0)) : 0;
 
@@ -489,7 +490,7 @@ function _buildAttackCard({
     ? `<div class="ac-row ac-penalty"><span>Ungelernt</span><span>${_sign(untrainedPenalty)}</span></div>`
     : "";
   const modRow = situMod !== 0
-    ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(-situMod)}</span></div>`
+    ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>`
     : "";
   const critNote = critical
     ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>`

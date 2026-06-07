@@ -1,13 +1,13 @@
 
 import { ABOREA } from "./config.mjs";
-import { AboreaActorSheet, AboreaCharacterSheet, AboreaNpcSheet, AboreaCreatureSheet } from "./actor-sheet.mjs";
+import { AboreaActorSheet, AboreaCharacterSheet, AboreaNpcSheet, AboreaCreatureSheet, AboreaLootSheet } from "./actor-sheet.mjs";
 import { AboreaItemSheet } from "./item-sheet.mjs";
 import { importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
 import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHooks } from "./combat.mjs";
 import {
-  CharacterDataModel, NpcDataModel, CreatureDataModel,
+  CharacterDataModel, NpcDataModel, CreatureDataModel, LootDataModel,
   RaceDataModel, ClassDataModel, SkillDataModel,
   WeaponDataModel, ArmorDataModel, SpellDataModel,
   MiracleDataModel, GearDataModel, GodDataModel,
@@ -55,7 +55,8 @@ Hooks.once("init", async function () {
   CONFIG.Actor.dataModels = {
     character: CharacterDataModel,
     npc:       NpcDataModel,
-    creature:  CreatureDataModel
+    creature:  CreatureDataModel,
+    loot:      LootDataModel,
   };
   CONFIG.Item.dataModels = {
     race:    RaceDataModel,
@@ -80,6 +81,7 @@ Hooks.once("init", async function () {
   Actors.registerSheet("aborea-v7", AboreaCharacterSheet, { types: ["character"], makeDefault: true, label: "ABOREA.CharacterSheet" });
   Actors.registerSheet("aborea-v7", AboreaNpcSheet, { types: ["npc"], makeDefault: true, label: "ABOREA.NpcSheet" });
   Actors.registerSheet("aborea-v7", AboreaCreatureSheet, { types: ["creature"], makeDefault: true, label: "ABOREA.CreatureSheet" });
+  Actors.registerSheet("aborea-v7", AboreaLootSheet,    { types: ["loot"],     makeDefault: true, label: "ABOREA.LootSheet" });
 
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("aborea-v7", AboreaItemSheet, { makeDefault: true });
@@ -89,6 +91,7 @@ Hooks.once("init", async function () {
     "systems/aborea-v7/templates/audio/soundboard.html",
     "systems/aborea-v7/templates/combat/attack-dialog.html",
     "systems/aborea-v7/templates/combat/spell-attack-dialog.html",
+    "systems/aborea-v7/templates/actor/loot-sheet.html",
   ]);
 
   Handlebars.registerHelper("aboreaEq",  function (a, b)   { return a === b; });

@@ -1,0 +1,149 @@
+<form class="aborea-sheet loot-sheet {{cssClass}}" autocomplete="off">
+
+  {{!-- ══ HEADER ══ --}}
+  <header class="loot-header">
+    <div class="loot-portrait-wrap">
+      <img class="loot-portrait" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+    </div>
+    <div class="loot-header-info">
+      <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+      <div class="loot-status-row">
+        {{#if system.locked}}
+          <span class="lock-badge locked">🔒 Verschlossen
+            {{#if system.lockDifficulty}}(Schwierigkeit {{system.lockDifficulty}}){{/if}}
+          </span>
+        {{else}}
+          <span class="lock-badge open">🔓 Offen</span>
+        {{/if}}
+        {{#if isGM}}
+          <button type="button" class="loot-toggle-lock btn-sm">
+            {{#if system.locked}}Entsperren{{else}}Sperren{{/if}}
+          </button>
+        {{/if}}
+      </div>
+      {{#if isGM}}
+      <div class="loot-gm-row">
+        <label class="loot-gm-label">Schlossschwierigkeit</label>
+        <input type="number" name="system.lockDifficulty" value="{{system.lockDifficulty}}" min="0" max="30" style="width:60px" />
+      </div>
+      {{/if}}
+    </div>
+  </header>
+
+  {{!-- ══ BESCHREIBUNG ══ --}}
+  {{#if isGM}}
+  <div class="loot-description-wrap">
+    <textarea name="system.description" class="loot-description-input" placeholder="Beschreibung (optional, nur für GM)…" rows="2">{{system.description}}</textarea>
+  </div>
+  {{else}}
+    {{#if system.description}}
+    <div class="loot-description-text">{{system.description}}</div>
+    {{/if}}
+  {{/if}}
+
+  {{!-- ══ ITEMS ══ --}}
+  <div class="loot-body">
+
+    {{#unless hasItems}}
+    <div class="loot-empty">
+      <p>Dieser Container ist leer.</p>
+    </div>
+    {{/unless}}
+
+    {{!-- Waffen --}}
+    {{#if itemLists.weapons.length}}
+    <section class="loot-section">
+      <div class="loot-section-header"><span>⚔ Waffen</span></div>
+      {{#each itemLists.weapons as |item|}}
+      <div class="loot-item-row" data-item-id="{{item.id}}">
+        <img class="loot-item-img" src="{{item.img}}" alt="{{item.name}}" />
+        <span class="loot-item-name">{{item.name}}</span>
+        <span class="loot-item-detail">Schaden +{{item.system.damage}}</span>
+        {{#if item.system.price}}<span class="loot-item-price">{{item.system.price}}</span>{{/if}}
+        <div class="loot-item-actions">
+          {{#if ../canTake}}<button type="button" class="loot-take-item btn-sm btn-primary">Nehmen</button>{{/if}}
+          {{#if ../isGM}}
+          <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
+          <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
+          {{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{!-- Rüstungen --}}
+    {{#if itemLists.armors.length}}
+    <section class="loot-section">
+      <div class="loot-section-header"><span>🛡 Rüstungen</span></div>
+      {{#each itemLists.armors as |item|}}
+      <div class="loot-item-row" data-item-id="{{item.id}}">
+        <img class="loot-item-img" src="{{item.img}}" alt="{{item.name}}" />
+        <span class="loot-item-name">{{item.name}}</span>
+        <span class="loot-item-detail">RS {{item.system.armor}}</span>
+        {{#if item.system.price}}<span class="loot-item-price">{{item.system.price}}</span>{{/if}}
+        <div class="loot-item-actions">
+          {{#if ../canTake}}<button type="button" class="loot-take-item btn-sm btn-primary">Nehmen</button>{{/if}}
+          {{#if ../isGM}}
+          <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
+          <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
+          {{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{!-- Ausrüstung --}}
+    {{#if itemLists.gear.length}}
+    <section class="loot-section">
+      <div class="loot-section-header"><span>🎒 Ausrüstung</span></div>
+      {{#each itemLists.gear as |item|}}
+      <div class="loot-item-row" data-item-id="{{item.id}}">
+        <img class="loot-item-img" src="{{item.img}}" alt="{{item.name}}" />
+        <span class="loot-item-name">{{item.name}}</span>
+        {{#if item.system.quantity}}<span class="loot-item-detail">× {{item.system.quantity}}</span>{{/if}}
+        {{#if item.system.price}}<span class="loot-item-price">{{item.system.price}}</span>{{/if}}
+        <div class="loot-item-actions">
+          {{#if ../canTake}}<button type="button" class="loot-take-item btn-sm btn-primary">Nehmen</button>{{/if}}
+          {{#if ../isGM}}
+          <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
+          <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
+          {{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+    {{!-- Magisches --}}
+    {{#if itemLists.magics.length}}
+    <section class="loot-section">
+      <div class="loot-section-header"><span>✨ Magisches</span></div>
+      {{#each itemLists.magics as |item|}}
+      <div class="loot-item-row" data-item-id="{{item.id}}">
+        <img class="loot-item-img" src="{{item.img}}" alt="{{item.name}}" />
+        <span class="loot-item-name">{{item.name}}</span>
+        {{#if item.system.price}}<span class="loot-item-price">{{item.system.price}}</span>{{/if}}
+        <div class="loot-item-actions">
+          {{#if ../canTake}}<button type="button" class="loot-take-item btn-sm btn-primary">Nehmen</button>{{/if}}
+          {{#if ../isGM}}
+          <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
+          <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
+          {{/if}}
+        </div>
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+
+  </div>{{!-- /.loot-body --}}
+
+  {{!-- ══ FOOTER ══ --}}
+  {{#if canTake}}
+  <footer class="loot-footer">
+    <button type="button" class="loot-take-all">🎒 Alles nehmen</button>
+  </footer>
+  {{/if}}
+
+</form>

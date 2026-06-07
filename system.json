@@ -34,7 +34,8 @@
     "Actor": {
       "character": {},
       "npc": {},
-      "creature": {}
+      "creature": {},
+      "loot": {}
     },
     "Item": {
       "race": {},
@@ -160,6 +161,17 @@
       "label": "Magisches",
       "type": "Item",
       "path": "packs/magics",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "loot",
+      "label": "Beute-Container",
+      "type": "Actor",
+      "path": "packs/loot",
       "system": "aborea-v7",
       "ownership": {
         "PLAYER": "OBSERVER",
