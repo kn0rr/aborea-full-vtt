@@ -1,6 +1,8 @@
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
 // ══════════════════════════════════════════════════════════════════
 //  AboreaCombat — Combat Document
 // ══════════════════════════════════════════════════════════════════
@@ -48,13 +50,9 @@ export class AboreaCombat extends Combat {
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  Attack Dialog & Resolution
+//  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
-/**
- * Berechnet den Malus für ungelernte Waffen (-2).
- * Gibt 0 zurück wenn die Waffe gelernt ist oder die Klasse den Malus aufhebt.
- */
 function _getUntrainedPenalty(actor, weapon) {
   if (!weapon) return 0;
   const skillKey = weapon.system?.skill;
@@ -62,9 +60,9 @@ function _getUntrainedPenalty(actor, weapon) {
   const rank = Number(actor.system.skills?.[skillKey]?.rank ?? 0);
   if (rank > 0) return 0;
   const minimums = actor.system.classFeatures?.weaponMinimums ?? {};
-  if ("all" in minimums) return 0;                                        // Krieger: Waffenkundig
-  if (skillKey === "boegen" && "bows-crossbows" in minimums) return 0;   // Waldläufer: Bogenschütze
-  if ("deityWeapon" in minimums) {                                        // Priester: Gotteswaffe
+  if ("all" in minimums) return 0;
+  if (skillKey === "boegen" && "bows-crossbows" in minimums) return 0;
+  if ("deityWeapon" in minimums) {
     const godItem = actor.items.find(i => i.type === "god");
     const deitySkills = godItem?.system?.weaponSkills ?? [];
     if (deitySkills.includes(skillKey)) return 0;
@@ -72,148 +70,280 @@ function _getUntrainedPenalty(actor, weapon) {
   return -2;
 }
 
-/**
- * Open the attack dialog for the given actor.
- * Reads Foundry's current token target automatically.
- */
+function _dv(actor) {
+  if (!actor) return 5;
+  if (actor.type === "character" && actor.system.combat?.totalArmorValue != null) {
+    return ABOREA.defenseValue(
+      Number(actor.system.combat.totalArmorValue),
+      Number(actor.system.combat?.defensiveBonus ?? 0));
+  }
+  const baseArmor      = Number(actor.system.combat?.armorValue ?? 0);
+  const armorFromItems = actor.items
+    .filter(i => i.type === "armor" && i.system.equipped)
+    .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+  return ABOREA.defenseValue(baseArmor + armorFromItems, Number(actor.system.combat?.defensiveBonus ?? 0));
+}
+
+function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
+
+function _hpColor(pct) {
+  if (pct > 60) return "#2d8a3e";
+  if (pct > 25) return "#c08a00";
+  return "#b91c1c";
+}
+
+/** Builds a target candidate list from scene tokens, excluding the given token id. */
+function _buildTargetCandidates(attackerTokenId) {
+  return (canvas?.tokens?.placeables ?? [])
+    .filter(t => t.actor && t.id !== attackerTokenId)
+    .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang))
+    .map(t => {
+      const hp    = t.actor.system.resources?.hp ?? {};
+      const hpVal = Number(hp.value ?? 0);
+      const hpMax = Number(hp.max ?? 1);
+      const pct   = hpMax > 0 ? Math.round((hpVal / hpMax) * 100) : 0;
+      return {
+        id:          t.id,
+        name:        t.name,
+        dv:          _dv(t.actor),
+        hp:          hpVal,
+        hpMax,
+        hpPct:       pct,
+        hpColor:     _hpColor(pct),
+        img:         t.actor.img ?? "icons/svg/mystery-man.svg",
+        preselected: t.id === (game.user.targets.first()?.id ?? ""),
+      };
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  AboreaAttackDialog — ApplicationV2
+// ══════════════════════════════════════════════════════════════════
+
+class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id:       "aborea-attack-dialog",
+    classes:  ["aborea-attack-dialog"],
+    tag:      "form",
+    window:   { resizable: false },
+    position: { width: 420 },
+    form:     { handler: AboreaAttackDialog._handleSubmit, closeOnSubmit: true },
+  };
+
+  static PARTS = {
+    form: { template: "systems/aborea-v7/templates/combat/attack-dialog.html" },
+  };
+
+  get title() { return `⚔ Angriff — ${this.options.attackerActor.name}`; }
+
+  async _prepareContext() {
+    const actor         = this.options.attackerActor;
+    const weapons       = actor.items.filter(i => i.type === "weapon" && i.system.equipped);
+    const globalSituMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+    const currentOffBonus = Number(actor.system.combat?.offensiveBonus ?? 0);
+    const combatBonus   = Number(actor.system.combat?.combatBonus ?? actor.system.combat?.offensiveBonus ?? 0)
+                        + Number(actor.system.combat?.defensiveBonus ?? 0);
+    const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
+    const initialPenalty  = weapons[0] ? _getUntrainedPenalty(actor, weapons[0]) : 0;
+
+    return {
+      weapons: weapons.map(w => ({
+        id:     w.id,
+        name:   w.name,
+        damage: w.system.damage ?? 0,
+        skill:  w.system.skill ?? "",
+      })),
+      targetCandidates: _buildTargetCandidates(attackerTokenId),
+      combatBonus,
+      currentOffBonus,
+      globalSituMod,
+      initialPenalty,
+    };
+  }
+
+  _onRender(context, options) {
+    const html         = this.element;
+    const actor        = this.options.attackerActor;
+    const targetSelect = html.querySelector("[name=targetTokenId]");
+    const weaponSelect = html.querySelector("[name=weaponId]");
+    const manualRow    = html.querySelector(".manual-dv-row");
+    const untrainedRow = html.querySelector(".untrained-row");
+    const preview      = html.querySelector(".target-preview");
+
+    // candidate lookup by token id
+    const candidateMap = Object.fromEntries(
+      (context.targetCandidates ?? []).map(c => [c.id, c])
+    );
+
+    const toggleManual = () => { manualRow.style.display = targetSelect.value ? "none" : ""; };
+    const updatePreview = () => {
+      const c = candidateMap[targetSelect.value];
+      if (!c) { preview.style.display = "none"; return; }
+      preview.style.display = "";
+      preview.querySelector(".target-preview-img").src  = c.img;
+      preview.querySelector(".target-preview-name").textContent = c.name;
+      const fill = preview.querySelector(".target-preview-hp-fill");
+      fill.style.width            = `${c.hpPct}%`;
+      fill.style.backgroundColor  = c.hpColor;
+      preview.querySelector(".target-preview-stats").textContent = `RW ${c.dv} · HP ${c.hp}/${c.hpMax}`;
+    };
+
+    targetSelect.addEventListener("change", () => { toggleManual(); updatePreview(); });
+    toggleManual();
+    updatePreview();
+
+    const updatePenalty = () => {
+      const weapon  = actor.items.get(weaponSelect.value);
+      const penalty = _getUntrainedPenalty(actor, weapon);
+      untrainedRow.style.display = penalty ? "" : "none";
+    };
+    weaponSelect.addEventListener("change", updatePenalty);
+
+    html.querySelector(".dialog-cancel-btn")?.addEventListener("click", () => this.close());
+  }
+
+  static async _handleSubmit(event, form, formData) {
+    const data    = formData.object;
+    const actor   = this.options.attackerActor;
+    const tokenId = data.targetTokenId;
+    const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
+    const targetActor = targetToken?.actor ?? null;
+    const weapon      = actor.items.get(data.weaponId);
+
+    const resolve = this.options.resolve;
+    this.options.resolve = null;
+    resolve?.({
+      weapon,
+      offBonus:        Number(data.offBonus || 0),
+      untrainedPenalty: weapon ? _getUntrainedPenalty(actor, weapon) : 0,
+      situMod:         Number(data.situMod || 0),
+      targetActor,
+      targetDefense:   targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
+      attackerImg:     actor.img ?? "",
+      targetImg:       targetActor?.img ?? "",
+    });
+  }
+
+  async _onClose(options) {
+    await super._onClose(options);
+    const resolve = this.options.resolve;
+    this.options.resolve = null;
+    resolve?.(null);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  AboreaSpellAttackDialog — ApplicationV2
+// ══════════════════════════════════════════════════════════════════
+
+class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id:       "aborea-spell-attack-dialog",
+    classes:  ["aborea-attack-dialog"],
+    tag:      "form",
+    window:   { resizable: false },
+    position: { width: 420 },
+    form:     { handler: AboreaSpellAttackDialog._handleSubmit, closeOnSubmit: true },
+  };
+
+  static PARTS = {
+    form: { template: "systems/aborea-v7/templates/combat/spell-attack-dialog.html" },
+  };
+
+  get title() { return `✨ Gezielter Zauber — ${this.options.item.name}`; }
+
+  async _prepareContext() {
+    const actor      = this.options.attackerActor;
+    const item       = this.options.item;
+    const inValue    = Number(actor.system.finalAttributes?.in?.value ?? actor.system.attributes?.in?.value ?? 5);
+    const attrBonus  = ABOREA.attributeBonus(inValue);
+    const skillRank  = Number(actor.system.skills?.gezielteSprueche?.rank ?? 0);
+    const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
+
+    const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
+
+    return {
+      itemName:         item.name,
+      mpCost:           this.options.mpCost,
+      spellAttackBonus: attrBonus + skillRank + classBonus,
+      signedAttrBonus:  _sign(attrBonus),
+      signedSkillRank:  _sign(skillRank),
+      signedClassBonus: _sign(classBonus),
+      globalSituMod:    Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0),
+      targetCandidates: _buildTargetCandidates(attackerTokenId),
+    };
+  }
+
+  _onRender(context, options) {
+    const html         = this.element;
+    const targetSelect = html.querySelector("[name=targetTokenId]");
+    const manualRow    = html.querySelector(".manual-dv-row");
+    const preview      = html.querySelector(".target-preview");
+
+    const candidateMap = Object.fromEntries(
+      (context.targetCandidates ?? []).map(c => [c.id, c])
+    );
+
+    const toggleManual = () => { manualRow.style.display = targetSelect.value ? "none" : ""; };
+    const updatePreview = () => {
+      const c = candidateMap[targetSelect.value];
+      if (!c) { preview.style.display = "none"; return; }
+      preview.style.display = "";
+      preview.querySelector(".target-preview-img").src = c.img;
+      preview.querySelector(".target-preview-name").textContent = c.name;
+      const fill = preview.querySelector(".target-preview-hp-fill");
+      fill.style.width           = `${c.hpPct}%`;
+      fill.style.backgroundColor = c.hpColor;
+      preview.querySelector(".target-preview-stats").textContent = `RW ${c.dv} · HP ${c.hp}/${c.hpMax}`;
+    };
+
+    targetSelect.addEventListener("change", () => { toggleManual(); updatePreview(); });
+    toggleManual();
+    updatePreview();
+
+    html.querySelector(".dialog-cancel-btn")?.addEventListener("click", () => this.close());
+  }
+
+  static async _handleSubmit(event, form, formData) {
+    const data    = formData.object;
+    const actor   = this.options.attackerActor;
+    const tokenId = data.targetTokenId;
+    const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
+    const targetActor = targetToken?.actor ?? null;
+
+    const resolve = this.options.resolve;
+    this.options.resolve = null;
+    resolve?.({
+      spellBonus:    Number(data.spellBonus || 0),
+      situMod:       Number(data.situMod || 0),
+      targetActor,
+      targetDefense: targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
+      attackerImg:   actor.img ?? "",
+      targetImg:     targetActor?.img ?? "",
+    });
+  }
+
+  async _onClose(options) {
+    await super._onClose(options);
+    const resolve = this.options.resolve;
+    this.options.resolve = null;
+    resolve?.(null);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  Attack Dialog & Resolution
+// ══════════════════════════════════════════════════════════════════
+
 export async function openAttackDialog(attackerActor) {
   const weapons = attackerActor.items.filter(i => i.type === "weapon" && i.system.equipped);
   if (!weapons.length) {
     ui.notifications.warn("ABOREA: Keine ausgerüstete Waffe gefunden.");
     return;
   }
-
-  const globalSituMod   = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
-  const currentOffBonus = Number(attackerActor.system.combat?.offensiveBonus ?? 0);
-  const combatBonus     = Number(attackerActor.system.combat?.combatBonus
-    ?? attackerActor.system.combat?.offensiveBonus ?? 0)
-    + Number(attackerActor.system.combat?.defensiveBonus ?? 0);
-
-  // All tokens on the scene except the attacker's own token
-  const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === attackerActor.id)?.id;
-  const targetCandidates = (canvas?.tokens?.placeables ?? [])
-    .filter(t => t.actor && t.id !== attackerTokenId)
-    .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
-
-  const preselectedId = game.user.targets.first()?.id ?? "";
-
-  const _dv = actor => {
-    if (!actor) return 5;
-    // Charaktere: totalArmorValue wird von _recalculateCharacter persistent gespeichert
-    // (enthält Rassen- und Klassenboni) → direkt verwenden
-    if (actor.type === "character" && actor.system.combat?.totalArmorValue != null) {
-      return ABOREA.defenseValue(
-        Number(actor.system.combat.totalArmorValue),
-        Number(actor.system.combat?.defensiveBonus ?? 0));
-    }
-    // NSCs / Kreaturen: live aus Basis + ausgerüsteten Rüstungsteilen berechnen
-    const baseArmor      = Number(actor.system.combat?.armorValue ?? 0);
-    const armorFromItems = actor.items
-      .filter(i => i.type === "armor" && i.system.equipped)
-      .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-    return ABOREA.defenseValue(baseArmor + armorFromItems, Number(actor.system.combat?.defensiveBonus ?? 0));
-  };
-
-  const targetOptions = [
-    `<option value="">— Kein Ziel (VW manuell) —</option>`,
-    ...targetCandidates.map(t => {
-      const dv = _dv(t.actor);
-      const hp = t.actor.system.resources?.hp?.value ?? "?";
-      return `<option value="${t.id}" ${t.id === preselectedId ? "selected" : ""}>`
-           + `${t.name} · RW ${dv} · HP ${hp}</option>`;
-    })
-  ].join("");
-
-  const weaponOptions = weapons
-    .map(w => `<option value="${w.id}">${w.name} &nbsp;(+${w.system.damage ?? 0} Schaden, ${w.system.skill ?? "—"})</option>`)
-    .join("");
-
-  const initialPenalty = _getUntrainedPenalty(attackerActor, weapons[0]);
-
   const params = await new Promise(resolve => {
-    new Dialog({
-      title: `⚔ Angriff — ${attackerActor.name}`,
-      content: `<form class="aborea-attack-form">
-        <div class="form-group">
-          <label>Waffe</label>
-          <select name="weaponId">${weaponOptions}</select>
-        </div>
-        <div class="form-group ob-row">
-          <label>Offensivbonus
-            <span class="hint">(Kampfbonus: ${combatBonus})</span>
-          </label>
-          <input type="number" name="offBonus" value="${currentOffBonus}" min="0" max="${combatBonus}" />
-        </div>
-        <div class="form-group untrained-row" style="display:${initialPenalty ? '' : 'none'}">
-          <label>Ungelernt <span class="hint">(Waffenfertigkeit Rang 0)</span></label>
-          <input type="number" name="untrainedPenalty" value="${initialPenalty}" disabled />
-        </div>
-        <div class="form-group">
-          <label>Situationsmodifikator
-            <span class="hint">(negativ = Erschwernis)</span>
-          </label>
-          <input type="number" name="situMod" value="${globalSituMod}" />
-        </div>
-        <div class="form-group">
-          <label>Ziel</label>
-          <select name="targetTokenId">${targetOptions}</select>
-        </div>
-        <div class="form-group manual-dv-row">
-          <label>Verteidigungswert <span class="hint">(manuell)</span></label>
-          <input type="number" name="manualDefense" value="5" min="1" />
-        </div>
-      </form>`,
-      buttons: {
-        attack: {
-          icon: `<i class="fas fa-dice-d10"></i>`,
-          label: "Angreifen",
-          callback: html => {
-            const root = html instanceof HTMLElement ? html : html[0];
-            const tokenId     = root.querySelector("[name=targetTokenId]").value;
-            const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
-            const targetActor = targetToken?.actor ?? null;
-            const untrainedPenalty = Number(root.querySelector("[name=untrainedPenalty]")?.value ?? 0);
-            resolve({
-              weapon:          attackerActor.items.get(root.querySelector("[name=weaponId]").value),
-              offBonus:        Number(root.querySelector("[name=offBonus]").value  || 0),
-              untrainedPenalty,
-              situMod:         Number(root.querySelector("[name=situMod]").value   || 0),
-              targetActor,
-              targetDefense: targetActor
-                ? _dv(targetActor)
-                : Number(root.querySelector("[name=manualDefense]").value || 5),
-            });
-          }
-        },
-        cancel: { label: "Abbruch", callback: () => resolve(null) }
-      },
-      default: "attack",
-      close: () => resolve(null),
-      render: html => {
-        const root          = html instanceof HTMLElement ? html : html[0];
-        const targetSelect  = root.querySelector("[name=targetTokenId]");
-        const weaponSelect  = root.querySelector("[name=weaponId]");
-        const manualRow     = root.querySelector(".manual-dv-row");
-        const untrainedRow  = root.querySelector(".untrained-row");
-        const penaltyInput  = root.querySelector("[name=untrainedPenalty]");
-
-        const toggleManual = () => {
-          manualRow.style.display = targetSelect.value ? "none" : "";
-        };
-        targetSelect.addEventListener("change", toggleManual);
-        toggleManual();
-
-        const updatePenalty = () => {
-          const weapon  = attackerActor.items.get(weaponSelect.value);
-          const penalty = _getUntrainedPenalty(attackerActor, weapon);
-          penaltyInput.value         = penalty;
-          untrainedRow.style.display = penalty ? "" : "none";
-        };
-        weaponSelect.addEventListener("change", updatePenalty);
-      }
-    }).render(true);
+    new AboreaAttackDialog({ attackerActor, resolve }).render(true);
   });
-
   if (!params?.weapon) return;
   await _executeAttack(attackerActor, params);
 }
@@ -222,129 +352,16 @@ export async function openAttackDialog(attackerActor) {
 //  Targeted Spell Attack Dialog
 // ══════════════════════════════════════════════════════════════════
 
-/**
- * Called from _castPower when item.system.targeted === true.
- * MP has already been deducted. Rolls an attack; on hit the caller
- * applies the spell effects, on miss nothing happens.
- * Returns true if the spell hit, false if it missed.
- */
 export async function openSpellAttackDialog(attackerActor, item, mpCost) {
-  const globalSituMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
-
-  // Spell attack bonus = IN-bonus + Gezielte Sprüche rank + class bonus
-  const inValue    = Number(attackerActor.system.finalAttributes?.in?.value
-                         ?? attackerActor.system.attributes?.in?.value ?? 5);
-  const attrBonus  = ABOREA.attributeBonus(inValue);
-  const skillRank  = Number(attackerActor.system.skills?.gezielteSprueche?.rank ?? 0);
-  const classBonus = Number(attackerActor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
-  const spellAttackBonus = attrBonus + skillRank + classBonus;
-
-  // Scene token dropdown (same logic as openAttackDialog)
-  const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === attackerActor.id)?.id;
-  const targetCandidates = (canvas?.tokens?.placeables ?? [])
-    .filter(t => t.actor && t.id !== attackerTokenId)
-    .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
-  const preselectedId = game.user.targets.first()?.id ?? "";
-
-  const _dv = actor => {
-    if (!actor) return 5;
-    // Charaktere: totalArmorValue wird von _recalculateCharacter persistent gespeichert
-    // (enthält Rassen- und Klassenboni) → direkt verwenden
-    if (actor.type === "character" && actor.system.combat?.totalArmorValue != null) {
-      return ABOREA.defenseValue(
-        Number(actor.system.combat.totalArmorValue),
-        Number(actor.system.combat?.defensiveBonus ?? 0));
-    }
-    // NSCs / Kreaturen: live aus Basis + ausgerüsteten Rüstungsteilen berechnen
-    const baseArmor      = Number(actor.system.combat?.armorValue ?? 0);
-    const armorFromItems = actor.items
-      .filter(i => i.type === "armor" && i.system.equipped)
-      .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-    return ABOREA.defenseValue(baseArmor + armorFromItems, Number(actor.system.combat?.defensiveBonus ?? 0));
-  };
-
-  const targetOptions = [
-    `<option value="">— Kein Ziel (VW manuell) —</option>`,
-    ...targetCandidates.map(t => {
-      const dv = _dv(t.actor);
-      const hp = t.actor.system.resources?.hp?.value ?? "?";
-      return `<option value="${t.id}" ${t.id === preselectedId ? "selected" : ""}>`
-           + `${t.name} · RW ${dv} · HP ${hp}</option>`;
-    })
-  ].join("");
-
   const params = await new Promise(resolve => {
-    new Dialog({
-      title: `✨ Gezielter Zauber — ${item.name}`,
-      content: `<form class="aborea-attack-form">
-        <div class="form-group target-info">
-          <label>Zauber</label>
-          <span><strong>${item.name}</strong> &nbsp;·&nbsp; ${mpCost} MP</span>
-        </div>
-        <div class="form-group">
-          <label>Angriffsbonus
-            <span class="hint">(IN ${attrBonus >= 0 ? "+" : ""}${attrBonus}
-             + Gezielte Sprüche ${skillRank >= 0 ? "+" : ""}${skillRank}
-             + Klasse ${classBonus >= 0 ? "+" : ""}${classBonus})</span>
-          </label>
-          <input type="number" name="spellBonus" value="${spellAttackBonus}" />
-        </div>
-        <div class="form-group">
-          <label>Situationsmodifikator
-            <span class="hint">(negativ = Erschwernis)</span>
-          </label>
-          <input type="number" name="situMod" value="${globalSituMod}" />
-        </div>
-        <div class="form-group">
-          <label>Ziel</label>
-          <select name="targetTokenId">${targetOptions}</select>
-        </div>
-        <div class="form-group manual-dv-row">
-          <label>Verteidigungswert <span class="hint">(manuell)</span></label>
-          <input type="number" name="manualDefense" value="5" min="1" />
-        </div>
-      </form>`,
-      buttons: {
-        cast: {
-          icon: `<i class="fas fa-dice-d10"></i>`,
-          label: "Angriffswurf",
-          callback: html => {
-            const root    = html instanceof HTMLElement ? html : html[0];
-            const tokenId = root.querySelector("[name=targetTokenId]").value;
-            const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
-            const targetActor = targetToken?.actor ?? null;
-            resolve({
-              spellBonus:    Number(root.querySelector("[name=spellBonus]").value  || 0),
-              situMod:       Number(root.querySelector("[name=situMod]").value     || 0),
-              targetActor,
-              targetDefense: targetActor
-                ? _dv(targetActor)
-                : Number(root.querySelector("[name=manualDefense]").value || 5),
-            });
-          }
-        },
-        cancel: { label: "Abbruch", callback: () => resolve(null) }
-      },
-      default: "cast",
-      close: () => resolve(null),
-      render: html => {
-        const root      = html instanceof HTMLElement ? html : html[0];
-        const select    = root.querySelector("[name=targetTokenId]");
-        const manualRow = root.querySelector(".manual-dv-row");
-        const toggle    = () => { manualRow.style.display = select.value ? "none" : ""; };
-        select.addEventListener("change", toggle);
-        toggle();
-      }
-    }).render(true);
+    new AboreaSpellAttackDialog({ attackerActor, item, mpCost, resolve }).render(true);
   });
-
-  if (!params) return null;   // cancelled
+  if (!params) return null;
 
   const roll = await rollOpenD10({ label: `Gezielter Zauber: ${item.name}`, skipVisual: true });
   const attackValue = roll.total + params.spellBonus - params.situMod;
   const hit = !roll.naturalOne && attackValue > params.targetDefense;
 
-  // Build chat card
   const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
   const resultLabel = roll.naturalOne
     ? "⛔ Patzer — automatischer Fehlschlag"
@@ -354,15 +371,12 @@ export async function openSpellAttackDialog(attackerActor, item, mpCost) {
     ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>` : "";
 
   const cardContent = `<div class="aborea-chat-card aborea-attack-card">
-    <div class="ac-header">
-      <span class="ac-attacker">✨ ${attackerActor.name}</span>
-      ${params.targetActor ? `<span class="ac-arrow">→</span><span class="ac-target">${params.targetActor.name}</span>` : ""}
-    </div>
+    ${_buildCardHeader(attackerActor.name, params.attackerImg, params.targetActor?.name, params.targetImg)}
     <div class="ac-body">
       <div class="ac-row"><span>Zauber</span><span>${item.name} (${mpCost} MP)</span></div>
       <div class="ac-row"><span>Würfelwurf</span><span>${roll.formula}</span></div>
-      <div class="ac-row"><span>Angriffsbonus</span><span>${params.spellBonus >= 0 ? "+" : ""}${params.spellBonus}</span></div>
-      ${params.situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${params.situMod >= 0 ? "+" : ""}${-params.situMod}</span></div>` : ""}
+      <div class="ac-row"><span>Angriffsbonus</span><span>${_sign(params.spellBonus)}</span></div>
+      ${params.situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(-params.situMod)}</span></div>` : ""}
       <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${roll.naturalOne ? "—" : attackValue}</strong></span></div>
       <div class="ac-row"><span>Verteidigungswert</span><span>${params.targetDefense}</span></div>
     </div>
@@ -382,63 +396,75 @@ export async function openSpellAttackDialog(attackerActor, item, mpCost) {
 
 // ── Internal: roll + chat ────────────────────────────────────────
 
-async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalty = 0, situMod, targetActor, targetDefense }) {
+async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalty = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
   const effectiveOffBonus = offBonus + untrainedPenalty;
   const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
 
-  // Natural 1 → Patzer, automatic failure
   if (roll.naturalOne) {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
       rolls: roll.rolls,
       content: _buildAttackCard({
-        attacker: attackerActor.name,
-        target: targetActor?.name,
+        attacker: attackerActor.name, attackerImg,
+        target: targetActor?.name, targetImg,
         weapon: weapon.name,
-        rollFormula: roll.formula,
-        rollTotal: 0,
+        rollFormula: roll.formula, rollTotal: 0,
         offBonus, untrainedPenalty, situMod,
-        attackValue: 0,
-        defenseValue: targetDefense,
-        hit: false, damage: 0,
-        patzer: true, critical: false,
+        attackValue: 0, defenseValue: targetDefense,
+        hit: false, damage: 0, patzer: true, critical: false,
       })
     });
     return;
   }
 
   const attackValue = roll.total + effectiveOffBonus - situMod;
-  const hit = attackValue > targetDefense;
-  const damage = hit
-    ? Math.max(1, (attackValue - targetDefense) + Number(weapon.system.damage ?? 0))
-    : 0;
+  const hit    = attackValue > targetDefense;
+  const damage = hit ? Math.max(1, (attackValue - targetDefense) + Number(weapon.system.damage ?? 0)) : 0;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
     rolls: roll.rolls,
     content: _buildAttackCard({
-      attacker: attackerActor.name,
-      target: targetActor?.name,
+      attacker: attackerActor.name, attackerImg,
+      target: targetActor?.name, targetImg,
       targetActorId: targetActor?.id,
       weapon: weapon.name,
-      rollFormula: roll.formula,
-      rollTotal: roll.total,
+      rollFormula: roll.formula, rollTotal: roll.total,
       offBonus, untrainedPenalty, situMod,
-      attackValue,
-      defenseValue: targetDefense,
-      hit, damage,
-      patzer: false,
-      critical: roll.critical,
+      attackValue, defenseValue: targetDefense,
+      hit, damage, patzer: false, critical: roll.critical,
       weaponDamage: weapon.system.damage ?? 0,
     }),
     flags: { "aborea-v7": { attackResult: { hit, damage, targetActorId: targetActor?.id ?? null } } }
   });
 }
 
-function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
+function _buildCardHeader(attacker, attackerImg, target, targetImg) {
+  const attackerPortrait = attackerImg
+    ? `<img class="ac-portrait" src="${attackerImg}" alt="${attacker}" />`
+    : "";
+  const targetPortrait = targetImg
+    ? `<img class="ac-portrait" src="${targetImg}" alt="${target}" />`
+    : "";
+  const targetBlock = target
+    ? `<span class="ac-arrow">→</span>
+       <div class="ac-combatant">
+         ${targetPortrait}
+         <span class="ac-target">${target}</span>
+       </div>`
+    : "";
+  return `<div class="ac-header">
+    <div class="ac-combatant">
+      ${attackerPortrait}
+      <span class="ac-attacker">⚔ ${attacker}</span>
+    </div>
+    ${targetBlock}
+  </div>`;
+}
 
 function _buildAttackCard({
-  attacker, target, targetActorId,
+  attacker, attackerImg = "",
+  target,   targetImg = "",   targetActorId,
   weapon, rollFormula, rollTotal, offBonus, untrainedPenalty = 0, situMod,
   attackValue, defenseValue, hit, damage, patzer, critical, weaponDamage = 0
 }) {
@@ -450,11 +476,9 @@ function _buildAttackCard({
   const untrainedRow = untrainedPenalty
     ? `<div class="ac-row ac-penalty"><span>Ungelernt</span><span>${_sign(untrainedPenalty)}</span></div>`
     : "";
-
   const modRow = situMod !== 0
     ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(-situMod)}</span></div>`
     : "";
-
   const critNote = critical
     ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>`
     : "";
@@ -481,10 +505,7 @@ function _buildAttackCard({
     </div>` : "";
 
   return `<div class="aborea-chat-card aborea-attack-card">
-    <div class="ac-header">
-      <span class="ac-attacker">⚔ ${attacker}</span>
-      ${target ? `<span class="ac-arrow">→</span><span class="ac-target">${target}</span>` : ""}
-    </div>
+    ${_buildCardHeader(attacker, attackerImg, target, targetImg)}
     <div class="ac-body">
       <div class="ac-row"><span>Waffe</span><span>${weapon}</span></div>
       <div class="ac-row"><span>Würfelwurf</span><span>${rollFormula}${patzer ? " (Patzer!)" : ""}</span></div>
@@ -507,15 +528,34 @@ function _buildAttackCard({
 export function applyDamage(targetActorId, damage) {
   const actor = game.actors.get(targetActorId);
   if (!actor) { ui.notifications.warn("ABOREA: Ziel nicht gefunden."); return; }
-  const hp = actor.system.resources?.hp ?? {};
+  const hp      = actor.system.resources?.hp ?? {};
   const current = Number(hp.value ?? 0);
-  const newHp = Math.max(0, current - damage);
+  const hpMax   = Number(hp.max ?? current);
+  const newHp   = Math.max(0, current - damage);
+  const pct     = hpMax > 0 ? Math.round((newHp / hpMax) * 100) : 0;
+  const color   = _hpColor(pct);
+
   actor.update({ "system.resources.hp.value": newHp });
+
+  const portrait = actor.img
+    ? `<img class="ac-portrait ac-portrait-lg" src="${actor.img}" alt="${actor.name}" />`
+    : "";
+
   ChatMessage.create({
     speaker: { alias: "System" },
-    content: `<div class="aborea-chat-card">
-      <p>💢 <strong>${actor.name}</strong>: ${current} → ${newHp} HP (−${damage})</p>
-      ${newHp === 0 ? `<p class="ac-note critical">☠ ${actor.name} ist bewusstlos oder tot!</p>` : ""}
+    content: `<div class="aborea-chat-card aborea-damage-card">
+      <div class="ac-damage-header">
+        ${portrait}
+        <div class="ac-damage-info">
+          <strong>${actor.name}</strong>
+          <span class="ac-damage-amount">−${damage} HP</span>
+        </div>
+      </div>
+      <div class="ac-hp-bar-wrap">
+        <div class="ac-hp-bar-fill" style="width:${pct}%;background:${color}"></div>
+      </div>
+      <div class="ac-hp-label">${newHp} / ${hpMax} HP</div>
+      ${newHp === 0 ? `<div class="ac-result patzer" style="margin-top:6px">☠ ${actor.name} ist bewusstlos oder tot!</div>` : ""}
     </div>`
   });
 }
@@ -525,18 +565,15 @@ export function applyDamage(targetActorId, damage) {
 // ══════════════════════════════════════════════════════════════════
 
 export function registerCombatHooks() {
-  // Global situational modifier setting (GM-only, world scope)
   game.settings.register("aborea-v7", "globalSituMod", {
     name: "Globaler Situationsmodifikator",
     hint: "Wird im Angriffsdialog als Voreinstellung verwendet. Negativer Wert = Erschwernis.",
     scope: "world",
-    config: false,        // managed via Combat Tracker UI, not settings menu
+    config: false,
     type: Number,
     default: 0
   });
 
-  // "Apply Damage" button in chat cards
-  // renderChatMessageHTML liefert direkt ein HTMLElement (seit v13)
   Hooks.on("renderChatMessageHTML", (_message, html) => {
     html.querySelectorAll(".apply-damage-btn").forEach(btn => {
       btn.addEventListener("click", ev => {
@@ -552,16 +589,11 @@ export function registerCombatHooks() {
     });
   });
 
-  // Add "Attack" button + global situ-mod row to Combat Tracker
-  // renderCombatTrackerHTML liefert direkt ein HTMLElement (seit v13)
   Hooks.on("renderCombatTrackerHTML", (_tracker, html) => {
-
-    // ── Global situational modifier (GM only) ───────────────────
     if (game.user.isGM) {
-      // Remove stale bar from previous renders before re-adding
       html.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
 
-      const footer = html.querySelector("#combat-controls") ?? html.querySelector(".combat-controls") ?? null;
+      const footer     = html.querySelector("#combat-controls") ?? html.querySelector(".combat-controls") ?? null;
       const currentMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
 
       const modBar = document.createElement("div");
@@ -579,10 +611,7 @@ export function registerCombatHooks() {
         await game.settings.set("aborea-v7", "globalSituMod", clamped);
         modBar.querySelector(".situ-mod-input").value = clamped;
       };
-
-      modBar.querySelector(".situ-mod-input").addEventListener("change", ev => {
-        updateMod(ev.target.value);
-      });
+      modBar.querySelector(".situ-mod-input").addEventListener("change", ev => updateMod(ev.target.value));
       modBar.querySelectorAll(".situ-mod-step").forEach(btn => {
         btn.addEventListener("click", () => {
           const cur = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
@@ -591,12 +620,10 @@ export function registerCombatHooks() {
       });
       modBar.querySelector(".situ-mod-reset").addEventListener("click", () => updateMod(0));
 
-      // Insert before the footer controls, or append to tracker
       if (footer) footer.before(modBar);
       else html.appendChild(modBar);
     }
 
-    // ── Attack button on active combatant ───────────────────────
     const combat = game.combat;
     if (!combat) return;
     const activeCombatant = combat.combatants.get(combat.current?.combatantId);
@@ -611,9 +638,9 @@ export function registerCombatHooks() {
     if (!controls) return;
 
     const btn = document.createElement("button");
-    btn.type = "button";
+    btn.type      = "button";
     btn.className = "combat-attack-btn";
-    btn.title = "Angreifen";
+    btn.title     = "Angreifen";
     btn.textContent = "⚔";
     btn.addEventListener("click", () => {
       const actor = activeCombatant.actor;

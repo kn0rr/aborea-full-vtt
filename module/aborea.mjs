@@ -86,7 +86,9 @@ Hooks.once("init", async function () {
 
   await loadTemplates([
     "systems/aborea-v7/templates/actor/partials/inventory.html",
-    "systems/aborea-v7/templates/audio/soundboard.html"
+    "systems/aborea-v7/templates/audio/soundboard.html",
+    "systems/aborea-v7/templates/combat/attack-dialog.html",
+    "systems/aborea-v7/templates/combat/spell-attack-dialog.html",
   ]);
 
   Handlebars.registerHelper("aboreaEq",  function (a, b)   { return a === b; });

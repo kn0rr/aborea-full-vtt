@@ -1003,10 +1003,65 @@
 .aborea-soundboard-info p { margin: 2px 0; }
 .aborea-soundboard-info a { color: #c8a84b; }
 
-/* ── Attack Dialog ──────────────────────────────────── */
+/* ── Attack Dialog (legacy form selector, kept for safety) ── */
 .aborea-attack-form .target-info { background: #e8f4e8; border-radius: 5px;
                                    padding: 4px 8px; font-size: .85rem; }
 .aborea-attack-form .hint { font-size: .75rem; opacity: .7; font-weight: 400; }
+
+/* ── Attack Dialog V2 ───────────────────────────────── */
+.aborea-attack-dialog .window-content { background: var(--aborea-parchment); padding: 0; }
+.aborea-attack-dialog-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+.aborea-attack-dialog-body .form-group { display: flex; align-items: center; gap: 8px;
+  padding: 4px 0; border-bottom: 1px solid var(--aborea-border-light); font-size: .87rem; }
+.aborea-attack-dialog-body .form-group:last-of-type { border-bottom: none; }
+.aborea-attack-dialog-body .form-group label { flex: 1; font-weight: 600; color: var(--aborea-brown); }
+.aborea-attack-dialog-body .form-group input,
+.aborea-attack-dialog-body .form-group select { width: 140px; }
+.aborea-attack-dialog-body .hint { font-size: .72rem; opacity: .65; font-weight: 400; display: block; }
+.aborea-attack-dialog-body .untrained-display { color: #b91c1c; font-weight: 700; font-size: .85rem; }
+.aborea-attack-dialog-body .spell-info-row { background: #e8f4e8; border-radius: 5px; padding: 4px 8px; }
+.aborea-attack-dialog-body .spell-info-value { font-size: .87rem; }
+
+/* Target preview strip */
+.target-preview { display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,.04); border-radius: 6px; padding: 6px 8px; margin: 4px 0; }
+.target-preview-img { width: 40px; height: 40px; border-radius: 4px; object-fit: cover;
+  border: 1px solid var(--aborea-border); flex-shrink: 0; }
+.target-preview-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.target-preview-name { font-weight: 700; font-size: .85rem; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.target-preview-stats { font-size: .75rem; color: var(--aborea-brown); opacity: .8; }
+
+/* Shared HP bar (dialog preview + damage card) */
+.hp-bar-wrap, .ac-hp-bar-wrap {
+  height: 6px; background: rgba(0,0,0,.15); border-radius: 3px; overflow: hidden; }
+.hp-bar-fill, .ac-hp-bar-fill {
+  height: 100%; border-radius: 3px; transition: width .3s ease, background-color .3s ease; }
+
+/* Dialog footer */
+.aborea-attack-dialog-body .dialog-footer { display: flex; gap: 6px; padding-top: 8px; margin-top: 4px; }
+.aborea-attack-dialog-body .dialog-footer button { flex: 1; padding: 6px 10px;
+  font-size: .85rem; cursor: pointer; border-radius: 5px; border: 1px solid var(--aborea-border); }
+.aborea-attack-dialog-body .dialog-footer button[type=submit] {
+  background: var(--aborea-red); color: #fff; border-color: var(--aborea-red); font-weight: 700; }
+.aborea-attack-dialog-body .dialog-footer button[type=submit]:hover { background: #a01414; }
+.aborea-attack-dialog-body .dialog-footer .dialog-cancel-btn { background: #eee; color: #444; }
+.aborea-attack-dialog-body .dialog-footer .dialog-cancel-btn:hover { background: #ddd; }
+
+/* ── Chat Card Portraits ────────────────────────────── */
+.ac-header { flex-wrap: wrap; }
+.ac-combatant { display: flex; align-items: center; gap: 5px; }
+.ac-portrait { width: 28px; height: 28px; border-radius: 4px; object-fit: cover;
+  border: 1px solid var(--aborea-border); flex-shrink: 0; }
+.ac-portrait-lg { width: 38px; height: 38px; }
+
+/* ── Damage Application Card ────────────────────────── */
+.aborea-damage-card { padding: 8px 10px; }
+.ac-damage-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ac-damage-info { flex: 1; display: flex; flex-direction: column; gap: 2px; font-size: .88rem; }
+.ac-damage-amount { font-size: 1.1rem; font-weight: 800; color: var(--aborea-red); }
+.ac-hp-label { text-align: center; font-size: .8rem; color: var(--aborea-brown);
+  margin-top: 4px; font-weight: 600; }
 
 /* ── Würfel-Overlay ─────────────────────────────────── */
 .aborea-dice-overlay.hidden { display: none; }

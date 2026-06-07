@@ -1,0 +1,53 @@
+<div class="aborea-attack-dialog-body">
+
+  <div class="form-group spell-info-row">
+    <label>Zauber</label>
+    <span class="spell-info-value"><strong>{{itemName}}</strong> &nbsp;·&nbsp; {{mpCost}} MP</span>
+  </div>
+
+  <div class="form-group">
+    <label>Angriffsbonus
+      <span class="hint">(IN {{signedAttrBonus}} + Gezielte Sprüche {{signedSkillRank}} + Klasse {{signedClassBonus}})</span>
+    </label>
+    <input type="number" name="spellBonus" value="{{spellAttackBonus}}" />
+  </div>
+
+  <div class="form-group">
+    <label>Situationsmodifikator <span class="hint">(negativ = Erschwernis)</span></label>
+    <input type="number" name="situMod" value="{{globalSituMod}}" />
+  </div>
+
+  <div class="form-group">
+    <label>Ziel</label>
+    <select name="targetTokenId">
+      <option value="">— Kein Ziel (VW manuell) —</option>
+      {{#each targetCandidates}}
+      <option value="{{id}}" {{#if preselected}}selected{{/if}}>{{name}} · RW {{dv}} · HP {{hp}}</option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="target-preview" style="display:none">
+    <img class="target-preview-img" src="" alt="" />
+    <div class="target-preview-info">
+      <span class="target-preview-name"></span>
+      <div class="hp-bar-wrap target-preview-hp-bar">
+        <div class="hp-bar-fill target-preview-hp-fill" style="width:100%"></div>
+      </div>
+      <span class="target-preview-stats"></span>
+    </div>
+  </div>
+
+  <div class="form-group manual-dv-row">
+    <label>Verteidigungswert <span class="hint">(manuell)</span></label>
+    <input type="number" name="manualDefense" value="5" min="1" />
+  </div>
+
+  <footer class="sheet-footer dialog-footer">
+    <button type="submit" class="bright">
+      <i class="fas fa-magic"></i> Angriffswurf
+    </button>
+    <button type="button" class="dialog-cancel-btn">Abbruch</button>
+  </footer>
+
+</div>
