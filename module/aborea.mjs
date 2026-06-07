@@ -6,6 +6,9 @@ import { importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } f
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
 import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHooks } from "./combat.mjs";
+import { registerConditions, registerConditionHooks } from "./conditions.mjs";
+import { openCheckDialog, openGroupCheckDialog, registerCheckHooks } from "./checks.mjs";
+import { registerQuickNpcSceneControl } from "./quick-npc.mjs";
 import {
   CharacterDataModel, NpcDataModel, CreatureDataModel, LootDataModel,
   RaceDataModel, ClassDataModel, SkillDataModel,
@@ -37,6 +40,15 @@ async function cleanupExpiredSummons() {
 Hooks.once("init", async function () {
   console.log("ABOREA V7 | Initialisiere System");
 
+  const unlockSystemPacks = async () => {
+    const packs = game.packs.filter(p => p.metadata.packageName === "aborea-v7" && p.locked);
+    for (const p of packs) await p.configure({ locked: false });
+    if (packs.length) console.log(`ABOREA | ${packs.length} Pack(s) entsperrt.`);
+    return packs.length;
+  };
+
+  registerConditions();
+
   game.aborea = {
     config: ABOREA,
     importPack: importSingleAboreaPack,
@@ -44,10 +56,13 @@ Hooks.once("init", async function () {
     resetWorldPacks: resetAboreaWorldPacks,
     buildSystemPacks,
     resetSystemPacks,
+    unlockPacks: unlockSystemPacks,
     cleanupExpiredSummons,
     audio: AboreaSoundboard,
     openSoundboard: () => AboreaSoundboard.openDialog(),
-    attack: openAttackDialog,
+    attack:      openAttackDialog,
+    check:       openCheckDialog,
+    groupCheck:  openGroupCheckDialog,
   };
   CONFIG.ABOREA = ABOREA;
 
@@ -76,6 +91,9 @@ Hooks.once("init", async function () {
   AboreaSoundboard.registerSettings();
   AboreaSoundboard.registerSceneControl();
   registerCombatHooks();
+  registerConditionHooks();
+  registerCheckHooks();
+  registerQuickNpcSceneControl();
 
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("aborea-v7", AboreaCharacterSheet, { types: ["character"], makeDefault: true, label: "ABOREA.CharacterSheet" });
@@ -88,10 +106,13 @@ Hooks.once("init", async function () {
 
   await loadTemplates([
     "systems/aborea-v7/templates/actor/partials/inventory.html",
+    "systems/aborea-v7/templates/actor/partials/conditions.html",
+    "systems/aborea-v7/templates/combat/check-dialog.html",
     "systems/aborea-v7/templates/audio/soundboard.html",
     "systems/aborea-v7/templates/combat/attack-dialog.html",
     "systems/aborea-v7/templates/combat/spell-attack-dialog.html",
     "systems/aborea-v7/templates/actor/loot-sheet.html",
+    "systems/aborea-v7/templates/loot/item-picker.html",
   ]);
 
   Handlebars.registerHelper("aboreaEq",  function (a, b)   { return a === b; });
@@ -109,9 +130,12 @@ Hooks.once("diceSoNiceReady", function (dice3d) {
 Hooks.once("ready", async function () {
   console.log("ABOREA V7 | Bereit");
   if (game.user.isGM) {
+    // System-Packs automatisch entsperren damit Inhalte direkt bearbeitbar sind
+    await game.aborea.unlockPacks();
+
     const emptySystemPacks = game.packs.filter(p => p.metadata.packageName === "aborea-v7" && p.index.size === 0);
     if (emptySystemPacks.length) {
-      ui.notifications.warn("ABOREA: Die System-Packs sind noch leer. Entsperre die Packs und führe game.aborea.buildSystemPacks() als GM aus.");
+      ui.notifications.warn("ABOREA: Die System-Packs sind noch leer. Führe game.aborea.buildSystemPacks() als GM aus.");
     }
     setInterval(() => cleanupExpiredSummons().catch(err => console.error("ABOREA summon cleanup failed", err)), 30000);
 
@@ -154,6 +178,23 @@ Hooks.on("updateItem", async (item, changes) => {
       .map(e => e.id);
     if (toDelete.length) await actor.deleteEmbeddedDocuments("ActiveEffect", toDelete);
   }
+});
+
+// ── Handout: Journal-Eintrag an Spieler senden ──────────────────
+Hooks.on("getJournalEntryContextOptions", (html, options) => {
+  if (!game.user.isGM) return;
+  options.push({
+    name:      "📤 An Spieler senden",
+    icon:      '<i class="fas fa-share-alt"></i>',
+    condition: () => game.user.isGM,
+    callback:  li => {
+      const entryId = li.dataset?.entryId ?? li.dataset?.documentId ?? li[0]?.dataset?.entryId;
+      const entry = game.journal.get(entryId);
+      if (!entry) { ui.notifications.warn("Journal-Eintrag nicht gefunden."); return; }
+      entry.show("text", true);
+      ui.notifications.info(`"${entry.name}" wird allen Spielern gezeigt.`);
+    }
+  });
 });
 
 Hooks.on("updateActor", function (actor, changes) {

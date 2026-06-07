@@ -3,6 +3,8 @@
  * Alle Hilfsfunktionen → actor-helpers.mjs ausgelagert.
  */
 import { ABOREA } from "./config.mjs";
+import { ABOREA_CONDITIONS } from "./conditions.mjs";
+import { openCheckDialog } from "./checks.mjs";
 import { rollAttack, rollSkill, rollAttribute } from "./dice.mjs";
 import { openAttackDialog, openSpellAttackDialog } from "./combat.mjs";
 import {
@@ -21,6 +23,26 @@ import {
   levelForXp, xpForNextLevel,
   normalizeCustomSkills
 } from "./actor-helpers.mjs";
+
+let _namesCache = null;
+async function _randomName(actor) {
+  if (!_namesCache) {
+    try {
+      const res = await fetch("systems/aborea-v7/data/names.json");
+      _namesCache = await res.json();
+    } catch (e) {
+      console.warn("ABOREA | names.json konnte nicht geladen werden:", e);
+      return null;
+    }
+  }
+  const race = String(actor?.system?.details?.race ?? actor?.system?.creature?.kind ?? "").toLowerCase();
+  let pool = _namesCache.allgemein ?? [];
+  if (race.includes("elf")) pool = _namesCache.elfen ?? pool;
+  else if (race.includes("zwerg") || race.includes("dwarf")) pool = _namesCache.zwerge ?? pool;
+  else if (race.includes("mensch") || race.includes("human")) pool = _namesCache.menschen ?? pool;
+  if (!pool.length) return null;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
 
 function duplicateItemObject(item) {
   const obj = item.toObject(); delete obj._id; return obj;
@@ -74,6 +96,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
     context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
     context.isGM = game.user.isGM;
+
+    // Kampfzustände — aktive Effekte als Set, alle Conditions mit active-Flag
+    const activeStatuses = new Set(
+      actor.effects.flatMap(e => [...(e.statuses ?? [])])
+    );
+    context.conditions = ABOREA_CONDITIONS.map(c => ({ ...c, active: activeStatuses.has(c.id) }));
 
     // Inventar-Totals
     const weightItems = actor.items.filter(i => ["weapon","armor","gear","magic"].includes(i.type));
@@ -452,6 +480,18 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   _onRender(context, options) {
     super._onRender(context, options);
+    // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
+    this.element.querySelectorAll("img[data-edit]").forEach(img => {
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => {
+        if (!this.isEditable) return;
+        new FilePicker({
+          type: "image",
+          current: this.document.img,
+          callback: path => this.document.update({ img: path }),
+        }).render(true);
+      });
+    });
     const html = this._html();
     // Tabs: aktiven Tab merken und beim Re-Render wiederherstellen
     const tabConfig = this.constructor.DEFAULT_OPTIONS?.tabs?.[0];
@@ -495,6 +535,61 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     }
     html.find(".roll-attack").on("click", () => openAttackDialog(this.actor));
     html.find(".open-attack-dialog").on("click", () => openAttackDialog(this.actor));
+    html.find(".open-check-dialog").on("click", () => openCheckDialog(this.actor));
+
+    // Zufallsname-Generator (NSC/Kreatur)
+    html.find(".random-name-btn").on("click", async () => {
+      const name = await _randomName(this.actor);
+      if (!name) return;
+      await this.actor.update({ name });
+    });
+
+    // Kampfzustände toggling
+    html.find(".condition-toggle").on("click", async ev => {
+      const condId = ev.currentTarget.dataset.conditionId;
+      const existing = this.actor.effects.find(e => e.statuses?.has(condId));
+      if (existing) {
+        await existing.delete();
+      } else {
+        const cond = ABOREA_CONDITIONS.find(c => c.id === condId);
+        if (!cond) return;
+        await this.actor.createEmbeddedDocuments("ActiveEffect", [{
+          name:     cond.name,
+          img:      cond.img,
+          statuses: [condId],
+        }]);
+      }
+    });
+
+    // Heiltrank / Gear verwenden
+    html.find(".gear-use").on("click", async ev => {
+      const itemId = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+      if (!itemId) return;
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+      const amount   = Number(item.system.healAmount ?? 0);
+      const healType = item.system.healType ?? "hp";
+      if (amount <= 0) return;
+      const res      = this.actor.system.resources?.[healType] ?? {};
+      const curVal   = Number(res.value ?? 0);
+      const maxVal   = Number(res.max ?? curVal);
+      const newVal   = Math.min(maxVal, curVal + amount);
+      const gained   = newVal - curVal;
+      await this.actor.update({ [`system.resources.${healType}.value`]: newVal });
+      const qty = Number(item.system.quantity ?? 1);
+      if (qty > 1) {
+        await item.update({ "system.quantity": qty - 1 });
+      } else {
+        await item.delete();
+      }
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="aborea-chat-card">
+          <p>🧪 <strong>${item.name}</strong> verwendet</p>
+          <p>+${gained} ${healType.toUpperCase()} (${newVal}/${maxVal})</p>
+        </div>`
+      });
+    });
     html.find(".item-create").on("click", this._onItemCreate.bind(this));
     html.find(".item-edit").on("click", ev => this.actor.items.get(ev.currentTarget.closest("[data-item-id]")?.dataset.itemId)?.sheet?.render(true));
     html.find(".item-notes-input").on("change", async ev => {
@@ -1443,12 +1538,15 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
         if (!game.user.isGM) return;
         await this.actor.update({ "system.locked": !this.actor.system.locked });
       });
+
+    html.querySelector(".loot-open-picker")
+      ?.addEventListener("click", () => {
+        new AboreaLootItemPicker({ lootActor: this.actor }).render(true);
+      });
   }
 
-  async _onDrop(event) {
+  async _onDropItem(event, data) {
     if (!this.isEditable) return;
-    const data = TextEditor.getDragEventData(event);
-    if (data?.type !== "Item") return;
     const item = await Item.implementation.fromDropData(data);
     if (!item) return;
     const obj = item.toObject();
@@ -1515,5 +1613,151 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       itemType, note: `aus ${containerName}`, scene
     });
     await character.update({ "system.inventoryHistory": logListPush(current, entry) });
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  AboreaLootItemPicker — ApplicationV2
+// ══════════════════════════════════════════════════════════════════
+
+const LOOT_ITEM_TYPES = [
+  { value: "",       label: "Alle",        active: true },
+  { value: "weapon", label: "⚔ Waffen",   active: false },
+  { value: "armor",  label: "🛡 Rüstungen", active: false },
+  { value: "gear",   label: "🎒 Ausrüstung", active: false },
+  { value: "magic",  label: "✨ Magisches", active: false },
+];
+
+class AboreaLootItemPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static DEFAULT_OPTIONS = {
+    id:       "aborea-loot-item-picker",
+    classes:  ["aborea-loot-picker"],
+    window:   { resizable: true },
+    position: { width: 480, height: 520 },
+  };
+
+  static PARTS = {
+    main: { template: "systems/aborea-v7/templates/loot/item-picker.html" },
+  };
+
+  constructor(options = {}) {
+    super(options);
+    this._lootActor  = options.lootActor;
+    this._allItems   = null;   // null = not yet loaded
+    this._activeType = "";
+  }
+
+  get title() { return `📦 Items hinzufügen — ${this._lootActor.name}`; }
+
+  async _prepareContext() {
+    return { types: LOOT_ITEM_TYPES.map(t => ({ ...t, active: t.value === this._activeType })) };
+  }
+
+  async _onRender(context, options) {
+    const html = this.element;
+    const searchInput  = html.querySelector(".picker-search");
+    const resultsEl    = html.querySelector(".picker-results");
+    const statusEl     = html.querySelector(".picker-status");
+
+    // Load index once, show spinner meanwhile
+    if (!this._allItems) {
+      resultsEl.innerHTML = `<p class="picker-empty">⏳ Kompendien werden geladen…</p>`;
+      this._allItems = await this._loadIndex();
+      this._renderResults(resultsEl, statusEl, searchInput?.value ?? "");
+    }
+
+    // Type tab buttons
+    html.querySelectorAll(".picker-type-btn").forEach(btn => {
+      if (btn.dataset.type === this._activeType) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        this._activeType = btn.dataset.type;
+        html.querySelectorAll(".picker-type-btn").forEach(b => b.classList.toggle("active", b.dataset.type === this._activeType));
+        this._renderResults(resultsEl, statusEl, searchInput?.value ?? "");
+      });
+    });
+
+    // Live search
+    let debounce = null;
+    searchInput?.addEventListener("input", () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => this._renderResults(resultsEl, statusEl, searchInput.value), 150);
+    });
+
+    searchInput?.focus();
+    if (this._allItems) this._renderResults(resultsEl, statusEl, "");
+  }
+
+  _renderResults(resultsEl, statusEl, query) {
+    const q = query.trim().toLowerCase();
+    const filtered = this._allItems.filter(item => {
+      if (this._activeType && item.type !== this._activeType) return false;
+      if (q && !item.name.toLowerCase().includes(q)) return false;
+      return true;
+    });
+
+    statusEl.textContent = filtered.length
+      ? `${filtered.length} Einträge${filtered.length > 50 ? " (erste 50)" : ""}`
+      : "";
+
+    if (!filtered.length) {
+      resultsEl.innerHTML = `<p class="picker-empty">Keine Einträge gefunden.</p>`;
+      return;
+    }
+
+    resultsEl.innerHTML = filtered.slice(0, 50).map(item => `
+      <div class="picker-item-row" data-pack="${item.pack}" data-item-id="${item.id}">
+        <img class="picker-item-img" src="${item.img}" alt="" />
+        <span class="picker-item-name">${item.name}</span>
+        <span class="picker-type-badge picker-type-${item.type}">${item.typeLabel}</span>
+        ${item.price ? `<span class="picker-item-price">${item.price}</span>` : ""}
+        <button type="button" class="picker-add-btn" title="Hinzufügen">+</button>
+      </div>
+    `).join("");
+
+    resultsEl.querySelectorAll(".picker-add-btn").forEach(btn => {
+      btn.addEventListener("click", async ev => {
+        const row = ev.currentTarget.closest(".picker-item-row");
+        btn.disabled = true;
+        btn.textContent = "…";
+        await this._addItem(row.dataset.pack, row.dataset.itemId);
+        btn.textContent = "✓";
+        btn.classList.add("added");
+      });
+    });
+  }
+
+  async _loadIndex() {
+    const TYPE_LABELS = {
+      weapon: "Waffe", armor: "Rüstung", gear: "Ausrüstung", magic: "Magisches"
+    };
+    const relevant = new Set(["weapon", "armor", "gear", "magic"]);
+    const items = [];
+
+    for (const pack of game.packs.filter(p => p.documentName === "Item")) {
+      const index = await pack.getIndex({ fields: ["name", "type", "img", "system.price"] });
+      for (const e of index) {
+        if (!relevant.has(e.type)) continue;
+        items.push({
+          id:        e._id,
+          pack:      pack.collection,
+          name:      e.name,
+          type:      e.type,
+          typeLabel: TYPE_LABELS[e.type] ?? e.type,
+          img:       e.img ?? "icons/svg/item-bag.svg",
+          price:     e.system?.price ?? "",
+        });
+      }
+    }
+
+    return items.sort((a, b) => a.name.localeCompare(b.name, "de"));
+  }
+
+  async _addItem(packCollection, itemId) {
+    const pack = game.packs.get(packCollection);
+    if (!pack) return;
+    const item = await pack.getDocument(itemId);
+    if (!item) return;
+    const obj = item.toObject(); delete obj._id;
+    await this._lootActor.createEmbeddedDocuments("Item", [obj]);
   }
 }

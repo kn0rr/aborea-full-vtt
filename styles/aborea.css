@@ -1129,6 +1129,61 @@
 .application:has(.loot-sheet) [data-application-part] {
   flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
+/* ── Loot Item Picker ───────────────────────────────── */
+.aborea-loot-picker .window-content { padding: 0; display: flex; flex-direction: column; }
+.loot-picker-body { display: flex; flex-direction: column; flex: 1; min-height: 0;
+  background: var(--aborea-parchment); }
+
+.picker-controls { padding: 8px 10px; border-bottom: 1px solid var(--aborea-border);
+  background: var(--aborea-parchment-2); display: flex; flex-direction: column; gap: 6px; }
+.picker-search { width: 100%; padding: 5px 8px; font-size: .9rem;
+  border: 1px solid var(--aborea-border); border-radius: var(--aborea-radius-sm);
+  background: #fff; }
+.picker-type-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.picker-type-btn { padding: 3px 10px; font-size: .78rem; cursor: pointer;
+  border: 1px solid var(--aborea-border); border-radius: 12px;
+  background: #eee; color: var(--aborea-brown); transition: all .15s; }
+.picker-type-btn:hover  { background: var(--aborea-parchment-2); }
+.picker-type-btn.active { background: var(--aborea-red); color: #fff;
+  border-color: var(--aborea-red); font-weight: 700; }
+
+.picker-results-wrap { flex: 1; overflow-y: auto; min-height: 0; }
+.picker-results { display: flex; flex-direction: column; }
+.picker-empty { text-align: center; padding: 20px; color: var(--aborea-brown);
+  opacity: .6; font-style: italic; font-size: .85rem; }
+
+.picker-item-row { display: flex; align-items: center; gap: 7px;
+  padding: 5px 10px; font-size: .84rem;
+  border-bottom: 1px solid var(--aborea-border-light); }
+.picker-item-row:hover { background: rgba(0,0,0,.03); }
+.picker-item-img { width: 26px; height: 26px; border-radius: 3px; object-fit: cover;
+  border: 1px solid var(--aborea-border-light); flex-shrink: 0; }
+.picker-item-name { flex: 1; font-weight: 600; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.picker-type-badge { font-size: .7rem; padding: 1px 6px; border-radius: 8px;
+  white-space: nowrap; flex-shrink: 0; }
+.picker-type-weapon { background: #fde8e8; color: #7a1010; }
+.picker-type-armor  { background: #e8eef8; color: #1e4a7a; }
+.picker-type-gear   { background: #f0ead8; color: #5b4b3a; }
+.picker-type-magic  { background: #f0e8f8; color: #5a1e7a; }
+.picker-item-price { font-size: .74rem; color: var(--aborea-gold); white-space: nowrap; flex-shrink: 0; }
+.picker-add-btn { width: 26px; height: 26px; font-size: 1rem; font-weight: 700;
+  cursor: pointer; border: none; border-radius: 50%;
+  background: var(--aborea-green); color: #fff; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; }
+.picker-add-btn:hover:not(:disabled)  { background: #1e5a1e; }
+.picker-add-btn:disabled              { opacity: .5; cursor: default; }
+.picker-add-btn.added                 { background: #555; }
+
+.picker-status { padding: 3px 10px; font-size: .72rem; color: var(--aborea-brown);
+  opacity: .6; border-top: 1px solid var(--aborea-border-light);
+  background: var(--aborea-parchment-2); }
+
+/* Loot sheet: btn-primary variant */
+.loot-open-picker { background: var(--aborea-blue) !important; color: #fff !important;
+  border-color: var(--aborea-blue) !important; }
+.loot-open-picker:hover { background: #163d6a !important; }
+
 /* ── Würfel-Overlay ─────────────────────────────────── */
 .aborea-dice-overlay.hidden { display: none; }
 .aborea-dice-overlay.visible { display: block; }
@@ -1139,6 +1194,122 @@
 #aborea-dice-overlay .aborea-die { width: 90px; height: 90px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; }
 #aborea-dice-overlay .aborea-die-face { width: 78px; height: 78px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 800; color: #fff6d6; background: radial-gradient(circle at 30% 30%, #d1a95a 0%, #90652f 55%, #56371a 100%); box-shadow: inset 0 1px 4px rgba(255,255,255,.25), 0 10px 24px rgba(0,0,0,.45); }
 #aborea-dice-overlay .aborea-dice-subline { font-size: 13px; opacity: .9; }
+
+/* ── Kampfzustände (Conditions Bar) ────────────────────── */
+.conditions-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(0,0,0,.04);
+  border-bottom: 1px solid var(--aborea-border-light);
+}
+.conditions-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--aborea-brown);
+  opacity: .7;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.condition-toggle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border: 1px solid var(--aborea-border-light);
+  border-radius: var(--aborea-radius-sm);
+  background: rgba(255,255,255,.5);
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--aborea-brown);
+  opacity: .55;
+  transition: opacity .15s, background .15s, border-color .15s;
+}
+.condition-toggle:hover { opacity: .85; background: rgba(255,255,255,.8); }
+.condition-toggle.condition-active {
+  opacity: 1;
+  background: #fef3c7;
+  border-color: #d97706;
+  color: #92400e;
+  font-weight: 600;
+}
+.condition-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.3));
+}
+
+/* ── Check Dialog ───────────────────────────────────── */
+.aborea-check-dialog .window-content { padding: 12px; }
+.aborea-check-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.aborea-check-form label { font-size: 12px; font-weight: 600; color: var(--aborea-brown); }
+.aborea-check-form select,
+.aborea-check-form input[type="number"] {
+  border: 1px solid var(--aborea-border);
+  border-radius: var(--aborea-radius-sm);
+  padding: 4px 6px;
+  background: var(--aborea-parchment-2);
+  font-size: 13px;
+}
+.check-difficulty-row { display: flex; gap: 6px; align-items: center; }
+.aborea-check-form .form-footer { margin-top: 14px; text-align: right; }
+
+/* ── Rundenzeit-Anzeige ─────────────────────────────── */
+.aborea-round-timer {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--aborea-brown);
+  background: rgba(0,0,0,.04);
+  border-bottom: 1px solid var(--aborea-border-light);
+  padding: 3px 0;
+  letter-spacing: .02em;
+}
+
+/* ── Gleichstand-Button ─────────────────────────────── */
+.aborea-tiebreak-btn {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 4px 8px;
+  padding: 4px 8px;
+  background: #fef3c7;
+  border: 1px solid #d97706;
+  border-radius: var(--aborea-radius-sm);
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.aborea-tiebreak-btn:hover { background: #fde68a; }
+
+/* ── Check Chat Card ────────────────────────────────── */
+.check-result { font-size: 15px; font-weight: 700; margin-top: 4px; }
+.check-success { color: #166534; }
+.check-failure { color: #991b1b; }
+
+/* ── Undo-Schaden Button ────────────────────────────── */
+.undo-damage-btn {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 3px 8px;
+  background: #f1f5f9;
+  border: 1px solid #94a3b8;
+  border-radius: var(--aborea-radius-sm);
+  color: #334155;
+  font-size: 11px;
+  cursor: pointer;
+}
+.undo-damage-btn:hover { background: #e2e8f0; }
+.undo-damage-btn:disabled { opacity: .5; cursor: default; }
 
 /* ── Responsive ─────────────────────────────────────── */
 @media (max-width: 880px) {

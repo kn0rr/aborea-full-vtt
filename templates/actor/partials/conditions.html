@@ -1,0 +1,14 @@
+{{#if conditions.length}}
+<div class="conditions-bar">
+  <span class="conditions-label">Zustände:</span>
+  {{#each conditions as |cond|}}
+  <button type="button"
+    class="condition-toggle {{#if cond.active}}condition-active{{/if}}"
+    data-condition-id="{{cond.id}}"
+    title="{{cond.name}}: {{cond.description}}">
+    <img src="{{cond.img}}" class="condition-icon" alt="{{cond.name}}" />
+    <span class="condition-label-text">{{cond.name}}</span>
+  </button>
+  {{/each}}
+</div>
+{{/if}}

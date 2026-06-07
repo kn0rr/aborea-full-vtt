@@ -17,6 +17,7 @@
         {{#if system.levelUp.pending}}
         <span class="level-up-badge" title="Stufenaufstieg verfügbar!">⬆</span>
         {{/if}}
+        <button type="button" class="open-check-dialog btn-sm" title="Fertigkeitsprobe würfeln">🎲 Probe</button>
       </div>
 
       {{!-- Volk / Beruf / Gott als Pills --}}
@@ -86,6 +87,8 @@
     <button type="button" class="do-level-up btn-primary">Stufe aufsteigen</button>
   </div>
   {{/if}}
+
+  {{> "systems/aborea-v7/templates/actor/partials/conditions.html"}}
 
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="creation">{{#if system.creation.completed}}🔒{{/if}} {{localize "ABOREA.TabCreation"}}</a>

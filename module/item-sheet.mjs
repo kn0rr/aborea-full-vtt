@@ -34,6 +34,18 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
   // statusEffects: Komma-String → Array (ersetzt _updateObject)
   _onRender(context, options) {
     super._onRender(context, options);
+    // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
+    this.element.querySelectorAll("img[data-edit]").forEach(img => {
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => {
+        if (!this.isEditable) return;
+        new FilePicker({
+          type: "image",
+          current: this.document.img,
+          callback: path => this.document.update({ img: path }),
+        }).render(true);
+      });
+    });
     if (!this.isEditable) return;
     if (this.item.type === "magic") {
       const input = this.element.querySelector('[data-status-effects]');

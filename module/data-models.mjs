@@ -300,7 +300,9 @@ export class GearDataModel extends foundry.abstract.TypeDataModel {
       quantity:    new fields.NumberField({ initial: 1, integer: true }),
       weight:      new fields.NumberField({ initial: 0 }),
       price:       new fields.StringField({ initial: "" }),
-      notes:       new fields.StringField({ initial: "" })
+      notes:       new fields.StringField({ initial: "" }),
+      healAmount:  new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      healType:    new fields.StringField({ initial: "hp" })
     };
   }
 }

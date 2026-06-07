@@ -1,0 +1,38 @@
+{
+  "menschen": [
+    "Aldric", "Baldur", "Carsten", "Dietmar", "Erwin", "Falco", "Gunnar", "Harald",
+    "Ingmar", "Jochen", "Klaus", "Lothar", "Markus", "Norbert", "Oskar", "Petra",
+    "Rainer", "Sigrid", "Thorsten", "Ulrich", "Vera", "Walter", "Xenia", "Yvonne",
+    "Zelda", "Adela", "Berta", "Claudia", "Dagmar", "Elsa", "Frieda", "Greta",
+    "Helga", "Irma", "Johanna", "Katrin", "Lena", "Marta", "Nora", "Olga",
+    "Rolf", "Stefan", "Tobias", "Uwe", "Viktor", "Wendelin", "Arnulf", "Brunhild",
+    "Conrad", "Dorothea", "Edmund", "Felicitas", "Gerhard", "Hildegard", "Ingo"
+  ],
+  "elfen": [
+    "Aelindra", "Bhalien", "Caladwen", "Daeris", "Elowen", "Faelith", "Galadwen",
+    "Haleth", "Ithilwen", "Jariel", "Kaelindra", "Lareniel", "Maethor", "Naelith",
+    "Oroniel", "Palaneth", "Raelis", "Silwen", "Thalion", "Uinen", "Valaer",
+    "Wandiel", "Xaelith", "Yaraniel", "Zoelanor", "Alatariel", "Beleth", "Celebris",
+    "Daervion", "Elanwe", "Faeris", "Gloreth", "Halawen", "Isilduin", "Jadwen",
+    "Kelenor", "Lirien", "Maedhel", "Nimloth", "Orowind", "Phariel", "Quariel",
+    "Rindeth", "Sindel", "Taurien", "Uloriel", "Vaerith", "Wraethen"
+  ],
+  "zwerge": [
+    "Aldrim", "Balin", "Dwalin", "Fili", "Gimli", "Groin", "Haldor", "Ingvar",
+    "Jorin", "Kain", "Lodur", "Mimir", "Nori", "Olaf", "Porin", "Ragnar",
+    "Sindri", "Thrain", "Ulfrik", "Volgrim", "Wulfar", "Bronn", "Drakon",
+    "Eldrim", "Floni", "Gundal", "Hakon", "Ivvar", "Kolgrim", "Malgrim",
+    "Narfi", "Ostir", "Paldin", "Rognir", "Snorri", "Torvald", "Undrim",
+    "Varlin", "Wargim", "Yondal", "Zundrik", "Agna", "Brunna", "Dagny",
+    "Eira", "Frida", "Gunna", "Helna", "Inga", "Jodna", "Korna"
+  ],
+  "allgemein": [
+    "Aldric", "Barak", "Calin", "Doran", "Edvin", "Ferin", "Gorim", "Havel",
+    "Idris", "Jorn", "Kalen", "Laric", "Morin", "Navar", "Osric", "Peryn",
+    "Quill", "Rador", "Sarin", "Talvin", "Urin", "Veron", "Warden", "Xan",
+    "Yoric", "Zara", "Adena", "Brin", "Ceren", "Deva", "Elia", "Fara",
+    "Gora", "Hana", "Ilya", "Jana", "Kira", "Lina", "Mira", "Nara",
+    "Ora", "Pira", "Reva", "Sera", "Tara", "Ula", "Vera", "Wren",
+    "Xira", "Yara"
+  ]
+}

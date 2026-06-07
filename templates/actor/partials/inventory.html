@@ -146,6 +146,9 @@
     {{#if item.system.quantity}}<span class="item-detail">× {{item.system.quantity}}</span>{{/if}}
     {{#if item.system.price}}<span class="item-detail gear-price">{{item.system.price}}</span>{{/if}}
     <div class="item-actions">
+      {{#if item.system.healAmount}}
+      <button type="button" class="gear-use btn-sm btn-primary" title="{{item.system.healType}}: +{{item.system.healAmount}}">🧪 Verwenden</button>
+      {{/if}}
       <button type="button" class="item-edit btn-icon">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
     </div>

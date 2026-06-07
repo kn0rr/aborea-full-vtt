@@ -538,24 +538,25 @@ function _buildAttackCard({
 //  Damage Application
 // ══════════════════════════════════════════════════════════════════
 
-export function applyDamage(targetActorId, damage) {
+export async function applyDamage(targetActorId, damage) {
   const actor = game.actors.get(targetActorId);
   if (!actor) { ui.notifications.warn("ABOREA: Ziel nicht gefunden."); return; }
-  const hp      = actor.system.resources?.hp ?? {};
-  const current = Number(hp.value ?? 0);
-  const hpMax   = Number(hp.max ?? current);
-  const newHp   = Math.max(0, current - damage);
-  const pct     = hpMax > 0 ? Math.round((newHp / hpMax) * 100) : 0;
-  const color   = _hpColor(pct);
+  const hp         = actor.system.resources?.hp ?? {};
+  const previousHp = Number(hp.value ?? 0);
+  const hpMax      = Number(hp.max ?? previousHp);
+  const newHp      = Math.max(0, previousHp - damage);
+  const pct        = hpMax > 0 ? Math.round((newHp / hpMax) * 100) : 0;
+  const color      = _hpColor(pct);
 
-  actor.update({ "system.resources.hp.value": newHp });
+  await actor.update({ "system.resources.hp.value": newHp });
 
   const portrait = actor.img
     ? `<img class="ac-portrait ac-portrait-lg" src="${actor.img}" alt="${actor.name}" />`
     : "";
 
-  ChatMessage.create({
+  await ChatMessage.create({
     speaker: { alias: "System" },
+    flags: { "aborea-v7": { undo: { actorId: targetActorId, previousHp } } },
     content: `<div class="aborea-chat-card aborea-damage-card">
       <div class="ac-damage-header">
         ${portrait}
@@ -569,8 +570,40 @@ export function applyDamage(targetActorId, damage) {
       </div>
       <div class="ac-hp-label">${newHp} / ${hpMax} HP</div>
       ${newHp === 0 ? `<div class="ac-result patzer" style="margin-top:6px">☠ ${actor.name} ist bewusstlos oder tot!</div>` : ""}
+      <button type="button" class="undo-damage-btn btn-sm">↩ Rückgängig</button>
     </div>`
   });
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  Gleichstand-Auflösung
+// ══════════════════════════════════════════════════════════════════
+
+async function _resolveTiebreak(combat) {
+  const byInit = new Map();
+  for (const c of combat.combatants.values()) {
+    if (c.initiative === null || c.initiative === undefined) continue;
+    const key = c.initiative;
+    if (!byInit.has(key)) byInit.set(key, []);
+    byInit.get(key).push(c);
+  }
+
+  const updates = [];
+  for (const [baseInit, group] of byInit) {
+    if (group.length < 2) continue;
+    for (const c of group) {
+      const roll = await (new Roll("1d10")).evaluate();
+      const tieVal = baseInit + roll.total * 0.01;
+      updates.push({ _id: c.id, initiative: tieVal });
+      ChatMessage.create({
+        content: `<div class="aborea-chat-card">
+          <p>⚔ <strong>${c.name}</strong> Gleichstand-W10: <strong>${roll.total}</strong></p>
+          <p>Neue Initiative: ${tieVal.toFixed(2)}</p>
+        </div>`
+      });
+    }
+  }
+  if (updates.length) await combat.updateEmbeddedDocuments("Combatant", updates);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -587,7 +620,7 @@ export function registerCombatHooks() {
     default: 0
   });
 
-  Hooks.on("renderChatMessageHTML", (_message, html) => {
+  Hooks.on("renderChatMessageHTML", (message, html) => {
     html.querySelectorAll(".apply-damage-btn").forEach(btn => {
       btn.addEventListener("click", ev => {
         if (!game.user.isGM && !game.user.isTrusted) {
@@ -600,12 +633,43 @@ export function registerCombatHooks() {
         b.textContent = `✓ Angewandt (${b.dataset.damage})`;
       });
     });
+
+    // Schaden rückgängig machen (GM only, einmalig)
+    html.querySelectorAll(".undo-damage-btn").forEach(btn => {
+      if (!game.user.isGM) { btn.style.display = "none"; return; }
+      btn.addEventListener("click", async () => {
+        const flag = message.getFlag("aborea-v7", "undo");
+        if (!flag) { ui.notifications.warn("Rückgängig bereits verwendet."); return; }
+        const actor = game.actors.get(flag.actorId);
+        if (!actor) { ui.notifications.warn("Ziel-Aktor nicht gefunden."); return; }
+        await actor.update({ "system.resources.hp.value": flag.previousHp });
+        await message.unsetFlag("aborea-v7", "undo");
+        btn.disabled = true;
+        btn.textContent = `✓ ${flag.previousHp} HP wiederhergestellt`;
+        ui.notifications.info(`${actor.name}: HP auf ${flag.previousHp} zurückgesetzt.`);
+      });
+    });
   });
 
   const _onRenderTracker = (app, html) => {
     // v13: html kann HTMLElement (V2-App) oder jQuery (V1) sein
     const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
     if (!root?.querySelector) return;
+
+    const combat = game.combat;
+
+    // ── Rundenzeit-Anzeige ─────────────────────────────────
+    root.querySelectorAll(".aborea-round-timer").forEach(el => el.remove());
+    if (combat?.started && combat.round > 0) {
+      const secs   = combat.round * 10;
+      const mins   = Math.floor(secs / 60);
+      const label  = mins > 0 ? `${mins} min ${secs % 60} s` : `${secs} s`;
+      const timer  = document.createElement("div");
+      timer.className   = "aborea-round-timer";
+      timer.textContent = `Runde ${combat.round} · ~${label}`;
+      const header = root.querySelector(".combat-tracker-header") ?? root.querySelector("header") ?? root.firstElementChild;
+      if (header) header.after(timer);
+    }
 
     if (game.user.isGM) {
       root.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
@@ -638,11 +702,27 @@ export function registerCombatHooks() {
       const footer = root.querySelector("#combat-controls") ?? root.querySelector(".combat-controls") ?? null;
       if (footer) footer.before(modBar);
       else root.appendChild(modBar);
+
+      // ── Gleichstand lösen ───────────────────────────────
+      root.querySelectorAll(".aborea-tiebreak-btn").forEach(el => el.remove());
+      if (combat?.started) {
+        const inits = [...(combat.combatants?.values() ?? [])].map(c => c.initiative).filter(v => v !== null && v !== undefined);
+        const hasTies = inits.some((v, i) => inits.indexOf(v) !== i);
+        if (hasTies) {
+          const tieBtn = document.createElement("button");
+          tieBtn.type      = "button";
+          tieBtn.className = "aborea-tiebreak-btn";
+          tieBtn.title     = "W10 für alle Gleichstand-Kombattanten würfeln";
+          tieBtn.textContent = "⚔ Gleichstand lösen";
+          tieBtn.addEventListener("click", () => _resolveTiebreak(combat));
+          if (footer) footer.before(tieBtn);
+          else root.appendChild(tieBtn);
+        }
+      }
     }
 
-    const combat = game.combat;
     if (!combat) return;
-    const activeCombatant = combat.combatants.get(combat.current?.combatantId);
+    const activeCombatant = combat.combatants.get(combat.current?.combatantId ?? "");
     if (!activeCombatant) return;
 
     const isOwner = activeCombatant.actor?.isOwner ?? false;

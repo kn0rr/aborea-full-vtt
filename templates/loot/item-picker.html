@@ -1,0 +1,20 @@
+<div class="loot-picker-body">
+
+  <div class="picker-controls">
+    <input type="text" class="picker-search" placeholder="Name suchen…" autocomplete="off" />
+    <div class="picker-type-tabs">
+      {{#each types}}
+      <button type="button" class="picker-type-btn {{#if active}}active{{/if}}" data-type="{{value}}">{{label}}</button>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="picker-results-wrap">
+    <div class="picker-results">
+      <p class="picker-empty">Tippe um zu suchen…</p>
+    </div>
+  </div>
+
+  <div class="picker-status"></div>
+
+</div>

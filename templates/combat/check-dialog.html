@@ -1,0 +1,70 @@
+<div class="aborea-check-form">
+  <div class="form-group">
+    <label>Probe auf</label>
+    {{!-- Sichtbares Dropdown ohne name — aktualisiert die hidden inputs --}}
+    <select id="check-type-select">
+      <optgroup label="Attribute">
+        {{#each attrs as |attr|}}
+        <option value="attr::{{attr.key}}">{{attr.label}}</option>
+        {{/each}}
+      </optgroup>
+      <optgroup label="Fertigkeiten">
+        {{#each skills as |skill|}}
+        <option value="{{skill.type}}::{{skill.key}}">{{skill.label}}{{#if skill.rank}} (Rang {{skill.rank}}){{/if}}</option>
+        {{/each}}
+      </optgroup>
+    </select>
+    <input type="hidden" name="checkType" id="check-type-hidden" value="attr" />
+    <input type="hidden" name="checkKey"  id="check-key-hidden"  value="st" />
+  </div>
+
+  <div class="form-group">
+    <label>Schwierigkeit</label>
+    <div class="check-difficulty-row">
+      <select id="check-difficulty-select">
+        {{#each difficulties as |d|}}
+        <option value="{{d.val}}" {{#if (aboreaEq d.val 10)}}selected{{/if}}>{{d.label}}</option>
+        {{/each}}
+        <option value="0">Eigener Wert …</option>
+      </select>
+      <input type="number" name="difficulty" id="check-difficulty-input" value="10" min="1" max="30" style="width:60px" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label title="Positiv = Erleichterung, Negativ = Erschwernis">Situationsmodifikator</label>
+    <input type="number" name="situMod" value="0" min="-10" max="10" />
+  </div>
+
+  <footer class="form-footer">
+    <button type="submit" class="btn-primary">🎲 Würfeln</button>
+  </footer>
+</div>
+
+<script>
+(function() {
+  const sel       = document.getElementById("check-type-select");
+  const typeHid   = document.getElementById("check-type-hidden");
+  const keyHid    = document.getElementById("check-key-hidden");
+  const diffSel   = document.getElementById("check-difficulty-select");
+  const diffInput = document.getElementById("check-difficulty-input");
+
+  function syncType() {
+    const val = sel.value; // "attr::st" or "skill::athletik"
+    const [type, key] = val.split("::");
+    typeHid.value = type;
+    keyHid.value  = key;
+  }
+  sel.addEventListener("change", syncType);
+  syncType();
+
+  diffSel.addEventListener("change", () => {
+    if (diffSel.value === "0") {
+      diffInput.removeAttribute("readonly");
+      diffInput.focus();
+    } else {
+      diffInput.value = diffSel.value;
+    }
+  });
+})();
+</script>
