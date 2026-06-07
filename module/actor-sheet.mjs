@@ -1548,7 +1548,25 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
   }
 
   _onRender(context, options) {
+    super._onRender(context, options);
     const html = this.element;
+
+    // Robuster Form-Change-Handler (gleiche Logik wie AboreaActorSheet)
+    if (!this._submitChangeHandlerBound) {
+      this._submitChangeHandlerBound = true;
+      this.element.addEventListener("change", async (ev) => {
+        if (!this.isEditable) return;
+        const field = ev.target;
+        if (!field?.name) return;
+        const n = field.name;
+        if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
+        if (!field.closest("form")) return;
+        const val = field.type === "checkbox" ? field.checked
+                  : field.type === "number"   ? (Number(field.value) || 0)
+                  : field.value;
+        await this.document.update({ [n]: val });
+      });
+    }
 
     html.querySelectorAll(".item-edit").forEach(btn =>
       btn.addEventListener("click", ev => {
