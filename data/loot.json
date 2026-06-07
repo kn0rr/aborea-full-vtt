@@ -1,6 +1,6 @@
 [
   {
-    "_id": "6c6f6f740000001",
+    "_id": "6c6f6f7400000001",
     "name": "Truhe (leer)",
     "type": "loot",
     "img": "icons/containers/chest/chest-reinforced-steel-brown.webp",
@@ -13,7 +13,7 @@
     "flags": { "aborea-v7": { "sourceId": "loot-truhe-leer" } }
   },
   {
-    "_id": "6c6f6f740000002",
+    "_id": "6c6f6f7400000002",
     "name": "Truhe (verschlossen)",
     "type": "loot",
     "img": "icons/containers/chest/chest-reinforced-steel-brown.webp",
@@ -26,7 +26,7 @@
     "flags": { "aborea-v7": { "sourceId": "loot-truhe-verschlossen" } }
   },
   {
-    "_id": "6c6f6f740000003",
+    "_id": "6c6f6f7400000003",
     "name": "Schatzkiste",
     "type": "loot",
     "img": "icons/containers/chest/chest-reinforced-gold.webp",
@@ -70,7 +70,7 @@
     "flags": { "aborea-v7": { "sourceId": "loot-schatzkiste" } }
   },
   {
-    "_id": "6c6f6f740000004",
+    "_id": "6c6f6f7400000004",
     "name": "Goblin-Beute",
     "type": "loot",
     "img": "icons/containers/bags/pack-simple-leather-tan.webp",
@@ -113,7 +113,7 @@
     "flags": { "aborea-v7": { "sourceId": "loot-goblin-beute" } }
   },
   {
-    "_id": "6c6f6f740000005",
+    "_id": "6c6f6f7400000005",
     "name": "Banditenbeute",
     "type": "loot",
     "img": "icons/containers/bags/pack-simple-leather-tan.webp",
@@ -169,7 +169,7 @@
     "flags": { "aborea-v7": { "sourceId": "loot-banditenbeute" } }
   },
   {
-    "_id": "6c6f6f740000006",
+    "_id": "6c6f6f7400000006",
     "name": "Händler-Regal (leer)",
     "type": "loot",
     "img": "icons/containers/chest/chest-wooden-stacked.webp",
