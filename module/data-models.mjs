@@ -52,7 +52,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       resources:       resourcesBlock(),
       combat: new fields.ObjectField({ initial: () => ({
         initiative: 0, combatBonus: 0, offensiveBonus: 0, defensiveBonus: 0,
-        defenseValue: 5, armorValue: 5, targetDefense: 5
+        defenseValue: 5, armorValue: 0, targetDefense: 5
       })}),
       details: new fields.ObjectField({ initial: () => ({
         race: "", class: "", god: "", size: "mittel", notes: ""
