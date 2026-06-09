@@ -757,6 +757,62 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       const level = Number(this.actor.system.resources?.level ?? 1);
       if (ABOREA.levelForXp(xp) > level) ui.notifications.info(`🎉 ${this.actor.name} hat genug EP für Stufe ${ABOREA.levelForXp(xp)}!`);
     });
+    html.find(".spawn-loot-actor").on("click", async () => {
+      if (!game.user.isGM) return;
+      await this._spawnLootActor();
+    });
+  }
+
+  async _spawnLootActor() {
+    const src = this.actor;
+    const hasItems = src.items.size > 0;
+    const srcW = src.system.wallet ?? {};
+    const hasCoins = ["gf","tt","kl","mu"].some(k => Number(srcW[k] ?? 0) > 0);
+
+    if (!hasItems && !hasCoins) {
+      ui.notifications.info("ABOREA: Dieser Aktor hat weder Items noch Geld — kein Beute-Container erstellt.");
+      return;
+    }
+
+    // Position bestimmen: Token des Aktors auf aktiver Szene oder Mitte
+    const scene = game.scenes?.active;
+    let tx = (scene?.width  ?? 1000) / 2;
+    let ty = (scene?.height ?? 1000) / 2;
+    const token = scene?.tokens?.find(t => t.actorId === src.id);
+    if (token) { tx = token.x; ty = token.y; }
+
+    // Loot-Aktor erstellen
+    const lootActor = await Actor.create({
+      name: `Beute: ${src.name}`,
+      type: "loot",
+      img:  src.img,
+      system: {
+        wallet: { gf: Number(srcW.gf ?? 0), tt: Number(srcW.tt ?? 0), kl: Number(srcW.kl ?? 0), mu: Number(srcW.mu ?? 0) }
+      }
+    });
+    if (!lootActor) { ui.notifications.error("ABOREA: Loot-Aktor konnte nicht erstellt werden."); return; }
+
+    // Items kopieren
+    if (hasItems) {
+      const objs = src.items.map(i => { const o = i.toObject(); delete o._id; return o; });
+      await lootActor.createEmbeddedDocuments("Item", objs);
+    }
+
+    // Token auf aktiver Szene platzieren
+    if (scene) {
+      const grid = scene.grid?.size ?? 100;
+      await scene.createEmbeddedDocuments("Token", [{
+        name:   lootActor.name,
+        actorId: lootActor.id,
+        img:    src.img,
+        x: tx + grid,   // leicht versetzt damit er nicht exakt überlappt
+        y: ty + grid,
+        width:  1,
+        height: 1,
+      }]);
+    }
+
+    ui.notifications.info(`☠ Beute-Container „${lootActor.name}" wurde erstellt${scene ? " und auf der Karte platziert" : ""}.`);
   }
 
   async _onDrop(event) {
@@ -1542,7 +1598,16 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       gear:    actor.items.filter(i => i.type === "gear"),
       magics:  actor.items.filter(i => i.type === "magic"),
     };
+    const w = actor.system.wallet ?? {};
+    context.wallet = [
+      { key: "gf", label: "GF", name: "Goldfalken",       amount: Number(w.gf ?? 0) },
+      { key: "tt", label: "TT", name: "Trionthaler",       amount: Number(w.tt ?? 0) },
+      { key: "kl", label: "KL", name: "Kupferlinge",       amount: Number(w.kl ?? 0) },
+      { key: "mu", label: "MU", name: "Münzen unbekannt",  amount: Number(w.mu ?? 0) },
+    ];
+    context.hasCoins = context.wallet.some(c => c.amount > 0);
     context.hasItems = actor.items.size > 0;
+    context.hasContent = context.hasItems || context.hasCoins;
     context.canTake  = !!game.user.character && !actor.system.locked;
     return context;
   }
@@ -1568,6 +1633,19 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       });
     }
 
+    // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
+    html.querySelectorAll("img[data-edit]").forEach(img => {
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => {
+        if (!this.isEditable) return;
+        new FilePicker({
+          type: "image",
+          current: this.document.img,
+          callback: path => this.document.update({ img: path }),
+        }).render(true);
+      });
+    });
+
     html.querySelectorAll(".item-edit").forEach(btn =>
       btn.addEventListener("click", ev => {
         const id = ev.currentTarget.closest("[data-item-id]")?.dataset.itemId;
@@ -1592,6 +1670,9 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
 
     html.querySelector(".loot-take-all")
       ?.addEventListener("click", () => this._takeAll());
+
+    html.querySelector(".loot-take-money")
+      ?.addEventListener("click", () => this._takeMoney());
 
     html.querySelector(".loot-toggle-lock")
       ?.addEventListener("click", async () => {
@@ -1642,26 +1723,69 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       ui.notifications.warn("ABOREA: Der Container ist verschlossen.");
       return;
     }
-    if (!this.actor.items.size) {
+    const w = this.actor.system.wallet ?? {};
+    const hasCoins = ["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0);
+    if (!this.actor.items.size && !hasCoins) {
       ui.notifications.info("ABOREA: Container ist leer.");
       return;
     }
-    const items = this.actor.items.map(i => i);
-    const objs  = items.map(i => { const o = i.toObject(); delete o._id; return o; });
-    await character.createEmbeddedDocuments("Item", objs);
-    await this.actor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
 
-    const current = Array.isArray(character.system.inventoryHistory)
-      ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
-    const scene = game.scenes?.active?.name ?? "";
-    const entries = items.map(i =>
-      makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i), {
-        itemType: i.type, note: `aus ${this.actor.name}`, scene
-      })
-    );
-    const updated = entries.reduce((list, e) => logListPush(list, e), current);
-    await character.update({ "system.inventoryHistory": updated });
+    // Items übertragen
+    if (this.actor.items.size) {
+      const items = this.actor.items.map(i => i);
+      const objs  = items.map(i => { const o = i.toObject(); delete o._id; return o; });
+      await character.createEmbeddedDocuments("Item", objs);
+      await this.actor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
+
+      const current = Array.isArray(character.system.inventoryHistory)
+        ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
+      const scene = game.scenes?.active?.name ?? "";
+      const entries = items.map(i =>
+        makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i), {
+          itemType: i.type, note: `aus ${this.actor.name}`, scene
+        })
+      );
+      const updated = entries.reduce((list, e) => logListPush(list, e), current);
+      await character.update({ "system.inventoryHistory": updated });
+    }
+
+    // Geld übertragen
+    if (hasCoins) await this._transferCoins(character);
+
     ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
+  }
+
+  async _takeMoney() {
+    const character = game.user.character;
+    if (!character) { ui.notifications.warn("ABOREA: Kein Charakter zugewiesen."); return; }
+    if (this.actor.system.locked) { ui.notifications.warn("ABOREA: Der Container ist verschlossen."); return; }
+    const w = this.actor.system.wallet ?? {};
+    if (!["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0)) {
+      ui.notifications.info("ABOREA: Kein Geld im Container."); return;
+    }
+    await this._transferCoins(character);
+    ui.notifications.info(`${character.name} nimmt das Geld aus ${this.actor.name}.`);
+  }
+
+  async _transferCoins(character) {
+    const lootW   = this.actor.system.wallet ?? {};
+    const charWallet = normalizeWallet(character.system.wallet);
+    const scene   = game.scenes?.active?.name ?? "";
+    const source  = this.actor.name;
+
+    for (const key of ["gf","tt","kl","mu"]) {
+      const amount = Number(lootW[key] ?? 0);
+      if (!amount) continue;
+      const cur = charWallet.currencies.find(c => c.key === key);
+      if (!cur) continue;
+      cur.amount = (Number(cur.amount) || 0) + amount;
+      charWallet.history = logListPush(
+        charWallet.history,
+        makeHistoryEntry("wallet", "add", cur.label, { amount, currency: cur.label, note: `aus ${source}`, scene })
+      );
+    }
+    await character.update({ "system.wallet": charWallet });
+    await this.actor.update({ "system.wallet": { gf: 0, tt: 0, kl: 0, mu: 0 } });
   }
 
   async _logLootEntry(character, itemName, itemType, containerName) {

@@ -111,7 +111,8 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
       weaponSkills:  new fields.ObjectField({ initial: () => ({}) }),
       magicSkills:   new fields.ObjectField({ initial: () => ({}) }),
       role:          new fields.StringField({ initial: "" }),
-      faction:       new fields.StringField({ initial: "" })
+      faction:       new fields.StringField({ initial: "" }),
+      wallet: new fields.ObjectField({ initial: () => ({ gf: 0, tt: 0, kl: 0, mu: 0 }) }),
     };
   }
 }
@@ -142,7 +143,8 @@ export class CreatureDataModel extends foundry.abstract.TypeDataModel {
         ownerActorId: "", sourceItemId: "", sourceItemName: "",
         summonType: "", summonLevel: 0, mpCost: 0,
         permanent: false, durationLabel: "", expiresAt: null, active: false
-      })})
+      })}),
+      wallet: new fields.ObjectField({ initial: () => ({ gf: 0, tt: 0, kl: 0, mu: 0 }) }),
     };
   }
 }
@@ -157,6 +159,7 @@ export class LootDataModel extends foundry.abstract.TypeDataModel {
       description:     new fields.StringField({ initial: "" }),
       locked:          new fields.BooleanField({ initial: false }),
       lockDifficulty:  new fields.NumberField({ initial: 0, integer: true, min: 0 }),
+      wallet: new fields.ObjectField({ initial: () => ({ gf: 0, tt: 0, kl: 0, mu: 0 }) }),
     };
   }
 }

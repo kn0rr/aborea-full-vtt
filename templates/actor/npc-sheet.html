@@ -7,6 +7,7 @@
         <h1 style="flex:1"><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
         <button type="button" class="random-name-btn btn-icon" title="Zufallsname">🎲</button>
         <button type="button" class="open-check-dialog btn-sm" title="Fertigkeitsprobe würfeln">🎲 Probe</button>
+        {{#if isGM}}<button type="button" class="spawn-loot-actor btn-sm btn-danger" title="Items und Geld als Beute-Container auf der Karte ablegen">☠ Als Beute ablegen</button>{{/if}}
       </div>
       <div class="header-grid">
         <label>{{localize "ABOREA.Role"}} <input type="text" name="system.role" value="{{system.role}}" /></label>
@@ -163,7 +164,18 @@
       </section>
 
     </div>
-    <div class="tab" data-group="primary" data-tab="inventory">{{> "systems/aborea-v7/templates/actor/partials/inventory.html"}}</div>
+    <div class="tab" data-group="primary" data-tab="inventory">
+      {{> "systems/aborea-v7/templates/actor/partials/inventory.html"}}
+      <section class="panel npc-wallet-panel">
+        <h2>💰 Geld</h2>
+        <div class="npc-wallet-row">
+          <div class="loot-coin-field"><label class="loot-coin-label" title="Goldfalken">GF</label><input type="number" name="system.wallet.gf" value="{{system.wallet.gf}}" min="0" class="loot-coin-input" /></div>
+          <div class="loot-coin-field"><label class="loot-coin-label" title="Trionthaler">TT</label><input type="number" name="system.wallet.tt" value="{{system.wallet.tt}}" min="0" class="loot-coin-input" /></div>
+          <div class="loot-coin-field"><label class="loot-coin-label" title="Kupferlinge">KL</label><input type="number" name="system.wallet.kl" value="{{system.wallet.kl}}" min="0" class="loot-coin-input" /></div>
+          <div class="loot-coin-field"><label class="loot-coin-label" title="Münzen unbekannt">MU</label><input type="number" name="system.wallet.mu" value="{{system.wallet.mu}}" min="0" class="loot-coin-input" /></div>
+        </div>
+      </section>
+    </div>
     <div class="tab" data-group="primary" data-tab="special"><section class="panel"><textarea name="system.details.notes">{{system.details.notes}}</textarea></section></div>
   </section>
 </form>

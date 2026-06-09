@@ -45,11 +45,48 @@
   {{!-- ══ ITEMS ══ --}}
   <div class="loot-body">
 
-    {{#unless hasItems}}
+    {{#unless hasContent}}
     <div class="loot-empty">
       <p>Dieser Container ist leer.</p>
     </div>
     {{/unless}}
+
+    {{!-- Geld --}}
+    {{#if isGM}}
+    <section class="loot-section loot-money-section">
+      <div class="loot-section-header"><span>💰 Geld</span></div>
+      <div class="loot-money-row">
+        {{#each wallet as |cur|}}
+        <div class="loot-coin-field">
+          <label class="loot-coin-label" title="{{cur.name}}">{{cur.label}}</label>
+          <input type="number" name="system.wallet.{{cur.key}}" value="{{cur.amount}}" min="0" class="loot-coin-input" />
+        </div>
+        {{/each}}
+        {{#if ../canTake}}
+        <button type="button" class="loot-take-money btn-sm btn-primary">Nehmen</button>
+        {{/if}}
+      </div>
+    </section>
+    {{else}}
+      {{#if hasCoins}}
+      <section class="loot-section loot-money-section">
+        <div class="loot-section-header"><span>💰 Geld</span></div>
+        <div class="loot-money-row">
+          {{#each wallet as |cur|}}
+          {{#if cur.amount}}
+          <div class="loot-coin-field">
+            <label class="loot-coin-label" title="{{cur.name}}">{{cur.label}}</label>
+            <span class="loot-coin-amount">{{cur.amount}}</span>
+          </div>
+          {{/if}}
+          {{/each}}
+          {{#if ../canTake}}
+          <button type="button" class="loot-take-money btn-sm btn-primary">Nehmen</button>
+          {{/if}}
+        </div>
+      </section>
+      {{/if}}
+    {{/if}}
 
     {{!-- Waffen --}}
     {{#if itemLists.weapons.length}}
