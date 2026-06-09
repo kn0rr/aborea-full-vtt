@@ -23,7 +23,7 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="stats">{{localize "ABOREA.TabStats"}}</a>
     <a class="item" data-tab="inventory">{{localize "ABOREA.TabInventory"}}</a>
-    <a class="item" data-tab="special">{{localize "ABOREA.TabSpecial"}}</a>
+    {{#if canViewSpecial}}<a class="item" data-tab="special">{{localize "ABOREA.TabSpecial"}}</a>{{/if}}
   </nav>
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
@@ -176,6 +176,6 @@
         </div>
       </section>
     </div>
-    <div class="tab" data-group="primary" data-tab="special"><section class="panel"><textarea name="system.details.notes">{{system.details.notes}}</textarea></section></div>
+    {{#if canViewSpecial}}<div class="tab" data-group="primary" data-tab="special"><section class="panel"><textarea name="system.details.notes">{{system.details.notes}}</textarea></section></div>{{/if}}
   </section>
 </form>

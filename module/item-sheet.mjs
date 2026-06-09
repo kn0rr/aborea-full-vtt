@@ -15,8 +15,11 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     context.system = item.system;
     context.cssClass = this.isEditable ? "editable" : "locked";
 
+    context.isGM = game.user.isGM;
+    context.canViewDescription = game.user.isGM || !item.system.descriptionLocked;
+
     // Beschreibungstext als Rich-HTML aufbereiten
-    if (item.system.description) {
+    if (item.system.description && context.canViewDescription) {
       context.enrichedDescription = await TextEditor.enrichHTML(
         item.system.description,
         { async: true, relativeTo: item }
@@ -35,22 +38,21 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
   _onRender(context, options) {
     super._onRender(context, options);
 
-    if (!this._submitChangeHandlerBound) {
-      this._submitChangeHandlerBound = true;
-      this.element.addEventListener("change", async (ev) => {
-        if (!this.isEditable) return;
-        const field = ev.target;
-        if (!field?.name) return;
-        const n = field.name;
-        if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
-        if (field.dataset.statusEffects !== undefined) return; // eigener Handler
-        if (!field.closest("form")) return;
-        const val = field.type === "checkbox" ? field.checked
-                  : field.type === "number"   ? (Number(field.value) || 0)
-                  : field.value;
-        await this.document.update({ [n]: val });
-      });
-    }
+    if (this._changeHandler) this.element.removeEventListener("change", this._changeHandler);
+    this._changeHandler = async (ev) => {
+      if (!this.isEditable) return;
+      const field = ev.target;
+      if (!field?.name) return;
+      const n = field.name;
+      if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
+      if (field.dataset.statusEffects !== undefined) return; // eigener Handler
+      if (!field.closest("form")) return;
+      const val = field.type === "checkbox" ? field.checked
+                : field.type === "number"   ? (Number(field.value) || 0)
+                : field.value;
+      await this.document.update({ [n]: val });
+    };
+    this.element.addEventListener("change", this._changeHandler);
 
     // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
     this.element.querySelectorAll("img[data-edit]").forEach(img => {

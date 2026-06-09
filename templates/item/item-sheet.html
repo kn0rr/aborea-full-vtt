@@ -8,6 +8,16 @@
     </div>
   </header>
 
+  {{!-- GM: Beschreibungssperre --}}
+  {{#if isGM}}
+  <div class="item-desc-lock-bar">
+    <label class="item-desc-lock-label">
+      <input type="checkbox" name="system.descriptionLocked" {{checked system.descriptionLocked}} />
+      🔒 Beschreibung für Spieler verbergen
+    </label>
+  </div>
+  {{/if}}
+
   <section class="panel item-body">
 
     {{!-- ── Waffe ─────────────────────────────────────────────── --}}
@@ -42,9 +52,19 @@
           {{localize "ABOREA.Equipped"}}
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{!-- ── Rüstung ───────────────────────────────────────────── --}}
@@ -70,9 +90,19 @@
           {{localize "ABOREA.Equipped"}}
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{!-- ── Fertigkeit ────────────────────────────────────────── --}}
@@ -91,9 +121,19 @@
           <input type="number" name="system.rank" value="{{system.rank}}" min="0" />
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{!-- ── Zauber ────────────────────────────────────────────── --}}
@@ -122,9 +162,19 @@
           {{localize "ABOREA.Targeted"}}
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
       {{#if enrichedDescription}}
       <div class="item-description enriched">{{enrichedDescription}}</div>
       {{/if}}
@@ -156,9 +206,19 @@
           {{localize "ABOREA.Targeted"}}
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
       {{#if enrichedDescription}}
       <div class="item-description enriched">{{enrichedDescription}}</div>
       {{/if}}
@@ -185,9 +245,19 @@
         </label>
         {{/each}}
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{!-- ── Beruf ─────────────────────────────────────────────── --}}
@@ -206,9 +276,19 @@
           <textarea name="system.special">{{system.special}}</textarea>
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{!-- ── Ausrüstung ───────────────────────────────────────── --}}
@@ -224,9 +304,19 @@
           <input type="text" name="system.price" value="{{system.price}}" />
         </label>
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{!-- ── Gott ──────────────────────────────────────────────── --}}
@@ -253,9 +343,19 @@
         </label>
         {{/if}}
       </div>
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
       {{#if enrichedDescription}}
       <div class="item-description enriched">{{enrichedDescription}}</div>
       {{/if}}
@@ -321,9 +421,19 @@
         </label>
       </fieldset>
 
+      {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
         <textarea name="system.description">{{system.description}}</textarea>
       </label>
+      {{else}}
+        {{#if canViewDescription}}
+          {{#if system.description}}
+          <div class="item-description-text">{{system.description}}</div>
+          {{/if}}
+        {{else}}
+        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+        {{/if}}
+      {{/if}}
       <label class="full-width">{{localize "ABOREA.Notes"}}
         <input type="text" name="system.notes" value="{{system.notes}}" />
       </label>

@@ -101,6 +101,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
     context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
     context.isGM = game.user.isGM;
+    // "Besonderes"-Reiter: für NSC/Kreatur nur GM; für Charakter GM oder Besitzer
+    context.canViewSpecial = game.user.isGM
+      || (actor.type === "character" && actor.isOwner);
 
     // Kampfzustände — aktive Effekte als Set, alle Conditions mit active-Flag
     try {
@@ -491,30 +494,31 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
   _onRender(context, options) {
     super._onRender(context, options);
 
-    // Robuster Form-Change-Handler: speichert Textfelder direkt via document.update().
-    // this.element ist persistent und überlebt Part-Re-Renders — im Gegensatz zum
-    // <form>-Element selbst, das bei jedem Render ersetzt wird.
-    if (!this._submitChangeHandlerBound) {
-      this._submitChangeHandlerBound = true;
-      this.element.addEventListener("change", async (ev) => {
-        if (!this.isEditable) return;
-        const field = ev.target;
-        if (!field?.name) return;
-        // Nur gültige Dokumentenpfade weitergeben
-        const n = field.name;
-        if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
-        // Felder mit eigenen Change-Handlern überspringen
-        if (field.classList.contains("item-notes-input")) return;
-        if (field.classList.contains("item-equip-toggle") || field.classList.contains("magic-item-equip")) return;
-        if (field.classList.contains("combat-balance")) return;
-        if (field.classList.contains("custom-skill-field")) return;
-        if (!field.closest("form")) return;
-        let val = field.type === "checkbox" ? field.checked
-                : field.type === "number"   ? (Number(field.value) || 0)
-                : field.value;
-        await this.document.update({ [n]: val });
-      });
+    // Robuster Form-Change-Handler: bei jedem Re-Render neu binden.
+    // Den alten Handler zuerst entfernen, damit kein Duplikat entsteht.
+    // NICHT per _submitChangeHandlerBound einmalig binden — falls Foundry
+    // this.element intern austauscht (z.B. bei Force-Re-Renders), wäre der
+    // Handler verloren und _submitChangeHandlerBound würde einen Neubind verhindern.
+    if (this._changeHandler) {
+      this.element.removeEventListener("change", this._changeHandler);
     }
+    this._changeHandler = async (ev) => {
+      if (!this.isEditable) return;
+      const field = ev.target;
+      if (!field?.name) return;
+      const n = field.name;
+      if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
+      if (field.classList.contains("item-notes-input")) return;
+      if (field.classList.contains("item-equip-toggle") || field.classList.contains("magic-item-equip")) return;
+      if (field.classList.contains("combat-balance")) return;
+      if (field.classList.contains("custom-skill-field")) return;
+      if (!field.closest("form")) return;
+      let val = field.type === "checkbox" ? field.checked
+              : field.type === "number"   ? (Number(field.value) || 0)
+              : field.value;
+      await this.document.update({ [n]: val });
+    };
+    this.element.addEventListener("change", this._changeHandler);
 
     // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
     this.element.querySelectorAll("img[data-edit]").forEach(img => {
@@ -1608,6 +1612,8 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
     context.hasCoins = context.wallet.some(c => c.amount > 0);
     context.hasItems = actor.items.size > 0;
     context.hasContent = context.hasItems || context.hasCoins;
+    // Inhalt nur sichtbar wenn: GM, ODER Container ist offen
+    context.canViewContent = game.user.isGM || !actor.system.locked;
     context.canTake  = !!game.user.character && !actor.system.locked;
     return context;
   }
@@ -1616,22 +1622,21 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
     super._onRender(context, options);
     const html = this.element;
 
-    // Robuster Form-Change-Handler (gleiche Logik wie AboreaActorSheet)
-    if (!this._submitChangeHandlerBound) {
-      this._submitChangeHandlerBound = true;
-      this.element.addEventListener("change", async (ev) => {
-        if (!this.isEditable) return;
-        const field = ev.target;
-        if (!field?.name) return;
-        const n = field.name;
-        if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
-        if (!field.closest("form")) return;
-        const val = field.type === "checkbox" ? field.checked
-                  : field.type === "number"   ? (Number(field.value) || 0)
-                  : field.value;
-        await this.document.update({ [n]: val });
-      });
-    }
+    // Change-Handler bei jedem Re-Render frisch binden (siehe AboreaActorSheet)
+    if (this._changeHandler) this.element.removeEventListener("change", this._changeHandler);
+    this._changeHandler = async (ev) => {
+      if (!this.isEditable) return;
+      const field = ev.target;
+      if (!field?.name) return;
+      const n = field.name;
+      if (!n.startsWith("system.") && n !== "name" && n !== "img") return;
+      if (!field.closest("form")) return;
+      const val = field.type === "checkbox" ? field.checked
+                : field.type === "number"   ? (Number(field.value) || 0)
+                : field.value;
+      await this.document.update({ [n]: val });
+    };
+    this.element.addEventListener("change", this._changeHandler);
 
     // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
     html.querySelectorAll("img[data-edit]").forEach(img => {

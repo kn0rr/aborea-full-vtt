@@ -157,7 +157,7 @@
   border-radius: var(--aborea-radius);
   box-shadow: var(--aborea-shadow);
 }
-.aborea-sheet .header-fields h1 input { font-size: 1.3rem; font-weight: 700; }
+.aborea-sheet .header-fields h1 input { font-size: 1.3rem; font-weight: 700; color: #2e2010; }
 .aborea-sheet .header-grid {
   display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 6px;
 }
@@ -1011,7 +1011,7 @@
 .aborea-attack-form .hint { font-size: .75rem; opacity: .7; font-weight: 400; }
 
 /* ── Attack Dialog V2 ───────────────────────────────── */
-.aborea-attack-dialog .window-content { background: var(--aborea-parchment); padding: 0; }
+.aborea-attack-dialog .window-content { background: var(--aborea-parchment); padding: 0; color: var(--aborea-brown); }
 .aborea-attack-dialog-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
 .aborea-attack-dialog-body .form-group { display: flex; align-items: center; gap: 8px;
   padding: 4px 0; border-bottom: 1px solid var(--aborea-border-light); font-size: .87rem; }
@@ -1031,7 +1031,7 @@
   border: 1px solid var(--aborea-border); flex-shrink: 0; }
 .target-preview-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .target-preview-name { font-weight: 700; font-size: .85rem; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis; }
+  overflow: hidden; text-overflow: ellipsis; color: #2e2010; }
 .target-preview-stats { font-size: .75rem; color: var(--aborea-brown); opacity: .8; }
 
 /* Shared HP bar (dialog preview + damage card) */
@@ -1097,6 +1097,9 @@
   flex-direction: column; gap: 4px; min-height: 0; }
 .loot-empty { padding: 24px; text-align: center; color: var(--aborea-brown); opacity: .6;
   font-style: italic; }
+.loot-locked-hint { padding: 28px 16px; text-align: center; color: var(--aborea-brown); }
+.loot-locked-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+.loot-locked-hint p { font-style: italic; opacity: .75; line-height: 1.5; margin: 0; }
 
 .loot-section { border: 1px solid var(--aborea-border-light); border-radius: var(--aborea-radius-sm);
   overflow: hidden; }
@@ -1147,7 +1150,7 @@
 /* ── Loot Item Picker ───────────────────────────────── */
 .aborea-loot-picker .window-content { padding: 0; display: flex; flex-direction: column; }
 .loot-picker-body { display: flex; flex-direction: column; flex: 1; min-height: 0;
-  background: var(--aborea-parchment); }
+  background: var(--aborea-parchment); color: var(--aborea-brown); }
 
 .picker-controls { padding: 8px 10px; border-bottom: 1px solid var(--aborea-border);
   background: var(--aborea-parchment-2); display: flex; flex-direction: column; gap: 6px; }
@@ -1174,14 +1177,14 @@
 .picker-item-img { width: 26px; height: 26px; border-radius: 3px; object-fit: cover;
   border: 1px solid var(--aborea-border-light); flex-shrink: 0; }
 .picker-item-name { flex: 1; font-weight: 600; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis; }
+  overflow: hidden; text-overflow: ellipsis; color: #2e2010; }
 .picker-type-badge { font-size: .7rem; padding: 1px 6px; border-radius: 8px;
   white-space: nowrap; flex-shrink: 0; }
 .picker-type-weapon { background: #fde8e8; color: #7a1010; }
 .picker-type-armor  { background: #e8eef8; color: #1e4a7a; }
 .picker-type-gear   { background: #f0ead8; color: #5b4b3a; }
 .picker-type-magic  { background: #f0e8f8; color: #5a1e7a; }
-.picker-item-price { font-size: .74rem; color: var(--aborea-gold); white-space: nowrap; flex-shrink: 0; }
+.picker-item-price { font-size: .74rem; color: #8a6820; white-space: nowrap; flex-shrink: 0; }
 .picker-add-btn { width: 26px; height: 26px; font-size: 1rem; font-weight: 700;
   cursor: pointer; border: none; border-radius: 50%;
   background: var(--aborea-green); color: #fff; flex-shrink: 0;
@@ -1345,4 +1348,40 @@
   .aborea-sheet .creation-attributes-grid .attribute-row { grid-template-columns: 1fr; }
   .aborea-sheet .creation-attributes-grid .attribute-header { display: none; }
   .history-row { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Item-Beschreibungssperre ──────────────────────── */
+.item-desc-lock-bar {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(180,140,60,.1);
+  border-bottom: 1px solid var(--aborea-border-light);
+}
+.item-desc-lock-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--aborea-brown);
+  cursor: pointer;
+  user-select: none;
+}
+.item-desc-lock-label input[type="checkbox"] {
+  cursor: pointer;
+}
+.item-description-text {
+  padding: 6px 10px;
+  font-size: .88rem;
+  color: var(--aborea-brown);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.item-desc-locked-hint {
+  padding: 12px 10px;
+  font-size: .85rem;
+  font-style: italic;
+  color: var(--aborea-brown);
+  opacity: .7;
 }

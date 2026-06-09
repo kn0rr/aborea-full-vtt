@@ -203,8 +203,9 @@ export class ClassDataModel extends foundry.abstract.TypeDataModel {
 export class SkillDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description:     new fields.StringField({ initial: "" }),
-      equipped:        new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       linkedAttribute: new fields.StringField({ initial: "" }),
       rank:            new fields.NumberField({ initial: 0, integer: true })
     };
@@ -214,8 +215,9 @@ export class SkillDataModel extends foundry.abstract.TypeDataModel {
 export class WeaponDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description: new fields.StringField({ initial: "" }),
-      equipped:    new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       skill:       new fields.StringField({ initial: "" }),
       minStrength: new fields.NumberField({ initial: 0 }),
       damage:      new fields.NumberField({ initial: 0 }),
@@ -233,8 +235,9 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
 export class ArmorDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description: new fields.StringField({ initial: "" }),
-      equipped:    new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       minStrength: new fields.NumberField({ initial: 0 }),
       armor:       new fields.NumberField({ initial: 5 }),
       maneuverMod: new fields.NumberField({ initial: 0 }),
@@ -248,8 +251,9 @@ export class ArmorDataModel extends foundry.abstract.TypeDataModel {
 export class SpellDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description: new fields.StringField({ initial: "" }),
-      equipped:    new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       rank:        new fields.NumberField({ initial: 1, integer: true }),
       cost:        new fields.NumberField({ initial: 1 }),
       school:      new fields.StringField({ initial: "" }),
@@ -273,8 +277,9 @@ export class SpellDataModel extends foundry.abstract.TypeDataModel {
 export class MiracleDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description: new fields.StringField({ initial: "" }),
-      equipped:    new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       rank:        new fields.NumberField({ initial: 1, integer: true }),
       cost:        new fields.NumberField({ initial: 1 }),
       domain:      new fields.StringField({ initial: "" }),
@@ -298,8 +303,9 @@ export class MiracleDataModel extends foundry.abstract.TypeDataModel {
 export class GearDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description: new fields.StringField({ initial: "" }),
-      equipped:    new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       quantity:    new fields.NumberField({ initial: 1, integer: true }),
       weight:      new fields.NumberField({ initial: 0 }),
       price:       new fields.StringField({ initial: "" }),
@@ -313,8 +319,9 @@ export class GearDataModel extends foundry.abstract.TypeDataModel {
 export class GodDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description: new fields.StringField({ initial: "" }),
-      equipped:    new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       pantheon:     new fields.StringField({ initial: "" }),
       rank:         new fields.StringField({ initial: "" }),
       aspects:      new fields.StringField({ initial: "" }),
@@ -329,8 +336,9 @@ export class GodDataModel extends foundry.abstract.TypeDataModel {
 export class MagicItemDataModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
-      description:   new fields.StringField({ initial: "" }),
-      equipped:      new fields.BooleanField({ initial: false }),
+      description:       new fields.StringField({ initial: "" }),
+      descriptionLocked: new fields.BooleanField({ initial: false }),
+      equipped:          new fields.BooleanField({ initial: false }),
       notes:         new fields.StringField({ initial: "" }),
       price:         new fields.StringField({ initial: "" }),
       weight:        new fields.NumberField({ initial: 0 }),

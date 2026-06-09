@@ -45,6 +45,16 @@
   {{!-- ══ ITEMS ══ --}}
   <div class="loot-body">
 
+    {{!-- Verschlossen & kein GM: Inhalt verbergen --}}
+    {{#unless canViewContent}}
+    <div class="loot-locked-hint">
+      <span class="loot-locked-icon">🔒</span>
+      <p>Dieser Behälter ist verschlossen.<br>Sein Inhalt bleibt verborgen.</p>
+    </div>
+    {{/unless}}
+
+    {{#if canViewContent}}
+
     {{#unless hasContent}}
     <div class="loot-empty">
       <p>Dieser Container ist leer.</p>
@@ -174,6 +184,8 @@
       {{/each}}
     </section>
     {{/if}}
+
+    {{/if}}{{!-- /canViewContent --}}
 
   </div>{{!-- /.loot-body --}}
 

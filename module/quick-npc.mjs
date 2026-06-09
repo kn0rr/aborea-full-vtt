@@ -85,10 +85,11 @@ export async function spawnCreatureOnScene() {
 
 export function registerQuickNpcSceneControl() {
   const entry = {
-    name:  "aborea-creatures",
-    title: "ABOREA Kreaturen",
-    icon:  "fas fa-dragon",
-    layer: "TokenLayer",
+    name:        "aborea-creatures",
+    title:       "ABOREA Kreaturen",
+    icon:        "fas fa-dragon",
+    layer:       "tokens",          // Foundry v13: Layer-Schlüssel, nicht Klassenname
+    activeTool:  "quick-spawn",
     tools: [
       {
         name:    "quick-spawn",
@@ -107,13 +108,14 @@ export function registerQuickNpcSceneControl() {
     ]
   };
 
+  // Foundry v13
   Hooks.on("getSceneControlButtonsV2", controls => {
     if (!game.user?.isGM) return;
     if (Array.isArray(controls)) controls.push(entry);
   });
+  // Foundry v12 Fallback
   Hooks.on("getSceneControlButtons", controls => {
     if (!game.user?.isGM) return;
     if (Array.isArray(controls)) controls.push(entry);
-    else if (controls && typeof controls === "object") controls[entry.name] = entry;
   });
 }
