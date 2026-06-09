@@ -320,6 +320,7 @@
   cursor: pointer;
   font-weight: 500;
   transition: background .15s;
+  color: var(--aborea-brown);
 }
 .aborea-sheet .tabs .item.active {
   background: var(--aborea-parchment-2);
@@ -1066,7 +1067,7 @@
 
 /* ── Loot Sheet ─────────────────────────────────────── */
 .loot-sheet { display: flex; flex-direction: column; flex: 1; min-height: 0;
-  background: var(--aborea-parchment); overflow: hidden; }
+  background: var(--aborea-parchment); overflow: hidden; color: var(--aborea-brown); }
 
 .loot-header { display: flex; gap: 12px; align-items: flex-start;
   padding: 10px 12px; border-bottom: 2px solid var(--aborea-border);
@@ -1076,7 +1077,8 @@
 .loot-header-info { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .loot-header-info h1 { margin: 0; }
 .loot-header-info h1 input { font-size: 1.1rem; font-weight: 700; width: 100%;
-  background: transparent; border: none; border-bottom: 1px dashed var(--aborea-border); }
+  background: transparent; border: none; border-bottom: 1px dashed var(--aborea-border);
+  color: var(--aborea-brown); }
 .loot-status-row { display: flex; align-items: center; gap: 6px; }
 .lock-badge { font-size: .8rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
 .lock-badge.locked { background: #fde8e8; color: #7a1010; border: 1px solid #f5c6cb; }
@@ -1109,10 +1111,10 @@
 .loot-item-img { width: 28px; height: 28px; object-fit: cover; border-radius: 3px;
   border: 1px solid var(--aborea-border-light); flex-shrink: 0; }
 .loot-item-name { flex: 1; font-weight: 600; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis; }
-.loot-item-detail { font-size: .78rem; color: var(--aborea-brown); opacity: .8;
+  overflow: hidden; text-overflow: ellipsis; color: #2e2010; }
+.loot-item-detail { font-size: .78rem; color: #6b543f;
   white-space: nowrap; flex-shrink: 0; }
-.loot-item-price { font-size: .75rem; color: var(--aborea-gold); font-weight: 600;
+.loot-item-price { font-size: .75rem; color: #8a6820; font-weight: 600;
   white-space: nowrap; flex-shrink: 0; }
 .loot-item-actions { display: flex; gap: 4px; flex-shrink: 0; margin-left: auto; }
 
