@@ -1710,12 +1710,21 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       ui.notifications.warn("ABOREA: Der Container ist verschlossen.");
       return;
     }
-    const item = this.actor.items.get(itemId);
-    if (!item) return;
-    const obj = item.toObject(); delete obj._id;
-    await character.createEmbeddedDocuments("Item", [obj]);
-    await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
-    await this._logLootEntry(character, item.name, item.type, this.actor.name);
+    if (this.actor.isOwner) {
+      // Direktzugriff (GM oder Besitzer)
+      const item = this.actor.items.get(itemId);
+      if (!item) return;
+      const obj = item.toObject(); delete obj._id;
+      await character.createEmbeddedDocuments("Item", [obj]);
+      await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+      await this._logLootEntry(character, item.name, item.type, this.actor.name);
+    } else {
+      // Socket-Delegation an GM
+      game.socket.emit("system.aborea-v7", {
+        type: "lootRequest", action: "takeItem",
+        lootActorId: this.actor.id, itemId, characterId: character.id,
+      });
+    }
   }
 
   async _takeAll() {
@@ -1735,29 +1744,34 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       return;
     }
 
-    // Items übertragen
-    if (this.actor.items.size) {
-      const items = this.actor.items.map(i => i);
-      const objs  = items.map(i => { const o = i.toObject(); delete o._id; return o; });
-      await character.createEmbeddedDocuments("Item", objs);
-      await this.actor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
-
-      const current = Array.isArray(character.system.inventoryHistory)
-        ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
-      const scene = game.scenes?.active?.name ?? "";
-      const entries = items.map(i =>
-        makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i), {
-          itemType: i.type, note: `aus ${this.actor.name}`, scene
-        })
-      );
-      const updated = entries.reduce((list, e) => logListPush(list, e), current);
-      await character.update({ "system.inventoryHistory": updated });
+    if (this.actor.isOwner) {
+      // Direktzugriff (GM oder Besitzer)
+      if (this.actor.items.size) {
+        const items = this.actor.items.map(i => i);
+        const objs  = items.map(i => { const o = i.toObject(); delete o._id; return o; });
+        await character.createEmbeddedDocuments("Item", objs);
+        await this.actor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
+        const current = Array.isArray(character.system.inventoryHistory)
+          ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
+        const scene = game.scenes?.active?.name ?? "";
+        const entries = items.map(i =>
+          makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i), {
+            itemType: i.type, note: `aus ${this.actor.name}`, scene
+          })
+        );
+        const updated = entries.reduce((list, e) => logListPush(list, e), current);
+        await character.update({ "system.inventoryHistory": updated });
+      }
+      if (hasCoins) await this._transferCoins(character);
+      ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
+    } else {
+      // Socket-Delegation an GM
+      game.socket.emit("system.aborea-v7", {
+        type: "lootRequest", action: "takeAll",
+        lootActorId: this.actor.id, characterId: character.id,
+      });
+      ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
     }
-
-    // Geld übertragen
-    if (hasCoins) await this._transferCoins(character);
-
-    ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
   }
 
   async _takeMoney() {
@@ -1768,8 +1782,16 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
     if (!["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0)) {
       ui.notifications.info("ABOREA: Kein Geld im Container."); return;
     }
-    await this._transferCoins(character);
-    ui.notifications.info(`${character.name} nimmt das Geld aus ${this.actor.name}.`);
+    if (this.actor.isOwner) {
+      await this._transferCoins(character);
+      ui.notifications.info(`${character.name} nimmt das Geld aus ${this.actor.name}.`);
+    } else {
+      game.socket.emit("system.aborea-v7", {
+        type: "lootRequest", action: "takeMoney",
+        lootActorId: this.actor.id, characterId: character.id,
+      });
+      ui.notifications.info(`${character.name} nimmt das Geld aus ${this.actor.name}.`);
+    }
   }
 
   async _transferCoins(character) {

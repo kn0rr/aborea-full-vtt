@@ -9,6 +9,7 @@ import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHo
 import { registerConditions, registerConditionHooks } from "./conditions.mjs";
 import { openCheckDialog, openGroupCheckDialog, registerCheckHooks } from "./checks.mjs";
 import { registerQuickNpcSceneControl } from "./quick-npc.mjs";
+import { normalizeWallet, makeHistoryEntry, logListPush, itemHistoryLabel } from "./actor-helpers.mjs";
 import {
   CharacterDataModel, NpcDataModel, CreatureDataModel, LootDataModel,
   RaceDataModel, ClassDataModel, SkillDataModel,
@@ -127,8 +128,99 @@ Hooks.once("diceSoNiceReady", function (dice3d) {
   game.aborea.dice3d = dice3d;
 });
 
+// ── Loot-Socket: Spieler-Anfragen via GM ausführen ─────────────────
+const SOCKET_NAME = "system.aborea-v7";
+
+async function _handleLootSocket(data) {
+  if (data.type !== "lootRequest") return;
+  if (!game.user.isGM) return;
+  // Nur der erste aktive GM verarbeitet die Anfrage
+  const activeGM = game.users.find(u => u.isGM && u.active);
+  if (!activeGM || activeGM.id !== game.user.id) return;
+
+  const lootActor = game.actors.get(data.lootActorId);
+  if (!lootActor || lootActor.type !== "loot") return;
+  if (lootActor.system.locked) return;
+
+  const character = game.actors.get(data.characterId);
+  if (!character) return;
+
+  const scene  = game.scenes?.active?.name ?? "";
+  const source = lootActor.name;
+
+  if (data.action === "takeItem") {
+    const item = lootActor.items.get(data.itemId);
+    if (!item) return;
+    const obj = item.toObject(); delete obj._id;
+    await character.createEmbeddedDocuments("Item", [obj]);
+    await lootActor.deleteEmbeddedDocuments("Item", [data.itemId]);
+    // Inventar-Historie
+    const current = Array.isArray(character.system.inventoryHistory)
+      ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
+    const entry = makeHistoryEntry("inventory", "item-add", itemHistoryLabel(item),
+      { itemType: item.type, note: `aus ${source}`, scene });
+    await character.update({ "system.inventoryHistory": logListPush(current, entry) });
+
+  } else if (data.action === "takeAll") {
+    const items = [...lootActor.items];
+    if (items.length) {
+      const objs = items.map(i => { const o = i.toObject(); delete o._id; return o; });
+      await character.createEmbeddedDocuments("Item", objs);
+      await lootActor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
+      const current = Array.isArray(character.system.inventoryHistory)
+        ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
+      const entries = items.map(i =>
+        makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i),
+          { itemType: i.type, note: `aus ${source}`, scene })
+      );
+      const updated = entries.reduce((list, e) => logListPush(list, e), current);
+      await character.update({ "system.inventoryHistory": updated });
+    }
+    // Münzen
+    const w = lootActor.system.wallet ?? {};
+    const hasCoins = ["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0);
+    if (hasCoins) {
+      const charWallet = normalizeWallet(character.system.wallet);
+      for (const key of ["gf","tt","kl","mu"]) {
+        const amount = Number(w[key] ?? 0);
+        if (!amount) continue;
+        const cur = charWallet.currencies.find(c => c.key === key);
+        if (!cur) continue;
+        cur.amount = (Number(cur.amount) || 0) + amount;
+        charWallet.history = logListPush(charWallet.history,
+          makeHistoryEntry("wallet", "add", cur.label,
+            { amount, currency: cur.label, note: `aus ${source}`, scene }));
+      }
+      await character.update({ "system.wallet": charWallet });
+      await lootActor.update({ "system.wallet": { gf: 0, tt: 0, kl: 0, mu: 0 } });
+    }
+
+  } else if (data.action === "takeMoney") {
+    const w = lootActor.system.wallet ?? {};
+    const hasCoins = ["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0);
+    if (!hasCoins) return;
+    const charWallet = normalizeWallet(character.system.wallet);
+    for (const key of ["gf","tt","kl","mu"]) {
+      const amount = Number(w[key] ?? 0);
+      if (!amount) continue;
+      const cur = charWallet.currencies.find(c => c.key === key);
+      if (!cur) continue;
+      cur.amount = (Number(cur.amount) || 0) + amount;
+      charWallet.history = logListPush(charWallet.history,
+        makeHistoryEntry("wallet", "add", cur.label,
+          { amount, currency: cur.label, note: `aus ${source}`, scene }));
+    }
+    await character.update({ "system.wallet": charWallet });
+    await lootActor.update({ "system.wallet": { gf: 0, tt: 0, kl: 0, mu: 0 } });
+  }
+}
+
 Hooks.once("ready", async function () {
   console.log("ABOREA V7 | Bereit");
+
+  // Socket für Loot-Anfragen registrieren (alle Clients)
+  game.socket.on(SOCKET_NAME, data => _handleLootSocket(data));
+
   if (game.user.isGM) {
     // System-Packs automatisch entsperren damit Inhalte direkt bearbeitbar sind
     await game.aborea.unlockPacks();
