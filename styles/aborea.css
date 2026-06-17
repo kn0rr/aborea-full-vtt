@@ -158,6 +158,8 @@
   box-shadow: var(--aborea-shadow);
 }
 .aborea-sheet .header-fields h1 input { font-size: 1.3rem; font-weight: 700; color: #2e2010; }
+.aborea-sheet .item-header { color: var(--aborea-brown); }
+.aborea-sheet .item-type-label { color: var(--aborea-brown); font-size: .85rem; margin: 2px 0 0; opacity: .8; }
 .aborea-sheet .header-grid {
   display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 6px;
 }
