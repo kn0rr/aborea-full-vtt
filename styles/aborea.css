@@ -160,6 +160,30 @@
 .aborea-sheet .header-fields h1 input { font-size: 1.3rem; font-weight: 700; color: #2e2010; }
 .aborea-sheet .item-header { color: var(--aborea-brown); }
 .aborea-sheet .item-type-label { color: var(--aborea-brown); font-size: .85rem; margin: 2px 0 0; opacity: .8; }
+
+/* ── Universelle Lesbarkeits-Fixes (Parchment-Hintergrund vs. Foundry Dark Theme) ── */
+/* Header-Grid Labels (NSC, Kreatur) */
+.aborea-sheet .header-grid label,
+.aborea-sheet .header-grid input { color: var(--aborea-brown); }
+
+/* Form-Grid Labels & Inputs (Item-Sheet, alle Typen) */
+.aborea-sheet .form-grid label,
+.aborea-sheet .form-grid input,
+.aborea-sheet .form-grid select,
+.aborea-sheet .form-group label,
+.aborea-sheet .form-group input { color: var(--aborea-brown); }
+
+/* Volle-Breite Labels (Beschreibung, Notizen, Besonderes) */
+.aborea-sheet .full-width,
+.aborea-sheet label.full-width { color: var(--aborea-brown); }
+.aborea-sheet .full-width textarea,
+.aborea-sheet label.full-width textarea { color: #2e2010; }
+
+/* Checkbox-Labels in Formularen */
+.aborea-sheet .checkbox-label { color: var(--aborea-brown); }
+
+/* Hint-Spans (z.B. Status-Effekte Hinweis beim Magic-Item) */
+.aborea-sheet .hint { color: var(--aborea-brown); opacity: .8; font-size: .8rem; }
 .aborea-sheet .header-grid {
   display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 6px;
 }
@@ -431,6 +455,7 @@
   font-weight: 700;
   font-size: .9rem;
   padding: 0 8px;
+  color: var(--aborea-brown);
 }
 .center { text-align: center; }
 
@@ -538,9 +563,9 @@
   gap: 6px; align-items: center;
 }
 .npc-ws-row:hover { background: var(--aborea-parchment-2); border-radius: 4px; }
-.npc-ws-label { font-size: .85rem; }
-.npc-ws-attr { font-size: .72rem; text-transform: uppercase; text-align: center; }
-.npc-ws-rank { text-align: center; width: 100%; }
+.npc-ws-label { font-size: .85rem; color: var(--aborea-brown); }
+.npc-ws-attr { font-size: .72rem; text-transform: uppercase; text-align: center; color: var(--aborea-brown); }
+.npc-ws-rank { text-align: center; width: 100%; color: #2e2010; }
 .npc-ws-cb { font-size: .85rem; font-weight: 700; text-align: center; border-radius: 99px; padding: 1px 8px; }
 .npc-ws-cb.pos { color: var(--aborea-green); background: #f0fdf4; }
 .npc-ws-cb.neg { color: var(--aborea-red); background: #fef2f2; }
@@ -1087,7 +1112,7 @@
 .lock-badge.open   { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
 .loot-gm-row { display: flex; align-items: center; gap: 6px; font-size: .8rem;
   color: var(--aborea-brown); }
-.loot-gm-label { opacity: .7; }
+.loot-gm-label { opacity: .8; color: var(--aborea-brown); }
 
 .loot-description-wrap { padding: 6px 12px; }
 .loot-description-input { width: 100%; font-size: .82rem; border: 1px solid var(--aborea-border-light);
