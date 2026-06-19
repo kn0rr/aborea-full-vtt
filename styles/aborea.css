@@ -162,28 +162,31 @@
 .aborea-sheet .item-type-label { color: var(--aborea-brown); font-size: .85rem; margin: 2px 0 0; opacity: .8; }
 
 /* ── Universelle Lesbarkeits-Fixes (Parchment-Hintergrund vs. Foundry Dark Theme) ── */
-/* Header-Grid Labels (NSC, Kreatur) */
-.aborea-sheet .header-grid label,
-.aborea-sheet .header-grid input { color: var(--aborea-brown); }
+/* !important nötig, da Foundry Dark Theme sonst mit höherer Spezifität gewinnt */
 
-/* Form-Grid Labels & Inputs (Item-Sheet, alle Typen) */
-.aborea-sheet .form-grid label,
-.aborea-sheet .form-grid input,
-.aborea-sheet .form-grid select,
-.aborea-sheet .form-group label,
-.aborea-sheet .form-group input { color: var(--aborea-brown); }
+/* Alle Labels, Absätze und Spans im Aborea-Sheet */
+.aborea-sheet label,
+.aborea-sheet p,
+.aborea-sheet legend { color: var(--aborea-brown) !important; }
 
-/* Volle-Breite Labels (Beschreibung, Notizen, Besonderes) */
-.aborea-sheet .full-width,
-.aborea-sheet label.full-width { color: var(--aborea-brown); }
-.aborea-sheet .full-width textarea,
-.aborea-sheet label.full-width textarea { color: #2e2010; }
+/* Alle Inputs, Selects, Textareas */
+.aborea-sheet input:not([type="checkbox"]):not([type="radio"]),
+.aborea-sheet select,
+.aborea-sheet textarea { color: #2e2010!important; }
 
-/* Checkbox-Labels in Formularen */
-.aborea-sheet .checkbox-label { color: var(--aborea-brown); }
+/* Hint-Spans */
+.aborea-sheet .hint,
+.aborea-sheet .hint-text { color: var(--aborea-brown) !important; opacity: .8; }
 
-/* Hint-Spans (z.B. Status-Effekte Hinweis beim Magic-Item) */
-.aborea-sheet .hint { color: var(--aborea-brown); opacity: .8; font-size: .8rem; }
+/* Ausnahmen: farbige Elemente sollen ihre eigene Farbe behalten */
+.aborea-sheet .panel h2 { color: var(--aborea-red) !important; }
+.aborea-sheet .badge.pos,
+.aborea-sheet .npc-ws-cb.pos { color: var(--aborea-green) !important; }
+.aborea-sheet .badge.neg,
+.aborea-sheet .npc-ws-cb.neg { color: var(--aborea-red) !important; }
+.aborea-sheet .level-badge { color: #fff !important; }
+.aborea-sheet .lock-badge.locked { color: var(--aborea-red) !important; }
+.aborea-sheet .lock-badge.open { color: var(--aborea-green) !important; }
 .aborea-sheet .header-grid {
   display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 6px;
 }
