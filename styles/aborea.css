@@ -169,10 +169,14 @@
 .aborea-sheet p,
 .aborea-sheet legend { color: var(--aborea-brown) !important; }
 
-/* Alle Inputs, Selects, Textareas */
+/* Alle Inputs, Selects, Textareas — Farbe UND Hintergrund überschreiben */
 .aborea-sheet input:not([type="checkbox"]):not([type="radio"]),
 .aborea-sheet select,
-.aborea-sheet textarea { color: #2e2010!important; }
+.aborea-sheet textarea {
+  color: #2e2010 !important;
+  background-color: rgba(255, 248, 235, 0.85) !important;
+  border-color: var(--aborea-border) !important;
+}
 
 /* Hint-Spans */
 .aborea-sheet .hint,
