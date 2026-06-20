@@ -516,6 +516,14 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       let val = field.type === "checkbox" ? field.checked
               : field.type === "number"   ? (Number(field.value) || 0)
               : field.value;
+      // Race-condition guard: HP/MP werden direkt per actor.update() verwaltet.
+      // Wenn der DOM-Wert älter als der Actor-Wert ist (z.B. nach Zauber-Abzug),
+      // den Actor-Wert gewinnen lassen.
+      if (n === "system.resources.mp.value" || n === "system.resources.hp.value") {
+        const key    = n === "system.resources.mp.value" ? "mp" : "hp";
+        const stored = Number(this.document.system?.resources?.[key]?.value ?? 0);
+        if (val === stored) return; // keine echte Änderung
+      }
       await this.document.update({ [n]: val });
     };
     this.element.addEventListener("change", this._changeHandler);
@@ -1335,45 +1343,21 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   async _castPower(itemId) {
     const item = this.actor.items.get(itemId); if (!item||!["spell","miracle"].includes(item.type)) return;
+
+    // Gezielte Zauber: komplett durch den Angriffsdialog (MP-Wahl + Ziel + Treffer)
+    if (item.system.targeted) {
+      await this._cleanupExpiredCompanions();
+      await openAttackDialog(this.actor, { preselectedSpellId: item.id });
+      return;
+    }
+
+    // Nicht-gezielte Zauber: MP-Kosten wählen, dann direkt wirken
     const mpCost = await chooseMpCost(item); if (mpCost==null) return;
     const currentMp = Number(this.actor.system.resources?.mp?.value??0);
     if (currentMp<mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
     await this._cleanupExpiredCompanions();
     await this.actor.update({"system.resources.mp.value":Math.max(0,currentMp-mpCost)});
 
-    // Gezielte Zauber: Angriffswurf notwendig
-    if (item.system.targeted) {
-      const result = await openSpellAttackDialog(this.actor, item, mpCost);
-      if (!result) return; // Dialog abgebrochen
-
-      // Effekte nur bei Treffer anwenden
-      let effectHtml = "";
-      if (result.hit && result.targetActor) {
-        const targets = [result.targetActor];
-        const hp      = inferDirectHp(item, mpCost);
-        const effects = inferEffects(item, mpCost).map(e => ({...e, origin: item.uuid}));
-        for (const target of targets) {
-          if (hp?.type === "heal")   { const cur = Number(target.system.resources?.hp?.value ?? 0); const max = Number(target.system.resources?.hp?.max ?? cur); await target.update({"system.resources.hp.value": Math.min(max, cur + hp.amount)}); effectHtml += `<div class="ac-effect-row">✨ <strong>${target.name}</strong>: +${hp.amount} HP</div>`; }
-          if (hp?.type === "damage") { const cur = Number(target.system.resources?.hp?.value ?? 0); await target.update({"system.resources.hp.value": Math.max(0, cur - hp.amount)}); effectHtml += `<div class="ac-effect-row">💥 <strong>${target.name}</strong>: −${hp.amount} HP</div>`; }
-          if (effects.length)        { await applyEffectsToActor(target, effects); effectHtml += `<div class="ac-effect-row">🔮 <strong>${target.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`; }
-        }
-      }
-
-      // Eine kombinierte Chat-Karte: Angriffswurf + Effekte
-      const effectSection = effectHtml ? `<div class="ac-effects">${effectHtml}</div>` : "";
-      await ChatMessage.create({
-        speaker: result.speaker,
-        rolls:   result.rolls,
-        content: result.cardOpen + effectSection + `</div>`,
-        flags:   result.flags,
-      });
-
-      // Kampfrunde weiterschalten
-      if (game.combat?.started) await game.combat.nextTurn();
-      return;
-    }
-
-    // Nicht-gezielte Zauber: direkt wirken
     const targets = Array.from(game.user.targets||[]).map(t=>t.actor).filter(Boolean);
     const hp = inferDirectHp(item,mpCost);
     const effects = inferEffects(item,mpCost).map(e=>({...e,origin:item.uuid}));

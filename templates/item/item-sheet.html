@@ -161,6 +161,11 @@
           <input type="checkbox" name="system.targeted" {{checked system.targeted}} />
           {{localize "ABOREA.Targeted"}}
         </label>
+        {{#if system.targeted}}
+        <label title="MP pro Ziel — 0 = Einzelziel, z.B. 3 = bei 6 MP → 2 Ziele">MP pro Ziel
+          <input type="number" name="system.mpPerTarget" value="{{system.mpPerTarget}}" min="0" />
+        </label>
+        {{/if}}
       </div>
       {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}
@@ -205,6 +210,11 @@
           <input type="checkbox" name="system.targeted" {{checked system.targeted}} />
           {{localize "ABOREA.Targeted"}}
         </label>
+        {{#if system.targeted}}
+        <label title="MP pro Ziel — 0 = Einzelziel, z.B. 3 = bei 6 MP → 2 Ziele">MP pro Ziel
+          <input type="number" name="system.mpPerTarget" value="{{system.mpPerTarget}}" min="0" />
+        </label>
+        {{/if}}
       </div>
       {{#if isGM}}
       <label class="full-width">{{localize "ABOREA.Description"}}

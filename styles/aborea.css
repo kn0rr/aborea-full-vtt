@@ -1084,6 +1084,47 @@
 }
 .spell-bonus-breakdown strong { font-size: .92rem; color: #2e2010; }
 
+.spell-mp-status {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  padding: 5px 8px; margin-bottom: 6px;
+  background: rgba(0,0,0,.04); border-radius: 4px; font-size: .82rem;
+}
+.spell-mp-label, .spell-mp-cost-label, .spell-mp-remaining-label {
+  color: var(--aborea-brown); white-space: nowrap;
+}
+.spell-mp-cost-label, .spell-mp-remaining-label { margin-left: 4px; }
+.spell-mp-value, .spell-mp-cost-value, .spell-mp-remaining-value {
+  font-weight: 600; color: #2e2010;
+}
+
+.spell-no-mp-warning {
+  padding: 5px 8px; margin: 2px 0 6px;
+  background: rgba(180,40,40,.1); border-left: 3px solid #b42828;
+  border-radius: 3px; font-size: .82rem; color: #b42828; font-weight: 600;
+}
+
+.spell-effect-preview {
+  padding: 5px 8px; margin: 2px 0 6px;
+  background: rgba(0, 100, 60, .08); border-left: 3px solid #1a6b3a;
+  border-radius: 3px; font-size: .85rem; color: #1a5c32; font-weight: 600;
+}
+
+.ac-body-extra { margin-top: 6px; border-top: 1px dashed var(--aborea-border-light); padding-top: 4px; }
+.ac-target-label span:last-child { font-style: italic; }
+
+/* Mehrziel-Auswahl */
+.multi-target-label { font-weight: 600; color: var(--aborea-brown) !important; }
+.multi-target-count-hint { font-size: .75rem; font-weight: 400; opacity: .7; }
+.multi-target-list { display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto;
+  border: 1px solid var(--aborea-border); border-radius: 4px; padding: 4px; background: rgba(255,248,235,.6); }
+.multi-target-item { display: flex; align-items: center; gap: 6px;
+  padding: 3px 6px; border-radius: 4px; cursor: pointer; }
+.multi-target-item:hover { background: rgba(192,149,64,.15); }
+.multi-target-item input[type=checkbox] { flex-shrink: 0; }
+.multi-target-img { width: 28px; height: 28px; border-radius: 3px; object-fit: cover; flex-shrink: 0; }
+.multi-target-name { flex: 1; font-size: .88rem; color: #2e2010 !important; }
+.multi-target-stats { font-size: .75rem; color: var(--aborea-brown) !important; white-space: nowrap; }
+
 /* Target preview strip */
 .target-preview { display: flex; align-items: center; gap: 8px;
   background: rgba(0,0,0,.04); border-radius: 6px; padding: 6px 8px; margin: 4px 0; }

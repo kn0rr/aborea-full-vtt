@@ -173,7 +173,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const skillRank  = _getGezielteSpruecheRank(actor);
     const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
     const spellAttackBonus = attrBonus + skillRank + classBonus;
-    const currentMp  = _getCurrentMp(actor);
+    const currentMp    = _getCurrentMp(actor);
+    const currentMpMax = Number(actor.system.resources?.mp?.max ?? currentMp);
 
     return {
       weapons: weapons.map(w => ({
@@ -182,23 +183,34 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         damage: w.system.damage ?? 0,
         skill:  w.system.skill ?? "",
       })),
+      preselectedSpellId: this.options.preselectedSpellId ?? null,
       targetedSpells: targetedSpells.map(s => {
-        const baseCost = Number(s.system.cost ?? 1) || 1;
-        // costOptions kann Zahlen ODER Objekte enthalten — robust extrahieren
+        const baseCost   = Number(s.system.cost ?? 1) || 1;
         const rawOptions = Array.isArray(s.system.costOptions) ? s.system.costOptions : [];
         const parsedOptions = rawOptions
           .map(o => typeof o === "object" && o !== null ? Number(o.cost ?? o.value ?? o) : Number(o))
           .filter(n => Number.isFinite(n) && n > 0);
-        const costs = parsedOptions.length ? parsedOptions : [baseCost];
-        const minCost = Math.min(...costs);
+        const costs    = parsedOptions.length ? parsedOptions : [baseCost];
+        const minCost  = Math.min(...costs);
+        const hpEffect = s.system.hpEffect ?? {};
+        const mpPerTarget = Number(s.system.mpPerTarget ?? 0);
+        // Vorschau-Daten pro Kostenstufe
+        const costPreviews = costs.map(c => ({
+          mp:      c,
+          damage:  hpEffect.type ? Math.min(hpEffect.max ?? Infinity, Math.round((hpEffect.multiplier ?? 1) * c)) : null,
+          damageType: hpEffect.type ?? null,
+          targets: mpPerTarget > 0 ? Math.max(1, Math.floor(c / mpPerTarget)) : 1,
+        }));
         return {
           id:        s.id,
           name:      s.name,
           cost:      baseCost,
           costs,
           minCost,
-          canAfford: currentMp >= minCost,
-          rank:      s.system.rank ?? 1,
+          canAfford:    currentMp >= minCost,
+          rank:         s.system.rank ?? 1,
+          mpPerTarget,
+          costPreviews,
         };
       }),
       hasSpells:        targetedSpells.length > 0,
@@ -207,6 +219,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       signedSkillRank:  _sign(skillRank),
       signedClassBonus: _sign(classBonus),
       currentMp,
+      currentMpMax,
       targetCandidates: _buildTargetCandidates(attackerTokenId),
       combatBonus,
       currentOffBonus,
@@ -216,45 +229,58 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   _onRender(context, options) {
-    const html         = this.element;
-    const actor        = this.options.attackerActor;
-    const targetSelect = html.querySelector("[name=targetTokenId]");
-    const weaponSelect = html.querySelector("[name=weaponId]");
-    const spellSelect  = html.querySelector("[name=spellId]");
-    const manualRow    = html.querySelector(".manual-dv-row");
-    const untrainedRow = html.querySelector(".untrained-row");
-    const preview      = html.querySelector(".target-preview");
+    const html          = this.element;
+    const actor         = this.options.attackerActor;
+    const targetSelect  = html.querySelector("[name=targetTokenId]");
+    const weaponSelect  = html.querySelector("[name=weaponId]");
+    const spellSelect   = html.querySelector("[name=spellId]");
+    const manualRow     = html.querySelector(".manual-dv-row");
+    const untrainedRow  = html.querySelector(".untrained-row");
+    const preview       = html.querySelector(".target-preview");
     const weaponSection = html.querySelector(".weapon-section");
     const spellSection  = html.querySelector(".spell-section");
     const modeRadios    = html.querySelectorAll("[name=attackMode]");
     const mpCostSelect  = html.querySelector("[name=mpCost]");
     const submitBtn     = html.querySelector("[type=submit]");
+    const singleRow     = html.querySelector(".single-target-row");
+    const multiRow      = html.querySelector(".multi-target-row");
+    const multiHint     = html.querySelector(".multi-target-count-hint");
+    const multiChecks   = () => html.querySelectorAll("[name=multiTargetId]");
 
     const candidateMap = Object.fromEntries(
       (context.targetCandidates ?? []).map(c => [c.id, c])
     );
-
-    // Spell data lookup by id
     const spellMap = Object.fromEntries(
       (context.targetedSpells ?? []).map(s => [s.id, s])
     );
 
-    const toggleManual = () => { manualRow.style.display = targetSelect.value ? "none" : ""; };
+    // Einzelziel-Logik
+    const toggleManual = () => { manualRow.style.display = targetSelect?.value ? "none" : ""; };
     const updatePreview = () => {
-      const c = candidateMap[targetSelect.value];
+      const c = candidateMap[targetSelect?.value];
       if (!c) { preview.style.display = "none"; return; }
       preview.style.display = "";
       preview.querySelector(".target-preview-img").src = c.img;
       preview.querySelector(".target-preview-name").textContent = c.name;
       const fill = preview.querySelector(".target-preview-hp-fill");
-      fill.style.width           = `${c.hpPct}%`;
+      fill.style.width = `${c.hpPct}%`;
       fill.style.backgroundColor = c.hpColor;
       preview.querySelector(".target-preview-stats").textContent = `RW ${c.dv} · HP ${c.hp}/${c.hpMax}`;
     };
-
-    targetSelect.addEventListener("change", () => { toggleManual(); updatePreview(); });
+    targetSelect?.addEventListener("change", () => { toggleManual(); updatePreview(); });
     toggleManual();
     updatePreview();
+
+    // Mehrziel-Checkbox-Limit — max. targetCount Checkboxen anwählbar
+    const updateMultiLimit = (max) => {
+      if (multiHint) multiHint.textContent = `(max. ${max})`;
+      multiChecks().forEach(cb => {
+        cb.addEventListener("change", () => {
+          const checked = [...multiChecks()].filter(c => c.checked);
+          if (checked.length > max) { cb.checked = false; }
+        });
+      });
+    };
 
     // Weapon untrained penalty
     const updatePenalty = () => {
@@ -264,22 +290,68 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     weaponSelect?.addEventListener("change", updatePenalty);
 
-    // MP-Kosten-Dropdown bei Zauberwahl aktualisieren
+    // MP-Kosten-Dropdown + Ziel-Sektion umschalten
+    const noMpWarning  = html.querySelector(".spell-no-mp-warning");
+    const spellPreview = html.querySelector(".spell-effect-preview");
+
+    const _updateTargetMode = (targetCount) => {
+      const isMulti = targetCount > 1;
+      if (singleRow) singleRow.style.display = isMulti ? "none" : "";
+      if (multiRow)  multiRow.style.display  = isMulti ? "" : "none";
+      if (isMulti)   updateMultiLimit(targetCount);
+    };
+
+    const mpCostVal    = html.querySelector(".spell-mp-cost-value");
+    const mpRemaining  = html.querySelector(".spell-mp-remaining-value");
+
+    const _updateSpellPreview = () => {
+      const spell  = spellMap[spellSelect?.value];
+      const mp     = Number(mpCostSelect?.value || 0);
+      const prev   = spell?.costPreviews?.find(p => p.mp === mp) ?? spell?.costPreviews?.[0];
+
+      // MP-Kosten + Verbleibend aktualisieren
+      if (mpCostVal)   mpCostVal.textContent   = mp ? `${mp} MP` : "—";
+      if (mpRemaining) {
+        const left = context.currentMp - mp;
+        mpRemaining.textContent = mp ? `${left} MP` : "—";
+        mpRemaining.style.color = left < 0 ? "#b42828" : "";
+      }
+
+      if (!spellPreview) return;
+      if (!prev || (!prev.damage && prev.targets <= 1)) { spellPreview.style.display = "none"; }
+      else {
+        const parts = [];
+        if (prev.targets > 1)    parts.push(`🎯 ${prev.targets} Ziele`);
+        if (prev.damage != null) parts.push(`${prev.damageType === "heal" ? "✨ +" : "💥 −"}${prev.damage} HP`);
+        spellPreview.textContent = parts.join("  ·  ");
+        spellPreview.style.display = "";
+      }
+      _updateTargetMode(prev?.targets ?? 1);
+    };
+
     const updateSpellCosts = () => {
       if (!spellSelect || !mpCostSelect) return;
       const spell = spellMap[spellSelect.value];
       mpCostSelect.innerHTML = "";
-      (spell?.costs ?? []).forEach(c => {
+      (spell?.costPreviews ?? []).forEach(({ mp, damage, damageType, targets }) => {
         const opt = document.createElement("option");
-        opt.value = c; opt.textContent = `${c} MP`;
-        if (c > context.currentMp) opt.disabled = true;
+        opt.value = mp;
+        let label = `${mp} MP`;
+        if (targets > 1)    label += ` · ${targets} Ziele`;
+        if (damage != null) label += ` · ${damageType === "heal" ? "+" : "−"}${damage} HP`;
+        opt.textContent = label;
+        if (mp > context.currentMp) opt.disabled = true;
         mpCostSelect.appendChild(opt);
       });
-      // Disable submit if can't afford
-      const minCost = spell ? Math.min(...(spell.costs ?? [1])) : 0;
-      if (submitBtn) submitBtn.disabled = minCost > context.currentMp;
+      const minCost    = spell ? Math.min(...(spell.costs ?? [1])) : 0;
+      const cantAfford = minCost > context.currentMp;
+      if (submitBtn)   submitBtn.disabled = cantAfford;
+      if (noMpWarning) noMpWarning.style.display = cantAfford ? "" : "none";
+      _updateSpellPreview();
     };
+
     spellSelect?.addEventListener("change", updateSpellCosts);
+    mpCostSelect?.addEventListener("change", _updateSpellPreview);
     updateSpellCosts();
 
     // Modus-Umschalten Waffe ↔ Zauber
@@ -288,6 +360,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       if (weaponSection) weaponSection.style.display = mode === "weapon" ? "" : "none";
       if (spellSection)  spellSection.style.display  = mode === "spell"  ? "" : "none";
       if (submitBtn) submitBtn.textContent = mode === "spell" ? " Zauber wirken" : " Angreifen";
+      // Bei Waffenmodus immer Einzelziel
+      if (mode === "weapon") _updateTargetMode(1);
     };
     modeRadios.forEach(r => r.addEventListener("change", updateMode));
     updateMode();
@@ -298,20 +372,36 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   static async _handleSubmit(event, form, formData) {
     const data    = formData.object;
     const actor   = this.options.attackerActor;
-    const tokenId = data.targetTokenId;
+    const mode    = data.attackMode ?? "weapon";
+
+    // Mehrfach-Ziele aus Checkboxen (multi-target Modus)
+    const multiTokenIds = form.querySelectorAll("[name=multiTargetId]:checked");
+    const multiTargetActors = multiTokenIds.length
+      ? [...multiTokenIds].map(cb => (canvas?.tokens?.placeables ?? []).find(t => t.id === cb.value)?.actor).filter(Boolean)
+      : null;
+
+    // Einzelziel (Waffe oder Einzelziel-Zauber)
+    const tokenId     = data.targetTokenId;
     const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
     const targetActor = targetToken?.actor ?? null;
-    const mode        = data.attackMode ?? "weapon";
 
     const resolve = this._resolve;
     this._resolve = null;
 
     if (mode === "spell") {
       const spell = actor.items.get(data.spellId);
+      const mpCost     = Number(data.mpCost || spell?.system?.cost || 1);
+      const mpPerTarget = Number(spell?.system?.mpPerTarget ?? 0);
+      const targetCount = mpPerTarget > 0 ? Math.max(1, Math.floor(mpCost / mpPerTarget)) : 1;
+      // Bei Mehrziel: manuelle Auswahl aus Checkboxen hat Vorrang vor game.user.targets
+      const resolvedTargets = multiTargetActors?.length ? multiTargetActors : null;
       resolve?.({
         mode:         "spell",
         spell,
-        mpCost:       Number(data.mpCost || spell?.system?.cost || 1),
+        mpCost,
+        mpPerTarget,
+        targetCount,
+        multiTargetActors: resolvedTargets,
         spellBonus:   Number(data.spellBonus || 0),
         situMod:      Number(data.situMod || 0),
         targetActor,
@@ -452,7 +542,7 @@ class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) 
 //  Attack Dialog & Resolution
 // ══════════════════════════════════════════════════════════════════
 
-export async function openAttackDialog(attackerActor) {
+export async function openAttackDialog(attackerActor, options = {}) {
   const weapons       = attackerActor.items.filter(i => i.type === "weapon" && i.system.equipped);
   const targetedSpells = attackerActor.items.filter(i =>
     ["spell", "miracle"].includes(i.type) && i.system.targeted
@@ -463,7 +553,7 @@ export async function openAttackDialog(attackerActor) {
   }
 
   const params = await new Promise(resolve => {
-    new AboreaAttackDialog({ attackerActor, resolve }).render(true);
+    new AboreaAttackDialog({ attackerActor, preselectedSpellId: options?.preselectedSpellId, resolve }).render(true);
   });
   if (!params) return;
 
@@ -476,7 +566,29 @@ export async function openAttackDialog(attackerActor) {
   if (game.combat?.started) await game.combat.nextTurn();
 }
 
-async function _executeSpellAttack(attackerActor, { spell, mpCost, spellBonus, situMod, targetActor, targetDefense, attackerImg, targetImg }) {
+async function _applySpellEffectsToTarget(spell, mpCost, targetActor) {
+  let html = "";
+  const hp      = inferDirectHp(spell, mpCost);
+  const effects = inferEffects(spell, mpCost).map(e => ({ ...e, origin: spell.uuid }));
+  if (hp?.type === "heal") {
+    const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
+    const max = Number(targetActor.system.resources?.hp?.max ?? cur);
+    await targetActor.update({ "system.resources.hp.value": Math.min(max, cur + hp.amount) });
+    html += `<div class="ac-effect-row">✨ <strong>${targetActor.name}</strong>: +${hp.amount} HP</div>`;
+  }
+  if (hp?.type === "damage") {
+    const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
+    await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - hp.amount) });
+    html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${hp.amount} HP</div>`;
+  }
+  if (effects.length) {
+    await applyEffectsToActor(targetActor, effects);
+    html += `<div class="ac-effect-row">🔮 <strong>${targetActor.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`;
+  }
+  return html;
+}
+
+async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget = 0, targetCount = 1, multiTargetActors = null, spellBonus, situMod, targetActor, targetDefense, attackerImg, targetImg }) {
   if (!spell) return;
 
   // MP prüfen & abziehen
@@ -484,60 +596,81 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, spellBonus, s
   if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
   await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
 
-  const roll        = await rollOpenD10({ label: `Gezielter Zauber: ${spell.name}`, skipVisual: true });
-  const attackValue = roll.total + spellBonus + situMod;
-  const hit         = !roll.naturalOne && attackValue > targetDefense;
+  // Ziele sammeln — Priorität: manuelle Checkbox-Auswahl > T-markierte Tokens > Dialog-Einzelziel
+  let targets = [];
+  if (mpPerTarget > 0 && targetCount > 1) {
+    if (multiTargetActors?.length) {
+      targets = multiTargetActors.slice(0, targetCount);
+    } else {
+      targets = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean).slice(0, targetCount);
+      if (!targets.length && targetActor) targets = [targetActor];
+    }
+    if (targets.length < targetCount) {
+      ui.notifications.info(`ABOREA: Zauber trifft ${targets.length} von ${targetCount} möglichen Zielen.`);
+    }
+  } else {
+    targets = targetActor ? [targetActor] : [];
+  }
 
-  const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
-  const resultLabel = roll.naturalOne
-    ? "⛔ Patzer — automatischer Fehlschlag"
-    : (hit ? "✅ Treffer — Zauber wirkt!" : "❌ Kein Treffer — Zauber verpufft");
-  const critNote = roll.critical
-    ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>` : "";
-
-  // Effekte bei Treffer anwenden
+  // Pro Ziel: eigener Treffer-Wurf
+  const rolls = [];
   let effectHtml = "";
-  if (hit && targetActor) {
-    const hp      = inferDirectHp(spell, mpCost);
-    const effects = inferEffects(spell, mpCost).map(e => ({ ...e, origin: spell.uuid }));
-    if (hp?.type === "heal") {
-      const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
-      const max = Number(targetActor.system.resources?.hp?.max ?? cur);
-      await targetActor.update({ "system.resources.hp.value": Math.min(max, cur + hp.amount) });
-      effectHtml += `<div class="ac-effect-row">✨ <strong>${targetActor.name}</strong>: +${hp.amount} HP</div>`;
-    }
-    if (hp?.type === "damage") {
-      const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
-      await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - hp.amount) });
-      effectHtml += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${hp.amount} HP</div>`;
-    }
-    if (effects.length) {
-      await applyEffectsToActor(targetActor, effects);
-      effectHtml += `<div class="ac-effect-row">🔮 <strong>${targetActor.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`;
+  let cardRows   = "";
+
+  for (let i = 0; i < Math.max(1, targets.length || 1); i++) {
+    const currentTarget     = targets[i] ?? null;
+    const currentDefense    = currentTarget ? _dv(currentTarget) : targetDefense;
+    const currentTargetImg  = currentTarget?.img ?? targetImg;
+    const roll       = await rollOpenD10({ label: `Gezielter Zauber: ${spell.name}`, skipVisual: true });
+    const attackValue = roll.total + spellBonus + situMod;
+    const hit         = !roll.naturalOne && attackValue > currentDefense;
+
+    rolls.push(...roll.rolls);
+
+    const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
+    const resultLabel = roll.naturalOne
+      ? "⛔ Patzer — automatischer Fehlschlag"
+      : (hit ? "✅ Treffer — Zauber wirkt!" : "❌ Kein Treffer — Zauber verpufft");
+    const critNote = roll.critical
+      ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>` : "";
+
+    const targetLabel = currentTarget ? currentTarget.name : (i === 0 ? (targetActor?.name ?? "—") : "—");
+    const headerLabel = targets.length > 1 ? `Ziel ${i + 1}: ${targetLabel}` : targetLabel;
+
+    cardRows += `
+      <div class="ac-body${i > 0 ? " ac-body-extra" : ""}">
+        ${targets.length > 1 ? `<div class="ac-row ac-target-label"><span>Ziel</span><span><strong>${headerLabel}</strong></span></div>` : ""}
+        <div class="ac-row"><span>Würfelwurf</span><span>${roll.formula}</span></div>
+        <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${roll.naturalOne ? "—" : attackValue}</strong></span></div>
+        <div class="ac-row"><span>Verteidigungswert</span><span>${currentDefense}</span></div>
+      </div>
+      <div class="ac-result ${resultClass}">${resultLabel}</div>
+      ${critNote}`;
+
+    if (hit && currentTarget) {
+      effectHtml += await _applySpellEffectsToTarget(spell, mpCost, currentTarget);
     }
   }
 
+  const targetNames   = targets.length > 1 ? targets.map(t => t.name).join(", ") : (targetActor?.name ?? null);
   const effectSection = effectHtml ? `<div class="ac-effects">${effectHtml}</div>` : "";
-  const cardContent = `<div class="aborea-chat-card aborea-attack-card">
-    ${_buildCardHeader(attackerActor.name, attackerImg, targetActor?.name, targetImg)}
+  const cardContent   = `<div class="aborea-chat-card aborea-attack-card">
+    ${_buildCardHeader(attackerActor.name, attackerImg, targetNames, targets[0]?.img ?? targetImg)}
     <div class="ac-body">
       <div class="ac-row"><span>Zauber</span><span>${spell.name} (${mpCost} MP)</span></div>
-      <div class="ac-row"><span>Würfelwurf</span><span>${roll.formula}</span></div>
       <div class="ac-row"><span>Angriffsbonus</span><span>${_sign(spellBonus)}</span></div>
       ${situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>` : ""}
-      <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${roll.naturalOne ? "—" : attackValue}</strong></span></div>
-      <div class="ac-row"><span>Verteidigungswert</span><span>${targetDefense}</span></div>
+      ${targets.length > 1 ? `<div class="ac-row"><span>Ziele</span><span>${targets.length}</span></div>` : ""}
     </div>
-    <div class="ac-result ${resultClass}">${resultLabel}</div>
-    ${critNote}
+    ${cardRows}
     ${effectSection}
   </div>`;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
-    rolls:   roll.rolls,
+    rolls,
     content: cardContent,
-    flags:   { "aborea-v7": { spellAttackResult: { hit, targetActorId: targetActor?.id ?? null, itemId: spell.id, mpCost } } }
+    flags:   { "aborea-v7": { spellAttackResult: { itemId: spell.id, mpCost, targetCount: targets.length } } }
   });
 }
 

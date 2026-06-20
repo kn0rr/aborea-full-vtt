@@ -4,11 +4,11 @@
   {{#if hasSpells}}
   <div class="attack-mode-row">
     <label class="attack-mode-option">
-      <input type="radio" name="attackMode" value="weapon" checked />
+      <input type="radio" name="attackMode" value="weapon" {{#unless preselectedSpellId}}checked{{/unless}} />
       ⚔ Waffe
     </label>
     <label class="attack-mode-option">
-      <input type="radio" name="attackMode" value="spell" />
+      <input type="radio" name="attackMode" value="spell" {{#if preselectedSpellId}}checked{{/if}} />
       ✨ Zauber
     </label>
   </div>
@@ -45,25 +45,42 @@
   {{!-- ── Zauber-Sektion ──────────────────────────────── --}}
   {{#if hasSpells}}
   <div class="spell-section" style="display:none">
+    <div class="spell-mp-status">
+      <span class="spell-mp-label">MP:</span>
+      <span class="spell-mp-value">{{currentMp}} / {{currentMpMax}}</span>
+      <span class="spell-mp-cost-label">→ Kosten:</span>
+      <span class="spell-mp-cost-value">—</span>
+      <span class="spell-mp-remaining-label">→ verbleibend:</span>
+      <span class="spell-mp-remaining-value">—</span>
+    </div>
+
     <div class="form-group">
       <label>Zauber</label>
       <select name="spellId">
         {{#each targetedSpells}}
-        <option value="{{id}}" {{#unless canAfford}}disabled title="Nicht genug MP (benötigt {{minCost}})"{{/unless}}>
-          {{name}} (Rang {{rank}}, {{minCost}} MP)
+        <option value="{{id}}"
+          {{#if (aboreaEq id ../preselectedSpellId)}}selected{{/if}}
+          {{#unless canAfford}}disabled title="Nicht genug MP (benötigt {{minCost}})"{{/unless}}>
+          {{name}} (Rang {{rank}}, {{minCost}} MP){{#unless canAfford}} — ⚠ zu wenig MP{{/unless}}
         </option>
         {{/each}}
       </select>
     </div>
 
+    <div class="spell-no-mp-warning" style="display:none">
+      ⚠ Nicht genug MP für diesen Zauber!
+    </div>
+
     <div class="form-group">
-      <label>MP-Kosten</label>
+      <label>MP-Kosten / Wirkung</label>
       <select name="mpCost">
-        {{#each targetedSpells.[0].costs}}
-        <option value="{{this}}">{{this}} MP</option>
+        {{#each targetedSpells.[0].costPreviews}}
+        <option value="{{mp}}">{{mp}} MP</option>
         {{/each}}
       </select>
     </div>
+
+    <div class="spell-effect-preview" style="display:none"></div>
 
     <div class="spell-bonus-breakdown">
       <span class="hint">Angriffsbonus: IN {{signedAttrBonus}} + Gez. Sprüche {{signedSkillRank}} + Klasse {{signedClassBonus}} = </span>
@@ -79,30 +96,53 @@
     <input type="number" name="situMod" value="{{globalSituMod}}" />
   </div>
 
-  <div class="form-group">
-    <label>Ziel</label>
-    <select name="targetTokenId">
-      <option value="">— Kein Ziel (VW manuell) —</option>
-      {{#each targetCandidates}}
-      <option value="{{id}}" {{#if preselected}}selected{{/if}}>{{name}} · RW {{dv}} · HP {{hp}}</option>
-      {{/each}}
-    </select>
-  </div>
+  {{!-- Einzelziel-Dropdown (Waffe + Einzelziel-Zauber) --}}
+  <div class="single-target-row">
+    <div class="form-group">
+      <label>Ziel</label>
+      <select name="targetTokenId">
+        <option value="">— Kein Ziel (VW manuell) —</option>
+        {{#each targetCandidates}}
+        <option value="{{id}}" {{#if preselected}}selected{{/if}}>{{name}} · RW {{dv}} · HP {{hp}}</option>
+        {{/each}}
+      </select>
+    </div>
 
-  <div class="target-preview" style="display:none">
-    <img class="target-preview-img" src="" alt="" />
-    <div class="target-preview-info">
-      <span class="target-preview-name"></span>
-      <div class="hp-bar-wrap target-preview-hp-bar">
-        <div class="hp-bar-fill target-preview-hp-fill" style="width:100%"></div>
+    <div class="target-preview" style="display:none">
+      <img class="target-preview-img" src="" alt="" />
+      <div class="target-preview-info">
+        <span class="target-preview-name"></span>
+        <div class="hp-bar-wrap target-preview-hp-bar">
+          <div class="hp-bar-fill target-preview-hp-fill" style="width:100%"></div>
+        </div>
+        <span class="target-preview-stats"></span>
       </div>
-      <span class="target-preview-stats"></span>
+    </div>
+
+    <div class="form-group manual-dv-row">
+      <label>Verteidigungswert <span class="hint">(manuell)</span></label>
+      <input type="number" name="manualDefense" value="5" min="1" />
     </div>
   </div>
 
-  <div class="form-group manual-dv-row">
-    <label>Verteidigungswert <span class="hint">(manuell)</span></label>
-    <input type="number" name="manualDefense" value="5" min="1" />
+  {{!-- Mehrziel-Auswahl (Mehrziel-Zauber) --}}
+  <div class="multi-target-row" style="display:none">
+    <div class="form-group">
+      <label class="multi-target-label">Ziele <span class="multi-target-count-hint"></span></label>
+      <div class="multi-target-list">
+        {{#each targetCandidates}}
+        <label class="multi-target-item">
+          <input type="checkbox" name="multiTargetId" value="{{id}}" {{#if preselected}}checked{{/if}} />
+          <img src="{{img}}" class="multi-target-img" />
+          <span class="multi-target-name">{{name}}</span>
+          <span class="multi-target-stats">RW {{dv}} · HP {{hp}}</span>
+        </label>
+        {{/each}}
+        {{#unless targetCandidates.length}}
+        <p class="hint-text">Keine Tokens auf der Szene.</p>
+        {{/unless}}
+      </div>
+    </div>
   </div>
 
   <footer class="sheet-footer dialog-footer">
