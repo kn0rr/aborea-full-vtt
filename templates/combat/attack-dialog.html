@@ -49,8 +49,8 @@
       <label>Zauber</label>
       <select name="spellId">
         {{#each targetedSpells}}
-        <option value="{{id}}" {{#unless canAfford}}disabled{{/unless}}>
-          {{name}} (Rang {{rank}}, {{cost}} MP{{#unless canAfford}} — zu wenig MP{{/unless}})
+        <option value="{{id}}" {{#unless canAfford}}disabled title="Nicht genug MP (benötigt {{minCost}})"{{/unless}}>
+          {{name}} (Rang {{rank}}, {{minCost}} MP)
         </option>
         {{/each}}
       </select>

@@ -172,16 +172,22 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         skill:  w.system.skill ?? "",
       })),
       targetedSpells: targetedSpells.map(s => {
-        const costs = Array.isArray(s.system.costOptions) && s.system.costOptions.length
-          ? s.system.costOptions.map(Number)
-          : [Number(s.system.cost ?? 1)];
+        const baseCost = Number(s.system.cost ?? 1) || 1;
+        // costOptions kann Zahlen ODER Objekte enthalten — robust extrahieren
+        const rawOptions = Array.isArray(s.system.costOptions) ? s.system.costOptions : [];
+        const parsedOptions = rawOptions
+          .map(o => typeof o === "object" && o !== null ? Number(o.cost ?? o.value ?? o) : Number(o))
+          .filter(n => Number.isFinite(n) && n > 0);
+        const costs = parsedOptions.length ? parsedOptions : [baseCost];
+        const minCost = Math.min(...costs);
         return {
-          id:      s.id,
-          name:    s.name,
-          cost:    Number(s.system.cost ?? 1),
+          id:        s.id,
+          name:      s.name,
+          cost:      baseCost,
           costs,
-          canAfford: currentMp >= Math.min(...costs),
-          rank:    s.system.rank ?? 1,
+          minCost,
+          canAfford: currentMp >= minCost,
+          rank:      s.system.rank ?? 1,
         };
       }),
       hasSpells:        targetedSpells.length > 0,
