@@ -296,7 +296,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const spellDmgLabel  = html.querySelector(".spell-damage-label");
     const spellDmgValue  = html.querySelector(".spell-damage-value");
     const mpMinHint      = html.querySelector(".mp-cost-min");
-    const mpCostSelect   = html.querySelector("[name=mpCost]");
     const mpProZielInput = html.querySelector("[name=mpProZiel]");
 
     const _getMpProZiel = () => Number(mpProZielInput?.value ?? 1);
