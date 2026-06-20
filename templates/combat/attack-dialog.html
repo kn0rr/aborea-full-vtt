@@ -72,12 +72,14 @@
     </div>
 
     <div class="form-group">
-      <label>MP-Kosten / Wirkung</label>
-      <select name="mpCost">
-        {{#each targetedSpells.[0].costPreviews}}
-        <option value="{{mp}}">{{mp}} MP</option>
-        {{/each}}
-      </select>
+      <label>MP-Kosten einsetzen
+        <span class="hint">(min. <span class="mp-cost-min">{{targetedSpells.[0].minCost}}</span>)</span>
+      </label>
+      <input type="number" name="mpCost"
+        value="{{targetedSpells.[0].minCost}}"
+        min="{{targetedSpells.[0].minCost}}"
+        max="{{currentMp}}"
+        step="1" />
     </div>
 
     <div class="spell-effect-preview" style="display:none"></div>

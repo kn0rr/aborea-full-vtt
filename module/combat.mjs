@@ -210,6 +210,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
           canAfford:    currentMp >= minCost,
           rank:         s.system.rank ?? 1,
           mpPerTarget,
+          hpEffect,
           costPreviews,
         };
       }),
@@ -290,9 +291,12 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     weaponSelect?.addEventListener("change", updatePenalty);
 
-    // MP-Kosten-Dropdown + Ziel-Sektion umschalten
+    // MP-Kosten-Input + Vorschau
     const noMpWarning  = html.querySelector(".spell-no-mp-warning");
     const spellPreview = html.querySelector(".spell-effect-preview");
+    const mpCostVal    = html.querySelector(".spell-mp-cost-value");
+    const mpRemaining  = html.querySelector(".spell-mp-remaining-value");
+    const mpMinHint    = html.querySelector(".mp-cost-min");
 
     const _updateTargetMode = (targetCount) => {
       const isMulti = targetCount > 1;
@@ -301,57 +305,61 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       if (isMulti)   updateMultiLimit(targetCount);
     };
 
-    const mpCostVal    = html.querySelector(".spell-mp-cost-value");
-    const mpRemaining  = html.querySelector(".spell-mp-remaining-value");
+    const _calcPreview = (spell, mp) => {
+      if (!spell || !mp) return { damage: null, damageType: null, targets: 1 };
+      const hp  = spell.hpEffect ?? {};
+      const damage = hp.type
+        ? Math.min(hp.max ?? Infinity, Math.round((hp.multiplier ?? 1) * mp))
+        : null;
+      const targets = spell.mpPerTarget > 0 ? Math.max(1, Math.floor(mp / spell.mpPerTarget)) : 1;
+      return { damage, damageType: hp.type ?? null, targets };
+    };
 
     const _updateSpellPreview = () => {
-      const spell  = spellMap[spellSelect?.value];
-      const mp     = Number(mpCostSelect?.value || 0);
-      const prev   = spell?.costPreviews?.find(p => p.mp === mp) ?? spell?.costPreviews?.[0];
+      const spell    = spellMap[spellSelect?.value];
+      const mp       = Number(mpCostSelect?.value || 0);
+      const { damage, damageType, targets } = _calcPreview(spell, mp);
 
-      // MP-Kosten + Verbleibend aktualisieren
-      if (mpCostVal)   mpCostVal.textContent   = mp ? `${mp} MP` : "—";
+      // MP-Status-Zeile
+      if (mpCostVal)  mpCostVal.textContent  = mp ? `${mp} MP` : "—";
       if (mpRemaining) {
         const left = context.currentMp - mp;
         mpRemaining.textContent = mp ? `${left} MP` : "—";
         mpRemaining.style.color = left < 0 ? "#b42828" : "";
       }
 
-      if (!spellPreview) return;
-      if (!prev || (!prev.damage && prev.targets <= 1)) { spellPreview.style.display = "none"; }
-      else {
-        const parts = [];
-        if (prev.targets > 1)    parts.push(`🎯 ${prev.targets} Ziele`);
-        if (prev.damage != null) parts.push(`${prev.damageType === "heal" ? "✨ +" : "💥 −"}${prev.damage} HP`);
-        spellPreview.textContent = parts.join("  ·  ");
-        spellPreview.style.display = "";
+      // Wirkungsvorschau
+      if (spellPreview) {
+        if (!damage && targets <= 1) { spellPreview.style.display = "none"; }
+        else {
+          const parts = [];
+          if (targets > 1)   parts.push(`🎯 ${targets} Ziele`);
+          if (damage != null) parts.push(`${damageType === "heal" ? "✨ +" : "💥 −"}${damage} HP`);
+          spellPreview.textContent = parts.join("  ·  ");
+          spellPreview.style.display = "";
+        }
       }
-      _updateTargetMode(prev?.targets ?? 1);
+
+      // Zu wenig MP?
+      const cantAfford = mp > context.currentMp || mp < (spell?.minCost ?? 1);
+      if (submitBtn)   submitBtn.disabled = cantAfford || !mp;
+      if (noMpWarning) noMpWarning.style.display = (mp > context.currentMp) ? "" : "none";
+      _updateTargetMode(targets);
     };
 
     const updateSpellCosts = () => {
       if (!spellSelect || !mpCostSelect) return;
       const spell = spellMap[spellSelect.value];
-      mpCostSelect.innerHTML = "";
-      (spell?.costPreviews ?? []).forEach(({ mp, damage, damageType, targets }) => {
-        const opt = document.createElement("option");
-        opt.value = mp;
-        let label = `${mp} MP`;
-        if (targets > 1)    label += ` · ${targets} Ziele`;
-        if (damage != null) label += ` · ${damageType === "heal" ? "+" : "−"}${damage} HP`;
-        opt.textContent = label;
-        if (mp > context.currentMp) opt.disabled = true;
-        mpCostSelect.appendChild(opt);
-      });
-      const minCost    = spell ? Math.min(...(spell.costs ?? [1])) : 0;
-      const cantAfford = minCost > context.currentMp;
-      if (submitBtn)   submitBtn.disabled = cantAfford;
-      if (noMpWarning) noMpWarning.style.display = cantAfford ? "" : "none";
+      const min   = spell?.minCost ?? 1;
+      mpCostSelect.min   = min;
+      mpCostSelect.max   = context.currentMp;
+      mpCostSelect.value = min;
+      if (mpMinHint) mpMinHint.textContent = min;
       _updateSpellPreview();
     };
 
     spellSelect?.addEventListener("change", updateSpellCosts);
-    mpCostSelect?.addEventListener("change", _updateSpellPreview);
+    mpCostSelect?.addEventListener("input", _updateSpellPreview);
     updateSpellCosts();
 
     // Modus-Umschalten Waffe ↔ Zauber
