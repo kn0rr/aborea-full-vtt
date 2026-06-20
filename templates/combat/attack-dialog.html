@@ -1,24 +1,79 @@
 <div class="aborea-attack-dialog-body">
 
-  <div class="form-group">
-    <label>Waffe</label>
-    <select name="weaponId">
-      {{#each weapons}}
-      <option value="{{id}}">{{name}} (+{{damage}} Schaden{{#if skill}}, {{skill}}{{/if}})</option>
-      {{/each}}
-    </select>
+  {{!-- Modus-Wahl: nur anzeigen wenn Zauber vorhanden --}}
+  {{#if hasSpells}}
+  <div class="attack-mode-row">
+    <label class="attack-mode-option">
+      <input type="radio" name="attackMode" value="weapon" checked />
+      ⚔ Waffe
+    </label>
+    <label class="attack-mode-option">
+      <input type="radio" name="attackMode" value="spell" />
+      ✨ Zauber
+    </label>
+  </div>
+  {{else}}
+  <input type="hidden" name="attackMode" value="weapon" />
+  {{/if}}
+
+  {{!-- ── Waffen-Sektion ─────────────────────────────── --}}
+  <div class="weapon-section">
+    {{#if weapons.length}}
+    <div class="form-group">
+      <label>Waffe</label>
+      <select name="weaponId">
+        {{#each weapons}}
+        <option value="{{id}}">{{name}} (+{{damage}} Schaden{{#if skill}}, {{skill}}{{/if}})</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-group untrained-row" {{#unless initialPenalty}}style="display:none"{{/unless}}>
+      <label>Ungelernt <span class="hint">(Waffenfertigkeit Rang 0)</span></label>
+      <span class="untrained-display">−2</span>
+    </div>
+
+    <div class="form-group">
+      <label>Offensivbonus <span class="hint">(Kampfbonus: {{combatBonus}})</span></label>
+      <input type="number" name="offBonus" value="{{currentOffBonus}}" min="-20" max="{{combatBonus}}" />
+    </div>
+    {{else}}
+    <p class="hint-text">Keine ausgerüstete Waffe.</p>
+    {{/if}}
   </div>
 
-  <div class="form-group untrained-row" {{#unless initialPenalty}}style="display:none"{{/unless}}>
-    <label>Ungelernt <span class="hint">(Waffenfertigkeit Rang 0)</span></label>
-    <span class="untrained-display">−2</span>
-  </div>
+  {{!-- ── Zauber-Sektion ──────────────────────────────── --}}
+  {{#if hasSpells}}
+  <div class="spell-section" style="display:none">
+    <div class="form-group">
+      <label>Zauber</label>
+      <select name="spellId">
+        {{#each targetedSpells}}
+        <option value="{{id}}" {{#unless canAfford}}disabled{{/unless}}>
+          {{name}} (Rang {{rank}}, {{cost}} MP{{#unless canAfford}} — zu wenig MP{{/unless}})
+        </option>
+        {{/each}}
+      </select>
+    </div>
 
-  <div class="form-group">
-    <label>Offensivbonus <span class="hint">(Kampfbonus: {{combatBonus}})</span></label>
-    <input type="number" name="offBonus" value="{{currentOffBonus}}" min="-20" max="{{combatBonus}}" />
-  </div>
+    <div class="form-group">
+      <label>MP-Kosten</label>
+      <select name="mpCost">
+        {{#each targetedSpells.[0].costs}}
+        <option value="{{this}}">{{this}} MP</option>
+        {{/each}}
+      </select>
+    </div>
 
+    <div class="spell-bonus-breakdown">
+      <span class="hint">Angriffsbonus: IN {{signedAttrBonus}} + Gez. Sprüche {{signedSkillRank}} + Klasse {{signedClassBonus}} = </span>
+      <strong>{{spellAttackBonus}}</strong>
+    </div>
+    <input type="hidden" name="spellBonus" value="{{spellAttackBonus}}" />
+  </div>
+  {{/if}}
+
+  {{!-- ── Gemeinsam ────────────────────────────────────── --}}
   <div class="form-group">
     <label>Situationsmodifikator <span class="hint">(negativ = Erschwernis)</span></label>
     <input type="number" name="situMod" value="{{globalSituMod}}" />

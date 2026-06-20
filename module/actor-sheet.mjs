@@ -1344,18 +1344,32 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     // Gezielte Zauber: Angriffswurf notwendig
     if (item.system.targeted) {
       const result = await openSpellAttackDialog(this.actor, item, mpCost);
-      if (!result || !result.hit) return; // cancelled or missed — MP already spent
-      // Apply effects only to the single target from the spell dialog
-      const targets = result.targetActor ? [result.targetActor] : [];
-      const hp = inferDirectHp(item, mpCost);
-      const effects = inferEffects(item, mpCost).map(e => ({...e, origin: item.uuid}));
-      let extra = "";
-      for (const target of targets) {
-        if (hp?.type==="heal")   { const cur=Number(target.system.resources?.hp?.value??0); const max=Number(target.system.resources?.hp?.max??cur); await target.update({"system.resources.hp.value":Math.min(max,cur+hp.amount)}); extra+=`<p><strong>${target.name}</strong>: +${hp.amount} HP</p>`; }
-        if (hp?.type==="damage") { const cur=Number(target.system.resources?.hp?.value??0); await target.update({"system.resources.hp.value":Math.max(0,cur-hp.amount)}); extra+=`<p><strong>${target.name}</strong>: -${hp.amount} HP</p>`; }
-        if (effects.length) { await applyEffectsToActor(target,effects); extra+=`<p><strong>${target.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</p>`; }
+      if (!result) return; // Dialog abgebrochen
+
+      // Effekte nur bei Treffer anwenden
+      let effectHtml = "";
+      if (result.hit && result.targetActor) {
+        const targets = [result.targetActor];
+        const hp      = inferDirectHp(item, mpCost);
+        const effects = inferEffects(item, mpCost).map(e => ({...e, origin: item.uuid}));
+        for (const target of targets) {
+          if (hp?.type === "heal")   { const cur = Number(target.system.resources?.hp?.value ?? 0); const max = Number(target.system.resources?.hp?.max ?? cur); await target.update({"system.resources.hp.value": Math.min(max, cur + hp.amount)}); effectHtml += `<div class="ac-effect-row">✨ <strong>${target.name}</strong>: +${hp.amount} HP</div>`; }
+          if (hp?.type === "damage") { const cur = Number(target.system.resources?.hp?.value ?? 0); await target.update({"system.resources.hp.value": Math.max(0, cur - hp.amount)}); effectHtml += `<div class="ac-effect-row">💥 <strong>${target.name}</strong>: −${hp.amount} HP</div>`; }
+          if (effects.length)        { await applyEffectsToActor(target, effects); effectHtml += `<div class="ac-effect-row">🔮 <strong>${target.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`; }
+        }
       }
-      if (extra) await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content:buildPowerCard(this.actor,item,mpCost,targets,extra)});
+
+      // Eine kombinierte Chat-Karte: Angriffswurf + Effekte
+      const effectSection = effectHtml ? `<div class="ac-effects">${effectHtml}</div>` : "";
+      await ChatMessage.create({
+        speaker: result.speaker,
+        rolls:   result.rolls,
+        content: result.cardOpen + effectSection + `</div>`,
+        flags:   result.flags,
+      });
+
+      // Kampfrunde weiterschalten
+      if (game.combat?.started) await game.combat.nextTurn();
       return;
     }
 
@@ -1372,6 +1386,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (hp?.type==="buffDamage") { effects.push({name:item.name,origin:item.uuid,description:item.system?.description,duration:parseSimpleDuration(item,mpCost),changes:[{key:"flags.aborea.extraWeaponDamage",mode:CONST.ACTIVE_EFFECT_MODES.ADD,value:hp.amount}]}); await applyEffectsToActor(this.actor,effects.slice(-1)); extra+=`<p><strong>${this.actor.name}</strong>: +${hp.amount} Waffenschaden</p>`; }
     const summon = await this._automateSummon(item,mpCost); if (summon?.extra) extra+=summon.extra;
     await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content:buildPowerCard(this.actor,item,mpCost,targets,extra)});
+    if (game.combat?.started) await game.combat.nextTurn();
   }
 
   async _onItemCreate(event) {
