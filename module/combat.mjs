@@ -274,15 +274,29 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // Mehrziel-Checkbox-Limit — einmalig registrieren, max dynamisch per Closure
     let _multiMax = 1;
-    multiChecks().forEach(cb => {
-      cb.addEventListener("change", () => {
-        const checked = [...multiChecks()].filter(c => c.checked);
-        if (checked.length > _multiMax) cb.checked = false;
-      });
-    });
+    const _onCheckboxChange = (evt) => {
+      const allChecks = [...multiChecks()];
+      const checked   = allChecks.filter(c => c.checked);
+      // Limit einhalten: überzähliges Checkbox deaktivieren
+      if (checked.length > _multiMax) { evt.target.checked = false; return; }
+      // Live-Kosten im MP-Status aktualisieren (nutzt Closures, die später initialisiert werden)
+      const mpProZiel = typeof _getMpProZiel === "function" ? _getMpProZiel() : 1;
+      if (mpProZiel > 0) {
+        const n       = allChecks.filter(c => c.checked).length;
+        const baseMin = Number(mpCostSelect?.value || 0);
+        const totalMp = Math.max(baseMin, n * mpProZiel);
+        if (mpCostVal)   mpCostVal.textContent   = `${totalMp} MP`;
+        if (mpRemaining) {
+          const left = context.currentMp - totalMp;
+          mpRemaining.textContent = `${left} MP`;
+          mpRemaining.style.color = left < 0 ? "#b42828" : "";
+        }
+      }
+    };
+    multiChecks().forEach(cb => cb.addEventListener("change", _onCheckboxChange));
     const updateMultiLimit = (max) => {
       _multiMax = max;
-      if (multiHint) multiHint.textContent = `(max. ${max})`;
+      if (multiHint) multiHint.textContent = max >= 999 ? "" : `(max. ${max})`;
     };
 
     // Weapon untrained penalty
@@ -615,11 +629,6 @@ async function _applySpellEffectsToTarget(spell, mpCost, targetActor) {
 async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget = 0, targetCount = 1, multiTargetActors = null, spellBonus, situMod, targetActor, targetDefense, attackerImg, targetImg }) {
   if (!spell) return;
 
-  // MP prüfen & abziehen
-  const currentMp = _getCurrentMp(attackerActor);
-  if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
-  await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
-
   // Ziele sammeln — Priorität: manuelle Checkbox-Auswahl > T-markierte Tokens > Dialog-Einzelziel
   const isUnlimited = targetCount >= 999;
   let targets = [];
@@ -636,6 +645,17 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget =
   } else {
     targets = targetActor ? [targetActor] : [];
   }
+
+  // Tatsächliche MP-Kosten: Anzahl Ziele × Kosten pro Ziel (mind. Basiskost des Zaubers)
+  const minCost = Number(spell.system?.cost ?? 1);
+  const actualMpCost = (mpPerTarget > 0 && targets.length > 0)
+    ? Math.max(minCost, targets.length * mpPerTarget)
+    : mpCost;
+
+  // MP prüfen & abziehen
+  const currentMp = _getCurrentMp(attackerActor);
+  if (currentMp < actualMpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
+  await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - actualMpCost) });
 
   // Pro Ziel: eigener Treffer-Wurf
   const rolls = [];
