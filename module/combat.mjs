@@ -272,15 +272,17 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     toggleManual();
     updatePreview();
 
-    // Mehrziel-Checkbox-Limit — max. targetCount Checkboxen anwählbar
-    const updateMultiLimit = (max) => {
-      if (multiHint) multiHint.textContent = `(max. ${max})`;
-      multiChecks().forEach(cb => {
-        cb.addEventListener("change", () => {
-          const checked = [...multiChecks()].filter(c => c.checked);
-          if (checked.length > max) { cb.checked = false; }
-        });
+    // Mehrziel-Checkbox-Limit — einmalig registrieren, max dynamisch per Closure
+    let _multiMax = 1;
+    multiChecks().forEach(cb => {
+      cb.addEventListener("change", () => {
+        const checked = [...multiChecks()].filter(c => c.checked);
+        if (checked.length > _multiMax) cb.checked = false;
       });
+    });
+    const updateMultiLimit = (max) => {
+      _multiMax = max;
+      if (multiHint) multiHint.textContent = `(max. ${max})`;
     };
 
     // Weapon untrained penalty
@@ -298,11 +300,12 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const mpRemaining  = html.querySelector(".spell-mp-remaining-value");
     const mpMinHint    = html.querySelector(".mp-cost-min");
 
-    const _updateTargetMode = (targetCount) => {
-      const isMulti = targetCount > 1;
+    const _updateTargetMode = (targetCount, spellHasMulti) => {
+      // Mehrziel-Liste zeigen sobald der Zauber mpPerTarget > 0 hat (unabhängig von aktuellem targetCount)
+      const isMulti = !!spellHasMulti;
       if (singleRow) singleRow.style.display = isMulti ? "none" : "";
       if (multiRow)  multiRow.style.display  = isMulti ? "" : "none";
-      if (isMulti)   updateMultiLimit(targetCount);
+      updateMultiLimit(targetCount);
     };
 
     const _calcPreview = (spell, mp) => {
@@ -344,7 +347,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       const cantAfford = mp > context.currentMp || mp < (spell?.minCost ?? 1);
       if (submitBtn)   submitBtn.disabled = cantAfford || !mp;
       if (noMpWarning) noMpWarning.style.display = (mp > context.currentMp) ? "" : "none";
-      _updateTargetMode(targets);
+      _updateTargetMode(targets, spell?.mpPerTarget > 0);
     };
 
     const updateSpellCosts = () => {
@@ -369,7 +372,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       if (spellSection)  spellSection.style.display  = mode === "spell"  ? "" : "none";
       if (submitBtn) submitBtn.textContent = mode === "spell" ? " Zauber wirken" : " Angreifen";
       // Bei Waffenmodus immer Einzelziel
-      if (mode === "weapon") _updateTargetMode(1);
+      if (mode === "weapon") _updateTargetMode(1, false);
     };
     modeRadios.forEach(r => r.addEventListener("change", updateMode));
     updateMode();
