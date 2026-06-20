@@ -311,7 +311,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     // Gesamtkosten: Anzahl Ziele × (mpProZiel + Basiskosten)
     const _calcTotalMp = (spell, checkedCount) => {
       const mpProZiel = _getMpProZiel();
-      const baseCost  = _getMpCost() || (spell?.minCost ?? 1);
+      const minCost   = spell?.minCost ?? 1;
+      const baseCost  = Math.max(minCost, _getMpCost());
       return { totalMp: checkedCount * (mpProZiel + baseCost), baseCost };
     };
 
@@ -408,7 +409,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       const mpPerTarget  = Number(data.mpProZiel ?? spell?.system?.mpPerTarget ?? 1);
       const checkedCount = multiTargetActors?.length ?? 1;
       const minCost      = Number(spell?.system?.cost ?? 1);
-      const baseCost     = Number(data.mpCost || minCost);
+      const baseCost     = Math.max(minCost, Number(data.mpCost ?? minCost));
       const mpCost       = checkedCount * (mpPerTarget + baseCost);
       const targetCount  = checkedCount;
       resolve?.({
