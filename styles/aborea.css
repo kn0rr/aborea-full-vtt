@@ -163,24 +163,42 @@
 
 /* ── Universelle Lesbarkeits-Fixes (Parchment-Hintergrund vs. Foundry Dark Theme) ── */
 /* !important nötig, da Foundry Dark Theme sonst mit höherer Spezifität gewinnt */
+/* Gilt für Sheets UND alle Aborea-Dialoge */
 
-/* Alle Labels, Absätze und Spans im Aborea-Sheet */
 .aborea-sheet label,
 .aborea-sheet p,
-.aborea-sheet legend { color: var(--aborea-brown) !important; }
+.aborea-sheet legend,
+.aborea-check-form label,
+.aborea-check-form p,
+.aborea-attack-dialog-body label,
+.aborea-attack-dialog-body p { color: var(--aborea-brown) !important; }
 
-/* Alle Inputs, Selects, Textareas — Farbe UND Hintergrund überschreiben */
 .aborea-sheet input:not([type="checkbox"]):not([type="radio"]),
 .aborea-sheet select,
-.aborea-sheet textarea {
+.aborea-sheet textarea,
+.aborea-check-form input:not([type="checkbox"]):not([type="radio"]),
+.aborea-check-form select,
+.aborea-attack-dialog-body input:not([type="checkbox"]):not([type="radio"]),
+.aborea-attack-dialog-body select {
   color: #2e2010 !important;
   background-color: rgba(255, 248, 235, 0.85) !important;
   border-color: var(--aborea-border) !important;
 }
 
+/* option / optgroup ebenfalls lesbar machen */
+.aborea-check-form option,
+.aborea-check-form optgroup,
+.aborea-attack-dialog-body option,
+.aborea-attack-dialog-body optgroup {
+  color: #2e2010 !important;
+  background-color: #fff8eb !important;
+}
+
 /* Hint-Spans */
 .aborea-sheet .hint,
-.aborea-sheet .hint-text { color: var(--aborea-brown) !important; opacity: .8; }
+.aborea-sheet .hint-text,
+.aborea-check-form .hint,
+.aborea-attack-dialog-body .hint { color: var(--aborea-brown) !important; opacity: .8; }
 
 /* Ausnahmen: farbige Elemente sollen ihre eigene Farbe behalten */
 .aborea-sheet .panel h2 { color: var(--aborea-red) !important; }

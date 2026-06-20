@@ -164,7 +164,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const baseArmor = Number(system.combat?.armorValue ?? 0) + Number(system.traits?.racialArmorBonus ?? 0) + Number(system.classFeatures?.armorBonus ?? 0);
     system.combat.totalArmorValue = baseArmor + armorFromItems;
     system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
-    system.combat.initiative = ABOREA.initiativeBonus({ system: { attributes: system.displayAttributes } });
+    system.combat.initiative = ABOREA.initiativeBonus(actor);
 
     // Kampfbonus-Tooltip: beste Waffenfertigkeit mit vollständiger Aufschlüsselung
     {
