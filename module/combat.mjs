@@ -4,6 +4,17 @@ import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helper
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+// Gibt den Rang von "gezielteSprueche" zurück — Characters/NPCs: skills.gezielteSprueche.rank, Kreaturen: magicSkills.gezielteSprueche
+function _getGezielteSpruecheRank(actor) {
+  if (actor.type === "creature") return Number(actor.system.magicSkills?.gezielteSprueche ?? 0);
+  return Number(actor.system.skills?.gezielteSprueche?.rank ?? 0);
+}
+
+// Gibt den aktuellen MP-Wert zurück (alle Actor-Typen nutzen resources.mp.value)
+function _getCurrentMp(actor) {
+  return Number(actor.system.resources?.mp?.value ?? 0);
+}
+
 // ══════════════════════════════════════════════════════════════════
 //  AboreaCombat — Combat Document
 // ══════════════════════════════════════════════════════════════════
@@ -159,10 +170,10 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     );
     const inValue    = Number(actor.system.finalAttributes?.in?.value ?? actor.system.attributes?.in?.value ?? 5);
     const attrBonus  = ABOREA.attributeBonus(inValue);
-    const skillRank  = Number(actor.system.skills?.gezielteSprueche?.rank ?? 0);
+    const skillRank  = _getGezielteSpruecheRank(actor);
     const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
     const spellAttackBonus = attrBonus + skillRank + classBonus;
-    const currentMp  = Number(actor.system.resources?.mp?.value ?? 0);
+    const currentMp  = _getCurrentMp(actor);
 
     return {
       weapons: weapons.map(w => ({
@@ -363,7 +374,7 @@ class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) 
     const item       = this.options.item;
     const inValue    = Number(actor.system.finalAttributes?.in?.value ?? actor.system.attributes?.in?.value ?? 5);
     const attrBonus  = ABOREA.attributeBonus(inValue);
-    const skillRank  = Number(actor.system.skills?.gezielteSprueche?.rank ?? 0);
+    const skillRank  = _getGezielteSpruecheRank(actor);
     const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
 
     const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
@@ -469,7 +480,7 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, spellBonus, s
   if (!spell) return;
 
   // MP prüfen & abziehen
-  const currentMp = Number(attackerActor.system.resources?.mp?.value ?? 0);
+  const currentMp = _getCurrentMp(attackerActor);
   if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
   await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
 
