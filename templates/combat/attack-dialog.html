@@ -82,6 +82,15 @@
         step="1" />
     </div>
 
+    <div class="form-group">
+      <label>MP pro zusätzl. Ziel
+        <span class="hint">(0 = unbegrenzt kostenlos)</span>
+      </label>
+      <input type="number" name="mpProZiel"
+        value="{{#if targetedSpells.[0].mpPerTarget}}{{targetedSpells.[0].mpPerTarget}}{{else}}1{{/if}}"
+        min="0" step="1" />
+    </div>
+
     <div class="spell-effect-preview" style="display:none"></div>
 
     <div class="spell-bonus-breakdown">

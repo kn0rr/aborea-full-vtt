@@ -294,15 +294,18 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     weaponSelect?.addEventListener("change", updatePenalty);
 
     // MP-Kosten-Input + Vorschau
-    const noMpWarning  = html.querySelector(".spell-no-mp-warning");
-    const spellPreview = html.querySelector(".spell-effect-preview");
-    const mpCostVal    = html.querySelector(".spell-mp-cost-value");
-    const mpRemaining  = html.querySelector(".spell-mp-remaining-value");
-    const mpMinHint    = html.querySelector(".mp-cost-min");
+    const noMpWarning   = html.querySelector(".spell-no-mp-warning");
+    const spellPreview  = html.querySelector(".spell-effect-preview");
+    const mpCostVal     = html.querySelector(".spell-mp-cost-value");
+    const mpRemaining   = html.querySelector(".spell-mp-remaining-value");
+    const mpMinHint     = html.querySelector(".mp-cost-min");
+    const mpProZielInput = html.querySelector("[name=mpProZiel]");
+
+    const _getMpProZiel = () => Number(mpProZielInput?.value ?? 1);
 
     const _updateTargetMode = (targetCount, spellHasMulti) => {
       // Im Zauber-Modus immer die Checkbox-Liste zeigen.
-      // Limit: wenn mpPerTarget > 0 → targetCount, sonst unbegrenzt (999)
+      // Limit: wenn mpProZiel > 0 → targetCount, sonst unbegrenzt (999)
       if (singleRow) singleRow.style.display = "none";
       if (multiRow)  multiRow.style.display  = "";
       updateMultiLimit(spellHasMulti ? targetCount : 999);
@@ -314,7 +317,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       const damage = hp.type
         ? Math.min(hp.max ?? Infinity, Math.round((hp.multiplier ?? 1) * mp))
         : null;
-      const targets = spell.mpPerTarget > 0 ? Math.max(1, Math.floor(mp / spell.mpPerTarget)) : 1;
+      const mpProZiel = _getMpProZiel();
+      const targets = mpProZiel > 0 ? Math.max(1, Math.floor(mp / mpProZiel)) : 999;
       return { damage, damageType: hp.type ?? null, targets };
     };
 
@@ -333,10 +337,11 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
       // Wirkungsvorschau
       if (spellPreview) {
+        const displayTargets = targets >= 999 ? "∞" : targets;
         if (!damage && targets <= 1) { spellPreview.style.display = "none"; }
         else {
           const parts = [];
-          if (targets > 1)   parts.push(`🎯 ${targets} Ziele`);
+          if (targets > 1)    parts.push(`🎯 ${displayTargets} Ziele`);
           if (damage != null) parts.push(`${damageType === "heal" ? "✨ +" : "💥 −"}${damage} HP`);
           spellPreview.textContent = parts.join("  ·  ");
           spellPreview.style.display = "";
@@ -347,7 +352,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       const cantAfford = mp > context.currentMp || mp < (spell?.minCost ?? 1);
       if (submitBtn)   submitBtn.disabled = cantAfford || !mp;
       if (noMpWarning) noMpWarning.style.display = (mp > context.currentMp) ? "" : "none";
-      _updateTargetMode(targets, spell?.mpPerTarget > 0);
+      _updateTargetMode(targets, _getMpProZiel() >= 0);
     };
 
     const updateSpellCosts = () => {
@@ -358,11 +363,14 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       mpCostSelect.max   = context.currentMp;
       mpCostSelect.value = min;
       if (mpMinHint) mpMinHint.textContent = min;
+      // Voreingestellter mpProZiel-Wert aus dem Zauber (Fallback: 1)
+      if (mpProZielInput) mpProZielInput.value = spell?.mpPerTarget > 0 ? spell.mpPerTarget : 1;
       _updateSpellPreview();
     };
 
     spellSelect?.addEventListener("change", updateSpellCosts);
     mpCostSelect?.addEventListener("input", _updateSpellPreview);
+    mpProZielInput?.addEventListener("input", _updateSpellPreview);
     updateSpellCosts();
 
     // Modus-Umschalten Waffe ↔ Zauber
@@ -406,9 +414,9 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     if (mode === "spell") {
       const spell = actor.items.get(data.spellId);
-      const mpCost     = Number(data.mpCost || spell?.system?.cost || 1);
-      const mpPerTarget = Number(spell?.system?.mpPerTarget ?? 0);
-      const targetCount = mpPerTarget > 0 ? Math.max(1, Math.floor(mpCost / mpPerTarget)) : 1;
+      const mpCost      = Number(data.mpCost || spell?.system?.cost || 1);
+      const mpPerTarget = Number(data.mpProZiel ?? spell?.system?.mpPerTarget ?? 1);
+      const targetCount = mpPerTarget > 0 ? Math.max(1, Math.floor(mpCost / mpPerTarget)) : 999;
       // Bei Mehrziel: manuelle Auswahl aus Checkboxen hat Vorrang vor game.user.targets
       const resolvedTargets = multiTargetActors?.length ? multiTargetActors : null;
       resolve?.({
@@ -613,13 +621,16 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget =
   await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
 
   // Ziele sammeln — Priorität: manuelle Checkbox-Auswahl > T-markierte Tokens > Dialog-Einzelziel
+  const isUnlimited = targetCount >= 999;
   let targets = [];
   if (multiTargetActors?.length) {
     targets = multiTargetActors;
-  } else if (mpPerTarget > 0 && targetCount > 1) {
-    targets = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean).slice(0, targetCount);
+  } else if ((mpPerTarget > 0 || isUnlimited) && targetCount > 1) {
+    const maxTargets = isUnlimited ? Infinity : targetCount;
+    targets = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean);
+    if (!isUnlimited) targets = targets.slice(0, maxTargets);
     if (!targets.length && targetActor) targets = [targetActor];
-    if (targets.length < targetCount) {
+    if (!isUnlimited && targets.length < targetCount) {
       ui.notifications.info(`ABOREA: Zauber trifft ${targets.length} von ${targetCount} möglichen Zielen.`);
     }
   } else {
