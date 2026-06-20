@@ -289,64 +289,59 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     weaponSelect?.addEventListener("change", updatePenalty);
 
     // MP-Kosten-Input + Vorschau
-    const noMpWarning   = html.querySelector(".spell-no-mp-warning");
-    const spellPreview  = html.querySelector(".spell-effect-preview");
-    const mpCostVal     = html.querySelector(".spell-mp-cost-value");
-    const mpRemaining   = html.querySelector(".spell-mp-remaining-value");
-    const mpMinHint     = html.querySelector(".mp-cost-min");
+    const noMpWarning    = html.querySelector(".spell-no-mp-warning");
+    const spellPreview   = html.querySelector(".spell-effect-preview");
+    const mpCostVal      = html.querySelector(".spell-mp-cost-value");
+    const mpRemaining    = html.querySelector(".spell-mp-remaining-value");
+    const spellDmgLabel  = html.querySelector(".spell-damage-label");
+    const spellDmgValue  = html.querySelector(".spell-damage-value");
+    const mpMinHint      = html.querySelector(".mp-cost-min");
+    const mpCostSelect   = html.querySelector("[name=mpCost]");
     const mpProZielInput = html.querySelector("[name=mpProZiel]");
 
     const _getMpProZiel = () => Number(mpProZielInput?.value ?? 1);
+    const _getMpCost    = () => Number(mpCostSelect?.value ?? 0);
 
     const _showSpellTargetMode = () => {
-      // Im Zauber-Modus immer Checkbox-Liste ohne Limit anzeigen
       if (singleRow) singleRow.style.display = "none";
       if (multiRow)  multiRow.style.display  = "";
       updateMultiLimit(999);
     };
 
+    // Gesamtkosten: Anzahl Ziele × (mpProZiel + Basiskosten)
     const _calcTotalMp = (spell, checkedCount) => {
       const mpProZiel = _getMpProZiel();
-      const minCost   = spell?.minCost ?? 1;
-      if (mpProZiel > 0 && checkedCount > 0) return Math.max(minCost, checkedCount * mpProZiel);
-      return minCost;
+      const baseCost  = _getMpCost() || (spell?.minCost ?? 1);
+      return { totalMp: checkedCount * (mpProZiel + baseCost), baseCost };
     };
 
-    const _calcDamage = (spell, mp) => {
-      if (!spell || !mp) return { damage: null, damageType: null };
-      const hp = spell.hpEffect ?? {};
-      if (!hp.type) return { damage: null, damageType: null };
-      return {
-        damage:     Math.min(hp.max ?? Infinity, Math.round((hp.multiplier ?? 1) * mp)),
-        damageType: hp.type,
-      };
-    };
+    const _updateSpellPreview = () => {
+      const spell        = spellMap[spellSelect?.value];
+      const checkedCount = [...multiChecks()].filter(c => c.checked).length || 1;
+      const { totalMp, baseCost } = _calcTotalMp(spell, checkedCount);
 
-    const _updateMpStatus = (totalMp) => {
+      // MP-Status-Zeile
       if (mpCostVal)   mpCostVal.textContent   = totalMp ? `${totalMp} MP` : "—";
       if (mpRemaining) {
         const left = context.currentMp - totalMp;
         mpRemaining.textContent = totalMp ? `${left} MP` : "—";
         mpRemaining.style.color = left < 0 ? "#b42828" : "";
       }
-    };
 
-    const _updateSpellPreview = () => {
-      const spell        = spellMap[spellSelect?.value];
-      const checkedCount = [...multiChecks()].filter(c => c.checked).length || 1;
-      const totalMp      = _calcTotalMp(spell, checkedCount);
-      const { damage, damageType } = _calcDamage(spell, totalMp);
-
-      _updateMpStatus(totalMp);
-
-      // Wirkungsvorschau
-      if (spellPreview) {
-        if (!damage) { spellPreview.style.display = "none"; }
-        else {
-          spellPreview.textContent = `${damageType === "heal" ? "✨ +" : "💥 −"}${damage} HP`;
-          spellPreview.style.display = "";
+      // Schaden pro Ziel basiert auf Basiskosten
+      const hp = spell?.hpEffect ?? {};
+      const damagePerTarget = hp.type
+        ? Math.min(hp.max ?? Infinity, Math.round((hp.multiplier ?? 1) * baseCost))
+        : null;
+      if (spellDmgLabel) spellDmgLabel.style.display = damagePerTarget ? "" : "none";
+      if (spellDmgValue) {
+        spellDmgValue.style.display = damagePerTarget ? "" : "none";
+        if (damagePerTarget) {
+          const prefix = hp.type === "heal" ? "+" : "−";
+          spellDmgValue.textContent = `${prefix}${damagePerTarget} HP`;
         }
       }
+      if (spellPreview) spellPreview.style.display = "none";
 
       // Zu wenig MP?
       const cantAfford = totalMp > context.currentMp;
@@ -357,13 +352,15 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const updateSpellCosts = () => {
       if (!spellSelect) return;
       const spell = spellMap[spellSelect.value];
-      // Voreingestellter mpProZiel-Wert aus dem Zauber (Fallback: 1)
+      const min   = spell?.minCost ?? 1;
+      if (mpCostSelect) { mpCostSelect.min = min; mpCostSelect.max = context.currentMp; mpCostSelect.value = min; }
       if (mpProZielInput) mpProZielInput.value = spell?.mpPerTarget > 0 ? spell.mpPerTarget : 1;
       _showSpellTargetMode();
       _updateSpellPreview();
     };
 
     spellSelect?.addEventListener("change", updateSpellCosts);
+    mpCostSelect?.addEventListener("input", _updateSpellPreview);
     mpProZielInput?.addEventListener("input", _updateSpellPreview);
     updateSpellCosts();
 
@@ -407,19 +404,18 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     this._resolve = null;
 
     if (mode === "spell") {
-      const spell       = actor.items.get(data.spellId);
-      const mpPerTarget = Number(data.mpProZiel ?? spell?.system?.mpPerTarget ?? 1);
+      const spell        = actor.items.get(data.spellId);
+      const mpPerTarget  = Number(data.mpProZiel ?? spell?.system?.mpPerTarget ?? 1);
       const checkedCount = multiTargetActors?.length ?? 1;
-      const minCost     = Number(spell?.system?.cost ?? 1);
-      // Gesamtkosten aus Anzahl Ziele × Kosten pro Ziel (mind. Basiskost)
-      const mpCost = mpPerTarget > 0
-        ? Math.max(minCost, checkedCount * mpPerTarget)
-        : minCost;
-      const targetCount = checkedCount;
+      const minCost      = Number(spell?.system?.cost ?? 1);
+      const baseCost     = Number(data.mpCost || minCost);
+      const mpCost       = checkedCount * (mpPerTarget + baseCost);
+      const targetCount  = checkedCount;
       resolve?.({
         mode:         "spell",
         spell,
         mpCost,
+        baseCost,
         mpPerTarget,
         targetCount,
         multiTargetActors: multiTargetActors?.length ? multiTargetActors : null,
@@ -609,7 +605,7 @@ async function _applySpellEffectsToTarget(spell, mpCost, targetActor) {
   return html;
 }
 
-async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget = 0, targetCount = 1, multiTargetActors = null, spellBonus, situMod, targetActor, targetDefense, attackerImg, targetImg }) {
+async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpPerTarget = 0, targetCount = 1, multiTargetActors = null, spellBonus, situMod, targetActor, targetDefense, attackerImg, targetImg }) {
   if (!spell) return;
 
   // Ziele sammeln — Priorität: manuelle Checkbox-Auswahl > T-markierte Tokens > Dialog-Einzelziel
@@ -629,16 +625,10 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget =
     targets = targetActor ? [targetActor] : [];
   }
 
-  // Tatsächliche MP-Kosten: Anzahl Ziele × Kosten pro Ziel (mind. Basiskost des Zaubers)
-  const minCost = Number(spell.system?.cost ?? 1);
-  const actualMpCost = (mpPerTarget > 0 && targets.length > 0)
-    ? Math.max(minCost, targets.length * mpPerTarget)
-    : mpCost;
-
-  // MP prüfen & abziehen
+  // MP prüfen & abziehen (mpCost wurde bereits korrekt im Dialog berechnet)
   const currentMp = _getCurrentMp(attackerActor);
-  if (currentMp < actualMpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
-  await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - actualMpCost) });
+  if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
+  await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
 
   // Pro Ziel: eigener Treffer-Wurf
   const rolls = [];
@@ -676,7 +666,7 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget =
       ${critNote}`;
 
     if (hit && currentTarget) {
-      effectHtml += await _applySpellEffectsToTarget(spell, mpCost, currentTarget);
+      effectHtml += await _applySpellEffectsToTarget(spell, baseCost ?? mpCost, currentTarget);
     }
   }
 

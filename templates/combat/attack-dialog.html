@@ -52,6 +52,8 @@
       <span class="spell-mp-cost-value">—</span>
       <span class="spell-mp-remaining-label">→ verbleibend:</span>
       <span class="spell-mp-remaining-value">—</span>
+      <span class="spell-damage-label" style="display:none">→ Schaden/Ziel:</span>
+      <span class="spell-damage-value" style="display:none">—</span>
     </div>
 
     <div class="form-group">
@@ -69,6 +71,17 @@
 
     <div class="spell-no-mp-warning" style="display:none">
       ⚠ Nicht genug MP für diesen Zauber!
+    </div>
+
+    <div class="form-group">
+      <label>MP Basiskosten
+        <span class="hint">(Mindestkost: {{targetedSpells.[0].minCost}})</span>
+      </label>
+      <input type="number" name="mpCost"
+        value="{{targetedSpells.[0].minCost}}"
+        min="{{targetedSpells.[0].minCost}}"
+        max="{{currentMp}}"
+        step="1" />
     </div>
 
     <div class="form-group">
