@@ -301,11 +301,11 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const mpMinHint    = html.querySelector(".mp-cost-min");
 
     const _updateTargetMode = (targetCount, spellHasMulti) => {
-      // Mehrziel-Liste zeigen sobald der Zauber mpPerTarget > 0 hat (unabhängig von aktuellem targetCount)
-      const isMulti = !!spellHasMulti;
-      if (singleRow) singleRow.style.display = isMulti ? "none" : "";
-      if (multiRow)  multiRow.style.display  = isMulti ? "" : "none";
-      updateMultiLimit(targetCount);
+      // Im Zauber-Modus immer die Checkbox-Liste zeigen.
+      // Limit: wenn mpPerTarget > 0 → targetCount, sonst unbegrenzt (999)
+      if (singleRow) singleRow.style.display = "none";
+      if (multiRow)  multiRow.style.display  = "";
+      updateMultiLimit(spellHasMulti ? targetCount : 999);
     };
 
     const _calcPreview = (spell, mp) => {
@@ -371,8 +371,13 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       if (weaponSection) weaponSection.style.display = mode === "weapon" ? "" : "none";
       if (spellSection)  spellSection.style.display  = mode === "spell"  ? "" : "none";
       if (submitBtn) submitBtn.textContent = mode === "spell" ? " Zauber wirken" : " Angreifen";
-      // Bei Waffenmodus immer Einzelziel
-      if (mode === "weapon") _updateTargetMode(1, false);
+      // Waffe → Einzelziel-Dropdown; Zauber → Checkbox-Liste (wird via updateSpellCosts gesetzt)
+      if (mode === "weapon") {
+        if (singleRow) singleRow.style.display = "";
+        if (multiRow)  multiRow.style.display  = "none";
+      } else {
+        _updateSpellPreview(); // stellt Ziel-Modus für aktuellen Zauber ein
+      }
     };
     modeRadios.forEach(r => r.addEventListener("change", updateMode));
     updateMode();
