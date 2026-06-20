@@ -614,13 +614,11 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, mpPerTarget =
 
   // Ziele sammeln — Priorität: manuelle Checkbox-Auswahl > T-markierte Tokens > Dialog-Einzelziel
   let targets = [];
-  if (mpPerTarget > 0 && targetCount > 1) {
-    if (multiTargetActors?.length) {
-      targets = multiTargetActors.slice(0, targetCount);
-    } else {
-      targets = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean).slice(0, targetCount);
-      if (!targets.length && targetActor) targets = [targetActor];
-    }
+  if (multiTargetActors?.length) {
+    targets = multiTargetActors;
+  } else if (mpPerTarget > 0 && targetCount > 1) {
+    targets = Array.from(game.user.targets ?? []).map(t => t.actor).filter(Boolean).slice(0, targetCount);
+    if (!targets.length && targetActor) targets = [targetActor];
     if (targets.length < targetCount) {
       ui.notifications.info(`ABOREA: Zauber trifft ${targets.length} von ${targetCount} möglichen Zielen.`);
     }
