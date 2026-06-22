@@ -505,9 +505,16 @@
 .metric-card.metric-warn { border-color: #d97706; background: rgba(254,243,199,.6); }
 
 /* ── Validierungs-Panel ─────────────────────────────── */
-.validation-panel { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--aborea-border-light); }
-.validation-grid { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
-.summary-row { display: grid; grid-template-columns: minmax(130px,1fr) 1fr; gap: 8px; align-items: center; font-size: .9rem; }
+.validation-panel { margin-top: 12px; padding-top: 10px; border-top: 2px solid var(--aborea-border); }
+.validation-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+.summary-row {
+  display: grid; grid-template-columns: minmax(140px,1fr) auto;
+  gap: 8px; align-items: center; font-size: .9rem;
+  padding: 3px 6px; border-radius: 4px;
+}
+.summary-row:nth-child(even) { background: rgba(120,90,60,.06); }
+.summary-row label { color: var(--aborea-brown); font-weight: 600; }
+.summary-row span { text-align: right; font-weight: 500; }
 .summary-row.row-ok span { color: var(--aborea-green); font-weight: 700; }
 .status-badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: .8rem; font-weight: 600; }
 .status-badge.status-draft    { background: #fde68a; color: #92400e; }
@@ -518,10 +525,28 @@
 
 /* ── Kostentabelle ──────────────────────────────────── */
 .cost-reference-panel { overflow-x: auto; }
-.cost-reference-table { width: 100%; border-collapse: collapse; }
+.cost-reference-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
 .cost-reference-table th,
-.cost-reference-table td { border: 1px solid var(--aborea-border-light); padding: 5px 8px; text-align: center; font-size: .88rem; }
-.cost-reference-table th { background: rgba(120,90,60,.12); font-weight: 700; }
+.cost-reference-table td {
+  border: 1px solid var(--aborea-border);
+  padding: 6px 10px;
+  text-align: center;
+  line-height: 1.3;
+  color: #2c1f0f;
+}
+.cost-reference-table tbody { background: var(--aborea-parchment-2); }
+.cost-reference-table th {
+  background: #7a5c3e;
+  color: #f5ede0;
+  font-weight: 700;
+  font-size: .85rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border-bottom: 2px solid #5b4b3a;
+}
+.cost-reference-table tbody tr:nth-child(even) { background: rgba(120,90,60,.07); }
+.cost-reference-table tbody tr:hover { background: rgba(120,90,60,.15); }
+.cost-reference-table tbody td:first-child { font-weight: 600; }
 
 /* ── Hint-Texte ─────────────────────────────────────── */
 .hint-text { font-size: .85rem; color: var(--aborea-brown); margin: 0 0 8px; }
@@ -601,6 +626,9 @@
   min-width: 2.5em; text-align: center; }
 .trait-bonus-tag { font-size: .7rem; background: #f0fdf4; color: #166534;
   border: 1px solid #86efac; border-radius: 4px; padding: 1px 5px; }
+.situational-bonus-tag { font-size: .7rem; background: #fefce8; color: #854d0e;
+  border: 1px solid #fde047; border-radius: 4px; padding: 1px 5px;
+  font-style: italic; cursor: help; }
 
 /* ── Besonderes: Rassenmerkmale ─────────────────────── */
 .racial-traits-full { display: flex; flex-wrap: wrap; gap: 8px; }

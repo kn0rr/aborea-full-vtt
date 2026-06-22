@@ -39,27 +39,42 @@ export const ABOREA = {
     natur: { label: "ABOREA.SkillNatur", attribute: "in", creation: true },
     reiten: { label: "ABOREA.SkillReiten", attribute: "ge", creation: true },
     schwimmen: { label: "ABOREA.SkillSchwimmen", attribute: "ko", creation: true },
-    spruchlisten: { label: "ABOREA.SkillSpruchlisten", attribute: "in", creation: true, maxCreationRank: 2 },
-    waffen: { label: "ABOREA.SkillWaffen", attribute: "st", creation: true, maxCreationRank: 2 },
+    // spruchlisten + waffen kept without creation:true for backward compat (legacy actors)
+    spruchlisten: { label: "ABOREA.SkillSpruchlisten", attribute: "in" },
+    waffen: { label: "ABOREA.SkillWaffen", attribute: "st" },
     wahrnehmung: { label: "ABOREA.SkillWahrnehmung", attribute: "in", creation: true },
     wissen: { label: "ABOREA.SkillWissen", attribute: "in", creation: true },
-    waffenlos: { label: "ABOREA.SkillWaffenlos", attribute: "st" },
-    boegen: { label: "ABOREA.SkillBoegen", attribute: "ge" },
-    aexte: { label: "ABOREA.SkillAexte", attribute: "st" },
-    langeKlingenwaffe: { label: "ABOREA.SkillLangeKlingenwaffe", attribute: "st" },
-    kurzeKlingenwaffe: { label: "ABOREA.SkillKurzeKlingenwaffe", attribute: "ge" },
-    stangenwaffe: { label: "ABOREA.SkillStangenwaffe", attribute: "st" },
-    wurfwaffe: { label: "ABOREA.SkillWurfwaffe", attribute: "ge" },
-    fallen: { label: "ABOREA.SkillFallen", attribute: "in" },
-    geheimtuer: { label: "ABOREA.SkillGeheimtuer", attribute: "in" },
-    mechanik: { label: "ABOREA.SkillMechanik", attribute: "in" },
-    gift: { label: "ABOREA.SkillGift", attribute: "in" },
-    heimlichkeit: { label: "ABOREA.SkillHeimlichkeit", attribute: "ge" },
-    heilen: { label: "ABOREA.SkillHeilen", attribute: "ch" },
-    information: { label: "ABOREA.SkillInformation", attribute: "ch" },
-    magieWahrnehmen: { label: "ABOREA.SkillMagieWahrnehmen", attribute: "in" }
+    // Weapon skills — each group is a separate creation skill; class cost lookup uses "waffen"
+    waffenlos: { label: "ABOREA.SkillWaffenlos", attribute: "st", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    boegen: { label: "ABOREA.SkillBoegen", attribute: "ge", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    aexte: { label: "ABOREA.SkillAexte", attribute: "st", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    langeKlingenwaffe: { label: "ABOREA.SkillLangeKlingenwaffe", attribute: "st", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    kurzeKlingenwaffe: { label: "ABOREA.SkillKurzeKlingenwaffe", attribute: "ge", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    stangenwaffe: { label: "ABOREA.SkillStangenwaffe", attribute: "st", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    wurfwaffe: { label: "ABOREA.SkillWurfwaffe", attribute: "ge", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    armbrust: { label: "ABOREA.SkillArmbrust", attribute: "ge", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    stichwaffe: { label: "ABOREA.SkillStichwaffe", attribute: "ge", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    wuchtwaffe: { label: "ABOREA.SkillWuchtwaffe", attribute: "st", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    schleuder: { label: "ABOREA.SkillSchleuder", attribute: "ge", creation: true, maxCreationRank: 2, costGroup: "waffen" },
+    // Spell list skills — each list is a separate creation skill; class cost lookup uses "spruchlisten"
+    wildeMagie: { label: "ABOREA.SkillWildeMagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Wilde Magie" },
+    elementareMagie: { label: "ABOREA.SkillElementareMagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Elementare Magie" },
+    freieMagie: { label: "ABOREA.SkillFreieMagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Freie Magie" },
+    schwarzeMagie: { label: "ABOREA.SkillSchwarze_Magie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Schwarze Magie" },
+    bardenmagie: { label: "ABOREA.SkillBardenmagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Bardenmagie (Leitmagie)" },
+    schamanenmagie: { label: "ABOREA.SkillSchamanenmagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Schamanenmagie (Leitmagie)" },
+    wunder: { label: "ABOREA.SkillWunder", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Wunder (Leitmagie)" },
+    zeichen: { label: "ABOREA.SkillZeichen", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Zeichen (Leitmagie)" },
+    fallen: { label: "ABOREA.SkillFallen", attribute: "in", creation: true, maxCreationRank: 2 },
+    geheimtuer: { label: "ABOREA.SkillGeheimtuer", attribute: "in", creation: true, maxCreationRank: 1 },
+    mechanik: { label: "ABOREA.SkillMechanik", attribute: "in", creation: true, maxCreationRank: 2 },
+    gift: { label: "ABOREA.SkillGift", attribute: "in", creation: true, maxCreationRank: 2 },
+    heimlichkeit: { label: "ABOREA.SkillHeimlichkeit", attribute: "ge", creation: true, maxCreationRank: 2 },
+    heilen: { label: "ABOREA.SkillHeilen", attribute: "ch", creation: true, maxCreationRank: 2 },
+    information: { label: "ABOREA.SkillInformation", attribute: "ch", creation: true, maxCreationRank: 1 },
+    magieWahrnehmen: { label: "ABOREA.SkillMagieWahrnehmen", attribute: "in", creation: true, maxCreationRank: 1 }
   },
-  weaponSkillKeys: ["waffenlos","boegen","aexte","langeKlingenwaffe","kurzeKlingenwaffe","stangenwaffe","wurfwaffe"],
+  weaponSkillKeys: ["waffenlos","boegen","armbrust","aexte","langeKlingenwaffe","kurzeKlingenwaffe","stichwaffe","stangenwaffe","wuchtwaffe","wurfwaffe","schleuder"],
   maneuvers: {
     routine: 5,
     sehrEinfach: 7,
@@ -106,7 +121,8 @@ export const ABOREA = {
     for (const [key, cfg] of Object.entries(this.skills)) {
       if (!cfg.creation) continue;
       const rank = Number(skills?.[key]?.rank ?? 0);
-      for (let r = 1; r <= rank; r++) total += this.skillCostForRank(costs[key], r);
+      const costKey = cfg.costGroup ?? key;
+      for (let r = 1; r <= rank; r++) total += this.skillCostForRank(costs[costKey] ?? costs[key], r);
     }
     const csArray = Array.isArray(customSkills) ? customSkills : Object.values(customSkills || {});
     for (const cs of csArray) {
@@ -118,9 +134,18 @@ export const ABOREA = {
   skillMaxCreationRank(key, classSystem = {}) {
     const skillCfg = this.skills[key] ?? {};
     const base = Number(skillCfg.maxCreationRank ?? 1);
-    const parts = String(classSystem?.skillCosts?.[key] ?? "").split("/").filter(Boolean);
+    const costKey = skillCfg.costGroup ?? key;
+    const parts = String(classSystem?.skillCosts?.[costKey] ?? classSystem?.skillCosts?.[key] ?? "").split("/").filter(Boolean);
     return Math.max(base, parts.length > 1 ? 2 : 1);
   },
+  /** Returns the spell list skill key for a given list name, or null. */
+  spellListToSkillKey(listName) {
+    for (const [key, cfg] of Object.entries(this.skills)) {
+      if (cfg.spellList === listName) return key;
+    }
+    return null;
+  },
+  spellListSkillKeys: ["wildeMagie","elementareMagie","freieMagie","schwarzeMagie","bardenmagie","schamanenmagie","wunder","zeichen"],
   getCreationSkills() {
     return Object.entries(this.skills).filter(([, cfg]) => cfg.creation).map(([key, cfg]) => ({ key, ...cfg }));
   },

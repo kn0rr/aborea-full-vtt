@@ -68,10 +68,10 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       companions: new fields.ObjectField({ initial: () => ({ list: [] }) }),
       wallet: new fields.ObjectField({ initial: () => ({
         currencies: [
-          { key: "gf", label: "GF",  name: "Goldfalken",       amount: 0 },
-          { key: "tt", label: "TT",  name: "Trionthaler",      amount: 0 },
-          { key: "kl", label: "KL",  name: "Kupferlinge",      amount: 0 },
-          { key: "mu", label: "MU",  name: "Münzen unbekannt", amount: 0 }
+          { key: "gf", label: "GF",  name: "Goldfalken",  amount: 0 },
+          { key: "tt", label: "TT",  name: "Trionthaler", amount: 0 },
+          { key: "kl", label: "KL",  name: "Kupferlinge", amount: 0 },
+          { key: "mu", label: "MU",  name: "Muena",       amount: 0 }
         ],
         history: []
       })}),
@@ -219,6 +219,7 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
       descriptionLocked: new fields.BooleanField({ initial: false }),
       equipped:          new fields.BooleanField({ initial: false }),
       skill:       new fields.StringField({ initial: "" }),
+      skills:      new fields.ArrayField(new fields.StringField(), { initial: [] }),
       minStrength: new fields.NumberField({ initial: 0 }),
       damage:      new fields.NumberField({ initial: 0 }),
       initiative:  new fields.NumberField({ initial: 0 }),
@@ -313,7 +314,8 @@ export class GearDataModel extends foundry.abstract.TypeDataModel {
       price:       new fields.StringField({ initial: "" }),
       notes:       new fields.StringField({ initial: "" }),
       healAmount:  new fields.NumberField({ initial: 0, integer: true, min: 0 }),
-      healType:    new fields.StringField({ initial: "hp" })
+      healType:    new fields.StringField({ initial: "hp" }),
+      rarity:      new fields.StringField({ initial: "" })
     };
   }
 }

@@ -6,16 +6,15 @@
     "img": "icons/svg/sword.svg",
     "system": {
       "description": "",
-      "skill": "boegen",
+      "skill": "armbrust",
+      "skills": ["armbrust"],
       "minStrength": 0,
       "damage": 1,
       "initiative": 2,
       "range": "long",
       "price": "14 GF",
       "weight": 5,
-      "attrChoices": [
-        "ge"
-      ],
+      "attrChoices": ["ge"],
       "hands": 2
     }
   },
@@ -27,16 +26,14 @@
     "system": {
       "description": "",
       "skill": "kurzeKlingenwaffe",
+      "skills": ["kurzeKlingenwaffe", "stichwaffe"],
       "minStrength": 0,
       "damage": -1,
       "initiative": 1,
       "range": "kurz",
       "price": "14 TT",
       "weight": 2,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -48,16 +45,14 @@
     "system": {
       "description": "",
       "skill": "boegen",
+      "skills": ["boegen"],
       "minStrength": 6,
       "damage": 0,
       "initiative": 0,
       "range": "lang",
       "price": "2 GF",
       "weight": 2,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -69,15 +64,14 @@
     "system": {
       "description": "",
       "skill": "langeKlingenwaffe",
+      "skills": ["langeKlingenwaffe"],
       "minStrength": 5,
       "damage": 1,
       "initiative": 0,
       "range": "mittel",
       "price": "26 TT",
       "weight": 4,
-      "attrChoices": [
-        "st"
-      ],
+      "attrChoices": ["st"],
       "hands": 1
     }
   },
@@ -87,18 +81,16 @@
     "type": "weapon",
     "img": "icons/svg/sword.svg",
     "system": {
-      "description": "Im Spielerheft als Wuchtwaffe geführt; hier als Platzhalter einer Nahkampffertigkeit zugeordnet.",
-      "skill": "stangenwaffe",
+      "description": "",
+      "skill": "wuchtwaffe",
+      "skills": ["wuchtwaffe"],
       "minStrength": 0,
       "damage": 1,
       "initiative": 0,
       "range": "mittel",
       "price": "24 TT",
       "weight": 4,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -109,17 +101,15 @@
     "img": "icons/svg/sword.svg",
     "system": {
       "description": "",
-      "skill": "kurzeKlingenwaffe",
+      "skill": "stichwaffe",
+      "skills": ["stichwaffe", "kurzeKlingenwaffe"],
       "minStrength": 0,
       "damage": 0,
       "initiative": 1,
       "range": "mittel",
       "price": "44 TT",
       "weight": 1.5,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -130,17 +120,15 @@
     "img": "icons/svg/sword.svg",
     "system": {
       "description": "",
-      "skill": "wurfwaffe",
+      "skill": "schleuder",
+      "skills": ["schleuder"],
       "minStrength": 0,
       "damage": -1,
       "initiative": 1,
       "range": "lang",
       "price": "2 MU",
       "weight": 0,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -152,16 +140,14 @@
     "system": {
       "description": "",
       "skill": "stangenwaffe",
+      "skills": ["stangenwaffe", "wurfwaffe"],
       "minStrength": 0,
       "damage": 0,
       "initiative": 0,
       "range": "lang",
       "price": "46 KL",
       "weight": 4,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -173,16 +159,14 @@
     "system": {
       "description": "",
       "skill": "stangenwaffe",
+      "skills": ["stangenwaffe"],
       "minStrength": 0,
       "damage": -1,
       "initiative": 1,
       "range": "lang",
       "price": "1 KL",
       "weight": 3,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 2
     }
   },
@@ -194,16 +178,14 @@
     "system": {
       "description": "",
       "skill": "waffenlos",
+      "skills": ["waffenlos"],
       "minStrength": 0,
       "damage": -2,
       "initiative": 1,
       "range": "kurz",
       "price": "0",
       "weight": 0,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -215,15 +197,14 @@
     "system": {
       "description": "",
       "skill": "aexte",
+      "skills": ["aexte"],
       "minStrength": 6,
       "damage": 2,
       "initiative": -1,
       "range": "lang",
       "price": "4 GF",
       "weight": 6,
-      "attrChoices": [
-        "st"
-      ],
+      "attrChoices": ["st"],
       "hands": 1
     }
   },
@@ -235,15 +216,14 @@
     "system": {
       "description": "",
       "skill": "langeKlingenwaffe",
+      "skills": ["langeKlingenwaffe"],
       "minStrength": 6,
       "damage": 2,
       "initiative": 0,
       "range": "lang",
       "price": "4 GF",
       "weight": 4,
-      "attrChoices": [
-        "st"
-      ],
+      "attrChoices": ["st"],
       "hands": 2
     }
   },
@@ -255,16 +235,14 @@
     "system": {
       "description": "",
       "skill": "kurzeKlingenwaffe",
+      "skills": ["kurzeKlingenwaffe", "stichwaffe", "wurfwaffe"],
       "minStrength": 0,
       "damage": -2,
       "initiative": 2,
       "range": "kurz",
       "price": "6 TT",
       "weight": 0.5,
-      "attrChoices": [
-        "st",
-        "ge"
-      ],
+      "attrChoices": ["st", "ge"],
       "hands": 1
     }
   },
@@ -275,7 +253,8 @@
     "img": "icons/svg/sword.svg",
     "system": {
       "description": "Einfache Schlagwaffe, oft selbst gefertigt.",
-      "skill": "aexte",
+      "skill": "wuchtwaffe",
+      "skills": ["wuchtwaffe"],
       "minStrength": 0,
       "damage": -1,
       "initiative": 1,
@@ -294,6 +273,7 @@
     "system": {
       "description": "Schwere einschneidige Axt.",
       "skill": "aexte",
+      "skills": ["aexte"],
       "minStrength": 6,
       "damage": 2,
       "initiative": -1,

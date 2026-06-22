@@ -168,10 +168,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     // Kampfbonus-Tooltip: beste Waffenfertigkeit mit vollständiger Aufschlüsselung
     {
-      const baseWR = Number(system.skills?.waffen?.rank ?? 0);
       let best = { cb: -99, label: "", attrKey: "st", rank: 0, attrBonus: 0 };
       for (const key of ABOREA.weaponSkillKeys) {
-        const rank     = Math.max(Number(system.skills?.[key]?.rank ?? 0), baseWR);
+        const rank     = Number(system.skills?.[key]?.rank ?? 0);
         const attrKey  = ABOREA.skills?.[key]?.attribute ?? "st";
         const attrBonus = ABOREA.attributeBonus(system.displayAttributes?.[attrKey]?.value ?? 5);
         const cb = ABOREA.combatBonus(attrBonus, rank);
@@ -214,9 +213,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     });
     const classItem = actor.items.find(i => i.type === "class");
     system.isLeitmagieClass = !!(classItem?.system?.description ?? "").includes("Leitmagie");
-    const spellListRank = Number(system.skills?.spruchlisten?.rank ?? 0);
     const knownSpellLists = [...new Set(actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
-    system.spellLists = { capacity: spellListRank, known: knownSpellLists, count: knownSpellLists.length, overflow: knownSpellLists.length > spellListRank && spellListRank > 0 };
+    const unlockedLists = knownSpellLists.filter(l => {
+      const sk = ABOREA.spellListToSkillKey(l);
+      return sk ? Number(system.skills?.[sk]?.rank ?? 0) >= 1 : true;
+    });
+    system.spellLists = { known: knownSpellLists, count: knownSpellLists.length, unlockedCount: unlockedLists.length, overflow: knownSpellLists.length > unlockedLists.length };
     const level = Number(system.resources?.level ?? 1);
     const raceName = (system.details?.race || "").toLowerCase();
     const humanBonus = raceName === "mensch" ? 2 : 0;
@@ -231,11 +233,19 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     // Compute skill bonus map fresh from active class features so the display
     // is always correct even if _recalculateCharacter hasn't run yet.
+    // Only skillBonus type counts as permanent — situationalBonus is context-dependent.
     const liveSkillBonuses = {};
+    const liveSituationalBonuses = {};
     for (const f of system.activeClassFeatures) {
       const tgt = String(f.target || "").toLowerCase();
-      if (tgt && Number(f.value)) liveSkillBonuses[tgt] = (liveSkillBonuses[tgt] || 0) + Number(f.value);
+      if (!tgt || !Number(f.value)) continue;
+      if (f.type === "situationalBonus") {
+        liveSituationalBonuses[tgt] = (liveSituationalBonuses[tgt] || 0) + Number(f.value);
+      } else {
+        liveSkillBonuses[tgt] = (liveSkillBonuses[tgt] || 0) + Number(f.value);
+      }
     }
+    system.situationalBonuses = liveSituationalBonuses;
     system.classFeatures = system.classFeatures || {};
 
     // Talente: Skill-Boni einmergen
@@ -350,14 +360,22 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     // Direkt vom Race-Item lesen — system.traits kann durch Foundry-Merge veraltet sein
     const _raceItem = actor.items.find(i => i.type === "race");
     const _skillBonuses = _raceItem?.system?.traits?.skillBonuses ?? system.traits?.skillBonuses ?? {};
-    system.skillDisplayRows = buildSkillDisplayRows(system).map(row => ({
-      ...row,
-      traitBonus: Number(_skillBonuses[row.key] ?? 0),
-      totalBonus: row.rank + Number(row.bonus ?? 0) + Number(_skillBonuses[row.key] ?? 0)
-    }));
+    system.skillDisplayRows = buildSkillDisplayRows(system).map(row => {
+      const classBonus      = Number(row.bonus ?? 0);
+      const raceBonus       = Number(_skillBonuses[row.key] ?? 0);
+      const situational     = Number(liveSituationalBonuses[row.key] ?? 0);
+      const totalBonus      = row.rank + classBonus + raceBonus;
+      const parts = [];
+      if (row.rank)    parts.push(`Rang ${row.rank}`);
+      if (classBonus)  parts.push(`Klasse +${classBonus}`);
+      if (raceBonus)   parts.push(`Rasse +${raceBonus}`);
+      if (situational) parts.push(`Situational +${situational}`);
+      const breakdown = parts.length ? parts.join(" + ") + ` = ${totalBonus}` : `${totalBonus}`;
+      return { ...row, classBonus, raceBonus, situationalBonus: situational, totalBonus, breakdown };
+    });
     // Fertigkeiten nach Gruppe sortieren
-    const KAMPF_KEYS = new Set(["waffenlos","boegen","aexte","langeKlingenwaffe","kurzeKlingenwaffe","stangenwaffe","wurfwaffe","waffen"]);
-    const MAGIE_KEYS = new Set(["magieEntwickeln","spruchlisten","gezielteSprueche","magieWahrnehmen"]);
+    const KAMPF_KEYS = new Set([...ABOREA.weaponSkillKeys, "waffen"]);
+    const MAGIE_KEYS = new Set(["magieEntwickeln","spruchlisten","gezielteSprueche","magieWahrnehmen",...ABOREA.spellListSkillKeys]);
     system.skillGroups = [
       { key: "kampf",     label: "Kampf",     icon: "⚔",
         rows: system.skillDisplayRows.filter(r => !r.isCustom && KAMPF_KEYS.has(r.key)) },
@@ -431,7 +449,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     }
 
     // Magische Fähigkeiten aufbereiten
-    const MAGIC_SKILL_KEYS = ["magieEntwickeln", "spruchlisten", "gezielteSprueche", "magieWahrnehmen"];
+    const MAGIC_SKILL_KEYS = ["magieEntwickeln", "gezielteSprueche", "magieWahrnehmen", ...ABOREA.spellListSkillKeys];
     system.magicSkillRows = MAGIC_SKILL_KEYS.map(key => {
       const rank      = Number(system.magicSkills?.[key] ?? 0);
       const attrKey   = ABOREA.skills?.[key]?.attribute ?? "in";
@@ -440,8 +458,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       // Für magieEntwickeln: MP-Pool = (attrBonus + 3) × Rang
       const mpPool    = key === "magieEntwickeln" && rank > 0
         ? `MP ${(attrBonus + 3) * rank}` : null;
-      const listInfo  = key === "spruchlisten" && rank > 0
-        ? `${rank} Liste${rank !== 1 ? "n" : ""}` : null;
+      const listInfo  = ABOREA.spellListSkillKeys.includes(key) && rank > 0
+        ? `Rang ${rank}` : null;
       return {
         key,
         label:   ABOREA.skills[key]?.label ?? key,
@@ -733,7 +751,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     html.find(".add-custom-skill").on("click", async () => await this._addCustomSkillDialog());
     html.find(".remove-custom-skill").on("click", async ev => await this._removeCustomSkill(ev.currentTarget.dataset.skillKey));
     html.find(".custom-skill-field").on("change", async ev => await this._onCustomSkillFieldChange(ev));
-    html.find(".wallet-adjust").on("click", async ev => { await this._adjustWalletCurrency(ev.currentTarget.dataset.currencyKey, ev.currentTarget.dataset.mode); });
+    html.find(".wallet-deposit").on("click", async () => { await this._walletTransaction("deposit"); });
+    html.find(".wallet-withdraw").on("click", async () => { await this._walletTransaction("withdraw"); });
     html.find(".wallet-add-currency").on("click", async () => await this._addWalletCurrency());
     html.find(".wallet-remove-currency").on("click", async ev => await this._removeWalletCurrency(ev.currentTarget.dataset.currencyKey));
     html.find(".recalc-character").on("click", async ev => {
@@ -1096,9 +1115,11 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, normalizeCustomSkills(actorSystem.customSkills));
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
-    const spruchlistenRank = Number(actorSystem.skills?.spruchlisten?.rank ?? 0);
     const knownLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
-    if (knownLists.length > spruchlistenRank && knownLists.length > 0) errors.push(`Spruchlisten: ${knownLists.length} bekannt, Rang Spruchlisten erlaubt aber nur ${spruchlistenRank}.`);
+    for (const list of knownLists) {
+      const sk = ABOREA.spellListToSkillKey(list);
+      if (sk && Number(actorSystem.skills?.[sk]?.rank ?? 0) < 1) errors.push(`Spruchliste „${list}" bekannt, aber kein Rang in der Fertigkeit.`);
+    }
     const hpBase = Number(cls?.system?.hitPointsBase ?? 5);
     const zwergBonus = raceName === "zwerg" ? 2 : 0;
     const talentHpBonus = (actorSystem.talents ?? []).reduce((s, t) => s + Number(t.hpBonus ?? 0), 0);
@@ -1107,14 +1128,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const magicAttr = cls?.system?.magicAttribute || "in";
     const magicDevelop = Number(actorSystem.skills?.magieEntwickeln?.rank ?? 0);
     const mpMax = Math.max(0, (ABOREA.attributeBonus(finalAttrs[magicAttr]?.value ?? 5) + 3) * magicDevelop) + talentMpBonus;
-    const baseWeaponRank = Number(actorSystem.skills?.waffen?.rank ?? 0);
     const skillUpdates = {};
-    for (const key of ABOREA.weaponSkillKeys) skillUpdates[`system.skills.${key}.rank`] = Math.max(Number(actorSystem.skills?.[key]?.rank ?? 0), baseWeaponRank);
 
     // Kampfbonus automatisch aus bester Waffenfertigkeit berechnen
     let bestCombatBonus = ABOREA.combatBonus(ABOREA.attributeBonus(finalAttrs.st?.value ?? 5), 0);
     for (const key of ABOREA.weaponSkillKeys) {
-      const rank    = Math.max(Number(actorSystem.skills?.[key]?.rank ?? 0), baseWeaponRank);
+      const rank    = Number(actorSystem.skills?.[key]?.rank ?? 0);
       const attrKey = ABOREA.skills?.[key]?.attribute ?? "st";
       const attrVal = finalAttrs[attrKey]?.value ?? 5;
       const cb = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
@@ -1174,20 +1193,99 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     ui.notifications.info(game.i18n.localize("ABOREA.ResetDone"));
   }
 
-  async _adjustWalletCurrency(currencyKey, mode) {
+  async _walletTransaction(mode) {
     if (this.actor.type !== "character") return;
-    const wallet = normalizeWallet(this.actor.system.wallet);
-    const cur = wallet.currencies.find(c => c.key === currencyKey); if (!cur) return;
-    const title = `${mode === "deposit" ? "Einzahlen" : "Auszahlen"}: ${cur.name} (${cur.label})`;
+    const RATES = { gf: 1000, tt: 100, kl: 10, mu: 1 }; // alles in Muena
+    const UNITS = [
+      { key: "gf", label: "GF", name: "Goldfalken"  },
+      { key: "tt", label: "TT", name: "Trionthaler" },
+      { key: "kl", label: "KL", name: "Kupferlinge" },
+      { key: "mu", label: "MU", name: "Muena"        },
+    ];
+    const unitOpts = UNITS.map(u => `<option value="${u.key}">${u.label} – ${u.name}</option>`).join("");
+    const title = mode === "deposit" ? "Einzahlen" : "Auszahlen";
     const result = await new Promise(resolve => {
-      new Dialog({ title, content: `<form><div class="form-group"><label>Betrag</label><input type="number" name="amount" value="1" min="1" step="1" /></div><div class="form-group"><label>Notiz (optional)</label><input type="text" name="note" placeholder="z.B. Belohnung vom Wirt" /></div></form>`,
-        buttons: { ok: { label:"OK", callback: html => resolve({ amount: Number(html.find("[name=amount]").val()||0), note: html.find("[name=note]").val().trim() }) }, cancel: { label:"Abbruch", callback: ()=>resolve(null) } },
-        default:"ok", close:()=>resolve(null) }).render(true);
+      new Dialog({
+        title,
+        content: `<form>
+          <div class="form-group">
+            <label>Betrag</label>
+            <input type="number" name="amount" value="1" min="1" step="1" style="width:80px" />
+            <select name="unit" style="margin-left:6px">${unitOpts}</select>
+          </div>
+          <div class="form-group">
+            <label>Notiz (optional)</label>
+            <input type="text" name="note" placeholder="z.B. Belohnung vom Wirt" style="width:100%" />
+          </div>
+          <p class="hint" style="margin:4px 0 0">1 GF = 10 TT = 100 KL = 1.000 MU</p>
+        </form>`,
+        buttons: {
+          ok: { label: "OK", callback: html => resolve({
+            amount: Number(html.find("[name=amount]").val() || 0),
+            unit:   html.find("[name=unit]").val(),
+            note:   html.find("[name=note]").val().trim()
+          })},
+          cancel: { label: "Abbruch", callback: () => resolve(null) }
+        },
+        default: "ok", close: () => resolve(null)
+      }).render(true);
     });
-    if (!result || !result.amount || result.amount <= 0) return;
-    const { amount, note } = result;
-    cur.amount = mode === "withdraw" ? Math.max(0, Number(cur.amount||0) - amount) : Number(cur.amount||0) + amount;
-    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, cur.label, { amount, currency: cur.label, note }));
+    if (!result || result.amount <= 0) return;
+
+    const wallet = normalizeWallet(this.actor.system.wallet);
+    const totalMu = result.amount * (RATES[result.unit] ?? 1); // Betrag in Muena
+
+    const getAmt = key => Number(wallet.currencies.find(c => c.key === key)?.amount ?? 0);
+    const setAmt = (key, val) => { const c = wallet.currencies.find(c => c.key === key); if (c) c.amount = Math.max(0, val); };
+
+    if (mode === "deposit") {
+      // Einzahlen: optimal aufteilen (große Münzen zuerst)
+      let remaining = totalMu;
+      for (const { key } of UNITS) {
+        const rate = RATES[key];
+        const coins = Math.floor(remaining / rate);
+        if (coins > 0) { setAmt(key, getAmt(key) + coins); remaining -= coins * rate; }
+      }
+    } else {
+      // Auszahlen: prüfen ob genug vorhanden (Gesamtwert in MU)
+      const totalAvailable = UNITS.reduce((s, { key }) => s + getAmt(key) * RATES[key], 0);
+      if (totalAvailable < totalMu) {
+        ui.notifications.warn(`ABOREA: Nicht genug Geld (vorhanden: ${totalAvailable} MU, benötigt: ${totalMu} MU).`);
+        return;
+      }
+      // Abziehen: zuerst kleinste Münzen aufbrauchen, dann aufwärts wechseln
+      let remaining = totalMu;
+      for (const { key } of [...UNITS].reverse()) {
+        const rate = RATES[key];
+        const have = getAmt(key);
+        const use  = Math.min(have, Math.floor(remaining / rate));
+        if (use > 0) { setAmt(key, have - use); remaining -= use * rate; }
+      }
+      // Falls noch Rest (Wechselgeld nötig): nächste große Münze wechseln
+      if (remaining > 0) {
+        for (const { key } of UNITS) {
+          const rate = RATES[key];
+          if (rate <= remaining) continue;
+          const have = getAmt(key);
+          if (have > 0) {
+            setAmt(key, have - 1);
+            const change = rate - remaining;
+            remaining = 0;
+            // Rückgeld in kleinen Münzen zurückgeben
+            let chg = change;
+            for (const u2 of UNITS) {
+              const r2 = RATES[u2.key];
+              const coins = Math.floor(chg / r2);
+              if (coins > 0) { setAmt(u2.key, getAmt(u2.key) + coins); chg -= coins * r2; }
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    const label = `${result.amount} ${result.unit.toUpperCase()}`;
+    wallet.history = logListPush(wallet.history, makeHistoryEntry("wallet", mode, label, { amount: result.amount, currency: result.unit.toUpperCase(), note: result.note }));
     await this.actor.update({ "system.wallet": wallet });
   }
 
@@ -1400,10 +1498,11 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (itemObj.type !== "spell") return;
     const spellList = itemObj.system?.list;
     if (!spellList) return;
-    const currentLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
-    const rank = Number(this.actor.system.skills?.spruchlisten?.rank ?? 0);
-    if (!currentLists.includes(spellList) && currentLists.length >= rank) {
-      ui.notifications.warn(`ABOREA: Neue Spruchliste „${spellList}" überschreitet Kapazität (${currentLists.length}/${rank}). Rang Spruchlisten zu niedrig!`);
+    const sk = ABOREA.spellListToSkillKey(spellList);
+    if (!sk) return;
+    const rank = Number(this.actor.system.skills?.[sk]?.rank ?? 0);
+    if (rank < 1) {
+      ui.notifications.warn(`ABOREA: Kein Rang in „${spellList}" — Fertigkeit muss mindestens Rang 1 haben.`);
     }
   }
 
@@ -1606,7 +1705,7 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       { key: "gf", label: "GF", name: "Goldfalken",       amount: Number(w.gf ?? 0) },
       { key: "tt", label: "TT", name: "Trionthaler",       amount: Number(w.tt ?? 0) },
       { key: "kl", label: "KL", name: "Kupferlinge",       amount: Number(w.kl ?? 0) },
-      { key: "mu", label: "MU", name: "Münzen unbekannt",  amount: Number(w.mu ?? 0) },
+      { key: "mu", label: "MU", name: "Muena",  amount: Number(w.mu ?? 0) },
     ];
     context.hasCoins = context.wallet.some(c => c.amount > 0);
     context.hasItems = actor.items.size > 0;

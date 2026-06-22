@@ -65,19 +65,33 @@ export class AboreaCombat extends Combat {
 //  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
+/** Returns the effective skill keys for a weapon (new multi-skill array with single-skill fallback). */
+function _weaponSkillKeys(weapon) {
+  const arr = weapon?.system?.skills;
+  if (Array.isArray(arr) && arr.length) return arr;
+  const single = weapon?.system?.skill;
+  return single ? [single] : [];
+}
+
+/** Returns the best skill rank the actor has for any of the weapon's skills. */
+function _bestWeaponRank(actor, weapon) {
+  return _weaponSkillKeys(weapon).reduce((best, key) => {
+    return Math.max(best, Number(actor.system.skills?.[key]?.rank ?? 0));
+  }, 0);
+}
+
 function _getUntrainedPenalty(actor, weapon) {
   if (!weapon) return 0;
-  const skillKey = weapon.system?.skill;
-  if (!skillKey) return 0;
-  const rank = Number(actor.system.skills?.[skillKey]?.rank ?? 0);
-  if (rank > 0) return 0;
+  const keys = _weaponSkillKeys(weapon);
+  if (!keys.length) return 0;
+  if (_bestWeaponRank(actor, weapon) > 0) return 0;
   const minimums = actor.system.classFeatures?.weaponMinimums ?? {};
   if ("all" in minimums) return 0;
-  if (skillKey === "boegen" && "bows-crossbows" in minimums) return 0;
+  if (keys.some(k => k === "boegen" || k === "armbrust") && "bows-crossbows" in minimums) return 0;
   if ("deityWeapon" in minimums) {
     const godItem = actor.items.find(i => i.type === "god");
     const deitySkills = godItem?.system?.weaponSkills ?? [];
-    if (deitySkills.includes(skillKey)) return 0;
+    if (keys.some(k => deitySkills.includes(k))) return 0;
   }
   return -2;
 }
@@ -280,13 +294,32 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       if (multiHint) multiHint.textContent = max >= 999 ? "" : `(max. ${max})`;
     };
 
-    // Weapon untrained penalty
-    const updatePenalty = () => {
+    // Weapon untrained penalty + dynamic combat bonus per weapon's best skill
+    const offBonusInput   = html.querySelector("[name=offBonus]");
+    const cbHint          = html.querySelector(".combat-bonus-hint");
+    const updateWeapon = () => {
       const weapon  = actor.items.get(weaponSelect?.value);
       const penalty = _getUntrainedPenalty(actor, weapon);
       if (untrainedRow) untrainedRow.style.display = penalty ? "" : "none";
+
+      // Recompute combat bonus from best matching skill for this weapon
+      const skillKeys = _weaponSkillKeys(weapon);
+      let bestCB = 0;
+      for (const key of skillKeys) {
+        const rank     = Number(actor.system.skills?.[key]?.rank ?? 0);
+        const attrKey  = ABOREA.skills?.[key]?.attribute ?? "st";
+        const attrVal  = Number(actor.system.finalAttributes?.[attrKey]?.value ?? actor.system.attributes?.[attrKey]?.value ?? 5);
+        const cb       = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
+        if (cb > bestCB) bestCB = cb;
+      }
+      if (cbHint) cbHint.textContent = bestCB;
+      if (offBonusInput) {
+        offBonusInput.max = bestCB;
+        if (Number(offBonusInput.value) > bestCB) offBonusInput.value = bestCB;
+      }
     };
-    weaponSelect?.addEventListener("change", updatePenalty);
+    weaponSelect?.addEventListener("change", updateWeapon);
+    updateWeapon();
 
     // MP-Kosten-Input + Vorschau
     const noMpWarning    = html.querySelector(".spell-no-mp-warning");

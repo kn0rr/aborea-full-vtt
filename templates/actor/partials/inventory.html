@@ -1,7 +1,10 @@
 <section class="panel">
   <div class="panel-header">
     <h2>{{localize "ABOREA.Wallet"}}</h2>
-    <button type="button" class="wallet-add-currency btn-sm">+ Zahlungsmittel</button>
+    <div class="button-row compact">
+      <button type="button" class="wallet-withdraw btn-sm">− Auszahlen</button>
+      <button type="button" class="wallet-deposit btn-sm btn-primary">+ Einzahlen</button>
+    </div>
   </div>
   <div class="wallet-grid">
     {{#each system.wallet.currencies as |currency idx|}}
@@ -9,15 +12,8 @@
       <div class="wallet-card-header">
         <span class="wallet-label">{{currency.label}}</span>
         <span class="wallet-name">{{currency.name}}</span>
-        {{#unless (aboreaHas (array "gf" "tt" "kl" "mu") currency.key)}}
-        <button type="button" class="wallet-remove-currency btn-icon" data-currency-key="{{currency.key}}" title="Entfernen">✕</button>
-        {{/unless}}
       </div>
       <div class="wallet-amount">{{currency.amount}}</div>
-      <div class="wallet-card-actions">
-        <button type="button" class="wallet-adjust btn-sm" data-currency-key="{{currency.key}}" data-mode="withdraw" title="Auszahlen">− Zahlen</button>
-        <button type="button" class="wallet-adjust btn-sm btn-primary" data-currency-key="{{currency.key}}" data-mode="deposit" title="Einzahlen">+ Erhalten</button>
-      </div>
     </div>
     {{/each}}
   </div>
@@ -73,7 +69,7 @@
   <div class="panel-header">
     <h2>Zauber</h2>
     <span class="spell-list-capacity {{#if system.spellLists.overflow}}overflow{{/if}}">
-      Listen: {{system.spellLists.count}} / {{system.spellLists.capacity}}
+      Listen: {{system.spellLists.count}}{{#if system.spellLists.overflow}} ⚠{{/if}}
     </span>
     <div class="button-row compact">
       <button type="button" class="import-pack-item btn-sm" data-type="spell">📦 Zauber</button>

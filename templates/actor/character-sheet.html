@@ -380,14 +380,15 @@
                   <span class="skill-name">{{skill.name}}</span>
                   <div class="skill-submeta">
                     <span class="skill-attr-tag">{{skill.attribute}}</span>
-                    {{#if skill.bonus}}<span class="class-bonus-tag">+{{skill.bonus}}</span>{{/if}}
-                    {{#if skill.traitBonus}}<span class="trait-bonus-tag">+{{skill.traitBonus}}</span>{{/if}}
+                    {{#if skill.classBonus}}<span class="class-bonus-tag" title="Klassenbonus">+{{skill.classBonus}} Kl.</span>{{/if}}
+                    {{#if skill.raceBonus}}<span class="trait-bonus-tag" title="Rassenbonus">+{{skill.raceBonus}} Ra.</span>{{/if}}
+                    {{#if skill.situationalBonus}}<span class="situational-bonus-tag" title="Situativer Bonus (nicht permanent)">~{{skill.situationalBonus}} Si.</span>{{/if}}
                   </div>
                 </div>
                 {{#if ../system.skillsLocked}}
                 <div class="skill-controls inline-controls">
                   <span class="skill-rank-display">{{skill.rank}}</span>
-                  <span class="skill-total-badge {{#if skill.totalBonus}}has-bonus{{/if}}" title="Rang + Klasse + Rasse">= {{skill.totalBonus}}</span>
+                  <span class="skill-total-badge {{#if skill.totalBonus}}has-bonus{{/if}}" title="{{skill.breakdown}}">= {{skill.totalBonus}}</span>
                   <button type="button" class="roll-skill btn-sm" data-skill="{{skill.key}}">🎲</button>
                   {{#if skill.isCustom}}<button type="button" class="remove-custom-skill btn-sm btn-danger" data-skill-key="{{skill.key}}">🗑</button>{{/if}}
                 </div>
@@ -397,7 +398,7 @@
                   <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="-1">−</button>
                   <span class="skill-rank-display">{{skill.rank}}</span>
                   <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="1">+</button>
-                  <span class="skill-total-badge {{#if skill.totalBonus}}has-bonus{{/if}}" title="Rang + Klasse + Rasse">= {{skill.totalBonus}}</span>
+                  <span class="skill-total-badge {{#if skill.totalBonus}}has-bonus{{/if}}" title="{{skill.breakdown}}">= {{skill.totalBonus}}</span>
                   <button type="button" class="roll-skill btn-sm" data-skill="{{skill.key}}">🎲</button>
                   {{#if skill.isCustom}}<button type="button" class="remove-custom-skill btn-sm btn-danger" data-skill-key="{{skill.key}}">🗑</button>{{/if}}
                 </div>

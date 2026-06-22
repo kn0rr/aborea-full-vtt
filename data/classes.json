@@ -23,7 +23,15 @@
         "spruchlisten": "3/4",
         "waffen": "3/5",
         "wahrnehmung": "1",
-        "wissen": "1"
+        "wissen": "1",
+        "fallen": "4",
+        "geheimtuer": "3",
+        "mechanik": "3",
+        "gift": "3",
+        "heimlichkeit": "2",
+        "heilen": "2",
+        "information": "1",
+        "magieWahrnehmen": "2"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
@@ -90,7 +98,15 @@
         "spruchlisten": "3/6",
         "waffen": "2/4",
         "wahrnehmung": "1",
-        "wissen": "2"
+        "wissen": "2",
+        "fallen": "1/2",
+        "geheimtuer": "1",
+        "mechanik": "1/2",
+        "gift": "1/2",
+        "heimlichkeit": "1/2",
+        "heilen": "3",
+        "information": "1",
+        "magieWahrnehmen": "4"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
@@ -199,7 +215,15 @@
         "spruchlisten": "4/8",
         "waffen": "1/3",
         "wahrnehmung": "1",
-        "wissen": "2"
+        "wissen": "2",
+        "fallen": "4",
+        "geheimtuer": "4",
+        "mechanik": "4",
+        "gift": "4",
+        "heimlichkeit": "3",
+        "heilen": "3",
+        "information": "2",
+        "magieWahrnehmen": "4"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
@@ -297,7 +321,15 @@
         "spruchlisten": "2/4",
         "waffen": "2/4",
         "wahrnehmung": "2",
-        "wissen": "1"
+        "wissen": "1",
+        "fallen": "4",
+        "geheimtuer": "3",
+        "mechanik": "4",
+        "gift": "4",
+        "heimlichkeit": "3",
+        "heilen": "1/2",
+        "information": "2",
+        "magieWahrnehmen": "1"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
@@ -390,7 +422,15 @@
         "spruchlisten": "3/4",
         "waffen": "3/6",
         "wahrnehmung": "1",
-        "wissen": "1"
+        "wissen": "1",
+        "fallen": "3",
+        "geheimtuer": "3",
+        "mechanik": "4",
+        "gift": "2",
+        "heimlichkeit": "2",
+        "heilen": "1/2",
+        "information": "3",
+        "magieWahrnehmen": "1"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
@@ -448,7 +488,15 @@
         "spruchlisten": "3/6",
         "waffen": "2/3",
         "wahrnehmung": "1",
-        "wissen": "2"
+        "wissen": "2",
+        "fallen": "2",
+        "geheimtuer": "2",
+        "mechanik": "3",
+        "gift": "2",
+        "heimlichkeit": "1/2",
+        "heilen": "2",
+        "information": "3",
+        "magieWahrnehmen": "3"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
@@ -516,7 +564,15 @@
         "spruchlisten": "1/3",
         "waffen": "4/8",
         "wahrnehmung": "2",
-        "wissen": "1"
+        "wissen": "1",
+        "fallen": "4",
+        "geheimtuer": "2",
+        "mechanik": "3",
+        "gift": "3",
+        "heimlichkeit": "3",
+        "heilen": "3",
+        "information": "3",
+        "magieWahrnehmen": "1"
       },
       "starterPackage": {
         "name": "Empfohlenes Startpaket",
