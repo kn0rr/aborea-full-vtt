@@ -96,16 +96,16 @@ Hooks.once("init", async function () {
   registerCheckHooks();
   registerQuickNpcSceneControl();
 
-  Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("aborea-v7", AboreaCharacterSheet, { types: ["character"], makeDefault: true, label: "ABOREA.CharacterSheet" });
-  Actors.registerSheet("aborea-v7", AboreaNpcSheet, { types: ["npc"], makeDefault: true, label: "ABOREA.NpcSheet" });
-  Actors.registerSheet("aborea-v7", AboreaCreatureSheet, { types: ["creature"], makeDefault: true, label: "ABOREA.CreatureSheet" });
-  Actors.registerSheet("aborea-v7", AboreaLootSheet,    { types: ["loot"],     makeDefault: true, label: "ABOREA.LootSheet" });
+  foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
+  foundry.documents.collections.Actors.registerSheet("aborea-v7", AboreaCharacterSheet, { types: ["character"], makeDefault: true, label: "ABOREA.CharacterSheet" });
+  foundry.documents.collections.Actors.registerSheet("aborea-v7", AboreaNpcSheet, { types: ["npc"], makeDefault: true, label: "ABOREA.NpcSheet" });
+  foundry.documents.collections.Actors.registerSheet("aborea-v7", AboreaCreatureSheet, { types: ["creature"], makeDefault: true, label: "ABOREA.CreatureSheet" });
+  foundry.documents.collections.Actors.registerSheet("aborea-v7", AboreaLootSheet,    { types: ["loot"],     makeDefault: true, label: "ABOREA.LootSheet" });
 
-  Items.unregisterSheet("core", ItemSheet);
-  Items.registerSheet("aborea-v7", AboreaItemSheet, { makeDefault: true });
+  foundry.documents.collections.Items.unregisterSheet("core", foundry.appv1.sheets.ItemSheet);
+  foundry.documents.collections.Items.registerSheet("aborea-v7", AboreaItemSheet, { makeDefault: true });
 
-  await loadTemplates([
+  await foundry.applications.handlebars.loadTemplates([
     "systems/aborea-v7/templates/actor/partials/inventory.html",
     "systems/aborea-v7/templates/actor/partials/conditions.html",
     "systems/aborea-v7/templates/combat/check-dialog.html",
