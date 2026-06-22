@@ -1,5 +1,25 @@
 import { ABOREA } from "./config.mjs";
 
+/** Berechnet den live Skill-Bonus eines Charakters (Klasse + Talente + Magiegegenstände). */
+function computeLiveSkillBonus(actor, skillKey) {
+  let bonus = 0;
+  const classItem = actor.items?.find(i => i.type === "class");
+  const level = Number(actor.system?.resources?.level ?? 1);
+  for (const f of ABOREA.activeClassFeatures(classItem?.system ?? {}, level)) {
+    const tgt = String(f.target || "").toLowerCase();
+    if (tgt === skillKey && Number(f.value) && f.type !== "situationalBonus") {
+      bonus += Number(f.value);
+    }
+  }
+  for (const talent of (actor.system?.talents ?? [])) {
+    bonus += Number(talent.skillBonuses?.[skillKey] ?? 0);
+  }
+  for (const mItem of (actor.items?.filter(i => i.type === "magic" && i.system.equipped) ?? [])) {
+    bonus += Number(mItem.system.skillBonuses?.[skillKey] ?? 0);
+  }
+  return bonus;
+}
+
 function ensureDiceOverlay() {
   let overlay = document.getElementById("aborea-dice-overlay");
   if (overlay) return overlay;
@@ -130,7 +150,7 @@ export async function rollSkill(actor, skillKey) {
   const attrValue = actor.system.attributes?.[attrKey]?.value ?? 5;
   const attrBonus = ABOREA.attributeBonus(attrValue);
   const rank = Number(skill.rank ?? 0);
-  const classBonus = Number(actor.system.classFeatures?.bonuses?.[skillKey] ?? skill.bonus ?? 0);
+  const classBonus = computeLiveSkillBonus(actor, skillKey);
 
   // Rassentraits: direkt vom Race-Item lesen (system.traits kann veraltet sein)
   const raceItem  = actor.items?.find(i => i.type === "race");

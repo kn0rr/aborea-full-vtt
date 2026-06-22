@@ -20,7 +20,7 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
 
     // Beschreibungstext als Rich-HTML aufbereiten
     if (item.system.description && context.canViewDescription) {
-      context.enrichedDescription = await TextEditor.enrichHTML(
+      context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         item.system.description,
         { async: true, relativeTo: item }
       );

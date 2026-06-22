@@ -847,7 +847,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
   }
 
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
     if (this.actor.type === "character" && data?.type === "Actor") {
       const dropTarget = event.target?.closest?.(".companion-dropzone, .tab[data-tab=companions]");
       if (dropTarget) { const d = await resolveDroppedActorDocument(data); if (d?.type === "creature") { await this._createCompanionFromActorDoc(d); return; } }
@@ -1149,15 +1149,20 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       "system.resources.hp.max": hpMax, "system.resources.hp.value": Math.min(Number(actorSystem.resources?.hp?.value ?? hpMax), hpMax),
       "system.resources.mp.max": mpMax, "system.resources.mp.value": Math.min(Number(actorSystem.resources?.mp?.value ?? mpMax), mpMax),
       "system.resources.trainingPoints": trainingBudget,
-      // Traits: erst skillBonuses löschen (verhindert Foundry-Deep-Merge des alten Volkes),
-      // dann alle Felder explizit setzen
-      "system.traits.-=skillBonuses":   null,
       "system.traits.racialArmorBonus": traits.racialArmorBonus,
       "system.traits.maneuverBonus":    traits.maneuverBonus,
       "system.traits.spellResistance":  traits.spellResistance,
       "system.traits.diseaseImmunity":  traits.diseaseImmunity,
       "system.traits.thermalVision":    traits.thermalVision,
-      "system.traits.skillBonuses":     traits.skillBonuses,
+      // Alte skillBonuses-Keys löschen (v13: ForcedDeletion), neue setzen — verhindert Deep-Merge
+      ...Object.fromEntries(
+        Object.keys(actorSystem.traits?.skillBonuses ?? {})
+          .filter(k => !(k in (traits.skillBonuses ?? {})))
+          .map(k => [`system.traits.skillBonuses.${k}`, new foundry.data.operators.ForcedDeletion()])
+      ),
+      ...Object.fromEntries(
+        Object.entries(traits.skillBonuses ?? {}).map(([k, v]) => [`system.traits.skillBonuses.${k}`, v])
+      ),
       "system.classFeatures": featureState,
       "system.combat.combatBonus":    bestCombatBonus,
       "system.combat.offensiveBonus": newOff,
