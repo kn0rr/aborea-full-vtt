@@ -222,6 +222,17 @@ Hooks.once("ready", async function () {
   game.socket.on(SOCKET_NAME, data => _handleLootSocket(data));
 
   if (game.user.isGM) {
+    // Migration: "Münzen unbekannt" → "Muena" in bestehenden Charakteren
+    for (const actor of game.actors.filter(a => a.type === "character")) {
+      const currencies = actor.system?.wallet?.currencies;
+      if (!Array.isArray(currencies)) continue;
+      const muEntry = currencies.find(c => c.key === "mu");
+      if (muEntry && muEntry.name !== "Muena") {
+        const updated = currencies.map(c => c.key === "mu" ? { ...c, name: "Muena" } : c);
+        await actor.update({ "system.wallet.currencies": updated });
+      }
+    }
+
     // System-Packs automatisch entsperren damit Inhalte direkt bearbeitbar sind
     await game.aborea.unlockPacks();
 
