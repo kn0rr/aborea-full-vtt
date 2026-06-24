@@ -303,7 +303,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     system.creation.skillRows = ABOREA.getCreationSkills().map(({ key, label, attribute }) => {
       const skill = system.skills[key] || { rank: 0, attribute };
-      return { key, label, rank: Number(skill.rank || 0), attribute: skill.attribute || attribute, cost: classItem?.system?.skillCosts?.[key] ?? "—", maxRank: ABOREA.skillMaxCreationRank(key, classItem?.system || {}) };
+      const costKey = ABOREA.skills[key]?.costGroup ?? key;
+      return { key, label, rank: Number(skill.rank || 0), attribute: skill.attribute || attribute, cost: classItem?.system?.skillCosts?.[costKey] ?? "—", maxRank: ABOREA.skillMaxCreationRank(key, classItem?.system || {}) };
     });
     const validationErrors = Array.isArray(system.creation?.validationErrors) ? system.creation.validationErrors : [];
     const xp = Number(system.resources?.xp ?? 0);
