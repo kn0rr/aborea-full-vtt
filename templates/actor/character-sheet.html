@@ -423,28 +423,107 @@
 
     {{!-- ══ TAB: REISEGEFÄHRT ══ --}}
     <div class="tab" data-group="primary" data-tab="reisegefaehrt">
+
+      {{!-- Fahrzeug hinzufügen --}}
       <section class="panel">
         <div class="panel-header">
           <h2>{{localize "ABOREA.TabReisegefaehrt"}}</h2>
-          <button type="button" class="import-pack-item btn-sm" data-type="gear" data-pack="aborea-v7.reisegefaehrt">📦 {{localize "ABOREA.ImportFromCompendium"}}</button>
+          <button type="button" class="import-pack-item btn-sm" data-type="gear" data-pack="aborea-v7.reisegefaehrt">📦 Reisegefährt hinzufügen</button>
         </div>
-        {{#each itemLists.reisegefaehrt as |item|}}
-        <div class="item-row" data-item-id="{{item.id}}">
-          <span class="item-name">{{item.name}}</span>
-          {{#if item.system.quantity}}<span class="item-detail">× {{item.system.quantity}}</span>{{/if}}
-          {{#if item.system.price}}<span class="item-detail gear-price">{{item.system.price}}</span>{{/if}}
-          {{#if item.system.weight}}<span class="item-detail">{{item.system.weight}} kg</span>{{/if}}
-          <div class="item-actions">
-            <button type="button" class="item-edit btn-icon">✎</button>
-            <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
-          </div>
-          <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
-        </div>
-        {{/each}}
-        {{#unless itemLists.reisegefaehrt.length}}
-        <p class="empty-state">Kein Reisegefährt zugewiesen. Importiere Gegenstände über den 📦-Button oder ziehe sie aus dem Kompendium hierher.</p>
+        {{#unless reisegefaehrtData.length}}
+        <p class="empty-state">Kein Reisegefährt zugewiesen. Importiere über den 📦-Button oder ziehe Gegenstände aus dem Kompendium hierher.</p>
         {{/unless}}
       </section>
+
+      {{!-- Pro Fahrzeug ein eigenes Inventar --}}
+      {{#each reisegefaehrtData as |vd|}}
+      <section class="panel vehicle-panel">
+
+        {{!-- Fahrzeug-Kopfzeile --}}
+        <div class="panel-header vehicle-header">
+          <span class="vehicle-name">🚗 {{vd.item.name}}</span>
+          {{#if vd.item.system.price}}<span class="item-detail gear-price">{{vd.item.system.price}}</span>{{/if}}
+          {{#if vd.item.system.weight}}<span class="item-detail">{{vd.item.system.weight}} kg</span>{{/if}}
+          <div class="item-actions">
+            <button type="button" class="item-edit btn-icon" title="Fahrzeug bearbeiten">✎</button>
+            <button type="button" class="item-delete btn-icon btn-danger" title="Fahrzeug entfernen">🗑</button>
+          </div>
+        </div>
+        {{#if vd.item.system.notes}}<p class="vehicle-notes">{{vd.item.system.notes}}</p>{{/if}}
+
+        {{!-- Fahrzeug-Inventar --}}
+        {{#if vd.vehicleActorId}}
+        <div class="vehicle-cargo" data-actor-id="{{vd.vehicleActorId}}">
+
+          {{!-- Waffen --}}
+          {{#if vd.cargoWeapons.length}}
+          <div class="vehicle-cargo-section">
+            <h4>Waffen</h4>
+            {{#each vd.cargoWeapons as |item|}}
+            <div class="item-row" data-item-id="{{item.id}}">
+              <span class="item-name">{{item.name}}</span>
+              <span class="item-detail">{{localize "ABOREA.Damage"}} {{item.system.damage}}</span>
+              <div class="item-actions">
+                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
+                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          {{!-- Rüstungen --}}
+          {{#if vd.cargoArmors.length}}
+          <div class="vehicle-cargo-section">
+            <h4>Rüstungen</h4>
+            {{#each vd.cargoArmors as |item|}}
+            <div class="item-row" data-item-id="{{item.id}}">
+              <span class="item-name">{{item.name}}</span>
+              <span class="item-detail">RW {{item.system.armor}}</span>
+              <div class="item-actions">
+                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
+                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          {{!-- Ausrüstung --}}
+          {{#if vd.cargoGear.length}}
+          <div class="vehicle-cargo-section">
+            <h4>Ausrüstung</h4>
+            {{#each vd.cargoGear as |item|}}
+            <div class="item-row" data-item-id="{{item.id}}">
+              <span class="item-name">{{item.name}}</span>
+              {{#if item.system.quantity}}<span class="item-detail">× {{item.system.quantity}}</span>{{/if}}
+              {{#if item.system.price}}<span class="item-detail gear-price">{{item.system.price}}</span>{{/if}}
+              <div class="item-actions">
+                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
+                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
+              </div>
+            </div>
+            {{/each}}
+          </div>
+          {{/if}}
+
+          {{#if vd.cargoEmpty}}
+          <p class="empty-state">Noch keine Gegenstände geladen.</p>
+          {{else}}
+          <div class="inventory-totals">⚖ Gesamtgewicht Ladung: <strong>{{vd.cargoWeight}} kg</strong></div>
+          {{/if}}
+
+          <div class="vehicle-cargo-footer">
+            <button type="button" class="vehicle-cargo-import btn-sm" data-actor-id="{{vd.vehicleActorId}}">📦 Gegenstand laden</button>
+          </div>
+        </div>
+        {{else}}
+        <p class="hint-text">Lade Foundry neu — das Fahrzeug-Inventar wird gerade erstellt.</p>
+        {{/if}}
+
+      </section>
+      {{/each}}
+
     </div>
 
     {{!-- ══ TAB: BESONDERES ══ --}}

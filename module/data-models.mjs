@@ -317,8 +317,9 @@ export class GearDataModel extends foundry.abstract.TypeDataModel {
       notes:       new fields.StringField({ initial: "" }),
       healAmount:  new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       healType:    new fields.StringField({ initial: "hp" }),
-      rarity:      new fields.StringField({ initial: "" }),
-      category:    new fields.StringField({ initial: "allgemein" })
+      rarity:         new fields.StringField({ initial: "" }),
+      category:       new fields.StringField({ initial: "allgemein" }),
+      vehicleActorId: new fields.StringField({ initial: "" })
     };
   }
 }

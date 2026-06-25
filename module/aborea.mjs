@@ -258,6 +258,31 @@ Hooks.once("ready", async function () {
   }
 });
 
+// ── Reisegefährt: Loot-Actor automatisch erstellen / löschen ─────────────────
+Hooks.on("createItem", async (item, _options, userId) => {
+  if (userId !== game.user.id) return;
+  if (item.parent?.type !== "character") return;
+  if (item.type !== "gear" || item.system.category !== "reisegefaehrt") return;
+  if (item.system.vehicleActorId) return;
+  const lootActor = await Actor.create({
+    name: `${item.name} (${item.parent.name})`,
+    type: "loot",
+    img: item.img ?? "icons/svg/item-bag.svg",
+    folder: null
+  });
+  if (lootActor) await item.update({ "system.vehicleActorId": lootActor.id });
+});
+
+Hooks.on("deleteItem", async (item, _options, userId) => {
+  if (userId !== game.user.id) return;
+  if (item.parent?.type !== "character") return;
+  if (item.type !== "gear" || item.system.category !== "reisegefaehrt") return;
+  const actorId = item.system.vehicleActorId;
+  if (!actorId) return;
+  const lootActor = game.actors.get(actorId);
+  if (lootActor) await lootActor.delete();
+});
+
 // Statuseffekte aus magischen Items anwenden / entfernen wenn equipped-Status wechselt
 Hooks.on("updateItem", async (item, changes) => {
   if (item.type !== "magic") return;

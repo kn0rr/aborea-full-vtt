@@ -102,6 +102,22 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
     context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
     context.isGM = game.user.isGM;
+    // Reisegefährt-Inventare: pro Fahrzeug den verknüpften Loot-Actor auflösen
+    context.reisegefaehrtData = context.itemLists.reisegefaehrt.map(item => {
+      const vehicleActor = item.system.vehicleActorId
+        ? game.actors.get(item.system.vehicleActorId) ?? null
+        : null;
+      const cargo = vehicleActor ? vehicleActor.items.contents : [];
+      return {
+        item,
+        vehicleActorId: vehicleActor?.id ?? null,
+        cargoWeapons: cargo.filter(i => i.type === "weapon"),
+        cargoArmors:  cargo.filter(i => i.type === "armor"),
+        cargoGear:    cargo.filter(i => i.type === "gear"),
+        cargoEmpty:   cargo.length === 0,
+        cargoWeight:  Math.round(cargo.reduce((s, i) => s + Number(i.system.weight ?? 0) * Number(i.system.quantity ?? 1), 0) * 10) / 10
+      };
+    });
     // "Besonderes"-Reiter: für NSC/Kreatur nur GM; für Charakter GM oder Besitzer
     context.canViewSpecial = game.user.isGM
       || (actor.type === "character" && actor.isOwner);
@@ -802,6 +818,37 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     html.find(".spawn-loot-actor").on("click", async () => {
       if (!game.user.isGM) return;
       await this._spawnLootActor();
+    });
+
+    // ── Reisegefährt-Inventar ──────────────────────────────────────────────
+    html.find(".vehicle-cargo-item-edit").on("click", ev => {
+      const { actorId, itemId } = ev.currentTarget.dataset;
+      game.actors.get(actorId)?.items.get(itemId)?.sheet?.render(true);
+    });
+    html.find(".vehicle-cargo-item-delete").on("click", async ev => {
+      const { actorId, itemId } = ev.currentTarget.dataset;
+      const vActor = game.actors.get(actorId);
+      if (vActor) await vActor.deleteEmbeddedDocuments("Item", [itemId]);
+    });
+    html.find(".vehicle-cargo-import").on("click", async ev => {
+      const actorId = ev.currentTarget.dataset.actorId;
+      const vActor = game.actors.get(actorId);
+      if (!vActor) return;
+      const choices = await this._packChoices("gear");
+      const pick = await openCompendiumPickerDialog("gear", choices, "Ausrüstung für Reisegefährt");
+      if (!pick) return;
+      const pack = game.packs.get(pick.pack); if (!pack) return;
+      const index = await pack.getIndex({ fields: ["name","type"] });
+      const hit = index.find(e => e.name === pick.name); if (!hit) return;
+      const doc = await pack.getDocument(hit._id);
+      const obj = duplicateItemObject(doc);
+      await vActor.createEmbeddedDocuments("Item", [obj]);
+    });
+    html.find(".vehicle-cargo-weapon-attack").on("click", async ev => {
+      const { actorId, itemId } = ev.currentTarget.dataset;
+      const vActor = game.actors.get(actorId);
+      const item = vActor?.items.get(itemId);
+      if (item) await import("./combat.mjs").then(m => m.rollAttack?.(this.actor, item));
     });
   }
 
