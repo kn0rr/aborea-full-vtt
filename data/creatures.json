@@ -1472,15 +1472,15 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": { "st": { "value": 5 }, "ge": { "value": 7 }, "ko": { "value": 5 }, "in": { "value": 2 }, "ch": { "value": 2 } },
-      "resources": { "hp": { "value": 8, "max": 8 }, "mp": { "value": 0, "max": 0 } },
-      "combat": { "combatBonus": 3, "offensiveBonus": 3, "defensiveBonus": 0, "armorValue": 4, "defenseValue": 4, "targetDefense": 4, "initiative": 3 },
+      "resources": { "hp": { "value": 12, "max": 12 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 4, "offensiveBonus": 3, "defensiveBonus": 1, "armorValue": 6, "defenseValue": 6, "targetDefense": 4, "initiative": 2 },
       "details": { "level": 1, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Biss (S 1)\nBesonderes: Rudel (bei 3+ Wölfen im Kampf +1 AB)" },
       "skills": {},
-      "weaponSkills": { "waffenlos": 3 },
+      "weaponSkills": { "waffenlos": 1 },
       "creature": { "kind": "Tier", "size": "mittel", "threat": 1, "regeneration": 0, "resistances": "", "vulnerabilities": "", "special": "Rudel (+1AB)" }
     },
     "items": [
-      { "name": "Biss", "type": "weapon", "img": "icons/svg/sword.svg", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
+      { "name": "Biss", "type": "weapon", "img": "assets/Wolf.png", "system": { "skill": "waffenlos", "attribute": "ge", "damage": 1, "range": "kurz", "initiativeMod": 0, "maneuverMod": 0, "minStrength": 0, "equipped": true } }
     ],
     "_id": "a1b2c3d4e5f6a7b8",
     "flags": { "aborea-v7": { "sourceId": "creature-wolf", "generated": true } },
@@ -1494,8 +1494,8 @@
     "img": "icons/svg/mystery-man.svg",
     "system": {
       "attributes": { "st": { "value": 7 }, "ge": { "value": 4 }, "ko": { "value": 7 }, "in": { "value": 2 }, "ch": { "value": 2 } },
-      "resources": { "hp": { "value": 22, "max": 22 }, "mp": { "value": 0, "max": 0 } },
-      "combat": { "combatBonus": 4, "offensiveBonus": 4, "defensiveBonus": 0, "armorValue": 5, "defenseValue": 5, "targetDefense": 5, "initiative": 0 },
+      "resources": { "hp": { "value": 25, "max": 25 }, "mp": { "value": 0, "max": 0 } },
+      "combat": { "combatBonus": 6, "offensiveBonus": 4, "defensiveBonus": 2, "armorValue": 6, "defenseValue": 6, "targetDefense": 5, "initiative": 1 },
       "details": { "level": 2, "xp": 0, "race": "", "class": "", "notes": "Kategorie: Tier\nWaffen: Klauen (S 2), Biss (S 2)\nBesonderes: Umklammerung – nach Treffer mit Klauen Manöver-Probe; Gegner verliert Handlungen solange umklammert" },
       "skills": {},
       "weaponSkills": { "waffenlos": 4 },
