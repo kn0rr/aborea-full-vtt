@@ -94,7 +94,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       armors: actor.items.filter(i => i.type === "armor"),
       spells: actor.items.filter(i => i.type === "spell"),
       miracles: actor.items.filter(i => i.type === "miracle"),
-      gear: actor.items.filter(i => i.type === "gear"),
+      gear: actor.items.filter(i => i.type === "gear" && i.system.category !== "reisegefaehrt"),
+      reisegefaehrt: actor.items.filter(i => i.type === "gear" && i.system.category === "reisegefaehrt"),
       skills: actor.items.filter(i => i.type === "skill"),
       magics: actor.items.filter(i => i.type === "magic")
     };

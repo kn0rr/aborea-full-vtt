@@ -61,6 +61,7 @@ export const ABOREA = {
     elementareMagie: { label: "ABOREA.SkillElementareMagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Elementare Magie" },
     freieMagie: { label: "ABOREA.SkillFreieMagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Freie Magie" },
     schwarzeMagie: { label: "ABOREA.SkillSchwarze_Magie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Schwarze Magie" },
+    weisseMagie: { label: "ABOREA.SkillWeisseMagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Weiße Magie" },
     bardenmagie: { label: "ABOREA.SkillBardenmagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Bardenmagie (Leitmagie)" },
     schamanenmagie: { label: "ABOREA.SkillSchamanenmagie", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Schamanenmagie (Leitmagie)" },
     wunder: { label: "ABOREA.SkillWunder", attribute: "in", creation: true, maxCreationRank: 2, costGroup: "spruchlisten", spellList: "Wunder (Leitmagie)" },
@@ -145,7 +146,7 @@ export const ABOREA = {
     }
     return null;
   },
-  spellListSkillKeys: ["wildeMagie","elementareMagie","freieMagie","schwarzeMagie","bardenmagie","schamanenmagie","wunder","zeichen"],
+  spellListSkillKeys: ["wildeMagie","elementareMagie","freieMagie","schwarzeMagie","weisseMagie","bardenmagie","schamanenmagie","wunder","zeichen"],
   getCreationSkills() {
     return Object.entries(this.skills).filter(([, cfg]) => cfg.creation).map(([key, cfg]) => ({ key, ...cfg }));
   },

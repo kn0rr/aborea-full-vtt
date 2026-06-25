@@ -930,5 +930,206 @@
       "school": "Freie Magie",
       "hpEffect": { "type": "buffDamage", "multiplier": 0.5, "max": 5 }
     }
+  },
+  {
+    "name": "Schutz",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ein +1 Rüstungsbonus/1 MP (max. Rüstung 10) und eine Person/1 MP. Der Effekt wirkt eine Stunde lang.",
+      "list": "Weiße Magie",
+      "rank": 1,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "3 m pro Stufe",
+      "targeted": true,
+      "duration": "1 Stunde",
+      "sourcePage": 41,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-schutz",
+      "externalId": "weisse-magie--schutz--1",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Linderung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Heilt einen TP/1 MP und eine Person/1 MP.",
+      "list": "Weiße Magie",
+      "rank": 2,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 41,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-linderung",
+      "externalId": "weisse-magie--linderung--2",
+      "school": "Weiße Magie",
+      "hpEffect": { "type": "heal", "multiplier": 1, "max": 0 }
+    }
+  },
+  {
+    "name": "Erkenntnis",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erhellt die wahre Natur um einen Erkenntnispunkt/1 MP.",
+      "list": "Weiße Magie",
+      "rank": 3,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 41,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-erkenntnis",
+      "externalId": "weisse-magie--erkenntnis--3",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Erschaffung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erschafft einen nichtmagischen Gegenstand im Wert von einem KL/1 MP.",
+      "list": "Weiße Magie",
+      "rank": 4,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "",
+      "sourcePage": 41,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-erschaffung",
+      "externalId": "weisse-magie--erschaffung--4",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Veränderung",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Verändert einen Gegenstand zum Besseren um max. 10 kg für eine Stunde pro Stufe des Formers.",
+      "list": "Weiße Magie",
+      "rank": 5,
+      "cost": 1,
+      "costOptions": [1, 2, 3],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "1 Stunde/Stufe",
+      "sourcePage": 41,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-veraenderung",
+      "externalId": "weisse-magie--veraenderung--5",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Schutzraum",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Erschafft einen Schutzraum für drei Stunden/1 MP und vier Personen/1 MP.",
+      "list": "Weiße Magie",
+      "rank": 6,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "3 Stunden/1 MP",
+      "sourcePage": 42,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-schutzraum",
+      "externalId": "weisse-magie--schutzraum--6",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Schutzwall",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Formt einen festen Wall für eine Runde/1 MP und mit fünf Verteidigungsbonus/1 MP (max. zehn).",
+      "list": "Weiße Magie",
+      "rank": 7,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Sichtweite",
+      "targeted": false,
+      "duration": "1 Runde/1 MP",
+      "sourcePage": 42,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-schutzwall",
+      "externalId": "weisse-magie--schutzwall--7",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Wissen",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Verschafft einer Person/1 MP einen +1 Bonus/1 MP (maximal +5) auf eine Fertigkeit für eine Runde.",
+      "list": "Weiße Magie",
+      "rank": 8,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "1 Runde",
+      "sourcePage": 42,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-wissen",
+      "externalId": "weisse-magie--wissen--8",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Reise",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Ermöglicht eine sofortige Reise von 1 km/1 MP und Person/1 MP zu einem bekannten Ort.",
+      "list": "Weiße Magie",
+      "rank": 9,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Berührung",
+      "targeted": true,
+      "duration": "",
+      "sourcePage": 42,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-reise",
+      "externalId": "weisse-magie--reise--9",
+      "school": "Weiße Magie"
+    }
+  },
+  {
+    "name": "Wahre Sicht",
+    "type": "spell",
+    "img": "icons/svg/book.svg",
+    "system": {
+      "description": "Es kann ein bekannter öffentlicher Ort für eine Runde/1 MP in einer Entfernung von 20 km/1 MP gesehen werden.",
+      "list": "Weiße Magie",
+      "rank": 10,
+      "cost": 1,
+      "costOptions": [1, 2, 3, 4, 5],
+      "range": "Berührung",
+      "targeted": false,
+      "duration": "1 Runde/1 MP",
+      "sourcePage": 42,
+      "sourcePdf": "ABOREA-1-Spielerheft-6ED.pdf",
+      "slug": "weisse-magie-wahre-sicht",
+      "externalId": "weisse-magie--wahre-sicht--10",
+      "school": "Weiße Magie"
+    }
   }
 ]

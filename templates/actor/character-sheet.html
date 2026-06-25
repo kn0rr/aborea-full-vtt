@@ -95,6 +95,7 @@
     <a class="item" data-tab="stats">{{localize "ABOREA.TabStats"}}</a>
     <a class="item" data-tab="skills">{{localize "ABOREA.TabSkills"}}</a>
     <a class="item" data-tab="inventory">{{localize "ABOREA.TabInventory"}}</a>
+    <a class="item" data-tab="reisegefaehrt">{{localize "ABOREA.TabReisegefaehrt"}}</a>
     {{#if canViewSpecial}}<a class="item" data-tab="special">{{localize "ABOREA.TabSpecial"}}</a>{{/if}}
     <a class="item" data-tab="companions">{{localize "ABOREA.TabCompanions"}}</a>
   </nav>
@@ -418,6 +419,32 @@
       {{#if inventoryTotals}}
       <div class="inventory-totals">⚖ Gesamtgewicht: <strong>{{inventoryTotals.weight}} kg</strong></div>
       {{/if}}
+    </div>
+
+    {{!-- ══ TAB: REISEGEFÄHRT ══ --}}
+    <div class="tab" data-group="primary" data-tab="reisegefaehrt">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>{{localize "ABOREA.TabReisegefaehrt"}}</h2>
+          <button type="button" class="import-pack-item btn-sm" data-type="gear" data-category="reisegefaehrt">📦 {{localize "ABOREA.ImportFromCompendium"}}</button>
+        </div>
+        {{#each itemLists.reisegefaehrt as |item|}}
+        <div class="item-row" data-item-id="{{item.id}}">
+          <span class="item-name">{{item.name}}</span>
+          {{#if item.system.quantity}}<span class="item-detail">× {{item.system.quantity}}</span>{{/if}}
+          {{#if item.system.price}}<span class="item-detail gear-price">{{item.system.price}}</span>{{/if}}
+          {{#if item.system.weight}}<span class="item-detail">{{item.system.weight}} kg</span>{{/if}}
+          <div class="item-actions">
+            <button type="button" class="item-edit btn-icon">✎</button>
+            <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
+          </div>
+          <input type="text" class="item-notes-input" data-item-id="{{item.id}}" value="{{item.system.notes}}" placeholder="Notiz…" />
+        </div>
+        {{/each}}
+        {{#unless itemLists.reisegefaehrt.length}}
+        <p class="empty-state">Kein Reisegefährt zugewiesen. Importiere Gegenstände über den 📦-Button oder ziehe sie aus dem Kompendium hierher.</p>
+        {{/unless}}
+      </section>
     </div>
 
     {{!-- ══ TAB: BESONDERES ══ --}}

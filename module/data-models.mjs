@@ -112,6 +112,7 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
       magicSkills:   new fields.ObjectField({ initial: () => ({}) }),
       role:          new fields.StringField({ initial: "" }),
       faction:       new fields.StringField({ initial: "" }),
+      sg:            new fields.NumberField({ initial: 1, integer: true, min: 1 }),
       wallet: new fields.ObjectField({ initial: () => ({ gf: 0, tt: 0, kl: 0, mu: 0 }) }),
     };
   }
@@ -135,6 +136,7 @@ export class CreatureDataModel extends foundry.abstract.TypeDataModel {
       creation:     new fields.ObjectField({ initial: () => ({}) }),
       weaponSkills: new fields.ObjectField({ initial: () => ({}) }),
       magicSkills:  new fields.ObjectField({ initial: () => ({}) }),
+      sg:       new fields.NumberField({ initial: 1, integer: true, min: 1 }),
       creature: new fields.ObjectField({ initial: () => ({
         kind: "", threat: 1, regeneration: 0,
         resistances: "", vulnerability: "", special: ""
@@ -315,7 +317,8 @@ export class GearDataModel extends foundry.abstract.TypeDataModel {
       notes:       new fields.StringField({ initial: "" }),
       healAmount:  new fields.NumberField({ initial: 0, integer: true, min: 0 }),
       healType:    new fields.StringField({ initial: "hp" }),
-      rarity:      new fields.StringField({ initial: "" })
+      rarity:      new fields.StringField({ initial: "" }),
+      category:    new fields.StringField({ initial: "allgemein" })
     };
   }
 }
