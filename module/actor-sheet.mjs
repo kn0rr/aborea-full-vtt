@@ -696,13 +696,22 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     // Kompendium-Import per Dialog
     html.find(".import-pack-item").on("click", async ev => {
       const type = ev.currentTarget.dataset.type;
-      const choices = await this._packChoices(type);
-      const labels = { weapon:"Waffen", armor:"Rüstungen", spell:"Zauber", miracle:"Wunder", gear:"Ausrüstung", race:"Völker", class:"Berufe", creature:"Kreaturen" };
+      const packId = ev.currentTarget.dataset.pack;
+      const labels = { weapon:"Waffen", armor:"Rüstungen", spell:"Zauber", miracle:"Wunder", gear:"Ausrüstung", reisegefaehrt:"Reisegefährt", race:"Völker", class:"Berufe", creature:"Kreaturen" };
+      let choices;
+      if (packId) {
+        const specificPack = game.packs.get(packId);
+        if (!specificPack) return;
+        const index = await specificPack.getIndex({ fields: ["name","type"] });
+        choices = index.map(e => ({ name: e.name, pack: packId, label: e.name }));
+      } else {
+        choices = await this._packChoices(type);
+      }
       const pick = await openCompendiumPickerDialog(type, choices, `${labels[type] || type} aus Kompendium`);
       if (!pick) return;
       const pack = game.packs.get(pick.pack); if (!pack) return;
       const index = await pack.getIndex({ fields: ["name","type"] });
-      const hit = index.find(e => e.name === pick.name && e.type === type); if (!hit) return;
+      const hit = index.find(e => e.name === pick.name); if (!hit) return;
       const doc = await pack.getDocument(hit._id);
       const obj = duplicateItemObject(doc);
       this._checkSpellListCapacity(obj);

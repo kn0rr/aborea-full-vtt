@@ -157,6 +157,17 @@
       }
     },
     {
+      "name": "reisegefaehrt",
+      "label": "Reisegefährt",
+      "type": "Item",
+      "path": "packs/reisegefaehrt",
+      "system": "aborea-v7",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
       "name": "magics",
       "label": "Magisches",
       "type": "Item",
