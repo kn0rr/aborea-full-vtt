@@ -88,7 +88,11 @@ function _getUntrainedPenalty(actor, weapon) {
   const minimums = actor.system.classFeatures?.weaponMinimums ?? {};
   if ("all" in minimums) return 0;
   if (keys.some(k => k === "boegen" || k === "armbrust") && "bows-crossbows" in minimums) return 0;
-  if ("deityWeapon" in minimums) {
+  // Götterwaffe: gespeicherte weaponMinimums ODER direkt aus dem Klassenitem lesen (Fallback für alte Charaktere)
+  const level = Number(actor.system.resources?.level ?? 1);
+  const hasDeityWeapon = "deityWeapon" in minimums || actor.items.find(i => i.type === "class")
+    ?.system?.levelFeatures?.some(f => f.type === "weaponMinimum" && f.target === "deityWeapon" && Number(f.level ?? 1) <= level);
+  if (hasDeityWeapon) {
     const godItem = actor.items.find(i => i.type === "god");
     const deitySkills = godItem?.system?.weaponSkills ?? [];
     if (keys.some(k => deitySkills.includes(k))) return 0;
