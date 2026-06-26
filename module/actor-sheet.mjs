@@ -97,23 +97,24 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       gear: actor.items.filter(i => i.type === "gear" && i.system.category !== "reisegefaehrt"),
       reisegefaehrt: actor.items.filter(i => i.type === "gear" && i.system.category === "reisegefaehrt"),
       skills: actor.items.filter(i => i.type === "skill"),
-      magics: actor.items.filter(i => i.type === "magic")
+      magics: actor.items.filter(i => i.type === "magic"),
+      gods: actor.items.filter(i => i.type === "god")
     };
     context.spellsByList = this._groupByList(actor.items.filter(i => i.type === "spell"));
     context.miraclesByList = this._groupByList(actor.items.filter(i => i.type === "miracle"));
     context.isGM = game.user.isGM;
     // Reisegefährt-Inventare: pro Fahrzeug den verknüpften Loot-Actor auflösen
     context.reisegefaehrtData = context.itemLists.reisegefaehrt.map(item => {
-      const vehicleActor = item.system.vehicleActorId
-        ? game.actors.get(item.system.vehicleActorId) ?? null
-        : null;
+      const vehicleActorId = item.system.vehicleActorId || null;
+      const vehicleActor = vehicleActorId ? game.actors.get(vehicleActorId) ?? null : null;
       const cargo = vehicleActor ? vehicleActor.items.contents : [];
+      const tag = (i) => ({ id: i.id, name: i.name, system: i.system, vehicleActorId });
       return {
         item,
-        vehicleActorId: vehicleActor?.id ?? null,
-        cargoWeapons: cargo.filter(i => i.type === "weapon"),
-        cargoArmors:  cargo.filter(i => i.type === "armor"),
-        cargoGear:    cargo.filter(i => i.type === "gear"),
+        vehicleActorId,
+        cargoWeapons: cargo.filter(i => i.type === "weapon").map(tag),
+        cargoArmors:  cargo.filter(i => i.type === "armor").map(tag),
+        cargoGear:    cargo.filter(i => i.type === "gear").map(tag),
         cargoEmpty:   cargo.length === 0,
         cargoWeight:  Math.round(cargo.reduce((s, i) => s + Number(i.system.weight ?? 0) * Number(i.system.quantity ?? 1), 0) * 10) / 10
       };
@@ -527,8 +528,21 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     return docs.filter(d => { const k = `${d.pack}:${d.name}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
   }
 
+  _preRender(context, options) {
+    // Scroll-Position vor dem Re-Render merken
+    const body = this.element?.querySelector(".sheet-body");
+    this._savedScrollTop = body ? body.scrollTop : 0;
+    return super._preRender(context, options);
+  }
+
   _onRender(context, options) {
     super._onRender(context, options);
+
+    // Scroll-Position nach Re-Render wiederherstellen
+    if (this._savedScrollTop) {
+      const body = this.element?.querySelector(".sheet-body");
+      if (body) body.scrollTop = this._savedScrollTop;
+    }
 
     // Robuster Form-Change-Handler: bei jedem Re-Render neu binden.
     // Den alten Handler zuerst entfernen, damit kein Duplikat entsteht.
@@ -731,6 +745,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       const doc = await pack.getDocument(hit._id);
       const obj = duplicateItemObject(doc);
       this._checkSpellListCapacity(obj);
+      await this._ensureVehicleActorId(obj);
       await this.actor.createEmbeddedDocuments("Item", [obj]);
       await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: pick.pack });
     });
@@ -844,12 +859,46 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       const obj = duplicateItemObject(doc);
       await vActor.createEmbeddedDocuments("Item", [obj]);
     });
+    html.find(".vehicle-cargo-move-to-inventory").on("click", async ev => {
+      const { actorId, itemId } = ev.currentTarget.dataset;
+      const vActor = game.actors.get(actorId);
+      const item = vActor?.items.get(itemId);
+      if (!item) return;
+      const obj = item.toObject();
+      delete obj._id;
+      await vActor.deleteEmbeddedDocuments("Item", [itemId]);
+      await this.actor.createEmbeddedDocuments("Item", [obj]);
+    });
+    html.find(".gear-move-to-vehicle").on("click", async ev => {
+      const itemId = ev.currentTarget.dataset.itemId;
+      const vehicleActorId = ev.currentTarget.dataset.vehicleActorId;
+      const item = this.actor.items.get(itemId);
+      const vActor = game.actors.get(vehicleActorId);
+      if (!item || !vActor) return;
+      const obj = item.toObject();
+      delete obj._id;
+      await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
+      await vActor.createEmbeddedDocuments("Item", [obj]);
+    });
     html.find(".vehicle-cargo-weapon-attack").on("click", async ev => {
       const { actorId, itemId } = ev.currentTarget.dataset;
       const vActor = game.actors.get(actorId);
       const item = vActor?.items.get(itemId);
       if (item) await import("./combat.mjs").then(m => m.rollAttack?.(this.actor, item));
     });
+  }
+
+  async _ensureVehicleActorId(itemObj) {
+    if (itemObj.type !== "gear") return;
+    if (itemObj.system?.category !== "reisegefaehrt") return;
+    if (itemObj.system?.vehicleActorId) return;
+    const lootActor = await Actor.create({
+      name: `${itemObj.name} (${this.actor.name})`,
+      type: "loot",
+      img: itemObj.img ?? "icons/svg/item-bag.svg",
+      folder: null
+    });
+    if (lootActor) foundry.utils.setProperty(itemObj, "system.vehicleActorId", lootActor.id);
   }
 
   async _spawnLootActor() {
@@ -925,6 +974,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (item.type === "class") return this._applyClass(item);
     const obj = duplicateItemObject(item);
     this._checkSpellListCapacity(obj);
+    await this._ensureVehicleActorId(obj);
     const created = await this.actor.createEmbeddedDocuments("Item", [obj]);
     await this._logInventoryEntry("item-add", itemHistoryLabel(obj), { itemType: obj.type, sourcePack: item.pack || "" });
     return created;
@@ -961,6 +1011,13 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
   async _applyGod(godItem) {
     if (this.actor.type !== "character") return;
     const godName = godItem.name ?? godItem.system?.name ?? "";
+    // Altes god-Item entfernen
+    const existing = this.actor.items.filter(i => i.type === "god").map(i => i.id);
+    if (existing.length) await this.actor.deleteEmbeddedDocuments("Item", existing);
+    // Neues god-Item ins Inventar legen
+    const obj = godItem.toObject ? godItem.toObject() : foundry.utils.deepClone(godItem);
+    delete obj._id;
+    await this.actor.createEmbeddedDocuments("Item", [obj]);
     await this.actor.update({ "system.details.god": godName });
     ui.notifications.info(`${godName} als Gottheit für ${this.actor.name} gesetzt.`);
   }

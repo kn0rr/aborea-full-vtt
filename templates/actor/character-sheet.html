@@ -61,16 +61,14 @@
       <select name="selectedClass"><option value=""></option>{{#each availablePacks.classes as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
       <button type="button" class="apply-class btn-sm btn-primary picker-btn" title="{{localize "ABOREA.Apply"}}">✓</button>
     </div>
-    {{#if system.isLeitmagieClass}}
     <div class="picker-row">
       <label class="picker-label">{{localize "ABOREA.God"}}</label>
       <select name="selectedGod"><option value=""></option>{{#each availablePacks.gods as |e|}}<option value="{{e.name}}">{{e.name}}</option>{{/each}}</select>
       <button type="button" class="apply-god btn-sm btn-primary picker-btn" title="{{localize "ABOREA.Apply"}}">✓</button>
     </div>
-    {{/if}}
   </div>
   {{/unless}}
-  {{#if system.isLeitmagieClass}}{{#if system.creation.completed}}
+  {{#if system.creation.completed}}
   <div class="pickers-bar">
     <div class="picker-row">
       <label class="picker-label">{{localize "ABOREA.God"}}</label>
@@ -78,7 +76,7 @@
       <button type="button" class="apply-god btn-sm btn-primary picker-btn" title="{{localize "ABOREA.Apply"}}">✓</button>
     </div>
   </div>
-  {{/if}}{{/if}}
+  {{/if}}
 
   {{!-- Stufenaufstieg-Banner --}}
   {{#if system.levelUp.pending}}
@@ -464,8 +462,9 @@
               <span class="item-name">{{item.name}}</span>
               <span class="item-detail">{{localize "ABOREA.Damage"}} {{item.system.damage}}</span>
               <div class="item-actions">
-                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
-                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
+                <button type="button" class="vehicle-cargo-move-to-inventory btn-icon" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Ins Inventar verschieben">⇐</button>
+                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
+                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
               </div>
             </div>
             {{/each}}
@@ -481,8 +480,9 @@
               <span class="item-name">{{item.name}}</span>
               <span class="item-detail">RW {{item.system.armor}}</span>
               <div class="item-actions">
-                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
-                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
+                <button type="button" class="vehicle-cargo-move-to-inventory btn-icon" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Ins Inventar verschieben">⇐</button>
+                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
+                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
               </div>
             </div>
             {{/each}}
@@ -499,8 +499,9 @@
               {{#if item.system.quantity}}<span class="item-detail">× {{item.system.quantity}}</span>{{/if}}
               {{#if item.system.price}}<span class="item-detail gear-price">{{item.system.price}}</span>{{/if}}
               <div class="item-actions">
-                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
-                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{../vd.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
+                <button type="button" class="vehicle-cargo-move-to-inventory btn-icon" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Ins Inventar verschieben">⇐</button>
+                <button type="button" class="vehicle-cargo-item-edit btn-icon" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Bearbeiten">✎</button>
+                <button type="button" class="vehicle-cargo-item-delete btn-icon btn-danger" data-actor-id="{{item.vehicleActorId}}" data-item-id="{{item.id}}" title="Entfernen">🗑</button>
               </div>
             </div>
             {{/each}}
@@ -600,6 +601,32 @@
           {{else}}<p class="empty-state">{{localize "ABOREA.NoActivatableFeatures"}}</p>{{/if}}
         </section>
       </details>
+
+      {{#if itemLists.gods.length}}
+      <details class="special-section" open>
+        <summary>{{localize "ABOREA.God"}}</summary>
+        <section class="panel">
+          {{#each itemLists.gods as |godItem|}}
+          <div class="god-panel">
+            <div class="god-header">
+              <img src="{{godItem.img}}" class="god-img" title="{{godItem.name}}" />
+              <div class="god-title">
+                <strong class="god-name">{{godItem.name}}</strong>
+                {{#if godItem.system.rank}}<span class="god-rank">{{godItem.system.rank}}</span>{{/if}}
+                {{#if godItem.system.pantheon}}<span class="god-pantheon">{{godItem.system.pantheon}}</span>{{/if}}
+              </div>
+              <button type="button" class="item-delete btn-icon btn-danger" data-item-id="{{godItem.id}}" title="Gottheit entfernen">🗑</button>
+            </div>
+            {{#if godItem.system.aspects}}<div class="god-row"><span class="god-label">Aspekte:</span> {{godItem.system.aspects}}</div>{{/if}}
+            {{#if godItem.system.weapon}}<div class="god-row"><span class="god-label">Waffe:</span> {{godItem.system.weapon}}</div>{{/if}}
+            {{#if godItem.system.miracleList}}<div class="god-row"><span class="god-label">Wunderliste:</span> {{godItem.system.miracleList}}</div>{{/if}}
+            {{#if godItem.system.symbol}}<div class="god-row"><span class="god-label">Symbol:</span> {{godItem.system.symbol}}</div>{{/if}}
+            {{#if godItem.system.description}}<p class="god-description">{{godItem.system.description}}</p>{{/if}}
+          </div>
+          {{/each}}
+        </section>
+      </details>
+      {{/if}}
 
       <details class="special-section">
         <summary>{{localize "ABOREA.EmbeddedRaceClass"}}</summary>

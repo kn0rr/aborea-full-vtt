@@ -145,6 +145,9 @@
       {{#if item.system.healAmount}}
       <button type="button" class="gear-use btn-sm btn-primary" title="{{item.system.healType}}: +{{item.system.healAmount}}">🧪 Verwenden</button>
       {{/if}}
+      {{#each ../reisegefaehrtData as |vd|}}
+      <button type="button" class="gear-move-to-vehicle btn-icon" data-item-id="{{../item.id}}" data-vehicle-actor-id="{{vd.vehicleActorId}}" title="→ {{vd.item.name}}">⇒</button>
+      {{/each}}
       <button type="button" class="item-edit btn-icon">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
     </div>

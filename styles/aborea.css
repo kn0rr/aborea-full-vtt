@@ -1532,3 +1532,15 @@
   color: var(--aborea-brown);
   opacity: .7;
 }
+
+/* ── Gottheit-Panel ─────────────────────────────────── */
+.god-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+.god-header { display: flex; align-items: flex-start; gap: 10px; }
+.god-img { width: 40px; height: 40px; object-fit: contain; border-radius: 6px; border: 1px solid var(--aborea-border-light); flex-shrink: 0; }
+.god-title { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.god-name { font-size: 1rem; font-weight: 700; color: var(--aborea-dark); }
+.god-rank { font-size: .78rem; color: var(--aborea-gold); font-style: italic; }
+.god-pantheon { font-size: .78rem; color: var(--aborea-brown); }
+.god-row { font-size: .85rem; color: var(--aborea-dark); }
+.god-row .god-label { font-weight: 600; color: var(--aborea-brown); margin-right: 4px; }
+.god-description { font-size: .82rem; color: var(--aborea-brown); line-height: 1.5; margin: 4px 0 0; font-style: italic; }
