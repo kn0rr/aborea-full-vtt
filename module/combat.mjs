@@ -807,7 +807,9 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
 
   const attackValue = roll.total + effectiveOffBonus + situMod;
   const hit    = attackValue > targetDefense;
-  const damage = hit ? Math.max(1, (attackValue - targetDefense) + Number(weapon.system.damage ?? 0)) : 0;
+  const weaponDmg = Number(weapon.system.damage ?? 0);
+  const critBonus = (hit && roll.critical) ? weaponDmg : 0;
+  const damage = hit ? Math.max(1, (attackValue - targetDefense) + weaponDmg + critBonus) : 0;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
@@ -821,7 +823,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
       offBonus, untrainedPenalty, situMod,
       attackValue, defenseValue: targetDefense,
       hit, damage, patzer: false, critical: roll.critical,
-      weaponDamage: weapon.system.damage ?? 0,
+      weaponDamage: weaponDmg, critBonus,
     }),
     flags: { "aborea-v7": { attackResult: { hit, damage, targetActorId: targetActor?.id ?? null } } }
   });
@@ -854,7 +856,7 @@ function _buildAttackCard({
   attacker, attackerImg = "",
   target,   targetImg = "",   targetActorId,
   weapon, rollFormula, rollTotal, offBonus, untrainedPenalty = 0, situMod,
-  attackValue, defenseValue, hit, damage, patzer, critical, weaponDamage = 0
+  attackValue, defenseValue, hit, damage, patzer, critical, weaponDamage = 0, critBonus = 0
 }) {
   const resultClass = patzer ? "patzer" : (hit ? "hit" : "miss");
   const resultLabel = patzer
@@ -881,6 +883,7 @@ function _buildAttackCard({
         <span>Waffenschaden</span>
         <span>${_sign(weaponDamage)}</span>
       </div>
+      ${critBonus ? `<div class="ac-row critical-bonus"><span>💥 Kritisch (Waffenschaden ×2)</span><span>+${critBonus}</span></div>` : ""}
       <div class="ac-row ac-total">
         <span><strong>Schaden</strong></span>
         <span><strong>${damage}</strong></span>
