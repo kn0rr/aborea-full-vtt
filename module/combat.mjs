@@ -89,17 +89,7 @@ function _getUntrainedPenalty(actor, weapon) {
   if ("all" in minimums) return 0;
   if (keys.some(k => k === "boegen" || k === "armbrust") && "bows-crossbows" in minimums) return 0;
   if ("deityWeapon" in minimums) {
-    let godItem = actor.items.find(i => i.type === "god");
-    // Fallback: god-Item per Name aus dem Kompendium suchen wenn keins im Inventar liegt
-    if (!godItem) {
-      const godName = actor.system?.details?.god;
-      if (godName) {
-        for (const pack of game.packs.filter(p => p.documentName === "Item")) {
-          const idx = pack.index.find(e => e.type === "god" && e.name === godName);
-          if (idx) { godItem = await pack.getDocument(idx._id); break; }
-        }
-      }
-    }
+    const godItem = actor.items.find(i => i.type === "god");
     const deitySkills = godItem?.system?.weaponSkills ?? [];
     if (keys.some(k => deitySkills.includes(k))) return 0;
   }
