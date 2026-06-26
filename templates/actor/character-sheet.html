@@ -438,13 +438,13 @@
       <section class="panel vehicle-panel">
 
         {{!-- Fahrzeug-Kopfzeile --}}
-        <div class="panel-header vehicle-header">
+        <div class="panel-header vehicle-header" data-item-id="{{vd.item.id}}">
           <span class="vehicle-name">🚗 {{vd.item.name}}</span>
           {{#if vd.item.system.price}}<span class="item-detail gear-price">{{vd.item.system.price}}</span>{{/if}}
           {{#if vd.item.system.weight}}<span class="item-detail">{{vd.item.system.weight}} kg</span>{{/if}}
           <div class="item-actions">
-            <button type="button" class="item-edit btn-icon" title="Fahrzeug bearbeiten">✎</button>
-            <button type="button" class="item-delete btn-icon btn-danger" title="Fahrzeug entfernen">🗑</button>
+            <button type="button" class="item-edit btn-icon" data-item-id="{{vd.item.id}}" title="Fahrzeug bearbeiten">✎</button>
+            <button type="button" class="item-delete btn-icon btn-danger" data-item-id="{{vd.item.id}}" title="Fahrzeug entfernen">🗑</button>
           </div>
         </div>
         {{#if vd.item.system.notes}}<p class="vehicle-notes">{{vd.item.system.notes}}</p>{{/if}}

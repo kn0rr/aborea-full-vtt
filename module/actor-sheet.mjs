@@ -528,20 +528,21 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     return docs.filter(d => { const k = `${d.pack}:${d.name}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
   }
 
-  _preRender(context, options) {
-    // Scroll-Position vor dem Re-Render merken
-    const body = this.element?.querySelector(".sheet-body");
-    this._savedScrollTop = body ? body.scrollTop : 0;
-    return super._preRender(context, options);
-  }
-
   _onRender(context, options) {
     super._onRender(context, options);
 
-    // Scroll-Position nach Re-Render wiederherstellen
-    if (this._savedScrollTop) {
-      const body = this.element?.querySelector(".sheet-body");
-      if (body) body.scrollTop = this._savedScrollTop;
+    // Scroll-Position wiederherstellen (requestAnimationFrame stellt sicher,
+    // dass das Layout bereits berechnet ist bevor wir setzen)
+    const body = this.element?.querySelector(".sheet-body");
+    if (body) {
+      if (this._savedScrollTop) {
+        requestAnimationFrame(() => { body.scrollTop = this._savedScrollTop; });
+      }
+      // Scroll-Listener: Position laufend merken
+      if (!body._aboreScrollBound) {
+        body._aboreScrollBound = true;
+        body.addEventListener("scroll", () => { this._savedScrollTop = body.scrollTop; });
+      }
     }
 
     // Robuster Form-Change-Handler: bei jedem Re-Render neu binden.
@@ -843,7 +844,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     html.find(".vehicle-cargo-item-delete").on("click", async ev => {
       const { actorId, itemId } = ev.currentTarget.dataset;
       const vActor = game.actors.get(actorId);
-      if (vActor) await vActor.deleteEmbeddedDocuments("Item", [itemId]);
+      if (vActor) {
+        await vActor.deleteEmbeddedDocuments("Item", [itemId]);
+        this.render();
+      }
     });
     html.find(".vehicle-cargo-import").on("click", async ev => {
       const actorId = ev.currentTarget.dataset.actorId;
@@ -858,6 +862,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       const doc = await pack.getDocument(hit._id);
       const obj = duplicateItemObject(doc);
       await vActor.createEmbeddedDocuments("Item", [obj]);
+      this.render();
     });
     html.find(".vehicle-cargo-move-to-inventory").on("click", async ev => {
       const { actorId, itemId } = ev.currentTarget.dataset;
@@ -868,6 +873,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       delete obj._id;
       await vActor.deleteEmbeddedDocuments("Item", [itemId]);
       await this.actor.createEmbeddedDocuments("Item", [obj]);
+      this.render();
     });
     html.find(".gear-move-to-vehicle").on("click", async ev => {
       const itemId = ev.currentTarget.dataset.itemId;
@@ -879,6 +885,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       delete obj._id;
       await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
       await vActor.createEmbeddedDocuments("Item", [obj]);
+      this.render();
     });
     html.find(".vehicle-cargo-weapon-attack").on("click", async ev => {
       const { actorId, itemId } = ev.currentTarget.dataset;
@@ -1012,8 +1019,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (this.actor.type !== "character") return;
     const godName = godItem.name ?? godItem.system?.name ?? "";
     // Altes god-Item entfernen
-    const existing = this.actor.items.filter(i => i.type === "god").map(i => i.id);
-    if (existing.length) await this.actor.deleteEmbeddedDocuments("Item", existing);
+    const existing = this.actor.items.filter(i => i.type === "god").map(i => i.id).filter(Boolean);
+    if (existing.length) {
+      try { await this.actor.deleteEmbeddedDocuments("Item", existing); } catch(e) { console.warn("ABOREA | god-Item löschen fehlgeschlagen:", e); }
+    }
     // Neues god-Item ins Inventar legen
     const obj = godItem.toObject ? godItem.toObject() : foundry.utils.deepClone(godItem);
     delete obj._id;
@@ -1182,7 +1191,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const actorSystem = this.actor.system;
     const base = foundry.utils.deepClone(actorSystem.baseAttributes || actorSystem.attributes || {});
     const race = this.actor.items.find(i => i.type === "race");
-    const cls  = this.actor.items.find(i => i.type === "class");
+    let cls    = this.actor.items.find(i => i.type === "class");
+    // Fallback: Klasse aus Kompendium laden wenn kein Item im Inventar
+    if (!cls) {
+      const clsName = actorSystem.details?.class;
+      if (clsName) cls = await findPackDocumentByTypeAndName("class", clsName);
+    }
     const level = Number(actorSystem.resources?.level ?? 1) || 1;
     const raceName = (race?.name || "").toLowerCase();
     const errors = []; const finalAttrs = {};
