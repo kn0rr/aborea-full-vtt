@@ -798,7 +798,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
   const attackValue = roll.total + effectiveOffBonus + situMod;
   const hit    = attackValue > targetDefense;
   const weaponDmg = Number(weapon.system.damage ?? 0);
-  const critBonus = (hit && roll.critical) ? weaponDmg : 0;
+  const critBonus = (hit && roll.critical) ? Math.max(0, weaponDmg) : 0;
   const damage = hit ? Math.max(1, (attackValue - targetDefense) + weaponDmg + critBonus) : 0;
 
   await ChatMessage.create({
