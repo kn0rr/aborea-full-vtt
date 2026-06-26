@@ -35,6 +35,9 @@
     <span class="item-detail">{{localize "ABOREA.Damage"}} {{item.system.damage}}</span>
     <div class="item-actions">
       <button type="button" class="roll-attack btn-sm">⚔ {{localize "ABOREA.Attack"}}</button>
+      {{#each ../reisegefaehrtData as |vd|}}
+      <button type="button" class="gear-move-to-vehicle btn-icon" data-item-id="{{item.id}}" data-vehicle-actor-id="{{vd.vehicleActorId}}" title="→ {{vd.item.name}}">⇒</button>
+      {{/each}}
       <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
     </div>
@@ -57,6 +60,9 @@
     <span class="item-name">{{item.name}}</span>
     <span class="item-detail">{{localize "ABOREA.ArmorValue"}} {{item.system.armor}}</span>
     <div class="item-actions">
+      {{#each ../reisegefaehrtData as |vd|}}
+      <button type="button" class="gear-move-to-vehicle btn-icon" data-item-id="{{item.id}}" data-vehicle-actor-id="{{vd.vehicleActorId}}" title="→ {{vd.item.name}}">⇒</button>
+      {{/each}}
       <button type="button" class="item-edit btn-icon" title="Bearbeiten">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger" title="Löschen">🗑</button>
     </div>
@@ -146,7 +152,7 @@
       <button type="button" class="gear-use btn-sm btn-primary" title="{{item.system.healType}}: +{{item.system.healAmount}}">🧪 Verwenden</button>
       {{/if}}
       {{#each ../reisegefaehrtData as |vd|}}
-      <button type="button" class="gear-move-to-vehicle btn-icon" data-item-id="{{../item.id}}" data-vehicle-actor-id="{{vd.vehicleActorId}}" title="→ {{vd.item.name}}">⇒</button>
+      <button type="button" class="gear-move-to-vehicle btn-icon" data-item-id="{{item.id}}" data-vehicle-actor-id="{{vd.vehicleActorId}}" title="→ {{vd.item.name}}">⇒</button>
       {{/each}}
       <button type="button" class="item-edit btn-icon">✎</button>
       <button type="button" class="item-delete btn-icon btn-danger">🗑</button>
