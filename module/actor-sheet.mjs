@@ -584,7 +584,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       img.style.cursor = "zoom-in";
       img.addEventListener("click", () => {
         if (!img.src) return;
-        new ImagePopout(img.src, { title: img.alt || img.title || "" }).render(true);
+        new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: img.alt || img.title || "" } }).render(true);
       });
     });
 
@@ -594,14 +594,14 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       img.addEventListener("click", (ev) => {
         if (ev.shiftKey) {
           if (!this.isEditable) return;
-          new FilePicker({
+          new foundry.applications.apps.FilePicker.implementation({
             type: "image",
             current: this.document.img,
             callback: path => this.document.update({ img: path }),
           }).render(true);
         } else {
           if (!img.src) return;
-          new ImagePopout(img.src, { title: img.alt || img.title || this.document.name || "" }).render(true);
+          new foundry.applications.apps.ImagePopout({ src: img.src, title: img.alt || img.title || this.document.name || "" }).render(true);
         }
       });
     });
@@ -1889,7 +1889,7 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       img.style.cursor = "pointer";
       img.addEventListener("click", () => {
         if (!this.isEditable) return;
-        new FilePicker({
+        new foundry.applications.apps.FilePicker.implementation({
           type: "image",
           current: this.document.img,
           callback: path => this.document.update({ img: path }),

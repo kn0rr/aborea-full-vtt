@@ -54,16 +54,21 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     };
     this.element.addEventListener("change", this._changeHandler);
 
-    // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
+    // Portrait (data-edit): normaler Klick = Bild vergrößern, Shift+Klick = FilePicker (nur editierbar)
     this.element.querySelectorAll("img[data-edit]").forEach(img => {
-      img.style.cursor = "pointer";
-      img.addEventListener("click", () => {
-        if (!this.isEditable) return;
-        new FilePicker({
-          type: "image",
-          current: this.document.img,
-          callback: path => this.document.update({ img: path }),
-        }).render(true);
+      img.style.cursor = "zoom-in";
+      img.addEventListener("click", (ev) => {
+        if (ev.shiftKey) {
+          if (!this.isEditable) return;
+          new foundry.applications.apps.FilePicker.implementation({
+            type: "image",
+            current: this.document.img,
+            callback: path => this.document.update({ img: path }),
+          }).render(true);
+        } else {
+          if (!img.src) return;
+          new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: this.document.name || "" } }).render(true);
+        }
       });
     });
     if (!this.isEditable) return;
