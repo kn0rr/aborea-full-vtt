@@ -17,9 +17,10 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
 
     context.isGM = game.user.isGM;
     context.canViewDescription = game.user.isGM || !item.system.descriptionLocked;
+    context.descriptionField = item.system.schema.fields.description;
 
-    // Beschreibungstext als Rich-HTML aufbereiten (für alle Item-Typen)
-    if (item.system.description && context.canViewDescription) {
+    // Beschreibungstext als Rich-HTML für Spieler-Ansicht aufbereiten
+    if (!context.isGM && item.system.description && context.canViewDescription) {
       context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         item.system.description,
         { async: true, relativeTo: item }
@@ -34,37 +35,6 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     }
 
     return context;
-  }
-
-  async _mountDescriptionEditor() {
-    const mount = this.element.querySelector(".description-prose-mount");
-    if (!mount || !game.user.isGM || !this.isEditable) return;
-
-    // Alten Editor aufräumen
-    if (this._proseMirrorEditor) {
-      this._proseMirrorEditor.destroy?.();
-      this._proseMirrorEditor = null;
-    }
-    mount.innerHTML = "";
-
-    const content = this.item.system.description ?? "";
-    try {
-      this._proseMirrorEditor = await foundry.prosemirror.ProseMirrorEditor.create(mount, content, {
-        document: this.item,
-        fieldName: "system.description",
-        collaborate: false,
-        plugins: {
-          ...foundry.prosemirror.defaultPlugins,
-          menu: foundry.prosemirror.ProseMirrorMenu.build(foundry.prosemirror.defaultSchema, {
-            compact: false,
-            destroyOnSave: false,
-            onSave: () => this._proseMirrorEditor?.save(),
-          }),
-        },
-      });
-    } catch(e) {
-      console.error("ABOREA | ProseMirror init failed:", e);
-    }
   }
 
   // statusEffects: Komma-String → Array (ersetzt _updateObject)
@@ -86,9 +56,6 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
       await this.document.update({ [n]: val });
     };
     this.element.addEventListener("change", this._changeHandler);
-
-    // ProseMirror-Editor mounten
-    this._mountDescriptionEditor();
 
     // Portrait (data-edit): normaler Klick = Bild vergrößern, Shift+Klick = FilePicker (nur editierbar)
     this.element.querySelectorAll("img[data-edit]").forEach(img => {

@@ -2,7 +2,7 @@
 <div class="description-editor-wrap">
   <label class="description-label">{{localize "ABOREA.Description"}}</label>
   {{#if isGM}}
-  <div class="description-prose-mount"></div>
+  {{formField descriptionField value=system.description name="system.description" stacked=true}}
   {{else}}
   {{#if enrichedDescription}}
   <div class="item-description-text">{{{enrichedDescription}}}</div>
