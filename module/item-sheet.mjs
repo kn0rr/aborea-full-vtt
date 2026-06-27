@@ -18,12 +18,14 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     context.isGM = game.user.isGM;
     context.canViewDescription = game.user.isGM || !item.system.descriptionLocked;
 
-    // Beschreibungstext als Rich-HTML aufbereiten
+    // Beschreibungstext als Rich-HTML aufbereiten (für alle Item-Typen)
     if (item.system.description && context.canViewDescription) {
       context.enrichedDescription = await foundry.applications.ux.TextEditor.implementation.enrichHTML(
         item.system.description,
         { async: true, relativeTo: item }
       );
+    } else {
+      context.enrichedDescription = "";
     }
 
     // Attribut-Auswahl für Waffen als lokalisierte Liste
