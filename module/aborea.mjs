@@ -108,6 +108,7 @@ Hooks.once("init", async function () {
   await foundry.applications.handlebars.loadTemplates([
     "systems/aborea-v7/templates/actor/partials/inventory.html",
     "systems/aborea-v7/templates/actor/partials/conditions.html",
+    "systems/aborea-v7/templates/item/partials/description-editor.html",
     "systems/aborea-v7/templates/combat/check-dialog.html",
     "systems/aborea-v7/templates/audio/soundboard.html",
     "systems/aborea-v7/templates/combat/attack-dialog.html",
