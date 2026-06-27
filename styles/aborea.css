@@ -1545,10 +1545,21 @@
   margin-bottom: 4px;
   opacity: .8;
 }
-.description-editor-wrap .editor {
+.description-editor-wrap prose-mirror {
+  display: block;
   border: 1px solid var(--aborea-border, #c9b99a);
   border-radius: 4px;
+  min-height: 160px;
+  resize: vertical;
+  overflow: auto;
+}
+.description-editor-wrap prose-mirror .ProseMirror {
   min-height: 120px;
+  padding: 8px 10px;
+  outline: none;
+  font-size: .88rem;
+  color: var(--aborea-brown);
+  line-height: 1.55;
 }
 .description-editor-wrap .editor-content {
   padding: 8px 10px;

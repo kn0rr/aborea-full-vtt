@@ -2,7 +2,7 @@
 <div class="description-editor-wrap">
   <label class="description-label">{{localize "ABOREA.Description"}}</label>
   {{#if isGM}}
-  <prose-mirror name="system.description" toggled value="{{system.description}}"></prose-mirror>
+  <prose-mirror name="system.description" toggled>{{{system.description}}}</prose-mirror>
   {{else}}
   {{#if enrichedDescription}}
   <div class="item-description-text">{{{enrichedDescription}}}</div>
