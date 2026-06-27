@@ -1545,15 +1545,17 @@
   margin-bottom: 4px;
   opacity: .8;
 }
-.description-editor-wrap prose-mirror {
-  display: block;
+.description-prose-mount {
   border: 1px solid var(--aborea-border, #c9b99a);
   border-radius: 4px;
   min-height: 160px;
-  resize: vertical;
   overflow: auto;
+  resize: vertical;
 }
-.description-editor-wrap prose-mirror .ProseMirror {
+.description-prose-mount .editor {
+  height: 100%;
+}
+.description-prose-mount .ProseMirror {
   min-height: 120px;
   padding: 8px 10px;
   outline: none;
@@ -1561,6 +1563,12 @@
   color: var(--aborea-brown);
   line-height: 1.55;
 }
+.description-prose-mount .ProseMirror p { margin: 0 0 .5em; }
+.description-prose-mount .ProseMirror h1,
+.description-prose-mount .ProseMirror h2,
+.description-prose-mount .ProseMirror h3 { margin: .5em 0 .25em; }
+.description-prose-mount .ProseMirror ul,
+.description-prose-mount .ProseMirror ol { padding-left: 1.4em; margin: .25em 0; }
 .description-editor-wrap .editor-content {
   padding: 8px 10px;
   font-size: .88rem;

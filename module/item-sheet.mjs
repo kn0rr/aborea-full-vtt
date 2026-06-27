@@ -36,6 +36,37 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     return context;
   }
 
+  async _mountDescriptionEditor() {
+    const mount = this.element.querySelector(".description-prose-mount");
+    if (!mount || !game.user.isGM || !this.isEditable) return;
+
+    // Alten Editor aufräumen
+    if (this._proseMirrorEditor) {
+      this._proseMirrorEditor.destroy?.();
+      this._proseMirrorEditor = null;
+    }
+    mount.innerHTML = "";
+
+    const content = this.item.system.description ?? "";
+    try {
+      this._proseMirrorEditor = await foundry.prosemirror.ProseMirrorEditor.create(mount, content, {
+        document: this.item,
+        fieldName: "system.description",
+        collaborate: false,
+        plugins: {
+          ...foundry.prosemirror.defaultPlugins,
+          menu: foundry.prosemirror.ProseMirrorMenu.build(foundry.prosemirror.defaultSchema, {
+            compact: false,
+            destroyOnSave: false,
+            onSave: () => this._proseMirrorEditor?.save(),
+          }),
+        },
+      });
+    } catch(e) {
+      console.error("ABOREA | ProseMirror init failed:", e);
+    }
+  }
+
   // statusEffects: Komma-String → Array (ersetzt _updateObject)
   _onRender(context, options) {
     super._onRender(context, options);
@@ -56,9 +87,8 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     };
     this.element.addEventListener("change", this._changeHandler);
 
-    // ProseMirror-Inhalt per Property setzen (Attribut würde HTML-Encoding verursachen)
-    const pm = this.element.querySelector("prose-mirror[name='system.description']");
-    if (pm) pm.value = this.item.system.description ?? "";
+    // ProseMirror-Editor mounten
+    this._mountDescriptionEditor();
 
     // Portrait (data-edit): normaler Klick = Bild vergrößern, Shift+Klick = FilePicker (nur editierbar)
     this.element.querySelectorAll("img[data-edit]").forEach(img => {
