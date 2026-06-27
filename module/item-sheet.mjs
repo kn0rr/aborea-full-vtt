@@ -56,6 +56,10 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     };
     this.element.addEventListener("change", this._changeHandler);
 
+    // ProseMirror-Inhalt per Property setzen (Attribut würde HTML-Encoding verursachen)
+    const pm = this.element.querySelector("prose-mirror[name='system.description']");
+    if (pm) pm.value = this.item.system.description ?? "";
+
     // Portrait (data-edit): normaler Klick = Bild vergrößern, Shift+Klick = FilePicker (nur editierbar)
     this.element.querySelectorAll("img[data-edit]").forEach(img => {
       img.style.cursor = "zoom-in";
