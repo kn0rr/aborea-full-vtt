@@ -52,19 +52,7 @@
           {{localize "ABOREA.Equipped"}}
         </label>
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Rüstung ───────────────────────────────────────────── --}}
@@ -90,19 +78,7 @@
           {{localize "ABOREA.Equipped"}}
         </label>
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Fertigkeit ────────────────────────────────────────── --}}
@@ -121,19 +97,7 @@
           <input type="number" name="system.rank" value="{{system.rank}}" min="0" />
         </label>
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Zauber ────────────────────────────────────────────── --}}
@@ -167,22 +131,7 @@
         </label>
         {{/if}}
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
-      {{#if enrichedDescription}}
-      <div class="item-description enriched">{{enrichedDescription}}</div>
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Wunder / Leitmagie ───────────────────────────────── --}}
@@ -216,22 +165,7 @@
         </label>
         {{/if}}
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
-      {{#if enrichedDescription}}
-      <div class="item-description enriched">{{enrichedDescription}}</div>
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Volk ──────────────────────────────────────────────── --}}
@@ -255,19 +189,7 @@
         </label>
         {{/each}}
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Beruf ─────────────────────────────────────────────── --}}
@@ -286,19 +208,7 @@
           <textarea name="system.special">{{system.special}}</textarea>
         </label>
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Ausrüstung ───────────────────────────────────────── --}}
@@ -314,19 +224,7 @@
           <input type="text" name="system.price" value="{{system.price}}" />
         </label>
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Gott ──────────────────────────────────────────────── --}}
@@ -353,22 +251,7 @@
         </label>
         {{/if}}
       </div>
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
-      {{#if enrichedDescription}}
-      <div class="item-description enriched">{{enrichedDescription}}</div>
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
     {{/if}}
 
     {{!-- ── Magisches Item ────────────────────────────────── --}}
@@ -431,19 +314,7 @@
         </label>
       </fieldset>
 
-      {{#if isGM}}
-      <label class="full-width">{{localize "ABOREA.Description"}}
-        <textarea name="system.description">{{system.description}}</textarea>
-      </label>
-      {{else}}
-        {{#if canViewDescription}}
-          {{#if system.description}}
-          <div class="item-description-text">{{system.description}}</div>
-          {{/if}}
-        {{else}}
-        <div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
-        {{/if}}
-      {{/if}}
+      {{> "systems/aborea-v7/templates/item/partials/description-editor.html"}}
       <label class="full-width">{{localize "ABOREA.Notes"}}
         <input type="text" name="system.notes" value="{{system.notes}}" />
       </label>

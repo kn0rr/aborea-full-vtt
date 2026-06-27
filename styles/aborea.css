@@ -1533,6 +1533,36 @@
   opacity: .7;
 }
 
+/* ── ProseMirror Beschreibungs-Editor ───────────────── */
+.description-editor-wrap {
+  padding: 4px 0;
+}
+.description-editor-wrap .description-label {
+  display: block;
+  font-size: .8rem;
+  font-weight: bold;
+  color: var(--aborea-brown);
+  margin-bottom: 4px;
+  opacity: .8;
+}
+.description-editor-wrap .editor {
+  border: 1px solid var(--aborea-border, #c9b99a);
+  border-radius: 4px;
+  min-height: 120px;
+}
+.description-editor-wrap .editor-content {
+  padding: 8px 10px;
+  font-size: .88rem;
+  color: var(--aborea-brown);
+  line-height: 1.55;
+}
+.description-editor-wrap .editor-content p { margin: 0 0 .5em; }
+.description-editor-wrap .editor-content h1,
+.description-editor-wrap .editor-content h2,
+.description-editor-wrap .editor-content h3 { margin: .5em 0 .25em; }
+.description-editor-wrap .editor-content ul,
+.description-editor-wrap .editor-content ol { padding-left: 1.4em; margin: .25em 0; }
+
 /* ── Gottheit-Panel ─────────────────────────────────── */
 .god-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
 .god-header { display: flex; align-items: flex-start; gap: 10px; }

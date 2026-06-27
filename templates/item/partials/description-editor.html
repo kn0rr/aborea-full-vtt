@@ -1,0 +1,8 @@
+{{#if canViewDescription}}
+<div class="description-editor-wrap">
+  <label class="description-label">{{localize "ABOREA.Description"}}</label>
+  {{editor system.description target="system.description" button=true engine="prosemirror" editable=isGM}}
+</div>
+{{else}}
+<div class="item-desc-locked-hint">🔒 Beschreibung vom Spielleiter gesperrt.</div>
+{{/if}}
