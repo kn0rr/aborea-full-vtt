@@ -1545,43 +1545,35 @@
   margin-bottom: 4px;
   opacity: .8;
 }
-/* prose-mirror custom element von {{formField}} */
-.description-editor-wrap prose-mirror {
-  display: block;
-  min-height: 200px;
+/* prose-mirror custom element von {{formField}} (v14) */
+.description-editor-wrap prose-mirror.editor {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
   resize: vertical;
   overflow: hidden;
   border: 1px solid var(--aborea-border, #c9b99a);
   border-radius: 4px;
 }
-.description-editor-wrap prose-mirror .editor {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.description-editor-wrap prose-mirror .editor-content,
-.description-editor-wrap prose-mirror .ProseMirror {
+.description-editor-wrap prose-mirror.editor .editor-container {
   flex: 1;
-  min-height: 160px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.description-editor-wrap prose-mirror.editor .editor-content {
+  min-height: 140px;
   padding: 8px 10px;
   font-size: .88rem;
   color: var(--aborea-brown);
   line-height: 1.55;
   outline: none;
-  overflow-y: auto;
 }
-.description-editor-wrap prose-mirror .ProseMirror p,
-.description-editor-wrap prose-mirror .editor-content p { margin: 0 0 .5em; }
-.description-editor-wrap prose-mirror .ProseMirror h1,
-.description-editor-wrap prose-mirror .ProseMirror h2,
-.description-editor-wrap prose-mirror .ProseMirror h3,
-.description-editor-wrap prose-mirror .editor-content h1,
-.description-editor-wrap prose-mirror .editor-content h2,
-.description-editor-wrap prose-mirror .editor-content h3 { margin: .5em 0 .25em; }
-.description-editor-wrap prose-mirror .ProseMirror ul,
-.description-editor-wrap prose-mirror .ProseMirror ol,
-.description-editor-wrap prose-mirror .editor-content ul,
-.description-editor-wrap prose-mirror .editor-content ol { padding-left: 1.4em; margin: .25em 0; }
+.description-editor-wrap prose-mirror.editor .editor-content p { margin: 0 0 .5em; }
+.description-editor-wrap prose-mirror.editor .editor-content h1,
+.description-editor-wrap prose-mirror.editor .editor-content h2,
+.description-editor-wrap prose-mirror.editor .editor-content h3 { margin: .5em 0 .25em; }
+.description-editor-wrap prose-mirror.editor .editor-content ul,
+.description-editor-wrap prose-mirror.editor .editor-content ol { padding-left: 1.4em; margin: .25em 0; }
 
 /* ── Gottheit-Panel ─────────────────────────────────── */
 .god-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
