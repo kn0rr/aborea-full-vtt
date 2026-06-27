@@ -1545,42 +1545,43 @@
   margin-bottom: 4px;
   opacity: .8;
 }
-.description-prose-mount {
+/* prose-mirror custom element von {{formField}} */
+.description-editor-wrap prose-mirror {
+  display: block;
+  min-height: 200px;
+  resize: vertical;
+  overflow: hidden;
   border: 1px solid var(--aborea-border, #c9b99a);
   border-radius: 4px;
-  min-height: 160px;
-  overflow: auto;
-  resize: vertical;
 }
-.description-prose-mount .editor {
+.description-editor-wrap prose-mirror .editor {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
-.description-prose-mount .ProseMirror {
-  min-height: 120px;
+.description-editor-wrap prose-mirror .editor-content,
+.description-editor-wrap prose-mirror .ProseMirror {
+  flex: 1;
+  min-height: 160px;
   padding: 8px 10px;
+  font-size: .88rem;
+  color: var(--aborea-brown);
+  line-height: 1.55;
   outline: none;
-  font-size: .88rem;
-  color: var(--aborea-brown);
-  line-height: 1.55;
+  overflow-y: auto;
 }
-.description-prose-mount .ProseMirror p { margin: 0 0 .5em; }
-.description-prose-mount .ProseMirror h1,
-.description-prose-mount .ProseMirror h2,
-.description-prose-mount .ProseMirror h3 { margin: .5em 0 .25em; }
-.description-prose-mount .ProseMirror ul,
-.description-prose-mount .ProseMirror ol { padding-left: 1.4em; margin: .25em 0; }
-.description-editor-wrap .editor-content {
-  padding: 8px 10px;
-  font-size: .88rem;
-  color: var(--aborea-brown);
-  line-height: 1.55;
-}
-.description-editor-wrap .editor-content p { margin: 0 0 .5em; }
-.description-editor-wrap .editor-content h1,
-.description-editor-wrap .editor-content h2,
-.description-editor-wrap .editor-content h3 { margin: .5em 0 .25em; }
-.description-editor-wrap .editor-content ul,
-.description-editor-wrap .editor-content ol { padding-left: 1.4em; margin: .25em 0; }
+.description-editor-wrap prose-mirror .ProseMirror p,
+.description-editor-wrap prose-mirror .editor-content p { margin: 0 0 .5em; }
+.description-editor-wrap prose-mirror .ProseMirror h1,
+.description-editor-wrap prose-mirror .ProseMirror h2,
+.description-editor-wrap prose-mirror .ProseMirror h3,
+.description-editor-wrap prose-mirror .editor-content h1,
+.description-editor-wrap prose-mirror .editor-content h2,
+.description-editor-wrap prose-mirror .editor-content h3 { margin: .5em 0 .25em; }
+.description-editor-wrap prose-mirror .ProseMirror ul,
+.description-editor-wrap prose-mirror .ProseMirror ol,
+.description-editor-wrap prose-mirror .editor-content ul,
+.description-editor-wrap prose-mirror .editor-content ol { padding-left: 1.4em; margin: .25em 0; }
 
 /* ── Gottheit-Panel ─────────────────────────────────── */
 .god-panel { display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
