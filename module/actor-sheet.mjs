@@ -579,16 +579,30 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     };
     this.element.addEventListener("change", this._changeHandler);
 
-    // Bild-Picker: data-edit="img" in ApplicationV2 manuell verdrahten
-    this.element.querySelectorAll("img[data-edit]").forEach(img => {
-      img.style.cursor = "pointer";
+    // Alle Bilder: normaler Klick = Bild vergrößern
+    this.element.querySelectorAll("img:not([data-edit])").forEach(img => {
+      img.style.cursor = "zoom-in";
       img.addEventListener("click", () => {
-        if (!this.isEditable) return;
-        new FilePicker({
-          type: "image",
-          current: this.document.img,
-          callback: path => this.document.update({ img: path }),
-        }).render(true);
+        if (!img.src) return;
+        new ImagePopout(img.src, { title: img.alt || img.title || "" }).render(true);
+      });
+    });
+
+    // Portrait (data-edit): normaler Klick = Bild vergrößern, Shift+Klick = FilePicker (nur editierbar)
+    this.element.querySelectorAll("img[data-edit]").forEach(img => {
+      img.style.cursor = "zoom-in";
+      img.addEventListener("click", (ev) => {
+        if (ev.shiftKey) {
+          if (!this.isEditable) return;
+          new FilePicker({
+            type: "image",
+            current: this.document.img,
+            callback: path => this.document.update({ img: path }),
+          }).render(true);
+        } else {
+          if (!img.src) return;
+          new ImagePopout(img.src, { title: img.alt || img.title || this.document.name || "" }).render(true);
+        }
       });
     });
     const html = this._html();
