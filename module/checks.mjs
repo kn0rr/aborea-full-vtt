@@ -125,7 +125,11 @@ export async function performCheck(actor, { checkType, checkKey, situMod = 0, di
   } else {
     const custom  = (actor.system.customSkills ?? []).find(s => s.key === checkKey);
     const skillDef = custom ?? actor.system.skills?.[checkKey] ?? { rank: 0, attribute: "in" };
-    const attrKey  = skillDef.attribute || ABOREA.skills?.[checkKey]?.attribute || "in";
+    const isMagicSkill = ABOREA.spellListSkillKeys?.includes(checkKey) || checkKey === "magieEntwickeln";
+    const classItem = isMagicSkill ? actor.items?.find(i => i.type === "class") : null;
+    const attrKey  = (isMagicSkill && classItem?.system?.magicAttribute)
+      ? classItem.system.magicAttribute
+      : (skillDef.attribute || ABOREA.skills?.[checkKey]?.attribute || "in");
     const attrVal  = actor.system.finalAttributes?.[attrKey]?.value
                   ?? actor.system.attributes?.[attrKey]?.value ?? 5;
     const attrBonus = ABOREA.attributeBonus(attrVal);
@@ -180,7 +184,11 @@ async function _rollSilent(actor, { checkType, checkKey, situMod, difficulty }) 
   } else {
     const custom  = (actor.system.customSkills ?? []).find(s => s.key === checkKey);
     const skillDef = custom ?? actor.system.skills?.[checkKey] ?? { rank: 0, attribute: "in" };
-    const attrKey  = skillDef.attribute || ABOREA.skills?.[checkKey]?.attribute || "in";
+    const isMagicSkill = ABOREA.spellListSkillKeys?.includes(checkKey) || checkKey === "magieEntwickeln";
+    const classItem = isMagicSkill ? actor.items?.find(i => i.type === "class") : null;
+    const attrKey  = (isMagicSkill && classItem?.system?.magicAttribute)
+      ? classItem.system.magicAttribute
+      : (skillDef.attribute || ABOREA.skills?.[checkKey]?.attribute || "in");
     const attrVal  = actor.system.finalAttributes?.[attrKey]?.value
                   ?? actor.system.attributes?.[attrKey]?.value ?? 5;
     const attrBonus = ABOREA.attributeBonus(attrVal);

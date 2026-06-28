@@ -295,7 +295,10 @@ export async function chooseMpCost(item) {
       title: game.i18n.localize("ABOREA.SelectMPCost"),
       content: `<form><div class="form-group"><label>${game.i18n.localize("ABOREA.MPCost")}</label><select name="mp">${optionHtml}</select></div></form>`,
       buttons: {
-        ok:     { label: "OK",     callback: html => resolve(Number(html.find("[name=mp]").val())) },
+        ok:     { label: "OK",     callback: html => {
+          const el = html instanceof jQuery ? html[0] : html;
+          resolve(Number(el.querySelector("[name=mp]")?.value) || 1);
+        }},
         cancel: { label: "Cancel", callback: () => resolve(null) }
       },
       default: "ok", close: () => resolve(null)

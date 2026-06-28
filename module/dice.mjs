@@ -146,7 +146,11 @@ export async function rollAttribute(actor, attrKey) {
 export async function rollSkill(actor, skillKey) {
   const custom = (actor.system.customSkills || []).find(s => s.key === skillKey);
   const skill = custom ?? actor.system.skills?.[skillKey] ?? { rank: 0, attribute: "in" };
-  const attrKey = skill.attribute || ABOREA.skills?.[skillKey]?.attribute || "in";
+  const isMagicSkill = ABOREA.spellListSkillKeys?.includes(skillKey) || skillKey === "magieEntwickeln";
+  const classItem = isMagicSkill ? actor.items?.find(i => i.type === "class") : null;
+  const attrKey = (isMagicSkill && classItem?.system?.magicAttribute)
+    ? classItem.system.magicAttribute
+    : (skill.attribute || ABOREA.skills?.[skillKey]?.attribute || "in");
   const attrValue = actor.system.attributes?.[attrKey]?.value ?? 5;
   const attrBonus = ABOREA.attributeBonus(attrValue);
   const rank = Number(skill.rank ?? 0);

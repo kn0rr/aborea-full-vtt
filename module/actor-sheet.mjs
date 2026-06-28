@@ -1598,7 +1598,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     }
 
     // Nicht-gezielte Zauber: MP-Kosten wählen, dann direkt wirken
-    const mpCost = await chooseMpCost(item); if (mpCost==null) return;
+    const mpCost = await chooseMpCost(item); if (mpCost == null || isNaN(mpCost)) return;
     const currentMp = Number(this.actor.system.resources?.mp?.value??0);
     if (currentMp<mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
     await this._cleanupExpiredCompanions();
