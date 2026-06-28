@@ -315,7 +315,7 @@ Hooks.on("getJournalEntryContextOptions", (html, options) => {
 Hooks.once("ready", () => {
   const _origClickLeft = Token.prototype._onClickLeft;
   Token.prototype._onClickLeft = function(event) {
-    if (event.shiftKey) {
+    if (event.altKey) {
       const src   = this.document?.texture?.src;
       const title = this.document?.name ?? "";
       if (src) new foundry.applications.apps.ImagePopout({ src, window: { title } }).render(true);
