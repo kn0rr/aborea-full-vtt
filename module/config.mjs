@@ -71,7 +71,7 @@ export const ABOREA = {
     mechanik: { label: "ABOREA.SkillMechanik", attribute: "in", creation: true, maxCreationRank: 2 },
     gift: { label: "ABOREA.SkillGift", attribute: "in", creation: true, maxCreationRank: 2 },
     heimlichkeit: { label: "ABOREA.SkillHeimlichkeit", attribute: "ge", creation: true, maxCreationRank: 2 },
-    heilen: { label: "ABOREA.SkillHeilen", attribute: "ch", creation: true, maxCreationRank: 2 },
+    heilen: { label: "ABOREA.SkillHeilen", attribute: "ch", creation: true, maxCreationRank: 1 },
     information: { label: "ABOREA.SkillInformation", attribute: "ch", creation: true, maxCreationRank: 1 },
     magieWahrnehmen: { label: "ABOREA.SkillMagieWahrnehmen", attribute: "in", creation: true, maxCreationRank: 1 }
   },
