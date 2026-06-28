@@ -312,6 +312,20 @@ Hooks.on("getJournalEntryContextOptions", (html, options) => {
   });
 });
 
+Hooks.on("renderTokenHUD", (hud, html) => {
+  const img = (html instanceof HTMLElement ? html : html[0])?.querySelector(".profile-img");
+  if (!img) return;
+  img.style.cursor = "zoom-in";
+  img.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const token = hud.object;
+    const src   = token?.document?.texture?.src ?? img.src;
+    const title = token?.document?.name ?? "";
+    new foundry.applications.apps.ImagePopout({ src, window: { title } }).render(true);
+  });
+});
+
 Hooks.on("updateActor", function (actor, changes) {
   if (actor.type !== "character") return;
   const xpChanged = foundry.utils.hasProperty(changes, "system.resources.xp");
