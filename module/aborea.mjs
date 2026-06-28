@@ -312,18 +312,17 @@ Hooks.on("getJournalEntryContextOptions", (html, options) => {
   });
 });
 
-Hooks.on("renderTokenHUD", (hud, html) => {
-  const img = (html instanceof HTMLElement ? html : html[0])?.querySelector(".profile-img");
-  if (!img) return;
-  img.style.cursor = "zoom-in";
-  img.addEventListener("click", (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    const token = hud.object;
-    const src   = token?.document?.texture?.src ?? img.src;
-    const title = token?.document?.name ?? "";
-    new foundry.applications.apps.ImagePopout({ src, window: { title } }).render(true);
-  });
+Hooks.once("ready", () => {
+  const _origClickLeft = Token.prototype._onClickLeft;
+  Token.prototype._onClickLeft = function(event) {
+    if (event.shiftKey) {
+      const src   = this.document?.texture?.src;
+      const title = this.document?.name ?? "";
+      if (src) new foundry.applications.apps.ImagePopout({ src, window: { title } }).render(true);
+      return;
+    }
+    return _origClickLeft.call(this, event);
+  };
 });
 
 Hooks.on("updateActor", function (actor, changes) {
