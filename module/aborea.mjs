@@ -313,8 +313,8 @@ Hooks.on("getJournalEntryContextOptions", (html, options) => {
 });
 
 Hooks.once("ready", () => {
-  const _origClickLeft = Token.prototype._onClickLeft;
-  Token.prototype._onClickLeft = function(event) {
+  const _origClickLeft = foundry.canvas.placeables.Token.prototype._onClickLeft;
+  foundry.canvas.placeables.Token.prototype._onClickLeft = function(event) {
     if (event.altKey) {
       const src   = this.document?.texture?.src;
       const title = this.document?.name ?? "";
