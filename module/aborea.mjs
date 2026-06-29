@@ -315,7 +315,7 @@ Hooks.on("getJournalEntryContextOptions", (html, options) => {
 Hooks.once("ready", () => {
   const _origClickLeft = foundry.canvas.placeables.Token.prototype._onClickLeft;
   foundry.canvas.placeables.Token.prototype._onClickLeft = function(event) {
-    if (event.altKey) {
+    if (event.altKey || event.data?.originalEvent?.altKey || game.keyboard.isModifierActive("Alt")) {
       const src   = this.document?.texture?.src;
       const title = this.document?.name ?? "";
       if (src) new foundry.applications.apps.ImagePopout({ src, window: { title } }).render(true);
