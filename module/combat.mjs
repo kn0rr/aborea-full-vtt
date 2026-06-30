@@ -183,9 +183,13 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const actor         = this.options.attackerActor;
     const weapons       = actor.items.filter(i => i.type === "weapon" && i.system.equipped);
     const globalSituMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
-    const currentOffBonus = Number(actor.system.combat?.offensiveBonus ?? 0);
-    const combatBonus   = Number(actor.system.combat?.combatBonus ?? actor.system.combat?.offensiveBonus ?? 0)
-                        + Number(actor.system.combat?.defensiveBonus ?? 0);
+    const isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
+    const storedOffBonus  = Number(actor.system.combat?.offensiveBonus ?? 0);
+    const storedCB        = Number(actor.system.combat?.combatBonus ?? 0);
+    const storedDef       = Number(actor.system.combat?.defensiveBonus ?? 0);
+    // Für Kreaturen/NPCs: Offensivbonus = berechneter Kampfbonus + manueller Offensivbonus
+    const currentOffBonus = isCreatureOrNpc ? storedCB + storedOffBonus : storedOffBonus;
+    const combatBonus     = isCreatureOrNpc ? storedCB + storedOffBonus : storedCB + storedDef;
     const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
     const initialPenalty  = weapons[0] ? _getUntrainedPenalty(actor, weapons[0]) : 0;
 
