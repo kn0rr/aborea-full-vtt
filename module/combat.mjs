@@ -206,13 +206,18 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const currentMp    = _getCurrentMp(actor);
     const currentMpMax = Number(actor.system.resources?.mp?.max ?? currentMp);
 
+    const weaponList = weapons.map(w => ({
+      id:     w.id,
+      name:   w.name,
+      damage: w.system.damage ?? 0,
+      skill:  w.system.skill ?? "",
+    }));
+    // Kreaturen/NPCs ohne Waffen-Items: generischen Angriff eintragen
+    if (!weaponList.length && isCreatureOrNpc) {
+      weaponList.push({ id: "__native__", name: "Angriff", damage: 0, skill: "" });
+    }
     return {
-      weapons: weapons.map(w => ({
-        id:     w.id,
-        name:   w.name,
-        damage: w.system.damage ?? 0,
-        skill:  w.system.skill ?? "",
-      })),
+      weapons: weaponList,
       preselectedSpellId: this.options.preselectedSpellId ?? null,
       targetedSpells: targetedSpells.map(s => {
         const baseCost   = Number(s.system.cost ?? 1) || 1;
@@ -314,7 +319,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const offBonusInput   = html.querySelector("[name=offBonus]");
     const cbHint          = html.querySelector(".combat-bonus-hint");
     const updateWeapon = () => {
-      const weapon  = actor.items.get(weaponSelect?.value);
+      const wId     = weaponSelect?.value;
+      const weapon  = (wId && wId !== "__native__") ? actor.items.get(wId) : null;
       const penalty = _getUntrainedPenalty(actor, weapon);
       if (untrainedRow) untrainedRow.style.display = penalty ? "" : "none";
 
@@ -477,7 +483,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         targetImg:    targetActor?.img ?? "",
       });
     } else {
-      const weapon = actor.items.get(data.weaponId);
+      const weapon = data.weaponId === "__native__" ? null : actor.items.get(data.weaponId);
       resolve?.({
         mode:             "weapon",
         weapon,
