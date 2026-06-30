@@ -249,18 +249,18 @@
 .combat-split-section { }
 .combat-split-label { font-size: .82rem; margin-bottom: 4px; }
 .combat-split-bars {
-  display: flex; height: 40px; border-radius: 6px; overflow: hidden;
+  display: flex; min-height: 52px; border-radius: 6px; overflow: hidden;
   border: 1px solid var(--aborea-border-light);
 }
 .split-bar-off {
   background: #dbeafe; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 1px;
-  font-size: .72rem; color: #1e40af; padding: 2px; min-width: 60px;
+  font-size: .72rem; color: #1e40af; padding: 2px; min-width: 120px;
 }
 .split-bar-def {
   background: #dcfce7; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 1px;
-  font-size: .72rem; color: #166534; padding: 2px; min-width: 60px;
+  font-size: .72rem; color: #166534; padding: 2px; min-width: 120px;
 }
 .split-bar-off input, .split-bar-def input {
   width: 3em; text-align: center; border: none; background: transparent;
