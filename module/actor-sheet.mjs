@@ -469,9 +469,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     // Magische Fähigkeiten aufbereiten
     const MAGIC_SKILL_KEYS = ["magieEntwickeln", "gezielteSprueche", "magieWahrnehmen", ...ABOREA.spellListSkillKeys];
+    const magicAttrKey = classItem?.system?.magicAttribute || "in";
     system.magicSkillRows = MAGIC_SKILL_KEYS.map(key => {
       const rank      = Number(system.magicSkills?.[key] ?? 0);
-      const attrKey   = ABOREA.skills?.[key]?.attribute ?? "in";
+      const attrKey   = (key === "magieWahrnehmen") ? (ABOREA.skills?.[key]?.attribute ?? "in") : magicAttrKey;
       const attrBonus = ABOREA.attributeBonus(Number(system.attributes?.[attrKey]?.value ?? 5));
       const bonus     = rank > 0 ? attrBonus + rank : 0; // kein Bonus bei Rang 0
       // Für magieEntwickeln: MP-Pool = (attrBonus + 3) × Rang

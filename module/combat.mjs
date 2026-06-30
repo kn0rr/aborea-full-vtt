@@ -71,12 +71,13 @@ export class AboreaCombat extends Combat {
 //  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
-/** Returns the effective skill keys for a weapon (new multi-skill array with single-skill fallback). */
+/** Returns the effective skill keys for a weapon. system.skill takes priority over legacy skills array. */
 function _weaponSkillKeys(weapon) {
+  const single = weapon?.system?.skill;
+  if (single) return [single];
   const arr = weapon?.system?.skills;
   if (Array.isArray(arr) && arr.length) return arr;
-  const single = weapon?.system?.skill;
-  return single ? [single] : [];
+  return [];
 }
 
 /** Returns the best skill rank the actor has for any of the weapon's skills. */
