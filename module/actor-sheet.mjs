@@ -171,9 +171,13 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   async _prepareCharacterData(actor, system) {
     system.skills = system.skills || {};
+    const _classItem = actor.items.find(i => i.type === "class");
+    const _magicAttr = _classItem?.system?.magicAttribute || "in";
+    const _isMagicSkill = key => ABOREA.spellListSkillKeys?.includes(key) || key === "magieEntwickeln" || key === "gezielteSprueche";
     for (const [key, cfg] of Object.entries(ABOREA.skills)) {
       const c = system.skills[key] ?? { rank: 0, attribute: cfg.attribute };
-      c.key = key; c.label = cfg.label; c.attribute = c.attribute || cfg.attribute;
+      c.key = key; c.label = cfg.label;
+      c.attribute = _isMagicSkill(key) ? _magicAttr : (c.attribute || cfg.attribute);
       system.skills[key] = c;
     }
     system.customSkills = normalizeCustomSkills(system.customSkills);
@@ -184,10 +188,17 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
     system.combat.initiative = ABOREA.initiativeBonus(actor);
 
-    // Kampfbonus-Tooltip: beste Waffenfertigkeit mit vollständiger Aufschlüsselung
+    // Kampfbonus-Tooltip: Fertigkeit der besten ausgerüsteten Waffe, Fallback auf beste Fertigkeit
     {
+      const equippedWeapons = actor.items?.filter(i => i.type === "weapon" && i.system.equipped) ?? [];
+      const equippedSkillKeys = [...new Set(equippedWeapons.flatMap(w => {
+        const s = w.system.skill; const arr = w.system.skills;
+        return s ? [s] : (Array.isArray(arr) ? arr : []);
+      }))].filter(k => ABOREA.weaponSkillKeys.includes(k));
+      const keysToCheck = equippedSkillKeys.length ? equippedSkillKeys : ABOREA.weaponSkillKeys;
+
       let best = { cb: -99, label: "", attrKey: "st", rank: 0, attrBonus: 0 };
-      for (const key of ABOREA.weaponSkillKeys) {
+      for (const key of keysToCheck) {
         const rank     = Number(system.skills?.[key]?.rank ?? 0);
         const attrKey  = ABOREA.skills?.[key]?.attribute ?? "st";
         const attrBonus = ABOREA.attributeBonus(system.displayAttributes?.[attrKey]?.value ?? 5);
@@ -469,7 +480,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     // Magische Fähigkeiten aufbereiten
     const MAGIC_SKILL_KEYS = ["magieEntwickeln", "gezielteSprueche", "magieWahrnehmen", ...ABOREA.spellListSkillKeys];
-    const magicAttrKey = classItem?.system?.magicAttribute || "in";
+    const _npcClassItem = actor.items?.find(i => i.type === "class");
+    const magicAttrKey = _npcClassItem?.system?.magicAttribute || "in";
     system.magicSkillRows = MAGIC_SKILL_KEYS.map(key => {
       const rank      = Number(system.magicSkills?.[key] ?? 0);
       const attrKey   = (key === "magieWahrnehmen") ? (ABOREA.skills?.[key]?.attribute ?? "in") : magicAttrKey;
