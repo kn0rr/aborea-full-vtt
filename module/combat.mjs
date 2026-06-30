@@ -10,6 +10,12 @@ function _getGezielteSpruecheRank(actor) {
   return Number(actor.system.skills?.gezielteSprueche?.rank ?? 0);
 }
 
+// Gibt den magischen Angriffs-Attribut-Schlüssel zurück (aus Klassen-Item oder Fallback "in")
+function _getMagicAttrKey(actor) {
+  const classItem = actor.items?.find(i => i.type === "class");
+  return classItem?.system?.magicAttribute || "in";
+}
+
 // Gibt den aktuellen MP-Wert zurück (alle Actor-Typen nutzen resources.mp.value)
 function _getCurrentMp(actor) {
   return Number(actor.system.resources?.mp?.value ?? 0);
@@ -186,8 +192,9 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const targetedSpells = actor.items.filter(i =>
       ["spell", "miracle"].includes(i.type) && i.system.targeted
     );
-    const inValue    = Number(actor.system.finalAttributes?.in?.value ?? actor.system.attributes?.in?.value ?? 5);
-    const attrBonus  = ABOREA.attributeBonus(inValue);
+    const magicAttr  = _getMagicAttrKey(actor);
+    const attrValue  = Number(actor.system.finalAttributes?.[magicAttr]?.value ?? actor.system.attributes?.[magicAttr]?.value ?? 5);
+    const attrBonus  = ABOREA.attributeBonus(attrValue);
     const skillRank  = _getGezielteSpruecheRank(actor);
     const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
     const spellAttackBonus = attrBonus + skillRank + classBonus;
@@ -517,8 +524,9 @@ class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) 
   async _prepareContext() {
     const actor      = this.options.attackerActor;
     const item       = this.options.item;
-    const inValue    = Number(actor.system.finalAttributes?.in?.value ?? actor.system.attributes?.in?.value ?? 5);
-    const attrBonus  = ABOREA.attributeBonus(inValue);
+    const magicAttr  = _getMagicAttrKey(actor);
+    const attrValue  = Number(actor.system.finalAttributes?.[magicAttr]?.value ?? actor.system.attributes?.[magicAttr]?.value ?? 5);
+    const attrBonus  = ABOREA.attributeBonus(attrValue);
     const skillRank  = _getGezielteSpruecheRank(actor);
     const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
 
