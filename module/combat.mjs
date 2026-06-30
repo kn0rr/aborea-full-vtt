@@ -334,10 +334,16 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         const cb       = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
         if (cb > bestCB) bestCB = cb;
       }
-      if (cbHint) cbHint.textContent = bestCB;
-      if (offBonusInput) {
-        offBonusInput.max = bestCB;
-        if (Number(offBonusInput.value) > bestCB) offBonusInput.value = bestCB;
+      if (isCreatureOrNpc) {
+        // Für Kreaturen/NPCs: kein Klemmen — Offensivbonus manuell gepflegt
+        if (cbHint) cbHint.textContent = combatBonus;
+        if (offBonusInput) offBonusInput.max = 99;
+      } else {
+        if (cbHint) cbHint.textContent = bestCB;
+        if (offBonusInput) {
+          offBonusInput.max = bestCB;
+          if (Number(offBonusInput.value) > bestCB) offBonusInput.value = bestCB;
+        }
       }
     };
     weaponSelect?.addEventListener("change", updateWeapon);
