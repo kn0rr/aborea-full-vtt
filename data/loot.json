@@ -29,7 +29,7 @@
     "_id": "6c6f6f7400000003",
     "name": "Schatzkiste",
     "type": "loot",
-    "img": "icons/containers/chest/chest-reinforced-gold.webp",
+    "img": "icons/containers/chest/chest-reinforced-steel-brown.webp",
     "system": {
       "description": "Eine schwer gesicherte Truhe mit aufwändigem Schloss. Sie scheint wertvollen Inhalt zu verwahren.",
       "locked": true,

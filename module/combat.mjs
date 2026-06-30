@@ -318,7 +318,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       let bestCB = 0;
       for (const key of skillKeys) {
         const rank     = Number(actor.system.skills?.[key]?.rank ?? 0);
-        const attrKey  = ABOREA.skills?.[key]?.attribute ?? "st";
+        const attrKey  = weapon.system.attr || ABOREA.skills?.[key]?.attribute ?? "st";
         const attrVal  = Number(actor.system.finalAttributes?.[attrKey]?.value ?? actor.system.attributes?.[attrKey]?.value ?? 5);
         const cb       = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
         if (cb > bestCB) bestCB = cb;

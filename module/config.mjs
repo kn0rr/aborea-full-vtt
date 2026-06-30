@@ -169,7 +169,9 @@ export const ABOREA = {
       actor?.system?.finalAttributes?.ge?.value ?? 5
     );
     const weapons = actor?.items?.filter(i => i.type === "weapon" && i.system.equipped) ?? [];
-    const weaponMod = weapons.reduce((best, w) => Math.max(best, Number(w.system.initiative ?? 0)), 0);
+    const weaponMod = weapons.length
+      ? weapons.reduce((best, w) => Math.max(best, Number(w.system.initiative ?? 0)), -Infinity)
+      : 0;
     return geBonus + weaponMod;
   },
   combatBonus(attributeBonus, skillRank = 0) {

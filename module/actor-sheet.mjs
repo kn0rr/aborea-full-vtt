@@ -1352,31 +1352,29 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     ];
     const unitOpts = UNITS.map(u => `<option value="${u.key}">${u.label} – ${u.name}</option>`).join("");
     const title = mode === "deposit" ? "Einzahlen" : "Auszahlen";
-    const result = await new Promise(resolve => {
-      new Dialog({
-        title,
-        content: `<form>
-          <div class="form-group">
-            <label>Betrag</label>
-            <input type="number" name="amount" value="1" min="1" step="1" style="width:80px" />
-            <select name="unit" style="margin-left:6px">${unitOpts}</select>
-          </div>
-          <div class="form-group">
-            <label>Notiz (optional)</label>
-            <input type="text" name="note" placeholder="z.B. Belohnung vom Wirt" style="width:100%" />
-          </div>
-          <p class="hint" style="margin:4px 0 0">1 GF = 10 TT = 100 KL = 1.000 MU</p>
-        </form>`,
-        buttons: {
-          ok: { label: "OK", callback: html => resolve({
-            amount: Number(html.find("[name=amount]").val() || 0),
-            unit:   html.find("[name=unit]").val(),
-            note:   html.find("[name=note]").val().trim()
-          })},
-          cancel: { label: "Abbruch", callback: () => resolve(null) }
-        },
-        default: "ok", close: () => resolve(null)
-      }).render(true);
+    const result = await foundry.applications.api.DialogV2.prompt({
+      window: { title },
+      content: `<form>
+        <div class="form-group">
+          <label>Betrag</label>
+          <input type="number" name="amount" value="1" min="1" step="1" style="width:80px" />
+          <select name="unit" style="margin-left:6px">${unitOpts}</select>
+        </div>
+        <div class="form-group">
+          <label>Notiz (optional)</label>
+          <input type="text" name="note" placeholder="z.B. Belohnung vom Wirt" style="width:100%" />
+        </div>
+        <p class="hint" style="margin:4px 0 0">1 GF = 10 TT = 100 KL = 1.000 MU</p>
+      </form>`,
+      ok: {
+        label: "OK",
+        callback: (event, button, dialog) => ({
+          amount: Number(dialog.querySelector("[name=amount]")?.value || 0),
+          unit:   dialog.querySelector("[name=unit]")?.value,
+          note:   dialog.querySelector("[name=note]")?.value?.trim() ?? ""
+        })
+      },
+      rejectClose: false
     });
     if (!result || result.amount <= 0) return;
 

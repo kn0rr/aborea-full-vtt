@@ -29,9 +29,13 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
       context.enrichedDescription = "";
     }
 
-    // Attribut-Auswahl für Waffen als lokalisierte Liste
+    // Attribut- und Fertigkeitsauswahl für Waffen
     if (item.type === "weapon") {
       context.attributeChoices = { st: "ST", ge: "GE", ko: "KO", in: "IN", ch: "CH" };
+      const { ABOREA } = await import("./config.mjs");
+      context.weaponSkillChoices = Object.fromEntries(
+        ABOREA.weaponSkillKeys.map(k => [k, game.i18n.localize(ABOREA.skills[k]?.label ?? k)])
+      );
     }
 
     return context;

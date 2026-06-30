@@ -24,7 +24,19 @@
     {{#if (aboreaEq item.type "weapon")}}
       <div class="form-grid">
         <label>{{localize "ABOREA.WeaponSkill"}}
-          <input type="text" name="system.skill" value="{{system.skill}}" />
+          <select name="system.skill">
+            <option value="">— keine —</option>
+            {{#each weaponSkillChoices as |label key|}}
+            <option value="{{key}}" {{selected ../system.skill key}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </label>
+        <label>{{localize "ABOREA.Attribute"}}
+          <select name="system.attr">
+            {{#each attributeChoices as |label key|}}
+            <option value="{{key}}" {{selected ../system.attr key}}>{{label}}</option>
+            {{/each}}
+          </select>
         </label>
         <label>{{localize "ABOREA.Damage"}}
           <input type="number" name="system.damage" value="{{system.damage}}" />
