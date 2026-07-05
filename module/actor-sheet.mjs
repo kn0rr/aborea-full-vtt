@@ -1381,11 +1381,14 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       </form>`,
       ok: {
         label: "OK",
-        callback: (event, button, dialog) => ({
-          amount: Number(dialog.querySelector("[name=amount]")?.value || 0),
-          unit:   dialog.querySelector("[name=unit]")?.value,
-          note:   dialog.querySelector("[name=note]")?.value?.trim() ?? ""
-        })
+        callback: (event, button) => {
+          const form = button.form;
+          return {
+            amount: Number(form.querySelector("[name=amount]")?.value || 0),
+            unit:   form.querySelector("[name=unit]")?.value,
+            note:   form.querySelector("[name=note]")?.value?.trim() ?? ""
+          };
+        }
       },
       rejectClose: false
     });
