@@ -675,7 +675,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       context.printGear = actor.items.filter(i => i.type === "gear").map(i => ({
         name: i.name, quantity: i.system.quantity ?? 1, weight: i.system.weight ?? 0
       }));
-      const rendered = await renderTemplate("systems/aborea-v7/templates/actor/character-print.html", context);
+      const rendered = await foundry.applications.handlebars.renderTemplate("systems/aborea-v7/templates/actor/character-print.html", context);
       const win = window.open("", "_blank");
       win.document.write(rendered);
       win.document.close();
