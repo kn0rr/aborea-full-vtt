@@ -662,6 +662,25 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     html.find(".roll-attack").on("click", () => openAttackDialog(this.actor));
     html.find(".open-attack-dialog").on("click", () => openAttackDialog(this.actor));
     html.find(".open-check-dialog").on("click", () => openCheckDialog(this.actor));
+    html.find(".print-character").on("click", async () => {
+      const actor = this.actor;
+      const context = await this._prepareContext({});
+      context.printWeapons = actor.items.filter(i => i.type === "weapon").map(i => ({
+        name: i.name, damage: i.system.damage ?? 0,
+        initiative: i.system.initiative ?? 0, equipped: i.system.equipped
+      }));
+      context.printArmors = actor.items.filter(i => i.type === "armor").map(i => ({
+        name: i.name, armor: i.system.armor ?? 0, equipped: i.system.equipped
+      }));
+      context.printGear = actor.items.filter(i => i.type === "gear").map(i => ({
+        name: i.name, quantity: i.system.quantity ?? 1, weight: i.system.weight ?? 0
+      }));
+      const rendered = await renderTemplate("systems/aborea-v7/templates/actor/character-print.html", context);
+      const win = window.open("", "_blank");
+      win.document.write(rendered);
+      win.document.close();
+      win.focus();
+    });
 
     // Zufallsname-Generator (NSC/Kreatur)
     html.find(".random-name-btn").on("click", async () => {

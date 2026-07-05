@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{actor.name}} – Charakterbogen</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, serif; font-size: 11pt; color: #2c1a0e; background: #fff; padding: 20px; }
+    h1 { font-size: 20pt; border-bottom: 2px solid #8b4513; padding-bottom: 6px; margin-bottom: 10px; }
+    h2 { font-size: 13pt; background: #8b4513; color: #fff; padding: 3px 8px; margin: 14px 0 6px; }
+    h3 { font-size: 11pt; border-bottom: 1px solid #c9b99a; margin: 10px 0 4px; }
+    .header { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 10px; }
+    .portrait { width: 90px; height: 90px; object-fit: cover; border: 2px solid #8b4513; border-radius: 4px; }
+    .header-info { flex: 1; }
+    .identity { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0; }
+    .pill { background: #f0e6d3; border: 1px solid #c9b99a; border-radius: 12px; padding: 1px 10px; font-size: 9.5pt; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .attr-table, .skill-table, .inv-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+    .attr-table th, .skill-table th, .inv-table th { background: #f0e6d3; text-align: left; padding: 2px 6px; border: 1px solid #c9b99a; }
+    .attr-table td, .skill-table td, .inv-table td { padding: 2px 6px; border: 1px solid #ddd; }
+    .resources { display: flex; gap: 16px; margin: 6px 0; }
+    .resource-box { border: 1px solid #8b4513; border-radius: 4px; padding: 4px 12px; text-align: center; min-width: 80px; }
+    .resource-box .label { font-size: 8.5pt; color: #8b4513; }
+    .resource-box .value { font-size: 14pt; font-weight: bold; }
+    .notes-box { border: 1px solid #c9b99a; border-radius: 4px; min-height: 60px; padding: 6px; font-size: 10pt; margin-top: 4px; }
+    .xp-line { font-size: 9.5pt; color: #555; margin: 2px 0; }
+    @media print {
+      body { padding: 10px; }
+      @page { margin: 1.5cm; }
+    }
+  </style>
+</head>
+<body>
+
+  {{!-- ── HEADER ── --}}
+  <div class="header">
+    <img class="portrait" src="{{actor.img}}" alt="{{actor.name}}" />
+    <div class="header-info">
+      <h1>{{actor.name}}</h1>
+      <div class="identity">
+        {{#if system.details.race}}<span class="pill">{{system.details.race}}</span>{{/if}}
+        {{#if system.details.class}}<span class="pill">{{system.details.class}}</span>{{/if}}
+        {{#if system.details.god}}<span class="pill">⚑ {{system.details.god}}</span>{{/if}}
+      </div>
+      <div class="xp-line">Stufe {{system.resources.level}} · {{system.resources.xp}} EP</div>
+      <div class="resources">
+        <div class="resource-box"><div class="label">LP</div><div class="value">{{system.resources.hp.value}}/{{system.resources.hp.max}}</div></div>
+        <div class="resource-box"><div class="label">MP</div><div class="value">{{system.resources.mp.value}}/{{system.resources.mp.max}}</div></div>
+        <div class="resource-box"><div class="label">Initiative</div><div class="value">{{system.combat.initiative}}</div></div>
+        <div class="resource-box"><div class="label">Kampfbonus</div><div class="value">{{system.combat.combatBonus}}</div></div>
+        <div class="resource-box"><div class="label">Rüstung</div><div class="value">{{system.combat.totalArmorValue}}</div></div>
+        <div class="resource-box"><div class="label">Verteidigung</div><div class="value">{{system.combat.defenseValue}}</div></div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- ── ATTRIBUTE ── --}}
+  <h2>Attribute</h2>
+  <table class="attr-table">
+    <thead><tr><th>Attribut</th><th>Wert</th><th>Bonus</th></tr></thead>
+    <tbody>
+      {{#each system.attributeBreakdown as |attr|}}
+      <tr>
+        <td>{{localize attr.label}}</td>
+        <td>{{attr.value}}</td>
+        <td>{{attr.bonus}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  {{!-- ── FERTIGKEITEN ── --}}
+  <h2>Fertigkeiten</h2>
+  <div class="grid-2">
+    {{#each system.skillGroups as |group|}}
+    {{#if group.rows.length}}
+    <div>
+      <h3>{{group.icon}} {{group.label}}</h3>
+      <table class="skill-table">
+        <thead><tr><th>Fertigkeit</th><th>Attr.</th><th>Rang</th><th>Bonus</th></tr></thead>
+        <tbody>
+          {{#each group.rows as |skill|}}
+          {{#if skill.rank}}
+          <tr>
+            <td>{{skill.name}}</td>
+            <td>{{skill.attribute}}</td>
+            <td>{{skill.rank}}</td>
+            <td>{{skill.totalBonus}}</td>
+          </tr>
+          {{/if}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{/if}}
+    {{/each}}
+  </div>
+
+  {{!-- ── INVENTAR ── --}}
+  <h2>Inventar</h2>
+  <div class="grid-2">
+    <div>
+      <h3>⚔ Waffen</h3>
+      <table class="inv-table">
+        <thead><tr><th>Name</th><th>Schaden</th><th>Initiative</th></tr></thead>
+        <tbody>
+          {{#each printWeapons as |w|}}
+          <tr><td>{{w.name}}{{#if w.equipped}} ✓{{/if}}</td><td>{{w.damage}}</td><td>{{w.initiative}}</td></tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>🛡 Rüstungen</h3>
+      <table class="inv-table">
+        <thead><tr><th>Name</th><th>Rüstung</th></tr></thead>
+        <tbody>
+          {{#each printArmors as |a|}}
+          <tr><td>{{a.name}}{{#if a.equipped}} ✓{{/if}}</td><td>{{a.armor}}</td></tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <h3 style="margin-top:10px">🎒 Ausrüstung</h3>
+  <table class="inv-table">
+    <thead><tr><th>Name</th><th>Menge</th><th>Gewicht</th></tr></thead>
+    <tbody>
+      {{#each printGear as |g|}}
+      <tr><td>{{g.name}}</td><td>{{g.quantity}}</td><td>{{g.weight}} kg</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  {{!-- ── GELDBEUTEL ── --}}
+  {{#if system.wallet.summary}}
+  <h2>Geldbeutel</h2>
+  <p>{{system.wallet.summary}}</p>
+  {{/if}}
+
+  {{!-- ── NOTIZEN ── --}}
+  <h2>Notizen</h2>
+  <div class="notes-box">{{{system.details.notes}}}</div>
+
+</body>
+</html>
