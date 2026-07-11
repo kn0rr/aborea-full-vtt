@@ -318,6 +318,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     // Weapon untrained penalty + dynamic combat bonus per weapon's best skill
     const offBonusInput   = html.querySelector("[name=offBonus]");
     const cbHint          = html.querySelector(".combat-bonus-hint");
+    const _isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
     const updateWeapon = () => {
       const wId     = weaponSelect?.value;
       const weapon  = (wId && wId !== "__native__") ? actor.items.get(wId) : null;
@@ -334,7 +335,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         const cb       = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
         if (cb > bestCB) bestCB = cb;
       }
-      if (isCreatureOrNpc) {
+      if (_isCreatureOrNpc) {
         // Für Kreaturen/NPCs: kein Klemmen — Offensivbonus manuell gepflegt
         if (cbHint) cbHint.textContent = combatBonus;
         if (offBonusInput) offBonusInput.max = 99;
