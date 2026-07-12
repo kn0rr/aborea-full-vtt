@@ -297,7 +297,7 @@ Hooks.on("getJournalEntryContextOptions", (html, options) => {
   options.push({
     name:      "📤 An Spieler senden",
     icon:      '<i class="fas fa-share-alt"></i>',
-    condition: () => game.user.isGM,
+    visible:   () => game.user.isGM,
     callback:  li => {
       const entryId = li.dataset?.entryId ?? li.dataset?.documentId ?? li[0]?.dataset?.entryId;
       const entry = game.journal.get(entryId);

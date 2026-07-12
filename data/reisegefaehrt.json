@@ -116,7 +116,7 @@
   {
     "name": "Ochse",
     "type": "gear",
-    "img": "icons/environment/creatures/bull-brown.webp",
+    "img": "icons/creatures/mammals/livestock-cow-green.webp",
     "system": {
       "description": "Kann 350 kg transportieren.",
       "quantity": 1,
@@ -135,7 +135,7 @@
   {
     "name": "Kamel",
     "type": "gear",
-    "img": "icons/environment/creatures/camel.webp",
+    "img": "icons/environment/creatures/horse-tan.webp",
     "system": {
       "description": "Kann 200 kg transportieren.",
       "quantity": 1,
@@ -154,7 +154,7 @@
   {
     "name": "Lama",
     "type": "gear",
-    "img": "icons/environment/creatures/camel.webp",
+    "img": "icons/creatures/mammals/livestock-sheep-green.webp",
     "system": {
       "description": "Kann 25 kg transportieren (insbesondere im Gebirge).",
       "quantity": 1,
@@ -173,7 +173,7 @@
   {
     "name": "Schlachtross",
     "type": "gear",
-    "img": "icons/environment/creatures/horse-black.webp",
+    "img": "icons/environment/people/cavalry-heavy.webp",
     "system": {
       "description": "Kann 200 kg transportieren. Gewährt +2 Bonus auf berittenen Kampf.",
       "quantity": 1,
@@ -192,7 +192,7 @@
   {
     "name": "Elefant",
     "type": "gear",
-    "img": "icons/creatures/mammals/elephant-walking-grey.webp",
+    "img": "icons/creatures/mammals/ox-buffalo-horned-green.webp",
     "system": {
       "description": "Kann 500 kg transportieren.",
       "quantity": 1,
@@ -211,7 +211,7 @@
   {
     "name": "Pferdekarren",
     "type": "gear",
-    "img": "icons/environment/settlement/cart-wooden.webp",
+    "img": "icons/environment/settlement/wagon.webp",
     "system": {
       "description": "Kann 400 kg transportieren.",
       "quantity": 1,
@@ -230,7 +230,7 @@
   {
     "name": "Planwagen",
     "type": "gear",
-    "img": "icons/environment/settlement/wagon-covered-white.webp",
+    "img": "icons/environment/settlement/wagon.webp",
     "system": {
       "description": "Kann 700 kg transportieren.",
       "quantity": 1,
@@ -287,7 +287,7 @@
   {
     "name": "Kanu",
     "type": "gear",
-    "img": "icons/tools/nautical/oar-wood-brown.webp",
+    "img": "icons/tools/nautical/anchor-blue.webp",
     "system": {
       "description": "Kann 350 kg transportieren.",
       "quantity": 1,
@@ -306,7 +306,7 @@
   {
     "name": "Ruderboot",
     "type": "gear",
-    "img": "icons/tools/nautical/oars-crossed-brown.webp",
+    "img": "icons/tools/nautical/anchor-blue-orange.webp",
     "system": {
       "description": "Kann 500 kg transportieren.",
       "quantity": 1,
@@ -344,7 +344,7 @@
   {
     "name": "Segelschiff - mittel",
     "type": "gear",
-    "img": "icons/tools/nautical/ship-wheel-brown.webp",
+    "img": "icons/tools/nautical/steering-wheel.webp",
     "system": {
       "description": "Bis zu 40 Personen.",
       "quantity": 1,
@@ -363,7 +363,7 @@
   {
     "name": "Segelschiff - groß",
     "type": "gear",
-    "img": "icons/tools/nautical/ship-wheel-brown.webp",
+    "img": "icons/tools/nautical/steering-wheel.webp",
     "system": {
       "description": "Bis zu 200 Personen.",
       "quantity": 1,
@@ -420,7 +420,7 @@
   {
     "name": "Kriegsschiff",
     "type": "gear",
-    "img": "icons/tools/nautical/ship-wheel-brown.webp",
+    "img": "icons/tools/nautical/steering-wheel.webp",
     "system": {
       "description": "Bis zu 1.000 Personen.",
       "quantity": 1,

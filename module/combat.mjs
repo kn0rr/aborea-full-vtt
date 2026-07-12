@@ -323,6 +323,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const offBonusInput   = html.querySelector("[name=offBonus]");
     const cbHint          = html.querySelector(".combat-bonus-hint");
     const _isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
+    const _storedCB        = Number(actor.system.combat?.combatBonus ?? 0);
     const updateWeapon = () => {
       const wId     = weaponSelect?.value;
       const weapon  = (wId && wId !== "__native__") ? actor.items.get(wId) : null;
@@ -331,7 +332,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
       // Recompute combat bonus from best matching skill for this weapon
       const skillKeys = _weaponSkillKeys(weapon);
-      let bestCB = storedCB; // Fallback: gespeicherter Kampfbonus wenn keine Skills konfiguriert
+      let bestCB = _storedCB; // Fallback: gespeicherter Kampfbonus wenn keine Skills konfiguriert
       if (skillKeys.length) {
         bestCB = 0;
         for (const key of skillKeys) {
@@ -343,7 +344,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         }
       }
       if (_isCreatureOrNpc) {
-        if (cbHint) cbHint.textContent = combatBonus;
+        if (cbHint) cbHint.textContent = _storedCB;
         if (offBonusInput) offBonusInput.max = 99;
       } else {
         if (cbHint) cbHint.textContent = bestCB;

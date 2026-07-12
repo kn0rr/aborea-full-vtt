@@ -2,7 +2,7 @@
   {
     "name": "Ring der Scharfsicht",
     "type": "magic",
-    "img": "icons/equipment/finger/ring-band-simple-gold.webp",
+    "img": "icons/equipment/finger/ring-eye-gold-green.webp",
     "system": {
       "description": "Ein magischer Ring, der die Sinne des Trägers schärft. Verleiht +1 auf Wahrnehmungs-Manöver.",
       "equipped": false,

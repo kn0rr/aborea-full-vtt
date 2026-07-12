@@ -126,7 +126,7 @@
   {
     "name": "Hornwan",
     "type": "god",
-    "img": "icons/consumables/drinks/beer-stein-wooden.webp",
+    "img": "icons/consumables/drinks/alcohol-beer-stein-wooden-brown.webp",
     "system": {
       "description": "Der Gott der Freude wandelt gerne unter den Sterblichen. Er überbringt die Botschaften der Götter und soll schon mit manchem guten Zwerg einen Humpen gehoben haben. Die Reisen Hornwans werden Zwergenkindern am Bett erzählt. Er ist der Bruder Barros' und schätzt diesen sehr. Typischer Spruch eines zwergischen Ausbilders: „Erst Barros Werk, dann Hornwans Freud'.",
       "pantheon": "Zwergisch",
@@ -345,7 +345,7 @@
   {
     "name": "Aone",
     "type": "god",
-    "img": "icons/magic/life/heart-hand-gold-red.webp",
+    "img": "icons/magic/life/heart-hand-gold-green.webp",
     "system": {
       "description": "Aone entstammt der Verbindung der Götter Iandara und Varus. Sie ist die Schwester Mycaels; beide ergänzen sich und gelten als unzertrennlich. Sie nahm einst einen Sterblichen zum Partner, dem sie bis an das Ende seines kurzen Lebens treu blieb. Die Trioner erbitten daher auch bei schweren Krankheiten ihre Hilfe. Sie gilt als neckisch und launenhaft. Nach langer Trauer ging sie mit Ateom eine Bindung ein, die jedoch nicht dauerhaft war. Aus dem Betrug soll Zia entstanden sein.",
       "pantheon": "Trionisch",
@@ -626,7 +626,7 @@
   {
     "name": "Otum",
     "type": "god",
-    "img": "icons/magic/water/water-elemental-blue.webp",
+    "img": "icons/magic/water/elemental-water.webp",
     "system": {
       "description": "Otum, der Zweigesichtige, ist der Gott des Meeres und des Schicksals. Er herrschte mit Leceia über Aborea, als Esthion gefangen war — aus diesem Bund kam Hemron hervor. Otum ist launenhaft und gewaltig. Er steht für das Schicksal und den Sturm, die Lüge und die Wut — aber auch für Klarheit und Wahrheit. Er trägt eine riesige Harpune und ein Horn, aus dem er Ozeane fließen lassen kann. Seine Töchter sind kapriziös, und Seeleute singen jeden Abend, um sie zu beschwichtigen.",
       "pantheon": "Trionisch",
@@ -840,7 +840,7 @@
   {
     "name": "Pria",
     "type": "god",
-    "img": "icons/magic/holy/angel-flying-sword-blue.webp",
+    "img": "icons/magic/holy/angel-winged-humanoid-blue.webp",
     "system": {
       "description": "Pria ist das einzige der vielen Kinder Insas und Elms, das zu ihnen aufgestiegen ist. Alle anderen Halblinge dürfen im Garten Aboreas ihr Glück finden und ihr Schicksal selbst bestimmen.",
       "pantheon": "Halblingisch",

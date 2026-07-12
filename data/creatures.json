@@ -2,7 +2,7 @@
   {
     "name": "Raufbold",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/charge.webp",
     "system": {
       "attributes": {
         "st": {
@@ -75,7 +75,7 @@
       {
         "name": "Knüppel",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "skill": "aexte",
           "attribute": "st",
@@ -128,7 +128,7 @@
   {
     "name": "Grobian",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/charge.webp",
     "system": {
       "attributes": {
         "st": {
@@ -202,7 +202,7 @@
       {
         "name": "Knüppel",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "skill": "aexte",
           "attribute": "st",
@@ -275,7 +275,7 @@
   {
     "name": "Schläger",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/charge.webp",
     "system": {
       "attributes": {
         "st": {
@@ -349,7 +349,7 @@
       {
         "name": "Knüppel",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "skill": "aexte",
           "attribute": "st",
@@ -559,7 +559,7 @@
   {
     "name": "Bandit",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/charge.webp",
     "system": {
       "attributes": {
         "st": {
@@ -680,7 +680,7 @@
   {
     "name": "Schurke",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/charge.webp",
     "system": {
       "attributes": {
         "st": {
@@ -1208,7 +1208,7 @@
   {
     "name": "Miliz",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/infantry.webp",
     "system": {
       "attributes": {
         "st": {
@@ -1366,7 +1366,7 @@
   {
     "name": "Soldat",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/infantry.webp",
     "system": {
       "attributes": {
         "st": {
@@ -1561,7 +1561,7 @@
   {
     "name": "Erf. Soldat",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/infantry-armored.webp",
     "system": {
       "attributes": {
         "st": {
@@ -1760,7 +1760,7 @@
   {
     "name": "Veteran",
     "type": "creature",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/infantry-armored.webp",
     "system": {
       "attributes": {
         "st": {
@@ -2428,7 +2428,7 @@
       {
         "name": "Knüppel",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "skill": "aexte",
           "attribute": "st",
@@ -2871,7 +2871,7 @@
       {
         "name": "Knochen (Hieb)",
         "type": "weapon",
-        "img": "icons/commodities/bones/bone-worn-brown.webp",
+        "img": "icons/commodities/bones/bone-simple-white.webp",
         "system": {
           "skill": "waffenlos",
           "attribute": "st",
@@ -2991,7 +2991,7 @@
   {
     "name": "Ork",
     "type": "creature",
-    "img": "icons/creatures/abilities/mouth-teeth-orc-green.webp",
+    "img": "icons/creatures/abilities/mouth-teeth-sharp.webp",
     "system": {
       "attributes": {
         "st": {
@@ -3114,7 +3114,7 @@
   {
     "name": "Ghul",
     "type": "creature",
-    "img": "icons/magic/death/undead-ghoul-crawling-green.webp",
+    "img": "icons/magic/death/hand-dirt-undead-zombie.webp",
     "system": {
       "attributes": {
         "st": {
@@ -3206,7 +3206,7 @@
   {
     "name": "Gnoll",
     "type": "creature",
-    "img": "icons/creatures/abilities/dog-head-growl-red.webp",
+    "img": "icons/creatures/mammals/humanoid-wolf-dog-blue.webp",
     "system": {
       "attributes": {
         "st": {
@@ -3368,7 +3368,7 @@
       {
         "name": "Keule",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "skill": "waffenlos",
           "attribute": "st",
@@ -3460,7 +3460,7 @@
       {
         "name": "Keule (groß)",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "skill": "waffenlos",
           "attribute": "st",

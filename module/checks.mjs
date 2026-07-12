@@ -313,13 +313,17 @@ export function openCheckDialog(actor) {
 }
 
 export function registerCheckHooks() {
-  // Token-Rechtsklick: Probe würfeln
+  // Actor-Verzeichnis-Rechtsklick: Probe würfeln
+  const actorFromLi = li => game.actors.get(li.dataset?.entryId ?? li.dataset?.documentId);
   Hooks.on("getActorContextOptions", (html, options) => {
     options.push({
       name:  "🎲 Probe würfeln",
       icon:  '<i class="fas fa-dice-d10"></i>',
-      condition: actor => ["character", "npc", "creature"].includes(actor?.type),
-      callback: actor => openCheckDialog(actor),
+      visible: li => ["character", "npc", "creature"].includes(actorFromLi(li)?.type),
+      callback: li => {
+        const actor = actorFromLi(li);
+        if (actor) openCheckDialog(actor);
+      },
     });
   });
 }

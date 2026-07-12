@@ -30,6 +30,13 @@ export function registerConditions() {
     (CONFIG.statusEffects ?? []).map(e => [e.id, e.img ?? e.icon ?? ""])
   );
 
+  // Absicherung: Der Combat Tracker braucht den "dead"-Status für den
+  // Besiegt-Toggle (CONFIG.specialStatusEffects.DEFEATED). Falls ein Modul
+  // ihn entfernt hat, wieder ergänzen.
+  if (!CONFIG.statusEffects.some(e => e.id === "dead")) {
+    CONFIG.statusEffects.push({ id: "dead", name: "Besiegt", img: "icons/svg/skull.svg" });
+  }
+
   for (const cond of [...ABOREA_CONDITIONS].reverse()) {
     const candidates = _BUILTIN_MAP[cond.id] ?? [];
     const img = candidates.map(id => builtIn.get(id)).find(p => p) ?? "";

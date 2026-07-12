@@ -2,7 +2,7 @@
   {
     "name": "Bier",
     "type": "gear",
-    "img": "icons/consumables/drinks/beer-stein-wooden.webp",
+    "img": "icons/consumables/drinks/alcohol-beer-stein-wooden-brown.webp",
     "system": {
       "description": "Halber Liter Bier.",
       "quantity": 1,
@@ -40,7 +40,7 @@
   {
     "name": "Cidre",
     "type": "gear",
-    "img": "icons/consumables/drinks/wine-amphora-clay.webp",
+    "img": "icons/consumables/drinks/wine-amphora-clay-gray.webp",
     "system": {
       "description": "1 l Apfel-Cidre.",
       "quantity": 1,
@@ -135,7 +135,7 @@
   {
     "name": "Feuerstein und Zunder",
     "type": "gear",
-    "img": "icons/sundries/survival/tinderbox.webp",
+    "img": "icons/sundries/survival/fire-lighter-torch.webp",
     "system": {
       "description": "Zum Entzünden eines Feuers innerhalb von ca. 3 Minuten.",
       "quantity": 1,
@@ -154,7 +154,7 @@
   {
     "name": "Gasthauszimmer",
     "type": "gear",
-    "img": "icons/environment/settlement/house-cottage.webp",
+    "img": "icons/environment/settlement/tavern.webp",
     "system": {
       "description": "Preis für ein Einzelzimmer pro Nacht und Person inklusive Frühstück.",
       "quantity": 1,
@@ -230,7 +230,7 @@
   {
     "name": "Große Heilertasche",
     "type": "gear",
-    "img": "icons/tools/laboratory/mortar-herbs-green.webp",
+    "img": "icons/tools/laboratory/bowl-herbs-green.webp",
     "system": {
       "description": "Bis zu 20 Anwendungen. Erlaubt einen Manöverbonus von +4 auf Wissen (Heilkunde).",
       "quantity": 1,
@@ -268,7 +268,7 @@
   {
     "name": "Haltbare Nahrung",
     "type": "gear",
-    "img": "icons/consumables/food/bread-loaf-boule-rustic-brown.webp",
+    "img": "icons/consumables/food/bread-toast-tan.webp",
     "system": {
       "description": "Für eine Woche Nahrung.",
       "quantity": 1,
@@ -287,7 +287,7 @@
   {
     "name": "Handschuhe",
     "type": "gear",
-    "img": "icons/equipment/hand/glove-leather-brown.webp",
+    "img": "icons/equipment/hand/gloves-leather-tan.webp",
     "system": {
       "description": "Lederhandschuhe.",
       "quantity": 1,
@@ -363,7 +363,7 @@
   {
     "name": "Heilsalbe",
     "type": "gear",
-    "img": "icons/consumables/potions/potion-jar-corked-pink.webp",
+    "img": "icons/consumables/potions/potion-jar-corked-orange.webp",
     "system": {
       "description": "Verdoppelt die Genesungsrate (5 Anwendungen).",
       "quantity": 1,
@@ -420,7 +420,7 @@
   {
     "name": "Hose",
     "type": "gear",
-    "img": "icons/equipment/leg/pants-leather-brown.webp",
+    "img": "icons/equipment/leg/pants-brown-leather-pants.webp",
     "system": {
       "description": "Einfach.",
       "quantity": 1,
@@ -515,7 +515,7 @@
   {
     "name": "Kleiner Hammer",
     "type": "gear",
-    "img": "icons/tools/hand/hammer-mallet-wood.webp",
+    "img": "icons/tools/hand/hammer-simple-wood.webp",
     "system": {
       "description": "Für kleinere Arbeiten oder zum Einschlagen von Kletterhaken.",
       "quantity": 1,
@@ -534,7 +534,7 @@
   {
     "name": "Kletterhaken",
     "type": "gear",
-    "img": "icons/tools/fasteners/pitons-steel-grey.webp",
+    "img": "icons/sundries/survival/climbing-anchor-steel-grey.webp",
     "system": {
       "description": "Unterstützt beim Klettern (Bonus von +4). Braucht einen Hammer.",
       "quantity": 1,
@@ -553,7 +553,7 @@
   {
     "name": "Köcher",
     "type": "gear",
-    "img": "icons/weapons/ammunition/quiver-leather-brown.webp",
+    "img": "icons/weapons/ammunition/arrows-fletching.webp",
     "system": {
       "description": "Platz für bis zu 20 Pfeile.",
       "quantity": 1,
@@ -572,7 +572,7 @@
   {
     "name": "Kochgeschirr",
     "type": "gear",
-    "img": "icons/tools/cooking/pot-steel-grey.webp",
+    "img": "icons/tools/cooking/pot-camping-iron-black.webp",
     "system": {
       "description": "Eisentopf, Pfanne und Besteck für das Kochen im Freien.",
       "quantity": 1,
@@ -591,7 +591,7 @@
   {
     "name": "Krähenfüße",
     "type": "gear",
-    "img": "icons/environment/traps/caltrops-steel.webp",
+    "img": "icons/environment/traps/metal-spikes.webp",
     "system": {
       "description": "10 Krähenfüße, die Verfolgern Schmerzen bereiten können.",
       "quantity": 1,
@@ -629,7 +629,7 @@
   {
     "name": "Kreide",
     "type": "gear",
-    "img": "icons/commodities/stone/chalk-white.webp",
+    "img": "icons/commodities/stone/masonry-block-cube-white.webp",
     "system": {
       "description": "Ein Stück Kreide.",
       "quantity": 1,
@@ -686,7 +686,7 @@
   {
     "name": "Metallkugeln (Schleuder)",
     "type": "gear",
-    "img": "icons/weapons/ammunition/bullets-lead-grey.webp",
+    "img": "icons/weapons/ammunition/shot-round-lead.webp",
     "system": {
       "description": "Beutel mit 30 Stück.",
       "quantity": 1,
@@ -838,7 +838,7 @@
   {
     "name": "Schlafrolle",
     "type": "gear",
-    "img": "icons/sundries/survival/bedroll-blue.webp",
+    "img": "icons/sundries/survival/bedroll-worn-blue.webp",
     "system": {
       "description": "Wärmt nachts. Hält durchschnittlich 2 Jahre.",
       "quantity": 1,
@@ -857,7 +857,7 @@
   {
     "name": "Schloss",
     "type": "gear",
-    "img": "icons/sundries/misc/lock-iron-worn.webp",
+    "img": "icons/sundries/misc/lock-bronze-reinforced.webp",
     "system": {
       "description": "Eisenschloss (MS 8) mit einem Schlüssel.",
       "quantity": 1,
@@ -895,7 +895,7 @@
   {
     "name": "Seil mit Wurfhaken",
     "type": "gear",
-    "img": "icons/sundries/survival/hook-grappling-steel.webp",
+    "img": "icons/tools/fasteners/chain-claw-hook-steel.webp",
     "system": {
       "description": "10 m Seil mit Wurfhaken.",
       "quantity": 1,
@@ -914,7 +914,7 @@
   {
     "name": "Spiegel (Stahl)",
     "type": "gear",
-    "img": "icons/sundries/misc/mirror-steel-grey.webp",
+    "img": "icons/sundries/survival/mirror-plain.webp",
     "system": {
       "description": "Metallspiegel. Nützlich zum Einblicken um Ecken oder zum Signalisieren.",
       "quantity": 1,
@@ -971,7 +971,7 @@
   {
     "name": "Umhang (wetterfest)",
     "type": "gear",
-    "img": "icons/equipment/back/cloak-collared-green.webp",
+    "img": "icons/equipment/back/cloak-layered-green.webp",
     "system": {
       "description": "Dicker Wollumhang mit Kapuze. Schützt vor Regen und Kälte.",
       "quantity": 1,
@@ -1028,7 +1028,7 @@
   {
     "name": "Wasserbeutel",
     "type": "gear",
-    "img": "icons/sundries/survival/waterskin-leather.webp",
+    "img": "icons/sundries/survival/waterskin-leather-brown.webp",
     "system": {
       "description": "Für 1 l Flüssigkeit. Leer 0,1 kg, voll 1,1 kg.",
       "quantity": 1,
@@ -1047,7 +1047,7 @@
   {
     "name": "Wein",
     "type": "gear",
-    "img": "icons/consumables/drinks/wine-bottle-open.webp",
+    "img": "icons/consumables/drinks/wine-amphora-clay-red.webp",
     "system": {
       "description": "0,3 l verdünnter Wein.",
       "quantity": 1,
@@ -1085,7 +1085,7 @@
   {
     "name": "Angelrute & Köder",
     "type": "gear",
-    "img": "icons/tools/fishing/pole-wood-blue.webp",
+    "img": "icons/tools/fishing/rod-wood-blue-tan.webp",
     "system": {
       "description": "Einfache Angel mit Haken und Schnur sowie etwas Köder. Ermöglicht Fischen als Nahrungsquelle.",
       "quantity": 1,
@@ -1104,7 +1104,7 @@
   {
     "name": "Brecheisen",
     "type": "gear",
-    "img": "icons/tools/hand/crowbar-steel.webp",
+    "img": "icons/tools/hand/pry-bar-steel.webp",
     "system": {
       "description": "Stabiles Eisenwerkzeug zum Aufbrechen von Türen und Kisten. Gibt +1 auf Kraft-Manöver.",
       "quantity": 1,
@@ -1180,7 +1180,7 @@
   {
     "name": "Fernrohr",
     "type": "gear",
-    "img": "icons/tools/navigation/spyglass-brass.webp",
+    "img": "icons/tools/navigation/spyglass-telescope-brass.webp",
     "system": {
       "description": "Einfaches Messing-Fernrohr. Verdoppelt die Sichtweite auf freiem Gelände. Gibt +1 auf Wahrnehmung über große Distanzen.",
       "quantity": 1,
@@ -1256,7 +1256,7 @@
   {
     "name": "Schaufel",
     "type": "gear",
-    "img": "icons/tools/hand/shovel-spade-steel-brown.webp",
+    "img": "icons/tools/hand/shovel-spade-steel-brown-grey.webp",
     "system": {
       "description": "Eiserne Schaufel zum Graben.",
       "quantity": 1,
@@ -1294,7 +1294,7 @@
   {
     "name": "Spitzhacke",
     "type": "gear",
-    "img": "icons/tools/hand/pickaxe-steel-brown.webp",
+    "img": "icons/tools/hand/pickaxe-steel-grey.webp",
     "system": {
       "description": "Schwere Spitzhacke zum Graben und Bearbeiten von Gestein.",
       "quantity": 1,
@@ -1370,7 +1370,7 @@
   {
     "name": "Zauberfokus",
     "type": "gear",
-    "img": "icons/commodities/gems/gem-faceted-round-blue.webp",
+    "img": "icons/commodities/gems/gem-faceted-oval-blue.webp",
     "system": {
       "description": "Stab, Kristall oder ähnliches Objekt als magischer Fokus.",
       "quantity": 1,
@@ -1389,7 +1389,7 @@
   {
     "name": "Fährfahrt",
     "type": "gear",
-    "img": "icons/tools/nautical/oar-wood-brown.webp",
+    "img": "icons/tools/nautical/steering-wheel-blue.webp",
     "system": {
       "description": "Übersetzen einer Person. Grundpreis; für jeden Kilometer wird eine Muena zusätzlich berechnet.",
       "quantity": 1,

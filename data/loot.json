@@ -10,7 +10,11 @@
       "lockDifficulty": 0
     },
     "items": [],
-    "flags": { "aborea-v7": { "sourceId": "loot-truhe-leer" } }
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "loot-truhe-leer"
+      }
+    }
   },
   {
     "_id": "6c6f6f7400000002",
@@ -23,7 +27,11 @@
       "lockDifficulty": 12
     },
     "items": [],
-    "flags": { "aborea-v7": { "sourceId": "loot-truhe-verschlossen" } }
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "loot-truhe-verschlossen"
+      }
+    }
   },
   {
     "_id": "6c6f6f7400000003",
@@ -42,14 +50,20 @@
         "img": "icons/weapons/daggers/dagger-curved-blue.webp",
         "system": {
           "description": "",
-          "skills": ["kurzeKlingenwaffe", "stichwaffe"],
+          "skills": [
+            "kurzeKlingenwaffe",
+            "stichwaffe"
+          ],
           "minStrength": 0,
           "damage": -2,
           "initiative": 2,
           "range": "kurz",
           "price": "5 TT",
           "weight": 0.5,
-          "attrChoices": ["st", "ge"],
+          "attrChoices": [
+            "st",
+            "ge"
+          ],
           "hands": 1
         }
       },
@@ -67,7 +81,11 @@
         }
       }
     ],
-    "flags": { "aborea-v7": { "sourceId": "loot-schatzkiste" } }
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "loot-schatzkiste"
+      }
+    }
   },
   {
     "_id": "6c6f6f7400000004",
@@ -83,17 +101,21 @@
       {
         "name": "Knüppel",
         "type": "weapon",
-        "img": "icons/weapons/clubs/club-simple.webp",
+        "img": "icons/weapons/clubs/club-baton-brown.webp",
         "system": {
           "description": "",
-          "skills": ["waffenlos"],
+          "skills": [
+            "waffenlos"
+          ],
           "minStrength": 0,
           "damage": -2,
           "initiative": 1,
           "range": "kurz",
           "price": "1 TT",
           "weight": 1,
-          "attrChoices": ["st"],
+          "attrChoices": [
+            "st"
+          ],
           "hands": 1
         }
       },
@@ -110,7 +132,11 @@
         }
       }
     ],
-    "flags": { "aborea-v7": { "sourceId": "loot-goblin-beute" } }
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "loot-goblin-beute"
+      }
+    }
   },
   {
     "_id": "6c6f6f7400000005",
@@ -129,14 +155,19 @@
         "img": "icons/weapons/swords/shortsword-guard-brass.webp",
         "system": {
           "description": "",
-          "skills": ["kurzeKlingenwaffe"],
+          "skills": [
+            "kurzeKlingenwaffe"
+          ],
           "minStrength": 0,
           "damage": -1,
           "initiative": 1,
           "range": "kurz",
           "price": "14 TT",
           "weight": 2,
-          "attrChoices": ["st", "ge"],
+          "attrChoices": [
+            "st",
+            "ge"
+          ],
           "hands": 1
         }
       },
@@ -166,19 +197,27 @@
         }
       }
     ],
-    "flags": { "aborea-v7": { "sourceId": "loot-banditenbeute" } }
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "loot-banditenbeute"
+      }
+    }
   },
   {
     "_id": "6c6f6f7400000006",
     "name": "Händler-Regal (leer)",
     "type": "loot",
-    "img": "icons/containers/chest/chest-wooden-stacked.webp",
+    "img": "icons/containers/chest/chest-simple-box-brown.webp",
     "system": {
       "description": "Ein leeres Händlerregal. Fülle es mit Waren aus dem Kompendium.",
       "locked": false,
       "lockDifficulty": 0
     },
     "items": [],
-    "flags": { "aborea-v7": { "sourceId": "loot-haendler-regal" } }
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "loot-haendler-regal"
+      }
+    }
   }
 ]

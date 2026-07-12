@@ -87,7 +87,7 @@
     "_id": "57aa56781e430016",
     "name": "Schild",
     "type": "armor",
-    "img": "icons/equipment/shield/round-wooden-boss-steel.webp",
+    "img": "icons/equipment/shield/round-wooden-boss-steel-brown.webp",
     "system": {
       "description": "Benötigt eine freie Hand.",
       "minStrength": 3,

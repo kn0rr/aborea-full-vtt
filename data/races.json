@@ -45,7 +45,7 @@
   {
     "name": "Zwerg",
     "type": "race",
-    "img": "icons/environment/people/infantry-armed.webp",
+    "img": "icons/environment/people/infantry-armored.webp",
     "system": {
       "description": "Wärmesicht, einmalig +2 Trefferpunkte auf der ersten Stufe, Bonus auf Geheimtüren und Fallen, +1 Rüstung.",
       "mods": {
@@ -92,7 +92,7 @@
   {
     "name": "Gnom",
     "type": "race",
-    "img": "icons/environment/people/mage.webp",
+    "img": "icons/environment/people/cleric-grey.webp",
     "system": {
       "description": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
       "mods": {

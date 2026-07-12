@@ -876,7 +876,7 @@
   {
     "name": "Schlaf",
     "type": "spell",
-    "img": "icons/magic/control/sleep-bubble-blue.webp",
+    "img": "icons/magic/control/sleep-bubble-purple.webp",
     "system": {
       "description": "Lässt Person/2 MP der Stufe/2 MP für Stunde/1 MP einschlafen. Die Opfer können sich mit einem einfachen KO-Manöver für 5 Minuten wachhalten (wiederholbar).",
       "list": "Freie Magie",
