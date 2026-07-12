@@ -1,325 +1,1541 @@
 [
-  { "name": "Bier", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Halber Liter Bier.", "quantity": 1, "weight": 0.5, "price": "1 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-bier" } } },
-
-  { "name": "Bolzen", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "10 Bolzen für Armbrüste.", "quantity": 1, "weight": 1.5, "price": "16 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-bolzen" } } },
-
-  { "name": "Cidre", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "1 l Apfel-Cidre.", "quantity": 1, "weight": 1.0, "price": "1 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-cidre" } } },
-
-  { "name": "Dietrich", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "+1 auf Schlösser öffnen.", "quantity": 1, "weight": 0.1, "price": "2 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-dietrich" } } },
-
-  { "name": "Fackel", "type": "gear", "img": "icons/svg/light.svg",
-    "system": { "description": "Brennt 6 Stunden und erhellt 6 m Umkreis.", "quantity": 1, "weight": 0.1, "price": "1 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-fackel" } } },
-
-  { "name": "Falle", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfache Tierfalle.", "quantity": 1, "weight": 1.0, "price": "18 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-falle" } } },
-
-  { "name": "Federkiel und Tinte", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Zum Schreiben mit Tinte.", "quantity": 1, "weight": 0.1, "price": "7 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-federkiel-tinte" } } },
-
-  { "name": "Feuerstein und Zunder", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Zum Entzünden eines Feuers innerhalb von ca. 3 Minuten.", "quantity": 1, "weight": 0.3, "price": "22 MU", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-feuerstein-zunder" } } },
-
-  { "name": "Gasthauszimmer", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Preis für ein Einzelzimmer pro Nacht und Person inklusive Frühstück.", "quantity": 1, "weight": 0, "price": "1 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-gasthauszimmer" } } },
-
-  { "name": "Glasphiole", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "100 ml Fassungsvermögen.", "quantity": 1, "weight": 0.1, "price": "5 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-glasphiole" } } },
-
-  { "name": "Glücksbringer", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfacher (nicht-magischer) Talisman.", "quantity": 1, "weight": 0.3, "price": "1 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-gluecksbringer" } } },
-
-  { "name": "Göttliches Symbol", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfaches Symbol eines Gottes.", "quantity": 1, "weight": 0.2, "price": "5 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-goettliches-symbol" } } },
-
-  { "name": "Große Heilertasche", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 20 Anwendungen. Erlaubt einen Manöverbonus von +4 auf Wissen (Heilkunde).", "quantity": 1, "weight": 4.0, "price": "24 GF", "equipped": false, "rarity": "sehr selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-heilertasche-gross" } } },
-
-  { "name": "Gürtelbeutel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kleiner Lederbeutel, der am Gürtel befestigt wird. Ideal für Münzen und Kleinigkeiten.", "quantity": 1, "weight": 0.2, "price": "1 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-guertelbeute" } } },
-
-  { "name": "Haltbare Nahrung", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Für eine Woche Nahrung.", "quantity": 1, "weight": 5.0, "price": "3 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-haltbare-nahrung" } } },
-
-  { "name": "Handschuhe", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Lederhandschuhe.", "quantity": 1, "weight": 0.2, "price": "3 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-handschuhe" } } },
-
-  { "name": "Hängematte", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Stoffhängematte.", "quantity": 1, "weight": 2.0, "price": "3 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-haengematte" } } },
-
-  { "name": "Heiliges Symbol", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Symbol einer Gottheit aus Holz oder einfachem Metall. Voraussetzung für viele Wunder.", "quantity": 1, "weight": 0.1, "price": "3 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-heiliges-symbol" } } },
-
-  { "name": "Heiliges Symbol (Silber)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Silbernes Symbol einer Gottheit. Voraussetzung für mächtige Wunder. Wirkt gegen bestimmte Untote.", "quantity": 1, "weight": 0.2, "price": "20 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-heiliges-symbol-silber" } } },
-
-  { "name": "Heilsalbe", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Verdoppelt die Genesungsrate (5 Anwendungen).", "quantity": 1, "weight": 0.05, "price": "10 GF", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-heilsalbe" } } },
-
-  { "name": "Heiltrank", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Regeneriert umgehend 20 Trefferpunkte.", "quantity": 1, "weight": 0.1, "price": "40 GF", "equipped": false, "rarity": "sehr selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-heiltrank" } } },
-
-  { "name": "Hemd", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfach.", "quantity": 1, "weight": 0.5, "price": "5 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-hemd" } } },
-
-  { "name": "Hose", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfach.", "quantity": 1, "weight": 1.0, "price": "4 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-hose" } } },
-
-  { "name": "Hut", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfach.", "quantity": 1, "weight": 0.5, "price": "1 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-hut" } } },
-
-  { "name": "Kerze", "type": "gear", "img": "icons/svg/light.svg",
-    "system": { "description": "Brennt 2 Stunden und erhellt 3 m Umkreis.", "quantity": 1, "weight": 0.05, "price": "8 MU", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kerze" } } },
-
-  { "name": "Kette", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Eisenkette. Preis und Gewicht pro Meter.", "quantity": 1, "weight": 3.0, "price": "4 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kette" } } },
-
-  { "name": "Kleine Heilertasche", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 20 Anwendungen. Erlaubt einen Manöverbonus von +2 auf Wissen (Heilkunde).", "quantity": 1, "weight": 2.0, "price": "10 GF", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-heilertasche-klein" } } },
-
-  { "name": "Kleiner Hammer", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Für kleinere Arbeiten oder zum Einschlagen von Kletterhaken.", "quantity": 1, "weight": 2.0, "price": "26 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kleiner-hammer" } } },
-
-  { "name": "Kletterhaken", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Unterstützt beim Klettern (Bonus von +4). Braucht einen Hammer.", "quantity": 1, "weight": 0.1, "price": "6 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kletterhaken" } } },
-
-  { "name": "Köcher", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Platz für bis zu 20 Pfeile.", "quantity": 1, "weight": 1.5, "price": "12 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-koecher" } } },
-
-  { "name": "Kochgeschirr", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Eisentopf, Pfanne und Besteck für das Kochen im Freien.", "quantity": 1, "weight": 2.0, "price": "4 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kochgeschirr" } } },
-
-  { "name": "Krähenfüße", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "10 Krähenfüße, die Verfolgern Schmerzen bereiten können.", "quantity": 1, "weight": 0.1, "price": "1 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kraehenfuesse" } } },
-
-  { "name": "Kräuterbuch", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Illustriertes Buch über Heilpflanzen. Gibt +1 auf Wissen (Heilkunst) bei der Kräutersuche.", "quantity": 1, "weight": 1.0, "price": "12 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kraeuter-buch" } } },
-
-  { "name": "Kreide", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Ein Stück Kreide.", "quantity": 1, "weight": 0, "price": "5 MU", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kreide" } } },
-
-  { "name": "Laterne", "type": "gear", "img": "icons/svg/light.svg",
-    "system": { "description": "Brennt pro halbem Liter Öl 6 Stunden und erhellt 15 m Umkreis.", "quantity": 1, "weight": 1.0, "price": "28 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-laterne" } } },
-
-  { "name": "Mahlzeit", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Eine übliche Mahlzeit.", "quantity": 1, "weight": 0, "price": "2 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-mahlzeit" } } },
-
-  { "name": "Metallkugeln (Schleuder)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Beutel mit 30 Stück.", "quantity": 1, "weight": 1.0, "price": "5 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-metallkugeln" } } },
-
-  { "name": "Musikinstrument (einfach)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfaches Instrument nach Wahl (Flöte, Laute, Trommel). Voraussetzung für Bardenmagie.", "quantity": 1, "weight": 1.5, "price": "10 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-musikinstrument" } } },
-
-  { "name": "Musikinstrument (hochwertig)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Feines Instrument (Laute, Harfe, Fiedel). Gibt +1 auf Kunst-Manöver.", "quantity": 1, "weight": 2.0, "price": "50 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-musikinstrument-hq" } } },
-
-  { "name": "Öl", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Leicht entzündlich. Nötig für Laternen, brennt 6 Stunden in einer Laterne.", "quantity": 1, "weight": 0.5, "price": "8 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-oel" } } },
-
-  { "name": "Pergament", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Ein Blatt Pergament.", "quantity": 1, "weight": 0.1, "price": "6 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-pergament" } } },
-
-  { "name": "Pfeile", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "20 Pfeile für Bögen.", "quantity": 1, "weight": 1.2, "price": "1 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-pfeile" } } },
-
-  { "name": "Reisekleidung", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Strapazierfähige Kleidung für Reisende: wetterfeste Hose, Hemd, Umhang und Stiefel.", "quantity": 1, "weight": 2.0, "price": "3 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-reisekleidung" } } },
-
-  { "name": "Rucksack", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann bis zu 20 kg oder 40 l verstauen.", "quantity": 1, "weight": 1.0, "price": "44 MU", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-rucksack" } } },
-
-  { "name": "Schlafrolle", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Wärmt nachts. Hält durchschnittlich 2 Jahre.", "quantity": 1, "weight": 4.0, "price": "12 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schlafrolle" } } },
-
-  { "name": "Schloss", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Eisenschloss (MS 8) mit einem Schlüssel.", "quantity": 1, "weight": 0.5, "price": "6 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schloss" } } },
-
-  { "name": "Seil", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Stabiles Seil (Preis und Gewicht pro Meter). Kann Bonus auf Manöver geben (z.B. Athletik zum Klettern).", "quantity": 1, "weight": 0.2, "price": "1 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-seil" } } },
-
-  { "name": "Seil mit Wurfhaken", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "10 m Seil mit Wurfhaken.", "quantity": 1, "weight": 5.0, "price": "5 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-seil-wurfhaken" } } },
-
-  { "name": "Spiegel (Stahl)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Metallspiegel. Nützlich zum Einblicken um Ecken oder zum Signalisieren.", "quantity": 1, "weight": 0.2, "price": "8 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-spiegel" } } },
-
-  { "name": "Stiefel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfach.", "quantity": 1, "weight": 2.0, "price": "24 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-stiefel" } } },
-
-  { "name": "Umhang", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfach.", "quantity": 1, "weight": 1.5, "price": "18 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-umhang-einfach" } } },
-
-  { "name": "Umhang (wetterfest)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Dicker Wollumhang mit Kapuze. Schützt vor Regen und Kälte.", "quantity": 1, "weight": 1.5, "price": "4 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-umhang" } } },
-
-  { "name": "Verstärktes Seil", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Hält dreimal mehr Gewicht als ein normales Seil. Preis und Gewicht pro Meter.", "quantity": 1, "weight": 0.3, "price": "3 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-verstaerktes-seil" } } },
-
-  { "name": "Waffengürtel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann zwei Waffen halten.", "quantity": 1, "weight": 0.5, "price": "1 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-waffenguerte" } } },
-
-  { "name": "Wasserbeutel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Für 1 l Flüssigkeit. Leer 0,1 kg, voll 1,1 kg.", "quantity": 1, "weight": 0.1, "price": "2 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-wasserbeutel" } } },
-
-  { "name": "Wein", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "0,3 l verdünnter Wein.", "quantity": 1, "weight": 0.3, "price": "2 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-wein" } } },
-
-  { "name": "Zelt", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bietet zwei Personen Schutz.", "quantity": 1, "weight": 3.0, "price": "5 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-zelt" } } },
-
-  { "name": "Angelrute & Köder", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfache Angel mit Haken und Schnur sowie etwas Köder. Ermöglicht Fischen als Nahrungsquelle.", "quantity": 1, "weight": 1.0, "price": "3 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-angelrute" } } },
-
-  { "name": "Brecheisen", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Stabiles Eisenwerkzeug zum Aufbrechen von Türen und Kisten. Gibt +1 auf Kraft-Manöver.", "quantity": 1, "weight": 2.0, "price": "3 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-brecheisen" } } },
-
-  { "name": "Diebeswerkzeug", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Spezialwerkzeug für Fallen entschärfen und Schlösser knacken. +1 auf entsprechende Manöver.", "quantity": 1, "weight": 0.5, "price": "25 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-diebeswerkzeug" } } },
-
-  { "name": "Fallenstell-Set", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfache Fallen für Kleintiere. Gibt +1 auf Überlebens-Manöver zum Nahrungsbeschaffen.", "quantity": 1, "weight": 1.5, "price": "4 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-fallenset" } } },
-
-  { "name": "Feine Kleidung", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Gut verarbeitete Kleidung für städtische Umgebungen. Gibt +1 auf Einflussnahme in gehobener Gesellschaft.", "quantity": 1, "weight": 1.5, "price": "15 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-feine-kleidung" } } },
-
-  { "name": "Fernrohr", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Einfaches Messing-Fernrohr. Verdoppelt die Sichtweite auf freiem Gelände. Gibt +1 auf Wahrnehmung über große Distanzen.", "quantity": 1, "weight": 0.5, "price": "30 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-fernrohr" } } },
-
-  { "name": "Handwerkszeug", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Grundausstattung für ein Handwerk. Gibt +1 auf Handwerks-Manöver.", "quantity": 1, "weight": 5.0, "price": "20 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-handwerkszeug" } } },
-
-  { "name": "Karte (Region)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Pergamentkarte einer bekannten Region. Gibt +1 auf Navigations-Manöver in dieser Gegend.", "quantity": 1, "weight": 0.1, "price": "5 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-karte-region" } } },
-
-  { "name": "Schlösserknacker-Set", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Feines Werkzeugset zum Öffnen von Schlössern. Benötigt Fertigkeit Mechanik.", "quantity": 1, "weight": 0.5, "price": "15 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schloesserknacker" } } },
-
-  { "name": "Schaufel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Eiserne Schaufel zum Graben.", "quantity": 1, "weight": 3.0, "price": "2 TT", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schaufel" } } },
-
-  { "name": "Schreibset", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Tintenfass, Federkiel und 10 Blatt Pergament.", "quantity": 1, "weight": 0.5, "price": "8 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schreibset" } } },
-
-  { "name": "Spitzhacke", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Schwere Spitzhacke zum Graben und Bearbeiten von Gestein.", "quantity": 1, "weight": 4.0, "price": "3 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-spitzhacke" } } },
-
-  { "name": "Truhe (klein)", "type": "gear", "img": "icons/svg/chest.svg",
-    "system": { "description": "Kleine Holztruhe mit Metallbeschlägen und Schloss. Fasst ca. 50 kg.", "quantity": 1, "weight": 5.0, "price": "8 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-truhe-klein" } } },
-
-  { "name": "Würfelset", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Set aus Knochen- oder Holzwürfeln für Glücksspiele. Gibt +1 auf List-Manöver beim Mogeln.", "quantity": 1, "weight": 0.1, "price": "1 KL", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-wuerfelset" } } },
-
-  { "name": "Zauberbuch (leer)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Leeres Buch mit behandelten Seiten, geeignet zum Aufzeichnen von Zaubern und Formeln.", "quantity": 1, "weight": 1.5, "price": "20 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-zauberbuch" } } },
-
-  { "name": "Zauberfokus", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Stab, Kristall oder ähnliches Objekt als magischer Fokus.", "quantity": 1, "weight": 0.5, "price": "15 TT", "equipped": false, "rarity": "selten", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-zauberfokus" } } },
-
-  { "name": "Fährfahrt", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Übersetzen einer Person. Grundpreis; für jeden Kilometer wird eine Muena zusätzlich berechnet.", "quantity": 1, "weight": 0, "price": "2 KL", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-faehrfahrt" } } },
-
-  { "name": "Schiffsreise", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Koje auf einem Schiff. Grundpreis pro Kilometer.", "quantity": 1, "weight": 0, "price": "1 TT", "equipped": false, "rarity": "mittel", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schiffsreise" } } },
-
-  { "name": "Stallplatz", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Für einen Tag Platz und Pflege für ein Tier.", "quantity": 1, "weight": 0, "price": "1 MU", "equipped": false, "rarity": "häufig", "category": "allgemein" },
-    "flags": { "aborea-v7": { "sourceId": "gear-stallplatz" } } },
-
-  { "name": "Esmarion", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "+30 TP für eine Stunde (kann auch über den maximalen TP liegen).", "quantity": 1, "weight": 0.1, "price": "350 GF", "equipped": false, "rarity": "extrem selten", "category": "kraeuter" },
-    "flags": { "aborea-v7": { "sourceId": "gear-esmarion" } } },
-
-  { "name": "Fistance", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Erlaubt für eine Stunde unter Wasser zu atmen.", "quantity": 1, "weight": 0.1, "price": "200 GF", "equipped": false, "rarity": "extrem selten", "category": "kraeuter" },
-    "flags": { "aborea-v7": { "sourceId": "gear-fistance" } } },
-
-  { "name": "Ishcar", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Gewährt für eine Stunde Wärmesicht.", "quantity": 1, "weight": 0.1, "price": "8 GF", "equipped": false, "rarity": "sehr selten", "category": "kraeuter" },
-    "flags": { "aborea-v7": { "sourceId": "gear-ishcar" } } },
-
-  { "name": "Knappenglück", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "+1 auf Einflussnahme beim Umwerben des anderen Geschlechts.", "quantity": 1, "weight": 0.1, "price": "1 GF", "equipped": false, "rarity": "sehr selten", "category": "kraeuter" },
-    "flags": { "aborea-v7": { "sourceId": "gear-knappengluck" } } },
-
-  { "name": "Uriashil", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "+1 Bonus auf Wahrnehmung für eine Stunde.", "quantity": 1, "weight": 0.1, "price": "4 GF", "equipped": false, "rarity": "extrem selten", "category": "kraeuter" },
-    "flags": { "aborea-v7": { "sourceId": "gear-uriashil" } } }
+  {
+    "name": "Bier",
+    "type": "gear",
+    "img": "icons/consumables/drinks/beer-stein-wooden.webp",
+    "system": {
+      "description": "Halber Liter Bier.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "1 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-bier"
+      }
+    }
+  },
+  {
+    "name": "Bolzen",
+    "type": "gear",
+    "img": "icons/weapons/ammunition/arrows-war-red.webp",
+    "system": {
+      "description": "10 Bolzen für Armbrüste.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "16 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-bolzen"
+      }
+    }
+  },
+  {
+    "name": "Cidre",
+    "type": "gear",
+    "img": "icons/consumables/drinks/wine-amphora-clay.webp",
+    "system": {
+      "description": "1 l Apfel-Cidre.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "1 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-cidre"
+      }
+    }
+  },
+  {
+    "name": "Dietrich",
+    "type": "gear",
+    "img": "icons/tools/hand/lockpicks-steel-grey.webp",
+    "system": {
+      "description": "+1 auf Schlösser öffnen.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "2 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-dietrich"
+      }
+    }
+  },
+  {
+    "name": "Fackel",
+    "type": "gear",
+    "img": "icons/sundries/lights/torch-brown.webp",
+    "system": {
+      "description": "Brennt 6 Stunden und erhellt 6 m Umkreis.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "1 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-fackel"
+      }
+    }
+  },
+  {
+    "name": "Falle",
+    "type": "gear",
+    "img": "icons/environment/traps/trap-jaw-steel.webp",
+    "system": {
+      "description": "Einfache Tierfalle.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "18 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-falle"
+      }
+    }
+  },
+  {
+    "name": "Federkiel und Tinte",
+    "type": "gear",
+    "img": "icons/tools/scribal/ink-quill-red.webp",
+    "system": {
+      "description": "Zum Schreiben mit Tinte.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "7 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-federkiel-tinte"
+      }
+    }
+  },
+  {
+    "name": "Feuerstein und Zunder",
+    "type": "gear",
+    "img": "icons/sundries/survival/tinderbox.webp",
+    "system": {
+      "description": "Zum Entzünden eines Feuers innerhalb von ca. 3 Minuten.",
+      "quantity": 1,
+      "weight": 0.3,
+      "price": "22 MU",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-feuerstein-zunder"
+      }
+    }
+  },
+  {
+    "name": "Gasthauszimmer",
+    "type": "gear",
+    "img": "icons/environment/settlement/house-cottage.webp",
+    "system": {
+      "description": "Preis für ein Einzelzimmer pro Nacht und Person inklusive Frühstück.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "1 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-gasthauszimmer"
+      }
+    }
+  },
+  {
+    "name": "Glasphiole",
+    "type": "gear",
+    "img": "icons/consumables/potions/bottle-bulb-empty-glass.webp",
+    "system": {
+      "description": "100 ml Fassungsvermögen.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "5 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-glasphiole"
+      }
+    }
+  },
+  {
+    "name": "Glücksbringer",
+    "type": "gear",
+    "img": "icons/equipment/neck/pendant-faceted-red.webp",
+    "system": {
+      "description": "Einfacher (nicht-magischer) Talisman.",
+      "quantity": 1,
+      "weight": 0.3,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-gluecksbringer"
+      }
+    }
+  },
+  {
+    "name": "Göttliches Symbol",
+    "type": "gear",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
+    "system": {
+      "description": "Einfaches Symbol eines Gottes.",
+      "quantity": 1,
+      "weight": 0.2,
+      "price": "5 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-goettliches-symbol"
+      }
+    }
+  },
+  {
+    "name": "Große Heilertasche",
+    "type": "gear",
+    "img": "icons/tools/laboratory/mortar-herbs-green.webp",
+    "system": {
+      "description": "Bis zu 20 Anwendungen. Erlaubt einen Manöverbonus von +4 auf Wissen (Heilkunde).",
+      "quantity": 1,
+      "weight": 4,
+      "price": "24 GF",
+      "equipped": false,
+      "rarity": "sehr selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-heilertasche-gross"
+      }
+    }
+  },
+  {
+    "name": "Gürtelbeutel",
+    "type": "gear",
+    "img": "icons/containers/bags/pouch-simple-brown.webp",
+    "system": {
+      "description": "Kleiner Lederbeutel, der am Gürtel befestigt wird. Ideal für Münzen und Kleinigkeiten.",
+      "quantity": 1,
+      "weight": 0.2,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-guertelbeute"
+      }
+    }
+  },
+  {
+    "name": "Haltbare Nahrung",
+    "type": "gear",
+    "img": "icons/consumables/food/bread-loaf-boule-rustic-brown.webp",
+    "system": {
+      "description": "Für eine Woche Nahrung.",
+      "quantity": 1,
+      "weight": 5,
+      "price": "3 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-haltbare-nahrung"
+      }
+    }
+  },
+  {
+    "name": "Handschuhe",
+    "type": "gear",
+    "img": "icons/equipment/hand/glove-leather-brown.webp",
+    "system": {
+      "description": "Lederhandschuhe.",
+      "quantity": 1,
+      "weight": 0.2,
+      "price": "3 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-handschuhe"
+      }
+    }
+  },
+  {
+    "name": "Hängematte",
+    "type": "gear",
+    "img": "icons/sundries/survival/bedroll-grey.webp",
+    "system": {
+      "description": "Stoffhängematte.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "3 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-haengematte"
+      }
+    }
+  },
+  {
+    "name": "Heiliges Symbol",
+    "type": "gear",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
+    "system": {
+      "description": "Symbol einer Gottheit aus Holz oder einfachem Metall. Voraussetzung für viele Wunder.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "3 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-heiliges-symbol"
+      }
+    }
+  },
+  {
+    "name": "Heiliges Symbol (Silber)",
+    "type": "gear",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
+    "system": {
+      "description": "Silbernes Symbol einer Gottheit. Voraussetzung für mächtige Wunder. Wirkt gegen bestimmte Untote.",
+      "quantity": 1,
+      "weight": 0.2,
+      "price": "20 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-heiliges-symbol-silber"
+      }
+    }
+  },
+  {
+    "name": "Heilsalbe",
+    "type": "gear",
+    "img": "icons/consumables/potions/potion-jar-corked-pink.webp",
+    "system": {
+      "description": "Verdoppelt die Genesungsrate (5 Anwendungen).",
+      "quantity": 1,
+      "weight": 0.05,
+      "price": "10 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-heilsalbe"
+      }
+    }
+  },
+  {
+    "name": "Heiltrank",
+    "type": "gear",
+    "img": "icons/consumables/potions/bottle-round-corked-red.webp",
+    "system": {
+      "description": "Regeneriert umgehend 20 Trefferpunkte.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "40 GF",
+      "equipped": false,
+      "rarity": "sehr selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-heiltrank"
+      }
+    }
+  },
+  {
+    "name": "Hemd",
+    "type": "gear",
+    "img": "icons/equipment/chest/shirt-simple-white.webp",
+    "system": {
+      "description": "Einfach.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "5 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-hemd"
+      }
+    }
+  },
+  {
+    "name": "Hose",
+    "type": "gear",
+    "img": "icons/equipment/leg/pants-leather-brown.webp",
+    "system": {
+      "description": "Einfach.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "4 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-hose"
+      }
+    }
+  },
+  {
+    "name": "Hut",
+    "type": "gear",
+    "img": "icons/equipment/head/hat-belted-simple.webp",
+    "system": {
+      "description": "Einfach.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-hut"
+      }
+    }
+  },
+  {
+    "name": "Kerze",
+    "type": "gear",
+    "img": "icons/sundries/lights/candle-unlit-white.webp",
+    "system": {
+      "description": "Brennt 2 Stunden und erhellt 3 m Umkreis.",
+      "quantity": 1,
+      "weight": 0.05,
+      "price": "8 MU",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kerze"
+      }
+    }
+  },
+  {
+    "name": "Kette",
+    "type": "gear",
+    "img": "icons/tools/fasteners/chain-steel-grey.webp",
+    "system": {
+      "description": "Eisenkette. Preis und Gewicht pro Meter.",
+      "quantity": 1,
+      "weight": 3,
+      "price": "4 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kette"
+      }
+    }
+  },
+  {
+    "name": "Kleine Heilertasche",
+    "type": "gear",
+    "img": "icons/containers/bags/pouch-simple-brown.webp",
+    "system": {
+      "description": "Bis zu 20 Anwendungen. Erlaubt einen Manöverbonus von +2 auf Wissen (Heilkunde).",
+      "quantity": 1,
+      "weight": 2,
+      "price": "10 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-heilertasche-klein"
+      }
+    }
+  },
+  {
+    "name": "Kleiner Hammer",
+    "type": "gear",
+    "img": "icons/tools/hand/hammer-mallet-wood.webp",
+    "system": {
+      "description": "Für kleinere Arbeiten oder zum Einschlagen von Kletterhaken.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "26 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kleiner-hammer"
+      }
+    }
+  },
+  {
+    "name": "Kletterhaken",
+    "type": "gear",
+    "img": "icons/tools/fasteners/pitons-steel-grey.webp",
+    "system": {
+      "description": "Unterstützt beim Klettern (Bonus von +4). Braucht einen Hammer.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "6 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kletterhaken"
+      }
+    }
+  },
+  {
+    "name": "Köcher",
+    "type": "gear",
+    "img": "icons/weapons/ammunition/quiver-leather-brown.webp",
+    "system": {
+      "description": "Platz für bis zu 20 Pfeile.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "12 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-koecher"
+      }
+    }
+  },
+  {
+    "name": "Kochgeschirr",
+    "type": "gear",
+    "img": "icons/tools/cooking/pot-steel-grey.webp",
+    "system": {
+      "description": "Eisentopf, Pfanne und Besteck für das Kochen im Freien.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "4 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kochgeschirr"
+      }
+    }
+  },
+  {
+    "name": "Krähenfüße",
+    "type": "gear",
+    "img": "icons/environment/traps/caltrops-steel.webp",
+    "system": {
+      "description": "10 Krähenfüße, die Verfolgern Schmerzen bereiten können.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kraehenfuesse"
+      }
+    }
+  },
+  {
+    "name": "Kräuterbuch",
+    "type": "gear",
+    "img": "icons/sundries/books/book-worn-green.webp",
+    "system": {
+      "description": "Illustriertes Buch über Heilpflanzen. Gibt +1 auf Wissen (Heilkunst) bei der Kräutersuche.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "12 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kraeuter-buch"
+      }
+    }
+  },
+  {
+    "name": "Kreide",
+    "type": "gear",
+    "img": "icons/commodities/stone/chalk-white.webp",
+    "system": {
+      "description": "Ein Stück Kreide.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "5 MU",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kreide"
+      }
+    }
+  },
+  {
+    "name": "Laterne",
+    "type": "gear",
+    "img": "icons/sundries/lights/lantern-iron-yellow.webp",
+    "system": {
+      "description": "Brennt pro halbem Liter Öl 6 Stunden und erhellt 15 m Umkreis.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "28 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-laterne"
+      }
+    }
+  },
+  {
+    "name": "Mahlzeit",
+    "type": "gear",
+    "img": "icons/consumables/food/bowl-stew-brown.webp",
+    "system": {
+      "description": "Eine übliche Mahlzeit.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "2 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-mahlzeit"
+      }
+    }
+  },
+  {
+    "name": "Metallkugeln (Schleuder)",
+    "type": "gear",
+    "img": "icons/weapons/ammunition/bullets-lead-grey.webp",
+    "system": {
+      "description": "Beutel mit 30 Stück.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "5 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-metallkugeln"
+      }
+    }
+  },
+  {
+    "name": "Musikinstrument (einfach)",
+    "type": "gear",
+    "img": "icons/tools/instruments/flute-simple-wood.webp",
+    "system": {
+      "description": "Einfaches Instrument nach Wahl (Flöte, Laute, Trommel). Voraussetzung für Bardenmagie.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "10 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-musikinstrument"
+      }
+    }
+  },
+  {
+    "name": "Musikinstrument (hochwertig)",
+    "type": "gear",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
+    "system": {
+      "description": "Feines Instrument (Laute, Harfe, Fiedel). Gibt +1 auf Kunst-Manöver.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "50 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-musikinstrument-hq"
+      }
+    }
+  },
+  {
+    "name": "Öl",
+    "type": "gear",
+    "img": "icons/consumables/potions/bottle-round-corked-orange.webp",
+    "system": {
+      "description": "Leicht entzündlich. Nötig für Laternen, brennt 6 Stunden in einer Laterne.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "8 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-oel"
+      }
+    }
+  },
+  {
+    "name": "Pergament",
+    "type": "gear",
+    "img": "icons/sundries/scrolls/scroll-plain-tan.webp",
+    "system": {
+      "description": "Ein Blatt Pergament.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "6 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-pergament"
+      }
+    }
+  },
+  {
+    "name": "Pfeile",
+    "type": "gear",
+    "img": "icons/weapons/ammunition/arrows-bodkin-yellow-red.webp",
+    "system": {
+      "description": "20 Pfeile für Bögen.",
+      "quantity": 1,
+      "weight": 1.2,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-pfeile"
+      }
+    }
+  },
+  {
+    "name": "Reisekleidung",
+    "type": "gear",
+    "img": "icons/equipment/chest/shirt-collared-brown.webp",
+    "system": {
+      "description": "Strapazierfähige Kleidung für Reisende: wetterfeste Hose, Hemd, Umhang und Stiefel.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "3 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-reisekleidung"
+      }
+    }
+  },
+  {
+    "name": "Rucksack",
+    "type": "gear",
+    "img": "icons/containers/bags/pack-simple-leather-tan.webp",
+    "system": {
+      "description": "Kann bis zu 20 kg oder 40 l verstauen.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "44 MU",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-rucksack"
+      }
+    }
+  },
+  {
+    "name": "Schlafrolle",
+    "type": "gear",
+    "img": "icons/sundries/survival/bedroll-blue.webp",
+    "system": {
+      "description": "Wärmt nachts. Hält durchschnittlich 2 Jahre.",
+      "quantity": 1,
+      "weight": 4,
+      "price": "12 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schlafrolle"
+      }
+    }
+  },
+  {
+    "name": "Schloss",
+    "type": "gear",
+    "img": "icons/sundries/misc/lock-iron-worn.webp",
+    "system": {
+      "description": "Eisenschloss (MS 8) mit einem Schlüssel.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "6 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schloss"
+      }
+    }
+  },
+  {
+    "name": "Seil",
+    "type": "gear",
+    "img": "icons/sundries/survival/rope-coiled-brown.webp",
+    "system": {
+      "description": "Stabiles Seil (Preis und Gewicht pro Meter). Kann Bonus auf Manöver geben (z.B. Athletik zum Klettern).",
+      "quantity": 1,
+      "weight": 0.2,
+      "price": "1 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-seil"
+      }
+    }
+  },
+  {
+    "name": "Seil mit Wurfhaken",
+    "type": "gear",
+    "img": "icons/sundries/survival/hook-grappling-steel.webp",
+    "system": {
+      "description": "10 m Seil mit Wurfhaken.",
+      "quantity": 1,
+      "weight": 5,
+      "price": "5 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-seil-wurfhaken"
+      }
+    }
+  },
+  {
+    "name": "Spiegel (Stahl)",
+    "type": "gear",
+    "img": "icons/sundries/misc/mirror-steel-grey.webp",
+    "system": {
+      "description": "Metallspiegel. Nützlich zum Einblicken um Ecken oder zum Signalisieren.",
+      "quantity": 1,
+      "weight": 0.2,
+      "price": "8 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-spiegel"
+      }
+    }
+  },
+  {
+    "name": "Stiefel",
+    "type": "gear",
+    "img": "icons/equipment/feet/boots-leather-brown.webp",
+    "system": {
+      "description": "Einfach.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "24 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-stiefel"
+      }
+    }
+  },
+  {
+    "name": "Umhang",
+    "type": "gear",
+    "img": "icons/equipment/back/cloak-heavy-fur-blue.webp",
+    "system": {
+      "description": "Einfach.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "18 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-umhang-einfach"
+      }
+    }
+  },
+  {
+    "name": "Umhang (wetterfest)",
+    "type": "gear",
+    "img": "icons/equipment/back/cloak-collared-green.webp",
+    "system": {
+      "description": "Dicker Wollumhang mit Kapuze. Schützt vor Regen und Kälte.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "4 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-umhang"
+      }
+    }
+  },
+  {
+    "name": "Verstärktes Seil",
+    "type": "gear",
+    "img": "icons/sundries/survival/rope-coiled-tan.webp",
+    "system": {
+      "description": "Hält dreimal mehr Gewicht als ein normales Seil. Preis und Gewicht pro Meter.",
+      "quantity": 1,
+      "weight": 0.3,
+      "price": "3 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-verstaerktes-seil"
+      }
+    }
+  },
+  {
+    "name": "Waffengürtel",
+    "type": "gear",
+    "img": "icons/equipment/waist/belt-armored-steel.webp",
+    "system": {
+      "description": "Kann zwei Waffen halten.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-waffenguerte"
+      }
+    }
+  },
+  {
+    "name": "Wasserbeutel",
+    "type": "gear",
+    "img": "icons/sundries/survival/waterskin-leather.webp",
+    "system": {
+      "description": "Für 1 l Flüssigkeit. Leer 0,1 kg, voll 1,1 kg.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "2 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-wasserbeutel"
+      }
+    }
+  },
+  {
+    "name": "Wein",
+    "type": "gear",
+    "img": "icons/consumables/drinks/wine-bottle-open.webp",
+    "system": {
+      "description": "0,3 l verdünnter Wein.",
+      "quantity": 1,
+      "weight": 0.3,
+      "price": "2 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-wein"
+      }
+    }
+  },
+  {
+    "name": "Zelt",
+    "type": "gear",
+    "img": "icons/environment/wilderness/camp-improvised.webp",
+    "system": {
+      "description": "Bietet zwei Personen Schutz.",
+      "quantity": 1,
+      "weight": 3,
+      "price": "5 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-zelt"
+      }
+    }
+  },
+  {
+    "name": "Angelrute & Köder",
+    "type": "gear",
+    "img": "icons/tools/fishing/pole-wood-blue.webp",
+    "system": {
+      "description": "Einfache Angel mit Haken und Schnur sowie etwas Köder. Ermöglicht Fischen als Nahrungsquelle.",
+      "quantity": 1,
+      "weight": 1,
+      "price": "3 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-angelrute"
+      }
+    }
+  },
+  {
+    "name": "Brecheisen",
+    "type": "gear",
+    "img": "icons/tools/hand/crowbar-steel.webp",
+    "system": {
+      "description": "Stabiles Eisenwerkzeug zum Aufbrechen von Türen und Kisten. Gibt +1 auf Kraft-Manöver.",
+      "quantity": 1,
+      "weight": 2,
+      "price": "3 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-brecheisen"
+      }
+    }
+  },
+  {
+    "name": "Diebeswerkzeug",
+    "type": "gear",
+    "img": "icons/tools/hand/lockpicks-steel-grey.webp",
+    "system": {
+      "description": "Spezialwerkzeug für Fallen entschärfen und Schlösser knacken. +1 auf entsprechende Manöver.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "25 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-diebeswerkzeug"
+      }
+    }
+  },
+  {
+    "name": "Fallenstell-Set",
+    "type": "gear",
+    "img": "icons/environment/traps/trap-jaw-steel.webp",
+    "system": {
+      "description": "Einfache Fallen für Kleintiere. Gibt +1 auf Überlebens-Manöver zum Nahrungsbeschaffen.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "4 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-fallenset"
+      }
+    }
+  },
+  {
+    "name": "Feine Kleidung",
+    "type": "gear",
+    "img": "icons/equipment/chest/coat-collared-red-gold.webp",
+    "system": {
+      "description": "Gut verarbeitete Kleidung für städtische Umgebungen. Gibt +1 auf Einflussnahme in gehobener Gesellschaft.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "15 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-feine-kleidung"
+      }
+    }
+  },
+  {
+    "name": "Fernrohr",
+    "type": "gear",
+    "img": "icons/tools/navigation/spyglass-brass.webp",
+    "system": {
+      "description": "Einfaches Messing-Fernrohr. Verdoppelt die Sichtweite auf freiem Gelände. Gibt +1 auf Wahrnehmung über große Distanzen.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "30 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-fernrohr"
+      }
+    }
+  },
+  {
+    "name": "Handwerkszeug",
+    "type": "gear",
+    "img": "icons/tools/hand/saw-steel-grey.webp",
+    "system": {
+      "description": "Grundausstattung für ein Handwerk. Gibt +1 auf Handwerks-Manöver.",
+      "quantity": 1,
+      "weight": 5,
+      "price": "20 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-handwerkszeug"
+      }
+    }
+  },
+  {
+    "name": "Karte (Region)",
+    "type": "gear",
+    "img": "icons/tools/navigation/map-simple-brown.webp",
+    "system": {
+      "description": "Pergamentkarte einer bekannten Region. Gibt +1 auf Navigations-Manöver in dieser Gegend.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "5 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-karte-region"
+      }
+    }
+  },
+  {
+    "name": "Schlösserknacker-Set",
+    "type": "gear",
+    "img": "icons/tools/hand/lockpicks-steel-grey.webp",
+    "system": {
+      "description": "Feines Werkzeugset zum Öffnen von Schlössern. Benötigt Fertigkeit Mechanik.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "15 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schloesserknacker"
+      }
+    }
+  },
+  {
+    "name": "Schaufel",
+    "type": "gear",
+    "img": "icons/tools/hand/shovel-spade-steel-brown.webp",
+    "system": {
+      "description": "Eiserne Schaufel zum Graben.",
+      "quantity": 1,
+      "weight": 3,
+      "price": "2 TT",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schaufel"
+      }
+    }
+  },
+  {
+    "name": "Schreibset",
+    "type": "gear",
+    "img": "icons/tools/scribal/ink-quill-red.webp",
+    "system": {
+      "description": "Tintenfass, Federkiel und 10 Blatt Pergament.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "8 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schreibset"
+      }
+    }
+  },
+  {
+    "name": "Spitzhacke",
+    "type": "gear",
+    "img": "icons/tools/hand/pickaxe-steel-brown.webp",
+    "system": {
+      "description": "Schwere Spitzhacke zum Graben und Bearbeiten von Gestein.",
+      "quantity": 1,
+      "weight": 4,
+      "price": "3 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-spitzhacke"
+      }
+    }
+  },
+  {
+    "name": "Truhe (klein)",
+    "type": "gear",
+    "img": "icons/containers/chest/chest-simple-walnut.webp",
+    "system": {
+      "description": "Kleine Holztruhe mit Metallbeschlägen und Schloss. Fasst ca. 50 kg.",
+      "quantity": 1,
+      "weight": 5,
+      "price": "8 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-truhe-klein"
+      }
+    }
+  },
+  {
+    "name": "Würfelset",
+    "type": "gear",
+    "img": "icons/sundries/gaming/dice-runed-brown.webp",
+    "system": {
+      "description": "Set aus Knochen- oder Holzwürfeln für Glücksspiele. Gibt +1 auf List-Manöver beim Mogeln.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "1 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-wuerfelset"
+      }
+    }
+  },
+  {
+    "name": "Zauberbuch (leer)",
+    "type": "gear",
+    "img": "icons/sundries/books/book-embossed-blue.webp",
+    "system": {
+      "description": "Leeres Buch mit behandelten Seiten, geeignet zum Aufzeichnen von Zaubern und Formeln.",
+      "quantity": 1,
+      "weight": 1.5,
+      "price": "20 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-zauberbuch"
+      }
+    }
+  },
+  {
+    "name": "Zauberfokus",
+    "type": "gear",
+    "img": "icons/commodities/gems/gem-faceted-round-blue.webp",
+    "system": {
+      "description": "Stab, Kristall oder ähnliches Objekt als magischer Fokus.",
+      "quantity": 1,
+      "weight": 0.5,
+      "price": "15 TT",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-zauberfokus"
+      }
+    }
+  },
+  {
+    "name": "Fährfahrt",
+    "type": "gear",
+    "img": "icons/tools/nautical/oar-wood-brown.webp",
+    "system": {
+      "description": "Übersetzen einer Person. Grundpreis; für jeden Kilometer wird eine Muena zusätzlich berechnet.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "2 KL",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-faehrfahrt"
+      }
+    }
+  },
+  {
+    "name": "Schiffsreise",
+    "type": "gear",
+    "img": "icons/tools/nautical/anchor.webp",
+    "system": {
+      "description": "Koje auf einem Schiff. Grundpreis pro Kilometer.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "1 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schiffsreise"
+      }
+    }
+  },
+  {
+    "name": "Stallplatz",
+    "type": "gear",
+    "img": "icons/environment/creatures/horse-brown.webp",
+    "system": {
+      "description": "Für einen Tag Platz und Pflege für ein Tier.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "1 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-stallplatz"
+      }
+    }
+  },
+  {
+    "name": "Esmarion",
+    "type": "gear",
+    "img": "icons/magic/nature/leaf-glow-triple-green.webp",
+    "system": {
+      "description": "+30 TP für eine Stunde (kann auch über den maximalen TP liegen).",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "350 GF",
+      "equipped": false,
+      "rarity": "extrem selten",
+      "category": "kraeuter"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-esmarion"
+      }
+    }
+  },
+  {
+    "name": "Fistance",
+    "type": "gear",
+    "img": "icons/magic/nature/leaf-glow-triple-green.webp",
+    "system": {
+      "description": "Erlaubt für eine Stunde unter Wasser zu atmen.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "200 GF",
+      "equipped": false,
+      "rarity": "extrem selten",
+      "category": "kraeuter"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-fistance"
+      }
+    }
+  },
+  {
+    "name": "Ishcar",
+    "type": "gear",
+    "img": "icons/magic/nature/leaf-glow-triple-green.webp",
+    "system": {
+      "description": "Gewährt für eine Stunde Wärmesicht.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "8 GF",
+      "equipped": false,
+      "rarity": "sehr selten",
+      "category": "kraeuter"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-ishcar"
+      }
+    }
+  },
+  {
+    "name": "Knappenglück",
+    "type": "gear",
+    "img": "icons/magic/nature/leaf-glow-triple-green.webp",
+    "system": {
+      "description": "+1 auf Einflussnahme beim Umwerben des anderen Geschlechts.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "1 GF",
+      "equipped": false,
+      "rarity": "sehr selten",
+      "category": "kraeuter"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-knappengluck"
+      }
+    }
+  },
+  {
+    "name": "Uriashil",
+    "type": "gear",
+    "img": "icons/magic/nature/leaf-glow-triple-green.webp",
+    "system": {
+      "description": "+1 Bonus auf Wahrnehmung für eine Stunde.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "4 GF",
+      "equipped": false,
+      "rarity": "extrem selten",
+      "category": "kraeuter"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-uriashil"
+      }
+    }
+  }
 ]

@@ -1,13 +1,13 @@
-﻿[
+[
   {
     "name": "Barde",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Leitmagie-Beruf.",
       "hitPointsBase": 6,
       "magicAttribute": "ch",
-      "magicFormula": "(CH-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
       "special": "Leitmagie-Beruf.",
       "skillBonuses": {},
       "skillCosts": {
@@ -55,7 +55,7 @@
           "type": "situationalBonus",
           "target": "information",
           "value": 1,
-          "description": "Bonus von +1 auf ManÃ¶ver der Informationsbeschaffung (z. B. Einflussnahme, List, Wahrnehmung)."
+          "description": "Bonus von +1 auf Manöver der Informationsbeschaffung (z. B. Einflussnahme, List, Wahrnehmung)."
         },
         {
           "level": 1,
@@ -69,7 +69,7 @@
           "key": "gemeinsames-spiel",
           "label": "Gemeinsames Spiel",
           "type": "pool",
-          "description": "Mehrere Barden kÃ¶nnen ihre Magiepunkte fÃ¼r gemeinsame Wirkungen zusammenlegen; Maximalwerte bleiben bestehen."
+          "description": "Mehrere Barden können ihre Magiepunkte für gemeinsame Wirkungen zusammenlegen; Maximalwerte bleiben bestehen."
         }
       ]
     }
@@ -77,12 +77,12 @@
   {
     "name": "Dieb",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/hand/lockpicks-steel-grey.webp",
     "system": {
       "description": "Fokus auf List, Heimlichkeit und Waffen.",
       "hitPointsBase": 6,
       "magicAttribute": "in",
-      "magicFormula": "(IN-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Fokus auf List, Heimlichkeit und Waffen.",
       "skillBonuses": {},
       "skillCosts": {
@@ -118,7 +118,7 @@
           "waffen": 1
         },
         "notes": [
-          "Fokus auf soziale und listige ManÃ¶ver"
+          "Fokus auf soziale und listige Manöver"
         ]
       },
       "levelFeatures": [
@@ -129,25 +129,25 @@
           "type": "skillBonus",
           "target": "fallen",
           "value": 1,
-          "description": "Bonus von +1 auf ManÃ¶ver zum Finden und EntschÃ¤rfen von Fallen."
+          "description": "Bonus von +1 auf Manöver zum Finden und Entschärfen von Fallen."
         },
         {
           "level": 1,
           "key": "schloesser",
-          "label": "SchlÃ¶sser (List) +1",
+          "label": "Schlösser (List) +1",
           "type": "skillBonus",
           "target": "list",
           "value": 1,
-          "description": "Bonus von +1 auf ManÃ¶ver zum Ã–ffnen von SchlÃ¶ssern mittels List."
+          "description": "Bonus von +1 auf Manöver zum Öffnen von Schlössern mittels List."
         },
         {
           "level": 1,
           "key": "geheimtueren",
-          "label": "GeheimtÃ¼ren (Wahrnehmung) +1",
+          "label": "Geheimtüren (Wahrnehmung) +1",
           "type": "skillBonus",
           "target": "wahrnehmung",
           "value": 1,
-          "description": "Bonus von +1 auf Wahrnehmungs-ManÃ¶ver zum Entdecken von GeheimtÃ¼ren."
+          "description": "Bonus von +1 auf Wahrnehmungs-Manöver zum Entdecken von Geheimtüren."
         },
         {
           "level": 1,
@@ -163,14 +163,14 @@
           "key": "heimlicher-angriff",
           "label": "Heimlicher Angriff",
           "type": "trait",
-          "description": "Bei Ãœberraschung verdoppelt ein erfolgreicher Nahkampftreffer den Schaden."
+          "description": "Bei Überraschung verdoppelt ein erfolgreicher Nahkampftreffer den Schaden."
         },
         {
           "level": 1,
           "key": "ausweichen",
           "label": "Ausweichen",
           "type": "conditionalDefense",
-          "description": "Bei maximal LederrÃ¼stung, ohne Schild und wenn nicht Ã¼berrascht: Athletik-Rang als RÃ¼stungsbonus (max. 5)."
+          "description": "Bei maximal Lederrüstung, ohne Schild und wenn nicht überrascht: Athletik-Rang als Rüstungsbonus (max. 5)."
         },
         {
           "level": 1,
@@ -179,14 +179,14 @@
           "type": "skillBonus",
           "target": "gift",
           "value": 1,
-          "description": "Bonus von +1 auf ManÃ¶ver im Umgang mit Giften."
+          "description": "Bonus von +1 auf Manöver im Umgang mit Giften."
         },
         {
           "level": 1,
           "key": "magische-gegenstaende",
-          "label": "Magische GegenstÃ¤nde",
+          "label": "Magische Gegenstände",
           "type": "trait",
-          "description": "Kann magische GegenstÃ¤nde sofort einsetzen."
+          "description": "Kann magische Gegenstände sofort einsetzen."
         }
       ]
     }
@@ -194,12 +194,12 @@
   {
     "name": "Krieger",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/skills/melee/weapons-crossed-swords-yellow.webp",
     "system": {
       "description": "Fokus auf Waffen und Kampf.",
       "hitPointsBase": 10,
       "magicAttribute": "in",
-      "magicFormula": "(IN-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Fokus auf Waffen und Kampf.",
       "skillBonuses": {},
       "skillCosts": {
@@ -234,16 +234,16 @@
           "wahrnehmung": 1
         },
         "notes": [
-          "Fokus auf Waffen und MobilitÃ¤t"
+          "Fokus auf Waffen und Mobilität"
         ]
       },
       "levelFeatures": [
         {
           "level": 1,
           "key": "magische-waffen-ruestungen",
-          "label": "Magische Waffen / RÃ¼stungen",
+          "label": "Magische Waffen / Rüstungen",
           "type": "trait",
-          "description": "Kann magische Waffen und RÃ¼stungen benutzen, ohne sie zu verstehen."
+          "description": "Kann magische Waffen und Rüstungen benutzen, ohne sie zu verstehen."
         },
         {
           "level": 1,
@@ -257,18 +257,18 @@
         {
           "level": 1,
           "key": "unzerstoerbar",
-          "label": "UnzerstÃ¶rbar",
+          "label": "Unzerstörbar",
           "type": "trait",
           "description": "Wird bei 0 TP nicht bewusstlos."
         },
         {
           "level": 1,
           "key": "drohen-fuehren",
-          "label": "Drohen / FÃ¼hren +1",
+          "label": "Drohen / Führen +1",
           "type": "situationalBonus",
           "target": "einflussnahme",
           "value": 1,
-          "description": "Bonus von +1 auf Einflussnahme, wenn der Krieger entsprechend auftritt; kann VerbÃ¼ndeten fÃ¼r die ersten zwei Kampfrunden +1 geben."
+          "description": "Bonus von +1 auf Einflussnahme, wenn der Krieger entsprechend auftritt; kann Verbündeten für die ersten zwei Kampfrunden +1 geben."
         },
         {
           "level": 11,
@@ -276,7 +276,7 @@
           "label": "Gefolgsleute I",
           "type": "followers",
           "followers": 3,
-          "description": "Kann Gefolgsleute anwerben; Richtwert laut Tabelle ab hÃ¶heren Stufen."
+          "description": "Kann Gefolgsleute anwerben; Richtwert laut Tabelle ab höheren Stufen."
         },
         {
           "level": 12,
@@ -284,7 +284,7 @@
           "label": "Gefolgsleute II",
           "type": "followers",
           "followers": 6,
-          "description": "Mehr Gefolgsleute mÃ¶glich; Spielleiter entscheidet Details."
+          "description": "Mehr Gefolgsleute möglich; Spielleiter entscheidet Details."
         },
         {
           "level": 13,
@@ -292,7 +292,7 @@
           "label": "Gefolgsleute III",
           "type": "followers",
           "followers": 12,
-          "description": "Mehr Gefolgsleute mÃ¶glich; Spielleiter entscheidet Details."
+          "description": "Mehr Gefolgsleute möglich; Spielleiter entscheidet Details."
         }
       ]
     }
@@ -300,12 +300,12 @@
   {
     "name": "Priester",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Leitmagie-Beruf.",
       "hitPointsBase": 8,
       "magicAttribute": "ch",
-      "magicFormula": "(CH-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
       "special": "Leitmagie-Beruf.",
       "skillBonuses": {},
       "skillCosts": {
@@ -352,7 +352,7 @@
           "label": "Heiliges Symbol",
           "type": "armorBonus",
           "value": 1,
-          "description": "Solange der Priester sein heiliges Symbol trÃ¤gt, erhÃ¤lt er +1 auf die RÃ¼stung."
+          "description": "Solange der Priester sein heiliges Symbol trägt, erhält er +1 auf die Rüstung."
         },
         {
           "level": 1,
@@ -368,16 +368,16 @@
           "type": "situationalBonus",
           "target": "heilen",
           "value": 1,
-          "description": "Bonus von +1 auf entsprechende Heil-ManÃ¶ver."
+          "description": "Bonus von +1 auf entsprechende Heil-Manöver."
         },
         {
           "level": 1,
           "key": "goettliche-waffe",
-          "label": "GÃ¶ttliche Waffe +0",
+          "label": "Göttliche Waffe +0",
           "type": "weaponMinimum",
           "target": "deityWeapon",
           "minimumRank": 0,
-          "description": "Die Waffe der Gottheit gilt nicht als ungeÃ¼bt; der Malus von -2 entfÃ¤llt."
+          "description": "Die Waffe der Gottheit gilt nicht als ungeübt; der Malus von -2 entfällt."
         },
         {
           "level": 5,
@@ -385,7 +385,7 @@
           "label": "Messe",
           "type": "dailyPower",
           "usesPerDay": 1,
-          "description": "Einmal am Tag besonders inspirierende Messe: Einflussnahme-ManÃ¶ver um 4 erleichtert; bei Erfolg erhalten Teilnehmer 4 Stunden +1 auf alle ManÃ¶ver."
+          "description": "Einmal am Tag besonders inspirierende Messe: Einflussnahme-Manöver um 4 erleichtert; bei Erfolg erhalten Teilnehmer 4 Stunden +1 auf alle Manöver."
         },
         {
           "level": 10,
@@ -393,7 +393,7 @@
           "label": "Segnung",
           "type": "dailyPower",
           "usesPerDay": 1,
-          "description": "Einmal am Tag Segnung aller in HÃ¶rweite: fÃ¼r einen Tag +2 auf alle ManÃ¶ver und Angriffe; Dauer 10 Minuten."
+          "description": "Einmal am Tag Segnung aller in Hörweite: für einen Tag +2 auf alle Manöver und Angriffe; Dauer 10 Minuten."
         }
       ]
     }
@@ -401,12 +401,12 @@
   {
     "name": "Schamane",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Leitmagie-Beruf.",
       "hitPointsBase": 6,
       "magicAttribute": "ch",
-      "magicFormula": "(CH-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(CH-Bonus + 3) × Rang Magie entwickeln",
       "special": "Leitmagie-Beruf.",
       "skillBonuses": {},
       "skillCosts": {
@@ -452,27 +452,27 @@
           "key": "fokus",
           "label": "Fokus",
           "type": "focusStorage",
-          "description": "Fokus speichert ZauberrÃ¤nge bis zu einem Rang pro Stufe; erneutes Binden kostet 2 MP pro Rang zzgl. VerstÃ¤rkungen."
+          "description": "Fokus speichert Zauberränge bis zu einem Rang pro Stufe; erneutes Binden kostet 2 MP pro Rang zzgl. Verstärkungen."
         },
         {
           "level": 1,
           "key": "blutmagie",
           "label": "Blutmagie",
           "type": "resourceConversion",
-          "description": "Beim Wirken eines Zaubers kann 1 TP Blutverlust in 1 zusÃ¤tzlichen Magiepunkt fÃ¼r genau diesen Zauber umgewandelt werden."
+          "description": "Beim Wirken eines Zaubers kann 1 TP Blutverlust in 1 zusätzlichen Magiepunkt für genau diesen Zauber umgewandelt werden."
         }
       ]
     }
   },
   {
-    "name": "WaldlÃ¤ufer",
+    "name": "Waldläufer",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/weapons/bows/longbow-recurve-leather-brown.webp",
     "system": {
       "description": "Fokus auf Natur, Bogen und Bewegung.",
       "hitPointsBase": 8,
       "magicAttribute": "in",
-      "magicFormula": "(IN-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Fokus auf Natur, Bogen und Bewegung.",
       "skillBonuses": {},
       "skillCosts": {
@@ -519,7 +519,7 @@
           "type": "weaponMinimum",
           "target": "bows-crossbows",
           "minimumRank": 0,
-          "description": "BÃ¶gen und ArmbrÃ¼ste gelten nicht als ungelernt."
+          "description": "Bögen und Armbrüste gelten nicht als ungelernt."
         },
         {
           "level": 1,
@@ -528,14 +528,14 @@
           "type": "situationalBonus",
           "target": "natur",
           "value": 1,
-          "description": "Situationsbonus von +1 auf Natur-ManÃ¶ver."
+          "description": "Situationsbonus von +1 auf Natur-Manöver."
         },
         {
           "level": 5,
           "key": "tierfreund",
           "label": "Tierfreund",
           "type": "companion",
-          "description": "Ab Stufe 5 kann ein tierischer Freund entstehen; dessen Stufe liegt mindestens 4 Stufen unter der des WaldlÃ¤ufers."
+          "description": "Ab Stufe 5 kann ein tierischer Freund entstehen; dessen Stufe liegt mindestens 4 Stufen unter der des Waldläufers."
         }
       ]
     }
@@ -543,12 +543,12 @@
   {
     "name": "Zauberer",
     "type": "class",
-    "img": "icons/svg/book.svg",
+    "img": "icons/sundries/books/book-embossed-blue.webp",
     "system": {
       "description": "Arkaner Magieberuf.",
       "hitPointsBase": 4,
       "magicAttribute": "in",
-      "magicFormula": "(IN-Bonus + 3) Ã— Rang Magie entwickeln",
+      "magicFormula": "(IN-Bonus + 3) × Rang Magie entwickeln",
       "special": "Arkaner Magieberuf.",
       "skillBonuses": {},
       "skillCosts": {
@@ -600,7 +600,7 @@
           "key": "grundzauber",
           "label": "Grundzauber",
           "type": "trait",
-          "description": "WeiÃŸe Zauberer: Lichtbogen; andere: Funkenregen. Dauer jeweils eine Runde pro Stufe."
+          "description": "Weiße Zauberer: Lichtbogen; andere: Funkenregen. Dauer jeweils eine Runde pro Stufe."
         },
         {
           "level": 1,
@@ -608,7 +608,7 @@
           "label": "Zauberbuch",
           "type": "castingBonus",
           "value": 2,
-          "description": "Wenn keine Zeitnot besteht: +2 auf Zauber-ManÃ¶ver; Zeitaufwand erhÃ¶ht sich um 10 Minuten pro Rang."
+          "description": "Wenn keine Zeitnot besteht: +2 auf Zauber-Manöver; Zeitaufwand erhöht sich um 10 Minuten pro Rang."
         },
         {
           "level": 1,
@@ -623,14 +623,14 @@
           "label": "Zauberstab",
           "type": "dailyPower",
           "usesPerDay": 3,
-          "description": "Beginnt mit einem einfachen Zauberstab: enthÃ¤lt einen Rang-1-Zauber einer nicht-leitmagischen Liste, 3Ã— pro Tag ohne MP-Kosten; Optionen kosten MP, jeder Zauberstab-Zauber ist gezielt."
+          "description": "Beginnt mit einem einfachen Zauberstab: enthält einen Rang-1-Zauber einer nicht-leitmagischen Liste, 3× pro Tag ohne MP-Kosten; Optionen kosten MP, jeder Zauberstab-Zauber ist gezielt."
         },
         {
           "level": 10,
           "key": "freund-des-zauberers",
           "label": "Freund des Zauberers",
           "type": "companion",
-          "description": "Ab Stufe 10 kann ein ungewÃ¶hnlicher magischer Freund erscheinen; seine Stufe ist hÃ¶chstens Zauberer-Stufe minus 5."
+          "description": "Ab Stufe 10 kann ein ungewöhnlicher magischer Freund erscheinen; seine Stufe ist höchstens Zauberer-Stufe minus 5."
         }
       ]
     }

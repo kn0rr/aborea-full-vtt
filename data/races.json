@@ -2,7 +2,7 @@
   {
     "name": "Mensch",
     "type": "race",
-    "img": "icons/svg/mystery-man.svg",
+    "img": "icons/environment/people/commoner.webp",
     "system": {
       "description": "Einmalig zwei Ausbildungspunkte mehr auf der ersten Stufe.",
       "mods": {
@@ -20,7 +20,7 @@
   {
     "name": "Elf",
     "type": "race",
-    "img": "icons/svg/mystery-man.svg",
+    "img": "icons/environment/people/archer.webp",
     "system": {
       "description": "Verbesserte Sicht (+1 auf Manöver), Immunität gegen natürliche Krankheiten.",
       "mods": {
@@ -32,13 +32,20 @@
       },
       "special": "Verbesserte Sicht (+1 auf Manöver), Immunität gegen natürliche Krankheiten.",
       "restrictions": "Kein Krieger",
-      "traits": { "diseaseImmunity": true, "skillBonuses": { "wahrnehmung": 1, "boegen": 1, "wurfwaffe": 1 } }
+      "traits": {
+        "diseaseImmunity": true,
+        "skillBonuses": {
+          "wahrnehmung": 1,
+          "boegen": 1,
+          "wurfwaffe": 1
+        }
+      }
     }
   },
   {
     "name": "Zwerg",
     "type": "race",
-    "img": "icons/svg/mystery-man.svg",
+    "img": "icons/environment/people/infantry-armed.webp",
     "system": {
       "description": "Wärmesicht, einmalig +2 Trefferpunkte auf der ersten Stufe, Bonus auf Geheimtüren und Fallen, +1 Rüstung.",
       "mods": {
@@ -50,13 +57,21 @@
       },
       "special": "Wärmesicht, einmalig +2 Trefferpunkte auf der ersten Stufe, Bonus auf Geheimtüren und Fallen, +1 Rüstung.",
       "restrictions": "Kein Zauberer",
-      "traits": { "racialArmorBonus": 1, "thermalVision": true, "skillBonuses": { "geheimtuer": 1, "mechanik": 1, "fallen": 1 } }
+      "traits": {
+        "racialArmorBonus": 1,
+        "thermalVision": true,
+        "skillBonuses": {
+          "geheimtuer": 1,
+          "mechanik": 1,
+          "fallen": 1
+        }
+      }
     }
   },
   {
     "name": "Halbling",
     "type": "race",
-    "img": "icons/svg/mystery-man.svg",
+    "img": "icons/environment/people/commoner.webp",
     "system": {
       "description": "Besonderer Schutz gegen Zauber (Zauberresistenz), +1 Rüstungsbonus.",
       "mods": {
@@ -68,13 +83,16 @@
       },
       "special": "Besonderer Schutz gegen Zauber (Zauberresistenz), +1 Rüstungsbonus.",
       "restrictions": "",
-      "traits": { "racialArmorBonus": 1, "spellResistance": true }
+      "traits": {
+        "racialArmorBonus": 1,
+        "spellResistance": true
+      }
     }
   },
   {
     "name": "Gnom",
     "type": "race",
-    "img": "icons/svg/mystery-man.svg",
+    "img": "icons/environment/people/mage.webp",
     "system": {
       "description": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
       "mods": {
@@ -86,7 +104,13 @@
       },
       "special": "Verständnis für Mechanik (+1 auf Manöver), Bonus auf Geheimtüren und Fallen, +1 Rüstungsbonus.",
       "restrictions": "",
-      "traits": { "racialArmorBonus": 1, "skillBonuses": { "mechanik": 1, "geheimtuer": 1 } }
+      "traits": {
+        "racialArmorBonus": 1,
+        "skillBonuses": {
+          "mechanik": 1,
+          "geheimtuer": 1
+        }
+      }
     }
   }
 ]

@@ -74,10 +74,7 @@ export class AboreaCombat extends Combat {
 /** Returns the skill keys for a weapon from system.skills array. */
 function _weaponSkillKeys(weapon) {
   const arr = weapon?.system?.skills;
-  if (Array.isArray(arr) && arr.length) return arr.filter(Boolean);
-  // Fallback für alte Daten mit system.skill
-  const single = weapon?.system?.skill;
-  return single ? [single] : [];
+  return Array.isArray(arr) ? arr.filter(Boolean) : [];
 }
 
 /** Returns the best skill rank the actor has for any of the weapon's skills. */
@@ -129,10 +126,16 @@ function _hpColor(pct) {
   return "#b91c1c";
 }
 
-/** Builds a target candidate list from scene tokens, excluding the given token id. */
+/**
+ * Builds a target candidate list from combat participants, excluding the given token id.
+ * Ohne aktiven Kampf leer — dann nur "Kein Ziel" mit manueller RW-Eingabe.
+ */
 function _buildTargetCandidates(attackerTokenId) {
+  if (!game.combat?.combatants.size) return [];
+  const combatTokenIds = new Set(game.combat.combatants.map(c => c.tokenId).filter(Boolean));
   return (canvas?.tokens?.placeables ?? [])
     .filter(t => t.actor && t.id !== attackerTokenId)
+    .filter(t => combatTokenIds.has(t.id))
     .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang))
     .map(t => {
       const hp    = t.actor.system.resources?.hp ?? {};
@@ -187,9 +190,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const storedOffBonus  = Number(actor.system.combat?.offensiveBonus ?? 0);
     const storedCB        = Number(actor.system.combat?.combatBonus ?? 0);
     const storedDef       = Number(actor.system.combat?.defensiveBonus ?? 0);
-    // Für Kreaturen/NPCs: offensiveBonus ist bereits Teil von combatBonus
     const currentOffBonus = storedOffBonus;
-    const combatBonus     = isCreatureOrNpc ? storedCB : storedCB + storedDef;
+    const combatBonus     = storedCB;
     const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
     const initialPenalty  = weapons[0] ? _getUntrainedPenalty(actor, weapons[0]) : 0;
 
@@ -210,7 +212,9 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       id:     w.id,
       name:   w.name,
       damage: w.system.damage ?? 0,
-      skill:  w.system.skill ?? "",
+      skill:  _weaponSkillKeys(w)
+        .map(k => game.i18n.localize(ABOREA.skills[k]?.label ?? k))
+        .join(", "),
     }));
     // Kreaturen/NPCs ohne Waffen-Items: generischen Angriff eintragen
     if (!weaponList.length && isCreatureOrNpc) {
@@ -327,16 +331,18 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
       // Recompute combat bonus from best matching skill for this weapon
       const skillKeys = _weaponSkillKeys(weapon);
-      let bestCB = 0;
-      for (const key of skillKeys) {
-        const rank     = Number(actor.system.skills?.[key]?.rank ?? 0);
-        const attrKey  = weapon.system.attr || (ABOREA.skills?.[key]?.attribute ?? "st");
-        const attrVal  = Number(actor.system.finalAttributes?.[attrKey]?.value ?? actor.system.attributes?.[attrKey]?.value ?? 5);
-        const cb       = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
-        if (cb > bestCB) bestCB = cb;
+      let bestCB = storedCB; // Fallback: gespeicherter Kampfbonus wenn keine Skills konfiguriert
+      if (skillKeys.length) {
+        bestCB = 0;
+        for (const key of skillKeys) {
+          const rank    = Number(actor.system.skills?.[key]?.rank ?? 0);
+          const attrKey = weapon.system.attr || (ABOREA.skills?.[key]?.attribute ?? "st");
+          const attrVal = Number(actor.system.finalAttributes?.[attrKey]?.value ?? actor.system.attributes?.[attrKey]?.value ?? 5);
+          const cb      = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
+          if (cb > bestCB) bestCB = cb;
+        }
       }
       if (_isCreatureOrNpc) {
-        // Für Kreaturen/NPCs: kein Klemmen — Offensivbonus manuell gepflegt
         if (cbHint) cbHint.textContent = combatBonus;
         if (offBonusInput) offBonusInput.max = 99;
       } else {

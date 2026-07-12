@@ -31,7 +31,12 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
 
     // Attribut- und Fertigkeitsauswahl für Waffen
     if (item.type === "weapon") {
-      context.attributeChoices = { st: "ST", ge: "GE", ko: "KO", in: "IN", ch: "CH" };
+      // attrChoices (Regelwerk) schränkt ein, welche Attribute die Waffe erlaubt
+      const allAttrs = { st: "ST", ge: "GE", ko: "KO", in: "IN", ch: "CH" };
+      const allowed  = item.system.attrChoices;
+      context.attributeChoices = (Array.isArray(allowed) && allowed.length)
+        ? Object.fromEntries(Object.entries(allAttrs).filter(([k]) => allowed.includes(k)))
+        : allAttrs;
       const { ABOREA } = await import("./config.mjs");
       context.weaponSkillChoices = Object.fromEntries(
         ABOREA.weaponSkillKeys.map(k => [k, game.i18n.localize(ABOREA.skills[k]?.label ?? k)])

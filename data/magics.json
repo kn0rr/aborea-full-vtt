@@ -2,28 +2,42 @@
   {
     "name": "Ring der Scharfsicht",
     "type": "magic",
-    "img": "icons/svg/item-bag.svg",
+    "img": "icons/equipment/finger/ring-band-simple-gold.webp",
     "system": {
       "description": "Ein magischer Ring, der die Sinne des Trägers schärft. Verleiht +1 auf Wahrnehmungs-Manöver.",
       "equipped": false,
       "notes": "",
       "price": "50 TT",
       "weight": 0.1,
-      "skillBonuses": { "wahrnehmung": 1 },
-      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "skillBonuses": {
+        "wahrnehmung": 1
+      },
+      "attributeMods": {
+        "st": 0,
+        "ge": 0,
+        "ko": 0,
+        "in": 0,
+        "ch": 0
+      },
       "passiveTraits": {},
       "statusEffects": [],
       "grantedSpells": [],
       "activations": {}
     },
-    "flags": { "aborea-v7": { "sourceId": "magic-ring-scharfsicht" } },
-    "ownership": { "default": 0 },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "magic-ring-scharfsicht"
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
     "folder": null
   },
   {
     "name": "Amulett der Geschwindigkeit",
     "type": "magic",
-    "img": "icons/svg/item-bag.svg",
+    "img": "icons/equipment/neck/amulet-round-blue.webp",
     "system": {
       "description": "Dieses Amulett beschleunigt die Reflexe des Trägers. Verleiht +1 GE und verbessert Initiative.",
       "equipped": false,
@@ -31,20 +45,32 @@
       "price": "120 TT",
       "weight": 0.2,
       "skillBonuses": {},
-      "attributeMods": { "st": 0, "ge": 1, "ko": 0, "in": 0, "ch": 0 },
+      "attributeMods": {
+        "st": 0,
+        "ge": 1,
+        "ko": 0,
+        "in": 0,
+        "ch": 0
+      },
       "passiveTraits": {},
       "statusEffects": [],
       "grantedSpells": [],
       "activations": {}
     },
-    "flags": { "aborea-v7": { "sourceId": "magic-amulett-geschwindigkeit" } },
-    "ownership": { "default": 0 },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "magic-amulett-geschwindigkeit"
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
     "folder": null
   },
   {
     "name": "Gürtel der Regeneration",
     "type": "magic",
-    "img": "icons/svg/item-bag.svg",
+    "img": "icons/equipment/waist/belt-leather-brown.webp",
     "system": {
       "description": "Ein verzauberter Gürtel, der die natürliche Heilung des Trägers beschleunigt. Regeneriert 1 HP pro Runde.",
       "equipped": false,
@@ -52,28 +78,48 @@
       "price": "200 TT",
       "weight": 0.5,
       "skillBonuses": {},
-      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
-      "passiveTraits": { "regeneration": 1 },
+      "attributeMods": {
+        "st": 0,
+        "ge": 0,
+        "ko": 0,
+        "in": 0,
+        "ch": 0
+      },
+      "passiveTraits": {
+        "regeneration": 1
+      },
       "statusEffects": [],
       "grantedSpells": [],
       "activations": {}
     },
-    "flags": { "aborea-v7": { "sourceId": "magic-guertel-regeneration" } },
-    "ownership": { "default": 0 },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "magic-guertel-regeneration"
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
     "folder": null
   },
   {
     "name": "Stab des Feuers",
     "type": "magic",
-    "img": "icons/svg/item-bag.svg",
+    "img": "icons/weapons/staves/staff-ornate-red.webp",
     "system": {
       "description": "Ein mächtiger Stab, der dem Träger erlaubt Feuerball und Blitz zu wirken — einmal pro Tag je Zauber.",
       "equipped": false,
       "notes": "",
       "price": "500 TT",
-      "weight": 2.0,
+      "weight": 2,
       "skillBonuses": {},
-      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "attributeMods": {
+        "st": 0,
+        "ge": 0,
+        "ko": 0,
+        "in": 0,
+        "ch": 0
+      },
       "passiveTraits": {},
       "statusEffects": [],
       "grantedSpells": [
@@ -100,22 +146,36 @@
       ],
       "activations": {}
     },
-    "flags": { "aborea-v7": { "sourceId": "magic-stab-des-feuers" } },
-    "ownership": { "default": 0 },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "magic-stab-des-feuers"
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
     "folder": null
   },
   {
     "name": "Umhang der Unsichtbarkeit",
     "type": "magic",
-    "img": "icons/svg/item-bag.svg",
+    "img": "icons/equipment/back/cape-layered-blue.webp",
     "system": {
       "description": "Ein legendärer Umhang, der den Träger unsichtbar macht. Einmal täglich nutzbar, hält eine Stunde.",
       "equipped": false,
       "notes": "",
       "price": "800 TT",
-      "weight": 1.0,
-      "skillBonuses": { "heimlichkeit": 2 },
-      "attributeMods": { "st": 0, "ge": 0, "ko": 0, "in": 0, "ch": 0 },
+      "weight": 1,
+      "skillBonuses": {
+        "heimlichkeit": 2
+      },
+      "attributeMods": {
+        "st": 0,
+        "ge": 0,
+        "ko": 0,
+        "in": 0,
+        "ch": 0
+      },
       "passiveTraits": {},
       "statusEffects": [],
       "grantedSpells": [
@@ -132,8 +192,14 @@
       ],
       "activations": {}
     },
-    "flags": { "aborea-v7": { "sourceId": "magic-umhang-unsichtbarkeit" } },
-    "ownership": { "default": 0 },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "magic-umhang-unsichtbarkeit"
+      }
+    },
+    "ownership": {
+      "default": 0
+    },
     "folder": null
   }
 ]

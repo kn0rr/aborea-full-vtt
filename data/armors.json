@@ -3,7 +3,7 @@
     "_id": "57aa56781e430010",
     "name": "Ungerüstet",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/chest/shirt-simple-white.webp",
     "system": {
       "description": "",
       "minStrength": 0,
@@ -17,7 +17,7 @@
     "_id": "57aa56781e430011",
     "name": "Lederrüstung",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/chest/breastplate-layered-leather-brown.webp",
     "system": {
       "description": "",
       "minStrength": 3,
@@ -31,7 +31,7 @@
     "_id": "57aa56781e430012",
     "name": "Kettenhemd",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/chest/breastplate-scale-grey.webp",
     "system": {
       "description": "",
       "minStrength": 4,
@@ -45,7 +45,7 @@
     "_id": "57aa56781e430013",
     "name": "Halbe-Platte",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/chest/breastplate-cuirass-steel-grey.webp",
     "system": {
       "description": "",
       "minStrength": 5,
@@ -59,7 +59,7 @@
     "_id": "57aa56781e430014",
     "name": "Plattenpanzer",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/chest/breastplate-collared-steel.webp",
     "system": {
       "description": "",
       "minStrength": 6,
@@ -73,7 +73,7 @@
     "_id": "57aa56781e430015",
     "name": "Ritterrüstung",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/chest/breastplate-layered-steel.webp",
     "system": {
       "description": "",
       "minStrength": 7,
@@ -87,7 +87,7 @@
     "_id": "57aa56781e430016",
     "name": "Schild",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/shield/round-wooden-boss-steel.webp",
     "system": {
       "description": "Benötigt eine freie Hand.",
       "minStrength": 3,
@@ -101,7 +101,7 @@
     "_id": "57aa56781e430017",
     "name": "Turmschild",
     "type": "armor",
-    "img": "icons/svg/shield.svg",
+    "img": "icons/equipment/shield/heater-steel-grey.webp",
     "system": {
       "description": "Benötigt eine freie Hand.",
       "minStrength": 4,

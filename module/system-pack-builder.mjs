@@ -22,11 +22,27 @@ function normalizeDocs(docs) {
     clone.flags ??= {};
     clone.flags["aborea-v7"] ??= {};
     clone.flags["aborea-v7"].sourceId = sourceFlag(clone);
+    clone.flags["aborea-v7"].sourceImg = clone.img ?? null;
     clone._id ??= foundry.utils.randomID(16);
     clone.sort ??= (i + 1) * 1000;
     clone.folder ??= null;
     return clone;
   });
+}
+
+/**
+ * img-Schutz: manuell im Pack geänderte Bilder überleben den Re-Import.
+ * sourceImg-Flag merkt sich das zuletzt importierte Quell-Bild — weicht das
+ * aktuelle Bild davon ab, wurde es manuell gesetzt und bleibt erhalten.
+ * Einträge ohne Flag (Alt-Bestand) bekommen einmalig das Quell-Bild.
+ */
+function protectManualImg(payload, existing) {
+  const storedSourceImg = existing.flags?.["aborea-v7"]?.sourceImg;
+  const manuallyChanged = storedSourceImg !== undefined
+    && existing.img
+    && existing.img !== storedSourceImg;
+  if (manuallyChanged) payload.img = existing.img;
+  return payload;
 }
 
 async function ensureUnlocked(pack) {
@@ -44,7 +60,7 @@ function getDocumentClassByType(type) {
   }
 }
 
-async function upsertDocumentsToPack(pack, docs, {replace=true}={}) {
+async function upsertDocumentsToPack(pack, docs, {replace=false}={}) {
   await ensureUnlocked(pack);
   docs = normalizeDocs(docs);
   const existing = await pack.getDocuments();
@@ -55,7 +71,10 @@ async function upsertDocumentsToPack(pack, docs, {replace=true}={}) {
   for (const doc of docs) {
     const srcId = sourceFlag(doc);
     const current = bySource.get(srcId);
-    if (current) updates.push(foundry.utils.mergeObject(doc, {_id: current.id}, {inplace: false}));
+    if (current) {
+      const payload = foundry.utils.mergeObject(doc, {_id: current.id}, {inplace: false});
+      updates.push(protectManualImg(payload, current));
+    }
     else creates.push(doc);
   }
 
@@ -90,7 +109,7 @@ async function getBuildEntries() {
   return entries;
 }
 
-export async function buildSystemPacks({notify=true, replace=true}={}) {
+export async function buildSystemPacks({notify=true, replace=false}={}) {
   if (!game.user.isGM) throw new Error("Nur ein GM kann System-Packs befüllen.");
 
   const entries = await getBuildEntries();

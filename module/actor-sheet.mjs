@@ -191,10 +191,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     // Kampfbonus-Tooltip: Fertigkeit der besten ausgerüsteten Waffe, Fallback auf beste Fertigkeit
     {
       const equippedWeapons = actor.items?.filter(i => i.type === "weapon" && i.system.equipped) ?? [];
-      const equippedSkillKeys = [...new Set(equippedWeapons.flatMap(w => {
-        const s = w.system.skill; const arr = w.system.skills;
-        return s ? [s] : (Array.isArray(arr) ? arr : []);
-      }))].filter(k => ABOREA.weaponSkillKeys.includes(k));
+      const equippedSkillKeys = [...new Set(equippedWeapons.flatMap(w =>
+        Array.isArray(w.system.skills) ? w.system.skills : []
+      ))].filter(k => ABOREA.weaponSkillKeys.includes(k));
       const keysToCheck = equippedSkillKeys.length ? equippedSkillKeys : ABOREA.weaponSkillKeys;
 
       let best = { cb: -99, label: "", attrKey: "st", rank: 0, attrBonus: 0 };

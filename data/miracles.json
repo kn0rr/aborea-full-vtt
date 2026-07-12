@@ -2,7 +2,7 @@
   {
     "name": "Unglaube",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Erkennt in einem Radius von 3 m/Stufe jeden Ungläubigen.",
       "list": "Zeichen (Leitmagie)",
@@ -24,7 +24,7 @@
   {
     "name": "Göttliches Zeichen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Ein Zeichen wird sichtbar für eine Runde/1 MP.",
       "list": "Zeichen (Leitmagie)",
@@ -46,7 +46,7 @@
   {
     "name": "Symbol",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Vertreiben von Unleben (Leben) für Runde/1 MP pro Stufe/1 MP.",
       "list": "Zeichen (Leitmagie)",
@@ -68,7 +68,7 @@
   {
     "name": "Weihe",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Weiht (für 1 Tag pro Stufe) MP/Quadratmeter: +1 Manöverbonus, -1 für Feinde.",
       "list": "Zeichen (Leitmagie)",
@@ -90,7 +90,7 @@
   {
     "name": "Dauerhaftes Zeichen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Markiert einen Ort/Gegenstand dauerhaft mit einem Spruch bis Rang 4. Jede Auslösung/1 MP.",
       "list": "Zeichen (Leitmagie)",
@@ -113,7 +113,7 @@
   {
     "name": "Wunder",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Ein nicht vorher bestimmbares Wunder passiert (Entscheidung des Spielleiters).",
       "list": "Zeichen (Leitmagie)",
@@ -133,7 +133,7 @@
   {
     "name": "Erdbeben",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Lässt die Erde im Umkreis von 5 m/2 MP erzittern. Das Beben erreicht Stärke/10 MP (höchstens Stärke 8) und kündigt sich 15 Minuten lang durch kleinere Vorbeben an.",
       "list": "Zeichen (Leitmagie)",
@@ -158,7 +158,7 @@
   {
     "name": "Sintflut",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Innerhalb von 10 Minuten zieht sich alles am Himmel zusammen und es beginnt dramatisch zu regnen: Pro Minute fallen 100 ml/m2. Der Regen dauert 1 Stunde/2 MP (maximal 10 Stunden).",
       "list": "Zeichen (Leitmagie)",
@@ -183,7 +183,7 @@
   {
     "name": "Feuerregen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Der Himmel zieht sich innerhalb von 5 Minuten zu. Die meisten Tiere flüchten. Es regnet heiße Lava im Umkreis von 5 m/5 MP für 1 Min./5 MP. Sie richtet einen Würfel Schaden an und entzündet alles Brennbare. Funktioniert nicht innerhalb von Räumen.",
       "list": "Zeichen (Leitmagie)",
@@ -206,7 +206,7 @@
   {
     "name": "Blitz",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/saint-glass-portrait-halo.webp",
     "system": {
       "description": "Lässt einen Blitz auf ein 1,5 m/10 MP Feld krachen, der Würfel/5 MP Schaden anrichtet (maximal 5).",
       "list": "Zeichen (Leitmagie)",
@@ -224,13 +224,16 @@
       "slug": "blitz",
       "externalId": "zeichen-leitmagie--blitz--10",
       "domain": "Zeichen (Leitmagie)",
-      "hpEffect": { "type": "damage", "multiplier": 1 }
+      "hpEffect": {
+        "type": "damage",
+        "multiplier": 1
+      }
     }
   },
   {
     "name": "Heilung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Heilt 4 TP/1 MP.",
       "list": "Wunder (Leitmagie)",
@@ -248,13 +251,16 @@
       "slug": "heilung",
       "externalId": "wunder-leitmagie--heilung--1",
       "domain": "Wunder (Leitmagie)",
-      "hpEffect": { "type": "heal", "multiplier": 4 }
+      "hpEffect": {
+        "type": "heal",
+        "multiplier": 4
+      }
     }
   },
   {
     "name": "Genesung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Heilt 1 Blutung/2 MP, eine Vergiftung (Rang des Giftes/1 MP) oder einen Attributsverlust (Attributspunkt/3 MP).",
       "list": "Wunder (Leitmagie)",
@@ -278,7 +284,7 @@
   {
     "name": "Göttlicher Schlag",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Waffe des Gottes für eine Stunde mit einem +1/2 MP (max. +3). Eine getragene Waffe wird für die Dauer verstärkt (max. +5); trägt man keine Waffe, dann erscheint diese in der Hand.",
       "list": "Wunder (Leitmagie)",
@@ -303,7 +309,7 @@
   {
     "name": "Beistand",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Für 5 Personen/1 MP kann ein +1/1 MP (bis zu +3 Manöverbonus) erwirkt werden für eine Runde/1 MP.",
       "list": "Wunder (Leitmagie)",
@@ -322,13 +328,21 @@
       "slug": "beistand",
       "externalId": "wunder-leitmagie--beistand--4",
       "domain": "Wunder (Leitmagie)",
-      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "valuePerMp": 1, "min": 1, "max": 3 }]
+      "effects": [
+        {
+          "type": "attribute",
+          "key": "system.traits.maneuverBonus",
+          "valuePerMp": 1,
+          "min": 1,
+          "max": 3
+        }
+      ]
     }
   },
   {
     "name": "Segnung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Gibt allen Gläubigen in Sichtweite/Hörweite einen Manöverbonus von +1 für eine Stunde.",
       "list": "Wunder (Leitmagie)",
@@ -343,13 +357,19 @@
       "slug": "segnung",
       "externalId": "wunder-leitmagie--segnung--5",
       "domain": "Wunder (Leitmagie)",
-      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": 1 }]
+      "effects": [
+        {
+          "type": "attribute",
+          "key": "system.traits.maneuverBonus",
+          "value": 1
+        }
+      ]
     }
   },
   {
     "name": "Fluch",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Verflucht eine bekannte Person für einen Tag/1 MP.",
       "list": "Wunder (Leitmagie)",
@@ -366,13 +386,19 @@
       "slug": "fluch",
       "externalId": "wunder-leitmagie--fluch--6",
       "domain": "Wunder (Leitmagie)",
-      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": -1 }]
+      "effects": [
+        {
+          "type": "attribute",
+          "key": "system.traits.maneuverBonus",
+          "value": -1
+        }
+      ]
     }
   },
   {
     "name": "Erlösung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Vernichtet eine beschworene oder untote Kreatur von einer Stufe/1 MP dauerhaft.",
       "list": "Wunder (Leitmagie)",
@@ -394,7 +420,7 @@
   {
     "name": "Einwirkung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Erlaubt das dauerhafte Binden eines Wunders bis Stufe 3 zu den jeweiligen MP-Kosten pro Anwendung.",
       "list": "Wunder (Leitmagie)",
@@ -416,7 +442,7 @@
   {
     "name": "Göttliches Eingreifen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Erlaubt, einen Würfelwurf sofort zu wiederholen.",
       "list": "Wunder (Leitmagie)",
@@ -436,7 +462,7 @@
   {
     "name": "Wiedererweckung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
     "system": {
       "description": "Erweckt eine Kreatur, die nicht länger als einen Tag/3 MP tot ist, wieder zum Leben.",
       "list": "Wunder (Leitmagie)",
@@ -459,7 +485,7 @@
   {
     "name": "Freundliche Weise",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Für 10 Min./1 MP erhält der Barde nach seinem Spiel einen Bonus von +2 auf seine Einflussnahme auf 3 Hörer/1 MP.",
       "list": "Bardenmagie (Leitmagie)",
@@ -479,13 +505,19 @@
       "slug": "freundliche-weise",
       "externalId": "bardenmagie-leitmagie--freundliche-weise--1",
       "domain": "Bardenmagie (Leitmagie)",
-      "effects": [{ "type": "attribute", "key": "system.classFeatures.bonuses.influence", "value": 2 }]
+      "effects": [
+        {
+          "type": "attribute",
+          "key": "system.classFeatures.bonuses.influence",
+          "value": 2
+        }
+      ]
     }
   },
   {
     "name": "Ablenkung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Für die Dauer des Auftritts ist jeder in Hör- oder Sichtweite (je nach Art des Auftritts) wie gebannt. Alle anderen Geschehnisse werden um einen Tarnpunkt/1 MP getarnt.",
       "list": "Bardenmagie (Leitmagie)",
@@ -507,7 +539,7 @@
   {
     "name": "Lied des Beistands",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "3 Hörer/1 MP erhalten jeweils einen TP/1 MP zurück oder einen Bonus von +1/1 MP (max. +5) auf deren nächstes Manöver (nach Wahl des Barden).",
       "list": "Bardenmagie (Leitmagie)",
@@ -531,7 +563,7 @@
   {
     "name": "Zeichen des Banns",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Kein beschworenes Wesen kann die markierte Schwelle für eine Stunde/1 MP übertreten.",
       "list": "Bardenmagie (Leitmagie)",
@@ -553,7 +585,7 @@
   {
     "name": "Laut des Vergessens",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Ein Hörer/1 MP vergisst die letzten 5 Minuten/1 MP. Die Erinnerungen sind nicht unwiderruflich verloren, vielmehr gelten sie als blockiert.",
       "list": "Bardenmagie (Leitmagie)",
@@ -576,7 +608,7 @@
   {
     "name": "Legende",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Der Barde kann für eine Stunde/1 MP die Identität eines Fremden annehmen (keine Person, die existiert oder existiert hat).",
       "list": "Bardenmagie (Leitmagie)",
@@ -598,7 +630,7 @@
   {
     "name": "Elemente",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/tools/instruments/lute-gold-brown.webp",
     "system": {
       "description": "Kann ein Element in einem Angriff als Waffe einsetzen (Schaden +2, Schaden wirkt 1 Runde/1 MP fort). Wirkung nur möglich, sofern das Element vorhanden ist. Fortwirkung nur möglich, wenn keine Gegenmaßnahmen erfolgreich waren.",
       "list": "Bardenmagie (Leitmagie)",
@@ -621,7 +653,7 @@
   {
     "name": "Heilen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Durch das Auflegen seiner Hände kann der Schamane eine Person heilen (1 TP/1 MP).",
       "list": "Schamanenmagie (Leitmagie)",
@@ -638,13 +670,16 @@
       "slug": "heilen",
       "externalId": "schamanenmagie-leitmagie--heilen--1",
       "domain": "Schamanenmagie (Leitmagie)",
-      "hpEffect": { "type": "heal", "multiplier": 1 }
+      "hpEffect": {
+        "type": "heal",
+        "multiplier": 1
+      }
     }
   },
   {
     "name": "Trance",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Der Schamane kann sich in einen Trancezustand versetzen, um die wahre Natur eines berührten Objektes um einen Erkenntnispunkt/1 MP zu erhellen. Die Dauer der Trance ist abhängig von der Zahl der eingesetzten MP.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -666,7 +701,7 @@
   {
     "name": "Heiliger Bezirk",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Weiht (für 1 Tag pro Stufe) Quadratmeter/1 MP. Alle Feinde, die den geweihten Bereich betreten, erhalten einen Manövermalus von -1.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -688,7 +723,7 @@
   {
     "name": "Unterschlupf",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Erschafft einen Unterschlupf (eine Höhle in einem großen Baum, einem Felsen oder im Boden) für drei Stunden/1 MP und vier Personen/1 MP.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -712,7 +747,7 @@
   {
     "name": "Naturgeist",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Beschwört einen Geist der Natur mit einer Stufe/1 MP (max. Stufe ist die Hälfte der des Schamanen), der dem Schamanen für eine Stunde/1 MP dient.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -729,13 +764,18 @@
       "slug": "naturgeist",
       "externalId": "schamanenmagie-leitmagie--naturgeist--5",
       "domain": "Schamanenmagie (Leitmagie)",
-      "summonRule": { "templateName": "Naturgeist", "summonType": "nature-spirit", "levelFormula": "min(mpCost,floor(actorLevel/2))", "permanent": false }
+      "summonRule": {
+        "templateName": "Naturgeist",
+        "summonType": "nature-spirit",
+        "levelFormula": "min(mpCost,floor(actorLevel/2))",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Verfluchen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Belegt eine Person/4 MP für einen Tag/1 MP mit einem Fluch.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -753,13 +793,19 @@
       "slug": "verfluchen",
       "externalId": "schamanenmagie-leitmagie--verfluchen--6",
       "domain": "Schamanenmagie (Leitmagie)",
-      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": -1 }]
+      "effects": [
+        {
+          "type": "attribute",
+          "key": "system.traits.maneuverBonus",
+          "value": -1
+        }
+      ]
     }
   },
   {
     "name": "Prophezeiung",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Der Schamane kann 1 Tag/1 MP in die mögliche Zukunft einer Person blicken.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -781,7 +827,7 @@
   {
     "name": "Bann brechen",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Hebt eine Stufe/4 MP eines Zaubers auf.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -803,7 +849,7 @@
   {
     "name": "Erdbeben",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Lässt die Erde im Umkreis von 10 m/2 MP erzittern. Das Beben erreicht Stärke/10 MP (höchstens Stärke 8) und kündigt sich 10 Minuten lang durch kleinere Vorbeben an.",
       "list": "Schamanenmagie (Leitmagie)",
@@ -827,7 +873,7 @@
   {
     "name": "Wunder der Natur",
     "type": "miracle",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/root-vine-caduceus-healing.webp",
     "system": {
       "description": "Erschafft/Verändert im Umkreis von 1 m/1 MP Vegetation (nach Wahl des Schamanen).",
       "list": "Schamanenmagie (Leitmagie)",

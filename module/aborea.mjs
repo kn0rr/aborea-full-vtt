@@ -2,7 +2,6 @@
 import { ABOREA } from "./config.mjs";
 import { AboreaActorSheet, AboreaCharacterSheet, AboreaNpcSheet, AboreaCreatureSheet, AboreaLootSheet } from "./actor-sheet.mjs";
 import { AboreaItemSheet } from "./item-sheet.mjs";
-import { importSingleAboreaPack, listAboreaWorldPacks, resetAboreaWorldPacks } from "./compendium-importer.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
 import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHooks } from "./combat.mjs";
@@ -52,9 +51,6 @@ Hooks.once("init", async function () {
 
   game.aborea = {
     config: ABOREA,
-    importPack: importSingleAboreaPack,
-    listWorldPacks: listAboreaWorldPacks,
-    resetWorldPacks: resetAboreaWorldPacks,
     buildSystemPacks,
     resetSystemPacks,
     unlockPacks: unlockSystemPacks,
@@ -122,8 +118,6 @@ Hooks.once("init", async function () {
   Handlebars.registerHelper("selected",  function (a, b)   { return a === b ? "selected" : ""; });
   Handlebars.registerHelper("aboreaGt",  function (a, b)   { return Number(a) > Number(b); });
   Handlebars.registerHelper("aboreaJoin",function (arr, sep) { return Array.isArray(arr) ? arr.join(sep || ", ") : ""; });
-  Handlebars.registerHelper("aboreaHas", function (arr, val) { return Array.isArray(arr) && arr.includes(val); });
-  Handlebars.registerHelper("array",     function (...args)  { return args.slice(0, -1); });
 });
 
 Hooks.once("diceSoNiceReady", function (dice3d) {

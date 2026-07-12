@@ -2,7 +2,7 @@
   {
     "name": "Tarnung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Ein Feld von 3 m2/1 MP mit einem Tarnpunkt/1 MP verstecken.",
       "list": "Schwarze Magie",
@@ -26,7 +26,7 @@
   {
     "name": "Trübung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Trübt den Geist anderer um einen Malus von 1/1 MP.",
       "list": "Schwarze Magie",
@@ -43,13 +43,19 @@
       "slug": "truebung",
       "externalId": "schwarze-magie--truebung--2",
       "school": "Schwarze Magie",
-      "effects": [{ "type": "attribute", "key": "system.traits.maneuverBonus", "value": -1 }]
+      "effects": [
+        {
+          "type": "attribute",
+          "key": "system.traits.maneuverBonus",
+          "value": -1
+        }
+      ]
     }
   },
   {
     "name": "Feuer",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/fire/flame-burning-embers-orange.webp",
     "system": {
       "description": "Erschafft magisches Feuer auf einem 3 m2/1 MP Feld für Runde/1 MP. Dieses Feuer kann nichts anderes entzünden oder entflammen. Jeder im Feuer erhält aber Hitzeschaden: Schaden/1 MP - max. +5.",
       "list": "Schwarze Magie",
@@ -74,7 +80,7 @@
   {
     "name": "Beschwörung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Beschwört eine Kreatur mit einer Stufe/1 MP für eine Stunde/1 MP. Die Stufe wird bei Monstern durch den Schwierigkeitsgrad (SG) angegeben.",
       "list": "Schwarze Magie",
@@ -91,13 +97,18 @@
       "slug": "beschwoerung",
       "externalId": "schwarze-magie--beschwoerung--4",
       "school": "Schwarze Magie",
-      "summonRule": { "templateName": "Beschworene Kreatur", "summonType": "conjured", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Beschworene Kreatur",
+        "summonType": "conjured",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Bannung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Verbannt eine beschworene Kreatur für ein Jahr/1 MP und Stufe/1 MP der Kreatur.",
       "list": "Schwarze Magie",
@@ -119,7 +130,7 @@
   {
     "name": "Beherrschung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Beherrscht eine beschworene Kreatur eine Stunde/1 MP für eine Stufe/1 MP.",
       "list": "Schwarze Magie",
@@ -141,7 +152,7 @@
   {
     "name": "Zerstörung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Zerstört eine Stufe/4 MP einer Kreatur oder eines Zaubers.",
       "list": "Schwarze Magie",
@@ -163,7 +174,7 @@
   {
     "name": "Bindung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Bindet eine beschworene Kreatur oder einen Zauber an einen Ort oder Person (Stufe/1 MP).",
       "list": "Schwarze Magie",
@@ -185,7 +196,7 @@
   {
     "name": "Belebung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Belebt einen Gegenstand für eine Stunde/1 MP und Stufe/1 MP (Untot).",
       "list": "Schwarze Magie",
@@ -202,13 +213,18 @@
       "slug": "belebung",
       "externalId": "schwarze-magie--belebung--9",
       "school": "Schwarze Magie",
-      "summonRule": { "templateName": "Untoter Diener", "summonType": "undead", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Untoter Diener",
+        "summonType": "undead",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Dauerhafte Belebung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/unholy/silhouette-robe-evil-power.webp",
     "system": {
       "description": "Erschafft dauerhaft Untote/2 MP auf Stufe/2 MP.",
       "list": "Schwarze Magie",
@@ -225,13 +241,18 @@
       "slug": "dauerhafte-belebung",
       "externalId": "schwarze-magie--dauerhafte-belebung--10",
       "school": "Schwarze Magie",
-      "summonRule": { "templateName": "Untoter Diener", "summonType": "undead", "levelFormula": "floor(mpCost/2)", "permanent": true }
+      "summonRule": {
+        "templateName": "Untoter Diener",
+        "summonType": "undead",
+        "levelFormula": "floor(mpCost/2)",
+        "permanent": true
+      }
     }
   },
   {
     "name": "Pfadfinder",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Führt zu einer Pflanze oder einem bekannten Ort innerhalb von einem km/1 MP.",
       "list": "Wilde Magie",
@@ -253,7 +274,7 @@
   {
     "name": "Helfer",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Ein Tier oder eine belebte Pflanze mit einer Stufe/1 MP steht dem Magier für eine Stunde/1 MP bei. 1 km pro Stufe.",
       "list": "Wilde Magie",
@@ -270,13 +291,18 @@
       "slug": "helfer",
       "externalId": "wilde-magie--helfer--2",
       "school": "Wilde Magie",
-      "summonRule": { "templateName": "Tierischer Helfer", "summonType": "animal-helper", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Tierischer Helfer",
+        "summonType": "animal-helper",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Animation",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Animiert eine Pflanze von einer Stufe/1 MP und für eine Stunde/1 MP.",
       "list": "Wilde Magie",
@@ -293,13 +319,18 @@
       "slug": "animation",
       "externalId": "wilde-magie--animation--3",
       "school": "Wilde Magie",
-      "summonRule": { "templateName": "Animierte Pflanze", "summonType": "animated-plant", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Animierte Pflanze",
+        "summonType": "animated-plant",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Animalie",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Verleiht das Wissen eines Tieres der Stufe/1 MP für eine Runde/1 MP.",
       "list": "Wilde Magie",
@@ -321,7 +352,7 @@
   {
     "name": "Tierfreund",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Findet einen dauerhaften Tierfreund einer Stufe/3 MP. 1 km pro Stufe.",
       "list": "Wilde Magie",
@@ -339,13 +370,18 @@
       "slug": "tierfreund",
       "externalId": "wilde-magie--tierfreund--5",
       "school": "Wilde Magie",
-      "summonRule": { "templateName": "Tierfreund", "summonType": "animal-friend", "levelFormula": "floor(mpCost/3)", "permanent": true }
+      "summonRule": {
+        "templateName": "Tierfreund",
+        "summonType": "animal-friend",
+        "levelFormula": "floor(mpCost/3)",
+        "permanent": true
+      }
     }
   },
   {
     "name": "Wandlung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Verwandelt in ein Tier der Stufe/1 MP für einen Tag.",
       "list": "Wilde Magie",
@@ -367,7 +403,7 @@
   {
     "name": "Tier",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Gewährt die Eigenschaft eines Tieres (Stufe/1 MP) für eine Stunde/1 MP.",
       "list": "Wilde Magie",
@@ -389,7 +425,7 @@
   {
     "name": "Erde",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Ein Erdelementar der Stufe/1 MP steht für eine Stunde bei.",
       "list": "Wilde Magie",
@@ -406,13 +442,18 @@
       "slug": "erde",
       "externalId": "wilde-magie--erde--8",
       "school": "Wilde Magie",
-      "summonRule": { "templateName": "Erdelementar", "summonType": "earth-elemental", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Erdelementar",
+        "summonType": "earth-elemental",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Elemente",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Ein Elementar der Stufe/1 MP steht für eine Stunde bei.",
       "list": "Wilde Magie",
@@ -429,13 +470,18 @@
       "slug": "elemente",
       "externalId": "wilde-magie--elemente--9",
       "school": "Wilde Magie",
-      "summonRule": { "templateName": "Elementar", "summonType": "elemental", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Elementar",
+        "summonType": "elemental",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Leben",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/nature/wolf-paw-glow-green.webp",
     "system": {
       "description": "Spendet eine Stufe/1 MP Leben für eine Person, die nicht länger als Tag/1 MP tot ist.",
       "list": "Wilde Magie",
@@ -457,7 +503,7 @@
   {
     "name": "Wasserfreund",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/water/orb-water-bubbles.webp",
     "system": {
       "description": "Erlaubt das Atmen unter Wasser für 10 Min./1 MP und Person/1 MP.",
       "list": "Elementare Magie",
@@ -480,7 +526,7 @@
   {
     "name": "Entzünden",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/fire/flame-burning-campfire-orange.webp",
     "system": {
       "description": "Entzündet etwas Brennbares in 10 m/1 MP.",
       "list": "Elementare Magie",
@@ -503,7 +549,7 @@
   {
     "name": "Feuerball",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/fire/explosion-fireball-medium-red-orange.webp",
     "system": {
       "description": "Schafft einen Ball aus Feuer, der wie ein Geschoss verwendet wird; Schaden/1 MP - max. +5.",
       "list": "Elementare Magie",
@@ -521,13 +567,17 @@
       "slug": "feuerball",
       "externalId": "elementare-magie--feuerball--3",
       "school": "Elementare Magie",
-      "hpEffect": { "type": "damage", "multiplier": 1, "max": 5 }
+      "hpEffect": {
+        "type": "damage",
+        "multiplier": 1,
+        "max": 5
+      }
     }
   },
   {
     "name": "Blitz",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/lightning/bolt-strike-blue.webp",
     "system": {
       "description": "Von dem Zauberer aus schießt ein Blitz; mehrere Ziele in einer Reihe möglich: Schaden/1 MP und Person/1 MP.",
       "list": "Elementare Magie",
@@ -544,13 +594,16 @@
       "slug": "blitz",
       "externalId": "elementare-magie--blitz--4",
       "school": "Elementare Magie",
-      "hpEffect": { "type": "damage", "multiplier": 1 }
+      "hpEffect": {
+        "type": "damage",
+        "multiplier": 1
+      }
     }
   },
   {
     "name": "Wall",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/earth/barrier-stone-brown-green.webp",
     "system": {
       "description": "Schafft einen Wall aus Luft/Erde/Wasser/Feuer für 1 Min./1 MP und Meter/1 MP lang (4 m hoch).",
       "list": "Elementare Magie",
@@ -573,7 +626,7 @@
   {
     "name": "Sturm",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/air/wind-tornado-funnel-gray.webp",
     "system": {
       "description": "Entfesselt einen Sturm der Windstärke 10 für Stunde/1 MP in einem Umkreis von 1 km; dauert eine Minute, bis er sich zusammengezogen hat. Die typischen Anzeichen für ein Unwetter passieren zuvor.",
       "list": "Elementare Magie",
@@ -596,7 +649,7 @@
   {
     "name": "Elementar",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
     "system": {
       "description": "Animiert einen Elementar zu erscheinen (Element muss vorhanden sein) und einem eine Stunde beizustehen (Stufe/1 MP).",
       "list": "Elementare Magie",
@@ -613,13 +666,18 @@
       "slug": "elementar",
       "externalId": "elementare-magie--elementar--7",
       "school": "Elementare Magie",
-      "summonRule": { "templateName": "Elementar", "summonType": "elemental", "levelFormula": "mpCost", "permanent": false }
+      "summonRule": {
+        "templateName": "Elementar",
+        "summonType": "elemental",
+        "levelFormula": "mpCost",
+        "permanent": false
+      }
     }
   },
   {
     "name": "Flutwelle",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/water/wave-water-blue.webp",
     "system": {
       "description": "Lässt ein Gewässer so unruhig werden, dass eine Flutwelle entsteht. 10 m/1 MP lang und 2 m/1 MP hoch (max. 20 m). Es dauert bis zu 10 Minuten, bevor die Welle kommt. Zuvor zieht sich das Wasser deutlich zurück.",
       "list": "Elementare Magie",
@@ -644,7 +702,7 @@
   {
     "name": "Erdbeben",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/earth/barrier-stone-explosion-debris.webp",
     "system": {
       "description": "Lässt die Erde im Umkreis von 10 m/2 MP erzittern. Das Beben erreicht Stärke/10 MP (höchstens Stärke 8) und kündigt sich 10 Minuten lang durch kleinere Vorbeben an. Die Stärke ist äquivalent zur Richterskala zu sehen.",
       "list": "Elementare Magie",
@@ -668,7 +726,7 @@
   {
     "name": "Feuerregen",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/fire/projectile-meteor-salvo-strong-red.webp",
     "system": {
       "description": "Der Himmel zieht sich innerhalb von 5 Minuten zu. Die meisten Tiere flüchten. Es regnet heiße Lava im Umkreis von 10 m/5 MP für 1 Min./5 MP. Sie richtet einen Würfel geteilt durch 2 Schaden an und entzündet alles Brennbare. Funktioniert nicht innerhalb von Räumen.",
       "list": "Elementare Magie",
@@ -693,7 +751,7 @@
   {
     "name": "Blenden",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/light/explosion-star-glow-yellow.webp",
     "system": {
       "description": "Erzeugt einen grellen Blitz, der eine Kreatur blenden kann (3 Runden/1 MP).",
       "list": "Freie Magie",
@@ -711,13 +769,18 @@
       "slug": "blenden",
       "externalId": "freie-magie--blenden--1",
       "school": "Freie Magie",
-      "effects": [{ "type": "status", "status": "blind" }]
+      "effects": [
+        {
+          "type": "status",
+          "status": "blind"
+        }
+      ]
     }
   },
   {
     "name": "Illusion",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/light/explosion-star-glow-blue.webp",
     "system": {
       "description": "Schafft eine einfache Illusion für Minute/1 MP (Routine Wahrnehmungs-Manöver zum Entlarven).",
       "list": "Freie Magie",
@@ -739,7 +802,7 @@
   {
     "name": "Licht und Dunkelheit",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/light/explosion-star-glow-blue.webp",
     "system": {
       "description": "Erschafft magisches Licht oder Dunkelheit in einem Umkreis von 3 m/1 MP (max. 10) um einen Gegenstand oder Kreatur.",
       "list": "Freie Magie",
@@ -763,7 +826,7 @@
   {
     "name": "Explosion",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/fire/explosion-fireball-large-orange.webp",
     "system": {
       "description": "Eine Explosion aus Licht und Schall verletzt alle Kreaturen im Umkreis von 5 m: Schaden/1 MP.",
       "list": "Freie Magie",
@@ -781,13 +844,16 @@
       "slug": "explosion",
       "externalId": "freie-magie--explosion--4",
       "school": "Freie Magie",
-      "hpEffect": { "type": "damage", "multiplier": 1 }
+      "hpEffect": {
+        "type": "damage",
+        "multiplier": 1
+      }
     }
   },
   {
     "name": "Große Illusion",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/light/explosion-star-glow-blue.webp",
     "system": {
       "description": "Wie Rang 2, aber erschwert das Wahrnehmungs-Manöver um 1/1 MP.",
       "list": "Freie Magie",
@@ -810,7 +876,7 @@
   {
     "name": "Schlaf",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/control/sleep-bubble-blue.webp",
     "system": {
       "description": "Lässt Person/2 MP der Stufe/2 MP für Stunde/1 MP einschlafen. Die Opfer können sich mit einem einfachen KO-Manöver für 5 Minuten wachhalten (wiederholbar).",
       "list": "Freie Magie",
@@ -829,13 +895,18 @@
       "slug": "schlaf",
       "externalId": "freie-magie--schlaf--6",
       "school": "Freie Magie",
-      "effects": [{ "type": "status", "status": "unconscious" }]
+      "effects": [
+        {
+          "type": "status",
+          "status": "unconscious"
+        }
+      ]
     }
   },
   {
     "name": "Unsichtbarkeit",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
     "system": {
       "description": "Lässt eine Person/3 MP oder einen Gegenstand von gleicher Größe/2 MP für eine Stunde/2 MP unsichtbar werden. Unsichtbare erhalten auf alle Manöver einen Malus von -1.",
       "list": "Freie Magie",
@@ -853,13 +924,18 @@
       "slug": "unsichtbarkeit",
       "externalId": "freie-magie--unsichtbarkeit--7",
       "school": "Freie Magie",
-      "effects": [{ "type": "status", "status": "invisible" }]
+      "effects": [
+        {
+          "type": "status",
+          "status": "invisible"
+        }
+      ]
     }
   },
   {
     "name": "Sprung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/movement/trail-streak-zigzag-yellow.webp",
     "system": {
       "description": "Erlaubt einen Sprung bis zu 2 m/1 MP (max. 4 m) aus dem Stand oder einen Fall ohne Schaden aus bis zu 10 m Höhe/4 MP.",
       "list": "Freie Magie",
@@ -884,7 +960,7 @@
   {
     "name": "Stoßwelle",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
     "system": {
       "description": "Mit den Händen kann eine Druckwelle ausgesandt werden, die alle auf einer Linie von 2 m/1 MP umreißt. Sie erhalten 1 Schaden/2 MP (max. 5).",
       "list": "Freie Magie",
@@ -903,13 +979,17 @@
       "slug": "stosswelle",
       "externalId": "freie-magie--stosswelle--9",
       "school": "Freie Magie",
-      "hpEffect": { "type": "damage", "multiplier": 0.5, "max": 5 }
+      "hpEffect": {
+        "type": "damage",
+        "multiplier": 0.5,
+        "max": 5
+      }
     }
   },
   {
     "name": "Flammenschwert",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/fire/dagger-rune-enchant-flame-red.webp",
     "system": {
       "description": "Verzaubert ein Schwert so, dass der Zauberer es führen kann (Fertigkeitsrang entsprechend der Fertigkeit Gezielte Sprüche). Das Schwert ist entflammt und richtet zusätzlich Schaden/2 MP an (max. 5). Dauer: 1 Runde/1 MP.",
       "list": "Freie Magie",
@@ -928,19 +1008,29 @@
       "slug": "flammenschwert",
       "externalId": "freie-magie--flammenschwert--10",
       "school": "Freie Magie",
-      "hpEffect": { "type": "buffDamage", "multiplier": 0.5, "max": 5 }
+      "hpEffect": {
+        "type": "buffDamage",
+        "multiplier": 0.5,
+        "max": 5
+      }
     }
   },
   {
     "name": "Schutz",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
     "system": {
       "description": "Ein +1 Rüstungsbonus/1 MP (max. Rüstung 10) und eine Person/1 MP. Der Effekt wirkt eine Stunde lang.",
       "list": "Weiße Magie",
       "rank": 1,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "3 m pro Stufe",
       "targeted": true,
       "duration": "1 Stunde",
@@ -954,13 +1044,19 @@
   {
     "name": "Linderung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/life/heart-cross-green.webp",
     "system": {
       "description": "Heilt einen TP/1 MP und eine Person/1 MP.",
       "list": "Weiße Magie",
       "rank": 2,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Berührung",
       "targeted": true,
       "duration": "",
@@ -969,19 +1065,29 @@
       "slug": "weisse-magie-linderung",
       "externalId": "weisse-magie--linderung--2",
       "school": "Weiße Magie",
-      "hpEffect": { "type": "heal", "multiplier": 1, "max": 0 }
+      "hpEffect": {
+        "type": "heal",
+        "multiplier": 1,
+        "max": 0
+      }
     }
   },
   {
     "name": "Erkenntnis",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Erhellt die wahre Natur um einen Erkenntnispunkt/1 MP.",
       "list": "Weiße Magie",
       "rank": 3,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Sichtweite",
       "targeted": false,
       "duration": "",
@@ -995,13 +1101,19 @@
   {
     "name": "Erschaffung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Erschafft einen nichtmagischen Gegenstand im Wert von einem KL/1 MP.",
       "list": "Weiße Magie",
       "rank": 4,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Berührung",
       "targeted": false,
       "duration": "",
@@ -1015,13 +1127,17 @@
   {
     "name": "Veränderung",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Verändert einen Gegenstand zum Besseren um max. 10 kg für eine Stunde pro Stufe des Formers.",
       "list": "Weiße Magie",
       "rank": 5,
       "cost": 1,
-      "costOptions": [1, 2, 3],
+      "costOptions": [
+        1,
+        2,
+        3
+      ],
       "range": "Berührung",
       "targeted": false,
       "duration": "1 Stunde/Stufe",
@@ -1035,13 +1151,19 @@
   {
     "name": "Schutzraum",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Erschafft einen Schutzraum für drei Stunden/1 MP und vier Personen/1 MP.",
       "list": "Weiße Magie",
       "rank": 6,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Berührung",
       "targeted": false,
       "duration": "3 Stunden/1 MP",
@@ -1055,13 +1177,19 @@
   {
     "name": "Schutzwall",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/defensive/barrier-shield-dome-blue-purple.webp",
     "system": {
       "description": "Formt einen festen Wall für eine Runde/1 MP und mit fünf Verteidigungsbonus/1 MP (max. zehn).",
       "list": "Weiße Magie",
       "rank": 7,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Sichtweite",
       "targeted": false,
       "duration": "1 Runde/1 MP",
@@ -1075,13 +1203,19 @@
   {
     "name": "Wissen",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Verschafft einer Person/1 MP einen +1 Bonus/1 MP (maximal +5) auf eine Fertigkeit für eine Runde.",
       "list": "Weiße Magie",
       "rank": 8,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Berührung",
       "targeted": true,
       "duration": "1 Runde",
@@ -1095,13 +1229,19 @@
   {
     "name": "Reise",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Ermöglicht eine sofortige Reise von 1 km/1 MP und Person/1 MP zu einem bekannten Ort.",
       "list": "Weiße Magie",
       "rank": 9,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Berührung",
       "targeted": true,
       "duration": "",
@@ -1115,13 +1255,19 @@
   {
     "name": "Wahre Sicht",
     "type": "spell",
-    "img": "icons/svg/book.svg",
+    "img": "icons/magic/holy/angel-wings-gray.webp",
     "system": {
       "description": "Es kann ein bekannter öffentlicher Ort für eine Runde/1 MP in einer Entfernung von 20 km/1 MP gesehen werden.",
       "list": "Weiße Magie",
       "rank": 10,
       "cost": 1,
-      "costOptions": [1, 2, 3, 4, 5],
+      "costOptions": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
       "range": "Berührung",
       "targeted": false,
       "duration": "1 Runde/1 MP",

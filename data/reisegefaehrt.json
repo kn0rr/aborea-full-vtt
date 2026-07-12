@@ -1,93 +1,439 @@
 [
-  { "name": "Satteltaschen", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann bis zu 8 kg fassen.", "quantity": 1, "weight": 5.0, "price": "18 KL", "equipped": false, "rarity": "häufig", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-satteltaschen" } } },
-
-  { "name": "Sattel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Sattel für ein Reittier.", "quantity": 1, "weight": 6.0, "price": "12 TT", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-sattel" } } },
-
-  { "name": "Pony", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "7 km/h, trägt bis zu 90 kg.", "quantity": 1, "weight": 0, "price": "4 GF", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-pony" } } },
-
-  { "name": "Reitpferd", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "12 km/h, trägt bis zu 150 kg.", "quantity": 1, "weight": 0, "price": "9 GF", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-reitpferd" } } },
-
-  { "name": "Arbeitspferd", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 100 kg transportieren.", "quantity": 1, "weight": 400, "price": "7 GF", "equipped": false, "rarity": "häufig", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-arbeitspferd" } } },
-
-  { "name": "Maultier", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 150 kg transportieren.", "quantity": 1, "weight": 200, "price": "5 GF", "equipped": false, "rarity": "häufig", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-maultier" } } },
-
-  { "name": "Ochse", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 350 kg transportieren.", "quantity": 1, "weight": 1000, "price": "17 GF", "equipped": false, "rarity": "häufig", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-ochse" } } },
-
-  { "name": "Kamel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 200 kg transportieren.", "quantity": 1, "weight": 450, "price": "30 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kamel" } } },
-
-  { "name": "Lama", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 25 kg transportieren (insbesondere im Gebirge).", "quantity": 1, "weight": 100, "price": "16 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-lama" } } },
-
-  { "name": "Schlachtross", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 200 kg transportieren. Gewährt +2 Bonus auf berittenen Kampf.", "quantity": 1, "weight": 600, "price": "14 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-schlachtross" } } },
-
-  { "name": "Elefant", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 500 kg transportieren.", "quantity": 1, "weight": 5500, "price": "130 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-elefant" } } },
-
-  { "name": "Pferdekarren", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 400 kg transportieren.", "quantity": 1, "weight": 200, "price": "6 GF", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-pferdekarren" } } },
-
-  { "name": "Planwagen", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 700 kg transportieren.", "quantity": 1, "weight": 450, "price": "16 GF", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-planwagen" } } },
-
-  { "name": "Kutsche", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 500 kg transportieren.", "quantity": 1, "weight": 1500, "price": "150 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kutsche" } } },
-
-  { "name": "Hundeschlitten", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Mit 8 Schlittenhunden. Kann 200 kg transportieren.", "quantity": 1, "weight": 0, "price": "126 TT", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-hundeschlitten" } } },
-
-  { "name": "Kanu", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 350 kg transportieren.", "quantity": 1, "weight": 70, "price": "14 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kanu" } } },
-
-  { "name": "Ruderboot", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Kann 500 kg transportieren.", "quantity": 1, "weight": 100, "price": "8 GF", "equipped": false, "rarity": "mittel", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-ruderboot" } } },
-
-  { "name": "Segelboot (10 m)", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 8 Personen.", "quantity": 1, "weight": 0, "price": "160 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-segelboot" } } },
-
-  { "name": "Segelschiff - mittel", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 40 Personen.", "quantity": 1, "weight": 0, "price": "750 GF", "equipped": false, "rarity": "selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-segelschiff-mittel" } } },
-
-  { "name": "Segelschiff - groß", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 200 Personen.", "quantity": 1, "weight": 0, "price": "6000 GF", "equipped": false, "rarity": "sehr selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-segelschiff-gross" } } },
-
-  { "name": "Galeere - klein", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 200 Personen.", "quantity": 1, "weight": 0, "price": "7500 GF", "equipped": false, "rarity": "sehr selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-galeere-klein" } } },
-
-  { "name": "Galeere - groß", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 400 Personen.", "quantity": 1, "weight": 0, "price": "20000 GF", "equipped": false, "rarity": "extrem selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-galeere-gross" } } },
-
-  { "name": "Kriegsschiff", "type": "gear", "img": "icons/svg/item-bag.svg",
-    "system": { "description": "Bis zu 1.000 Personen.", "quantity": 1, "weight": 0, "price": "80000 GF", "equipped": false, "rarity": "extrem selten", "category": "reisegefaehrt" },
-    "flags": { "aborea-v7": { "sourceId": "gear-kriegsschiff" } } }
+  {
+    "name": "Satteltaschen",
+    "type": "gear",
+    "img": "icons/containers/bags/pack-simple-leather-tan.webp",
+    "system": {
+      "description": "Kann bis zu 8 kg fassen.",
+      "quantity": 1,
+      "weight": 5,
+      "price": "18 KL",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-satteltaschen"
+      }
+    }
+  },
+  {
+    "name": "Sattel",
+    "type": "gear",
+    "img": "icons/commodities/leather/leather-scraps-tan.webp",
+    "system": {
+      "description": "Sattel für ein Reittier.",
+      "quantity": 1,
+      "weight": 6,
+      "price": "12 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-sattel"
+      }
+    }
+  },
+  {
+    "name": "Pony",
+    "type": "gear",
+    "img": "icons/environment/creatures/horse-tan.webp",
+    "system": {
+      "description": "7 km/h, trägt bis zu 90 kg.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "4 GF",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-pony"
+      }
+    }
+  },
+  {
+    "name": "Reitpferd",
+    "type": "gear",
+    "img": "icons/environment/creatures/horse-brown.webp",
+    "system": {
+      "description": "12 km/h, trägt bis zu 150 kg.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "9 GF",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-reitpferd"
+      }
+    }
+  },
+  {
+    "name": "Arbeitspferd",
+    "type": "gear",
+    "img": "icons/environment/creatures/horse-brown.webp",
+    "system": {
+      "description": "Kann 100 kg transportieren.",
+      "quantity": 1,
+      "weight": 400,
+      "price": "7 GF",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-arbeitspferd"
+      }
+    }
+  },
+  {
+    "name": "Maultier",
+    "type": "gear",
+    "img": "icons/environment/creatures/horse-tan.webp",
+    "system": {
+      "description": "Kann 150 kg transportieren.",
+      "quantity": 1,
+      "weight": 200,
+      "price": "5 GF",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-maultier"
+      }
+    }
+  },
+  {
+    "name": "Ochse",
+    "type": "gear",
+    "img": "icons/environment/creatures/bull-brown.webp",
+    "system": {
+      "description": "Kann 350 kg transportieren.",
+      "quantity": 1,
+      "weight": 1000,
+      "price": "17 GF",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-ochse"
+      }
+    }
+  },
+  {
+    "name": "Kamel",
+    "type": "gear",
+    "img": "icons/environment/creatures/camel.webp",
+    "system": {
+      "description": "Kann 200 kg transportieren.",
+      "quantity": 1,
+      "weight": 450,
+      "price": "30 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kamel"
+      }
+    }
+  },
+  {
+    "name": "Lama",
+    "type": "gear",
+    "img": "icons/environment/creatures/camel.webp",
+    "system": {
+      "description": "Kann 25 kg transportieren (insbesondere im Gebirge).",
+      "quantity": 1,
+      "weight": 100,
+      "price": "16 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-lama"
+      }
+    }
+  },
+  {
+    "name": "Schlachtross",
+    "type": "gear",
+    "img": "icons/environment/creatures/horse-black.webp",
+    "system": {
+      "description": "Kann 200 kg transportieren. Gewährt +2 Bonus auf berittenen Kampf.",
+      "quantity": 1,
+      "weight": 600,
+      "price": "14 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-schlachtross"
+      }
+    }
+  },
+  {
+    "name": "Elefant",
+    "type": "gear",
+    "img": "icons/creatures/mammals/elephant-walking-grey.webp",
+    "system": {
+      "description": "Kann 500 kg transportieren.",
+      "quantity": 1,
+      "weight": 5500,
+      "price": "130 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-elefant"
+      }
+    }
+  },
+  {
+    "name": "Pferdekarren",
+    "type": "gear",
+    "img": "icons/environment/settlement/cart-wooden.webp",
+    "system": {
+      "description": "Kann 400 kg transportieren.",
+      "quantity": 1,
+      "weight": 200,
+      "price": "6 GF",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-pferdekarren"
+      }
+    }
+  },
+  {
+    "name": "Planwagen",
+    "type": "gear",
+    "img": "icons/environment/settlement/wagon-covered-white.webp",
+    "system": {
+      "description": "Kann 700 kg transportieren.",
+      "quantity": 1,
+      "weight": 450,
+      "price": "16 GF",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-planwagen"
+      }
+    }
+  },
+  {
+    "name": "Kutsche",
+    "type": "gear",
+    "img": "icons/environment/settlement/wagon-black.webp",
+    "system": {
+      "description": "Kann 500 kg transportieren.",
+      "quantity": 1,
+      "weight": 1500,
+      "price": "150 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kutsche"
+      }
+    }
+  },
+  {
+    "name": "Hundeschlitten",
+    "type": "gear",
+    "img": "icons/creatures/mammals/wolf-shadow-black.webp",
+    "system": {
+      "description": "Mit 8 Schlittenhunden. Kann 200 kg transportieren.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "126 TT",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-hundeschlitten"
+      }
+    }
+  },
+  {
+    "name": "Kanu",
+    "type": "gear",
+    "img": "icons/tools/nautical/oar-wood-brown.webp",
+    "system": {
+      "description": "Kann 350 kg transportieren.",
+      "quantity": 1,
+      "weight": 70,
+      "price": "14 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kanu"
+      }
+    }
+  },
+  {
+    "name": "Ruderboot",
+    "type": "gear",
+    "img": "icons/tools/nautical/oars-crossed-brown.webp",
+    "system": {
+      "description": "Kann 500 kg transportieren.",
+      "quantity": 1,
+      "weight": 100,
+      "price": "8 GF",
+      "equipped": false,
+      "rarity": "mittel",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-ruderboot"
+      }
+    }
+  },
+  {
+    "name": "Segelboot (10 m)",
+    "type": "gear",
+    "img": "icons/tools/nautical/anchor.webp",
+    "system": {
+      "description": "Bis zu 8 Personen.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "160 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-segelboot"
+      }
+    }
+  },
+  {
+    "name": "Segelschiff - mittel",
+    "type": "gear",
+    "img": "icons/tools/nautical/ship-wheel-brown.webp",
+    "system": {
+      "description": "Bis zu 40 Personen.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "750 GF",
+      "equipped": false,
+      "rarity": "selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-segelschiff-mittel"
+      }
+    }
+  },
+  {
+    "name": "Segelschiff - groß",
+    "type": "gear",
+    "img": "icons/tools/nautical/ship-wheel-brown.webp",
+    "system": {
+      "description": "Bis zu 200 Personen.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "6000 GF",
+      "equipped": false,
+      "rarity": "sehr selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-segelschiff-gross"
+      }
+    }
+  },
+  {
+    "name": "Galeere - klein",
+    "type": "gear",
+    "img": "icons/tools/nautical/anchor.webp",
+    "system": {
+      "description": "Bis zu 200 Personen.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "7500 GF",
+      "equipped": false,
+      "rarity": "sehr selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-galeere-klein"
+      }
+    }
+  },
+  {
+    "name": "Galeere - groß",
+    "type": "gear",
+    "img": "icons/tools/nautical/anchor.webp",
+    "system": {
+      "description": "Bis zu 400 Personen.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "20000 GF",
+      "equipped": false,
+      "rarity": "extrem selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-galeere-gross"
+      }
+    }
+  },
+  {
+    "name": "Kriegsschiff",
+    "type": "gear",
+    "img": "icons/tools/nautical/ship-wheel-brown.webp",
+    "system": {
+      "description": "Bis zu 1.000 Personen.",
+      "quantity": 1,
+      "weight": 0,
+      "price": "80000 GF",
+      "equipped": false,
+      "rarity": "extrem selten",
+      "category": "reisegefaehrt"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-kriegsschiff"
+      }
+    }
+  }
 ]

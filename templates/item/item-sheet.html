@@ -35,6 +35,7 @@
         </div>
         <label>{{localize "ABOREA.Attribute"}}
           <select name="system.attr">
+            <option value="">— Standard der Fertigkeit —</option>
             {{#each attributeChoices as |label key|}}
             <option value="{{key}}" {{selected ../system.attr key}}>{{label}}</option>
             {{/each}}
