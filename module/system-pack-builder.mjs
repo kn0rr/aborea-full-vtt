@@ -83,7 +83,11 @@ async function upsertDocumentsToPack(pack, docs, {replace=false}={}) {
 
   if (replace) {
     const incomingIds = new Set(docs.map(sourceFlag));
-    const deleteIds = existing.filter(doc => !incomingIds.has(sourceFlag(doc))).map(doc => doc.id);
+    // Nur selbst importierte Einträge (sourceId-Flag) löschen — manuell im
+    // Kompendium angelegte Einträge bleiben auch bei replace:true erhalten.
+    const deleteIds = existing
+      .filter(doc => doc.flags?.["aborea-v7"]?.sourceId && !incomingIds.has(sourceFlag(doc)))
+      .map(doc => doc.id);
     if (deleteIds.length) await cls.deleteDocuments(deleteIds, {pack: pack.collection});
   }
   if (creates.length) await cls.createDocuments(creates, {pack: pack.collection, keepId: true});
@@ -131,17 +135,24 @@ export async function buildSystemPacks({notify=true, replace=false}={}) {
   return summary;
 }
 
-export async function resetSystemPacks({notify=true}={}) {
+export async function resetSystemPacks({notify=true, includeManual=false}={}) {
   if (!game.user.isGM) throw new Error("Nur ein GM kann System-Packs zurücksetzen.");
   const entries = await getBuildEntries();
+  let kept = 0;
   for (const entry of entries) {
     const pack = getSystemPack(entry.key);
     if (!pack) continue;
     await ensureUnlocked(pack);
     const cls = pack.documentClass ?? getDocumentClassByType(pack.metadata.type);
     const docs = await pack.getDocuments();
-    if (docs.length) await cls.deleteDocuments(docs.map(d => d.id), {pack: pack.collection});
+    // Manuell angelegte Einträge (ohne sourceId-Flag) nur mit includeManual:true löschen
+    const deletable = includeManual ? docs : docs.filter(d => d.flags?.["aborea-v7"]?.sourceId);
+    kept += docs.length - deletable.length;
+    if (deletable.length) await cls.deleteDocuments(deletable.map(d => d.id), {pack: pack.collection});
   }
-  if (notify) ui.notifications.info("ABOREA System-Packs geleert.");
+  if (notify) {
+    const keptHint = kept ? ` ${kept} manuelle(r) Eintrag/Einträge behalten.` : "";
+    ui.notifications.info(`ABOREA System-Packs geleert.${keptHint}`);
+  }
   return true;
 }

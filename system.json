@@ -2,7 +2,7 @@
   "id": "aborea-v7",
   "title": "ABOREA V7 (inoffiziell)",
   "description": "ABOREA V7 System mit Char-Gen, Klassenfähigkeiten und Zauber-/Active-Effect-Automation.",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
