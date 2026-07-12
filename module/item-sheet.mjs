@@ -83,7 +83,7 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
           }).render(true);
         } else {
           if (!img.src) return;
-          new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: this.document.name || "" } }).render(true);
+          new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: this.document.name || "Bild" } }).render(true);
         }
       });
     });

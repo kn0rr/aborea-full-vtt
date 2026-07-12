@@ -313,7 +313,7 @@ Hooks.once("ready", () => {
   foundry.canvas.placeables.Token.prototype._onClickLeft = function(event) {
     if (event.altKey || event.data?.originalEvent?.altKey || game.keyboard.isModifierActive("Alt")) {
       const src   = this.document?.texture?.src;
-      const title = this.document?.name ?? "";
+      const title = this.document?.name || "Bild";
       if (src) new foundry.applications.apps.ImagePopout({ src, window: { title } }).render(true);
       return;
     }

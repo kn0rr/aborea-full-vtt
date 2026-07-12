@@ -596,7 +596,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       img.style.cursor = "zoom-in";
       img.addEventListener("click", () => {
         if (!img.src) return;
-        new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: img.alt || img.title || "" } }).render(true);
+        new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: img.alt || img.title || "Bild" } }).render(true);
       });
     });
 
@@ -613,7 +613,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
           }).render(true);
         } else {
           if (!img.src) return;
-          new foundry.applications.apps.ImagePopout({ src: img.src, title: img.alt || img.title || this.document.name || "" }).render(true);
+          new foundry.applications.apps.ImagePopout({ src: img.src, window: { title: img.alt || img.title || this.document.name || "Bild" } }).render(true);
         }
       });
     });
