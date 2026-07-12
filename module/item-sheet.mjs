@@ -4,7 +4,11 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
     classes: ["aborea", "sheet", "item"],
     position: { width: 620, height: 480 },
     window: { resizable: true },
-    form: { submitOnChange: true, closeOnSubmit: false }
+    // Kein submitOnChange: der Voll-Formular-Submit würde bei jeder Änderung
+    // auch system.description mitschicken — mit leerem Editor-Wert bei offenem/
+    // frischem ProseMirror wird der gespeicherte Text sonst überschrieben.
+    // Updates laufen gezielt pro Feld über den change-Handler in _onRender.
+    form: { submitOnChange: false, closeOnSubmit: false }
   };
   static PARTS = { main: { template: "systems/aborea-v7/templates/item/item-sheet.html" } };
 
