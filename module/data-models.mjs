@@ -222,7 +222,6 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
       description:       new fields.HTMLField({ initial: "" }),
       descriptionLocked: new fields.BooleanField({ initial: false }),
       equipped:          new fields.BooleanField({ initial: false }),
-      skill:       new fields.StringField({ initial: "" }),
       skills:      new fields.ArrayField(new fields.StringField(), { initial: [] }),
       attr:        new fields.StringField({ initial: "" }),
       minStrength: new fields.NumberField({ initial: 0 }),

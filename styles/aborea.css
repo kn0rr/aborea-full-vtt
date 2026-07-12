@@ -1586,3 +1586,9 @@
 .god-row { font-size: .85rem; color: var(--aborea-dark); }
 .god-row .god-label { font-weight: 600; color: var(--aborea-brown); margin-right: 4px; }
 .god-description { font-size: .82rem; color: var(--aborea-brown); line-height: 1.5; margin: 4px 0 0; font-style: italic; }
+
+/* ── Waffenfertigkeits-Checkboxen (Item-Sheet) ──────── */
+.weapon-skills-label { font-size: .8rem; font-weight: 600; color: var(--aborea-brown); margin-bottom: 4px; }
+.weapon-skills-checkboxes { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.weapon-skill-check { display: flex; align-items: center; gap: 4px; font-size: .82rem; color: var(--aborea-dark); cursor: pointer; }
+.weapon-skill-check input[type="checkbox"] { margin: 0; cursor: pointer; }

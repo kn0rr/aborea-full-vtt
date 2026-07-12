@@ -23,14 +23,16 @@
     {{!-- ── Waffe ─────────────────────────────────────────────── --}}
     {{#if (aboreaEq item.type "weapon")}}
       <div class="form-grid">
-        <label>{{localize "ABOREA.WeaponSkill"}}
-          <select name="system.skill">
-            <option value="">— keine —</option>
-            {{#each weaponSkillChoices as |label key|}}
-            <option value="{{key}}" {{selected ../system.skill key}}>{{label}}</option>
-            {{/each}}
-          </select>
-        </label>
+        <div class="weapon-skills-label">{{localize "ABOREA.WeaponSkill"}}</div>
+        <div class="weapon-skills-checkboxes">
+          {{#each weaponSkillChoices as |label key|}}
+          <label class="weapon-skill-check">
+            <input type="checkbox" class="weapon-skill-cb" data-skill="{{key}}"
+              {{#if (aboreaIncludes ../system.skills key)}}checked{{/if}} />
+            {{label}}
+          </label>
+          {{/each}}
+        </div>
         <label>{{localize "ABOREA.Attribute"}}
           <select name="system.attr">
             {{#each attributeChoices as |label key|}}

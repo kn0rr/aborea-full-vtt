@@ -1,287 +1,346 @@
-[
-  {
-    "_id": "57aa56781e430001",
-    "name": "Armbrust",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "armbrust",
-      "skills": ["armbrust"],
-      "minStrength": 0,
-      "damage": 1,
-      "initiative": 2,
-      "range": "long",
-      "price": "14 GF",
-      "weight": 5,
-      "attrChoices": ["ge"],
-      "hands": 2
+﻿[
+    {
+        "_id":  "57aa56781e430001",
+        "name":  "Armbrust",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "armbrust"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  1,
+                       "initiative":  2,
+                       "range":  "long",
+                       "price":  "14 GF",
+                       "weight":  5,
+                       "attrChoices":  [
+                                           "ge"
+                                       ],
+                       "hands":  2
+                   }
+    },
+    {
+        "_id":  "57aa56781e430002",
+        "name":  "Kurzschwert",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "kurzeKlingenwaffe",
+                                      "stichwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  -1,
+                       "initiative":  1,
+                       "range":  "kurz",
+                       "price":  "14 TT",
+                       "weight":  2,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430003",
+        "name":  "Langbogen",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "boegen"
+                                  ],
+                       "minStrength":  6,
+                       "damage":  0,
+                       "initiative":  0,
+                       "range":  "lang",
+                       "price":  "2 GF",
+                       "weight":  2,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430004",
+        "name":  "Langschwert",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "langeKlingenwaffe"
+                                  ],
+                       "minStrength":  5,
+                       "damage":  1,
+                       "initiative":  0,
+                       "range":  "mittel",
+                       "price":  "26 TT",
+                       "weight":  4,
+                       "attrChoices":  [
+                                           "st"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430005",
+        "name":  "Morgenstern",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "wuchtwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  1,
+                       "initiative":  0,
+                       "range":  "mittel",
+                       "price":  "24 TT",
+                       "weight":  4,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430006",
+        "name":  "Rapier",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "stichwaffe",
+                                      "kurzeKlingenwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  0,
+                       "initiative":  1,
+                       "range":  "mittel",
+                       "price":  "44 TT",
+                       "weight":  1.5,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430007",
+        "name":  "Schleuder",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "schleuder"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  -1,
+                       "initiative":  1,
+                       "range":  "lang",
+                       "price":  "2 MU",
+                       "weight":  0,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430008",
+        "name":  "Speer",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "stangenwaffe",
+                                      "wurfwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  0,
+                       "initiative":  0,
+                       "range":  "lang",
+                       "price":  "46 KL",
+                       "weight":  4,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e430009",
+        "name":  "Stab",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "stangenwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  -1,
+                       "initiative":  1,
+                       "range":  "lang",
+                       "price":  "1 KL",
+                       "weight":  3,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  2
+                   }
+    },
+    {
+        "_id":  "57aa56781e43000a",
+        "name":  "Waffenlos",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "waffenlos"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  -2,
+                       "initiative":  1,
+                       "range":  "kurz",
+                       "price":  "0",
+                       "weight":  0,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e43000b",
+        "name":  "Zweihand-Axt",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "aexte"
+                                  ],
+                       "minStrength":  6,
+                       "damage":  2,
+                       "initiative":  -1,
+                       "range":  "lang",
+                       "price":  "4 GF",
+                       "weight":  6,
+                       "attrChoices":  [
+                                           "st"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e43000c",
+        "name":  "ZweihÃ¤nder",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "langeKlingenwaffe"
+                                  ],
+                       "minStrength":  6,
+                       "damage":  2,
+                       "initiative":  0,
+                       "range":  "lang",
+                       "price":  "4 GF",
+                       "weight":  4,
+                       "attrChoices":  [
+                                           "st"
+                                       ],
+                       "hands":  2
+                   }
+    },
+    {
+        "_id":  "57aa56781e43000d",
+        "name":  "Dolch",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "",
+                       "skills":  [
+                                      "kurzeKlingenwaffe",
+                                      "stichwaffe",
+                                      "wurfwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  -2,
+                       "initiative":  2,
+                       "range":  "kurz",
+                       "price":  "6 TT",
+                       "weight":  0.5,
+                       "attrChoices":  [
+                                           "st",
+                                           "ge"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e43000e",
+        "name":  "KnÃ¼ppel",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "Einfache Schlagwaffe, oft selbst gefertigt.",
+                       "skills":  [
+                                      "wuchtwaffe"
+                                  ],
+                       "minStrength":  0,
+                       "damage":  -1,
+                       "initiative":  1,
+                       "range":  "kurz",
+                       "price":  "1 KL",
+                       "weight":  2,
+                       "attrChoices":  [
+                                           "st"
+                                       ],
+                       "hands":  1
+                   }
+    },
+    {
+        "_id":  "57aa56781e43000f",
+        "name":  "Kriegsaxt",
+        "type":  "weapon",
+        "img":  "icons/svg/sword.svg",
+        "system":  {
+                       "description":  "Schwere einschneidige Axt.",
+                       "skills":  [
+                                      "aexte"
+                                  ],
+                       "minStrength":  6,
+                       "damage":  2,
+                       "initiative":  -1,
+                       "range":  "kurz",
+                       "price":  "3 GF",
+                       "weight":  5,
+                       "attrChoices":  [
+                                           "st"
+                                       ],
+                       "hands":  1
+                   }
     }
-  },
-  {
-    "_id": "57aa56781e430002",
-    "name": "Kurzschwert",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "kurzeKlingenwaffe",
-      "skills": ["kurzeKlingenwaffe", "stichwaffe"],
-      "minStrength": 0,
-      "damage": -1,
-      "initiative": 1,
-      "range": "kurz",
-      "price": "14 TT",
-      "weight": 2,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430003",
-    "name": "Langbogen",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "boegen",
-      "skills": ["boegen"],
-      "minStrength": 6,
-      "damage": 0,
-      "initiative": 0,
-      "range": "lang",
-      "price": "2 GF",
-      "weight": 2,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430004",
-    "name": "Langschwert",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "langeKlingenwaffe",
-      "skills": ["langeKlingenwaffe"],
-      "minStrength": 5,
-      "damage": 1,
-      "initiative": 0,
-      "range": "mittel",
-      "price": "26 TT",
-      "weight": 4,
-      "attrChoices": ["st"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430005",
-    "name": "Morgenstern",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "wuchtwaffe",
-      "skills": ["wuchtwaffe"],
-      "minStrength": 0,
-      "damage": 1,
-      "initiative": 0,
-      "range": "mittel",
-      "price": "24 TT",
-      "weight": 4,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430006",
-    "name": "Rapier",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "stichwaffe",
-      "skills": ["stichwaffe", "kurzeKlingenwaffe"],
-      "minStrength": 0,
-      "damage": 0,
-      "initiative": 1,
-      "range": "mittel",
-      "price": "44 TT",
-      "weight": 1.5,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430007",
-    "name": "Schleuder",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "schleuder",
-      "skills": ["schleuder"],
-      "minStrength": 0,
-      "damage": -1,
-      "initiative": 1,
-      "range": "lang",
-      "price": "2 MU",
-      "weight": 0,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430008",
-    "name": "Speer",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "stangenwaffe",
-      "skills": ["stangenwaffe", "wurfwaffe"],
-      "minStrength": 0,
-      "damage": 0,
-      "initiative": 0,
-      "range": "lang",
-      "price": "46 KL",
-      "weight": 4,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e430009",
-    "name": "Stab",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "stangenwaffe",
-      "skills": ["stangenwaffe"],
-      "minStrength": 0,
-      "damage": -1,
-      "initiative": 1,
-      "range": "lang",
-      "price": "1 KL",
-      "weight": 3,
-      "attrChoices": ["st", "ge"],
-      "hands": 2
-    }
-  },
-  {
-    "_id": "57aa56781e43000a",
-    "name": "Waffenlos",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "waffenlos",
-      "skills": ["waffenlos"],
-      "minStrength": 0,
-      "damage": -2,
-      "initiative": 1,
-      "range": "kurz",
-      "price": "0",
-      "weight": 0,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e43000b",
-    "name": "Zweihand-Axt",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "aexte",
-      "skills": ["aexte"],
-      "minStrength": 6,
-      "damage": 2,
-      "initiative": -1,
-      "range": "lang",
-      "price": "4 GF",
-      "weight": 6,
-      "attrChoices": ["st"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e43000c",
-    "name": "Zweihänder",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "langeKlingenwaffe",
-      "skills": ["langeKlingenwaffe"],
-      "minStrength": 6,
-      "damage": 2,
-      "initiative": 0,
-      "range": "lang",
-      "price": "4 GF",
-      "weight": 4,
-      "attrChoices": ["st"],
-      "hands": 2
-    }
-  },
-  {
-    "_id": "57aa56781e43000d",
-    "name": "Dolch",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "",
-      "skill": "kurzeKlingenwaffe",
-      "skills": ["kurzeKlingenwaffe", "stichwaffe", "wurfwaffe"],
-      "minStrength": 0,
-      "damage": -2,
-      "initiative": 2,
-      "range": "kurz",
-      "price": "6 TT",
-      "weight": 0.5,
-      "attrChoices": ["st", "ge"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e43000e",
-    "name": "Knüppel",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "Einfache Schlagwaffe, oft selbst gefertigt.",
-      "skill": "wuchtwaffe",
-      "skills": ["wuchtwaffe"],
-      "minStrength": 0,
-      "damage": -1,
-      "initiative": 1,
-      "range": "kurz",
-      "price": "1 KL",
-      "weight": 2,
-      "attrChoices": ["st"],
-      "hands": 1
-    }
-  },
-  {
-    "_id": "57aa56781e43000f",
-    "name": "Kriegsaxt",
-    "type": "weapon",
-    "img": "icons/svg/sword.svg",
-    "system": {
-      "description": "Schwere einschneidige Axt.",
-      "skill": "aexte",
-      "skills": ["aexte"],
-      "minStrength": 6,
-      "damage": 2,
-      "initiative": -1,
-      "range": "kurz",
-      "price": "3 GF",
-      "weight": 5,
-      "attrChoices": ["st"],
-      "hands": 1
-    }
-  }
 ]

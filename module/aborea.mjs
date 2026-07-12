@@ -117,7 +117,8 @@ Hooks.once("init", async function () {
     "systems/aborea-v7/templates/loot/item-picker.html",
   ]);
 
-  Handlebars.registerHelper("aboreaEq",  function (a, b)   { return a === b; });
+  Handlebars.registerHelper("aboreaEq",      function (a, b) { return a === b; });
+  Handlebars.registerHelper("aboreaIncludes", function (arr, val) { return Array.isArray(arr) && arr.includes(val); });
   Handlebars.registerHelper("selected",  function (a, b)   { return a === b ? "selected" : ""; });
   Handlebars.registerHelper("aboreaGt",  function (a, b)   { return Number(a) > Number(b); });
   Handlebars.registerHelper("aboreaJoin",function (arr, sep) { return Array.isArray(arr) ? arr.join(sep || ", ") : ""; });

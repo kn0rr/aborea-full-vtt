@@ -42,7 +42,7 @@
         "img": "icons/weapons/daggers/dagger-curved-blue.webp",
         "system": {
           "description": "",
-          "skill": "kurzeKlingenwaffe",
+          "skills": ["kurzeKlingenwaffe", "stichwaffe"],
           "minStrength": 0,
           "damage": -2,
           "initiative": 2,
@@ -86,7 +86,7 @@
         "img": "icons/weapons/clubs/club-simple.webp",
         "system": {
           "description": "",
-          "skill": "waffenlos",
+          "skills": ["waffenlos"],
           "minStrength": 0,
           "damage": -2,
           "initiative": 1,
@@ -129,7 +129,7 @@
         "img": "icons/weapons/swords/shortsword-guard-brass.webp",
         "system": {
           "description": "",
-          "skill": "kurzeKlingenwaffe",
+          "skills": ["kurzeKlingenwaffe"],
           "minStrength": 0,
           "damage": -1,
           "initiative": 1,

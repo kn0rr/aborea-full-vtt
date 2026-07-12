@@ -79,6 +79,16 @@ export class AboreaItemSheet extends foundry.applications.api.HandlebarsApplicat
       });
     });
     if (!this.isEditable) return;
+    // Waffenfertigkeits-Checkboxen
+    if (this.item.type === "weapon") {
+      this.element.querySelectorAll(".weapon-skill-cb").forEach(cb => {
+        cb.addEventListener("change", async () => {
+          const checked = [...this.element.querySelectorAll(".weapon-skill-cb:checked")]
+            .map(el => el.dataset.skill);
+          await this.document.update({ "system.skills": checked });
+        });
+      });
+    }
     if (this.item.type === "magic") {
       const input = this.element.querySelector('[data-status-effects]');
       if (input) {
