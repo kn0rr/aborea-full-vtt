@@ -236,8 +236,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         return {
           id:        s.id,
           name:      s.name,
-          cost:      baseCost,
-          costs,
           minCost,
           canAfford:    currentMp >= minCost,
           rank:         s.system.rank ?? 1,
