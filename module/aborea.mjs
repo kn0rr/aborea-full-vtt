@@ -4,7 +4,7 @@ import { AboreaActorSheet, AboreaCharacterSheet, AboreaNpcSheet, AboreaCreatureS
 import { AboreaItemSheet } from "./item-sheet.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
-import { AboreaCombat, openAttackDialog, openSpellAttackDialog, registerCombatHooks } from "./combat.mjs";
+import { AboreaCombat, openAttackDialog, registerCombatHooks } from "./combat.mjs";
 import { registerConditions, registerConditionHooks } from "./conditions.mjs";
 import { openCheckDialog, openGroupCheckDialog, registerCheckHooks } from "./checks.mjs";
 import { registerQuickNpcSceneControl } from "./quick-npc.mjs";
@@ -108,7 +108,6 @@ Hooks.once("init", async function () {
     "systems/aborea-v7/templates/combat/check-dialog.html",
     "systems/aborea-v7/templates/audio/soundboard.html",
     "systems/aborea-v7/templates/combat/attack-dialog.html",
-    "systems/aborea-v7/templates/combat/spell-attack-dialog.html",
     "systems/aborea-v7/templates/actor/loot-sheet.html",
     "systems/aborea-v7/templates/loot/item-picker.html",
   ]);

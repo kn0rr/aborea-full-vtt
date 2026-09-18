@@ -6,7 +6,7 @@ import { ABOREA } from "./config.mjs";
 import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
 import { rollAttack, rollSkill, rollAttribute } from "./dice.mjs";
-import { openAttackDialog, openSpellAttackDialog } from "./combat.mjs";
+import { openAttackDialog } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
   makeHistoryEntry, logListPush,

@@ -233,13 +233,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         const minCost  = Math.min(...costs);
         const hpEffect = s.system.hpEffect ?? {};
         const mpPerTarget = Number(s.system.mpPerTarget ?? 0);
-        // Vorschau-Daten pro Kostenstufe
-        const costPreviews = costs.map(c => ({
-          mp:      c,
-          damage:  hpEffect.type ? Math.min(hpEffect.max ?? Infinity, Math.round((hpEffect.multiplier ?? 1) * c)) : null,
-          damageType: hpEffect.type ?? null,
-          targets: mpPerTarget > 0 ? Math.max(1, Math.floor(c / mpPerTarget)) : 1,
-        }));
         return {
           id:        s.id,
           name:      s.name,
@@ -250,7 +243,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
           rank:         s.system.rank ?? 1,
           mpPerTarget,
           hpEffect,
-          costPreviews,
         };
       }),
       hasSpells:        targetedSpells.length > 0,
@@ -401,14 +393,19 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       // Schaden pro Ziel basiert auf Basiskosten
       const hp = spell?.hpEffect ?? {};
       const damagePerTarget = hp.type
-        ? Math.min(hp.max ?? Infinity, Math.round((hp.multiplier ?? 1) * baseCost))
+        ? Math.min(hp.max > 0 ? hp.max : Infinity, Math.round((hp.multiplier ?? 1) * baseCost))
         : null;
-      if (spellDmgLabel) spellDmgLabel.style.display = damagePerTarget ? "" : "none";
+      if (spellDmgLabel) {
+        spellDmgLabel.style.display = damagePerTarget ? "" : "none";
+        if (damagePerTarget) spellDmgLabel.textContent = hp.type === "heal" ? "→ Heilung/Ziel:" : "→ MP-Schaden/Ziel:";
+      }
       if (spellDmgValue) {
         spellDmgValue.style.display = damagePerTarget ? "" : "none";
+        // Beim Schaden kommt der Überschuss (Angriff − Verteidigung) erst beim Wurf dazu
         if (damagePerTarget) {
-          const prefix = hp.type === "heal" ? "+" : "−";
-          spellDmgValue.textContent = `${prefix}${damagePerTarget} HP`;
+          spellDmgValue.textContent = hp.type === "heal"
+            ? `+${damagePerTarget} HP`
+            : `−${damagePerTarget} HP + Überschuss`;
         }
       }
       if (spellPreview) spellPreview.style.display = "none";
@@ -521,112 +518,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 }
 
 // ══════════════════════════════════════════════════════════════════
-//  AboreaSpellAttackDialog — ApplicationV2
-// ══════════════════════════════════════════════════════════════════
-
-class AboreaSpellAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
-  static DEFAULT_OPTIONS = {
-    id:       "aborea-spell-attack-dialog",
-    classes:  ["aborea-attack-dialog"],
-    tag:      "form",
-    window:   { resizable: false },
-    position: { width: 420 },
-    form:     { handler: AboreaSpellAttackDialog._handleSubmit, closeOnSubmit: true },
-  };
-
-  static PARTS = {
-    form: { template: "systems/aborea-v7/templates/combat/spell-attack-dialog.html" },
-  };
-
-  constructor(options = {}) {
-    const { resolve, ...rest } = options;
-    super(rest);
-    this._resolve = resolve ?? null;
-  }
-
-  get title() { return `✨ Gezielter Zauber — ${this.options.item.name}`; }
-
-  async _prepareContext() {
-    const actor      = this.options.attackerActor;
-    const item       = this.options.item;
-    const magicAttr  = _getMagicAttrKey(actor);
-    const attrValue  = Number(actor.system.finalAttributes?.[magicAttr]?.value ?? actor.system.attributes?.[magicAttr]?.value ?? 5);
-    const attrBonus  = ABOREA.attributeBonus(attrValue);
-    const skillRank  = _getGezielteSpruecheRank(actor);
-    const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
-
-    const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
-
-    return {
-      itemName:         item.name,
-      mpCost:           this.options.mpCost,
-      spellAttackBonus: attrBonus + skillRank + classBonus,
-      signedAttrBonus:  _sign(attrBonus),
-      signedSkillRank:  _sign(skillRank),
-      signedClassBonus: _sign(classBonus),
-      globalSituMod:    Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0),
-      targetCandidates: _buildTargetCandidates(attackerTokenId),
-    };
-  }
-
-  _onRender(context, options) {
-    const html         = this.element;
-    const targetSelect = html.querySelector("[name=targetTokenId]");
-    const manualRow    = html.querySelector(".manual-dv-row");
-    const preview      = html.querySelector(".target-preview");
-
-    const candidateMap = Object.fromEntries(
-      (context.targetCandidates ?? []).map(c => [c.id, c])
-    );
-
-    const toggleManual = () => { manualRow.style.display = targetSelect.value ? "none" : ""; };
-    const updatePreview = () => {
-      const c = candidateMap[targetSelect.value];
-      if (!c) { preview.style.display = "none"; return; }
-      preview.style.display = "";
-      preview.querySelector(".target-preview-img").src = c.img;
-      preview.querySelector(".target-preview-name").textContent = c.name;
-      const fill = preview.querySelector(".target-preview-hp-fill");
-      fill.style.width           = `${c.hpPct}%`;
-      fill.style.backgroundColor = c.hpColor;
-      preview.querySelector(".target-preview-stats").textContent = `RW ${c.dv} · HP ${c.hp}/${c.hpMax}`;
-    };
-
-    targetSelect.addEventListener("change", () => { toggleManual(); updatePreview(); });
-    toggleManual();
-    updatePreview();
-
-    html.querySelector(".dialog-cancel-btn")?.addEventListener("click", () => this.close());
-  }
-
-  static async _handleSubmit(event, form, formData) {
-    const data    = formData.object;
-    const actor   = this.options.attackerActor;
-    const tokenId = data.targetTokenId;
-    const targetToken = tokenId ? (canvas?.tokens?.placeables ?? []).find(t => t.id === tokenId) : null;
-    const targetActor = targetToken?.actor ?? null;
-
-    const resolve = this._resolve;
-    this._resolve = null;
-    resolve?.({
-      spellBonus:    Number(data.spellBonus || 0),
-      situMod:       Number(data.situMod || 0),
-      targetActor,
-      targetDefense: targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
-      attackerImg:   actor.img ?? "",
-      targetImg:     targetActor?.img ?? "",
-    });
-  }
-
-  async _onClose(options) {
-    await super._onClose(options);
-    const resolve = this._resolve;
-    this._resolve = null;
-    resolve?.(null);
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════
 //  Attack Dialog & Resolution
 // ══════════════════════════════════════════════════════════════════
 
@@ -654,7 +545,45 @@ export async function openAttackDialog(attackerActor, options = {}) {
   if (game.combat?.started) await game.combat.nextTurn();
 }
 
-async function _applySpellEffectsToTarget(spell, mpCost, targetActor) {
+/**
+ * Zauberschaden — analog zum Waffenschaden in _executeAttack():
+ *   (Angriffswert − Verteidigungswert) + MP-gekaufter Schaden [+ Krit-Bonus]
+ * Der MP-Anteil kommt aus inferDirectHp() und ist dort bereits durch hpEffect.max
+ * gedeckelt; der Überschuss aus der Trefferprobe bleibt ungedeckelt. Ein Krit
+ * (offene 10) verdoppelt den MP-Anteil — wie den Waffenschaden bei Waffen.
+ */
+function _spellDamage(hp, attackValue, defenseValue, critical) {
+  if (hp?.type !== "damage") return null;
+  const overshoot = attackValue - defenseValue;
+  const mpDamage  = Math.max(0, hp.amount);
+  const critBonus = critical ? mpDamage : 0;
+  return {
+    attackValue, defenseValue, overshoot, mpDamage, critBonus,
+    total: Math.max(1, overshoot + mpDamage + critBonus),
+  };
+}
+
+/** Schadens-Aufschlüsselung für die Chatkarte — Aufbau wie in _buildAttackCard. */
+function _buildSpellDamageSection(dmg) {
+  if (!dmg) return "";
+  return `
+    <div class="ac-damage">
+      <div class="ac-row">
+        <span>Angriff − Verteidigung</span>
+        <span>${dmg.attackValue} − ${dmg.defenseValue} = ${dmg.overshoot}</span>
+      </div>
+      <div class="ac-row"><span>MP-Schaden</span><span>${_sign(dmg.mpDamage)}</span></div>
+      ${dmg.critBonus ? `<div class="ac-row critical-bonus"><span>💥 Kritisch (MP-Schaden ×2)</span><span>+${dmg.critBonus}</span></div>` : ""}
+      <div class="ac-row ac-total"><span><strong>Schaden</strong></span><span><strong>${dmg.total}</strong></span></div>
+    </div>`;
+}
+
+/**
+ * Wendet HP-Effekt und Active Effects eines Zaubers auf ein Ziel an.
+ * damageTotal übersteuert den reinen MP-Schaden — dort sind Überschuss und
+ * Krit aus der Trefferprobe schon eingerechnet (siehe _spellDamage).
+ */
+async function _applySpellEffectsToTarget(spell, mpCost, targetActor, damageTotal = null) {
   let html = "";
   const hp      = inferDirectHp(spell, mpCost);
   const effects = inferEffects(spell, mpCost).map(e => ({ ...e, origin: spell.uuid }));
@@ -665,9 +594,10 @@ async function _applySpellEffectsToTarget(spell, mpCost, targetActor) {
     html += `<div class="ac-effect-row">✨ <strong>${targetActor.name}</strong>: +${hp.amount} HP</div>`;
   }
   if (hp?.type === "damage") {
+    const amount = damageTotal ?? hp.amount;
     const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
-    await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - hp.amount) });
-    html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${hp.amount} HP</div>`;
+    await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - amount) });
+    html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${amount} HP</div>`;
   }
   if (effects.length) {
     await applyEffectsToActor(targetActor, effects);
@@ -706,6 +636,10 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
   let effectHtml = "";
   let cardRows   = "";
 
+  // MP-gekaufter Schadensanteil — für alle Ziele gleich (Basiskosten pro Ziel)
+  const spellMpCost = baseCost ?? mpCost;
+  const hpBase      = inferDirectHp(spell, spellMpCost);
+
   for (let i = 0; i < Math.max(1, targets.length || 1); i++) {
     const currentTarget     = targets[i] ?? null;
     const currentDefense    = currentTarget ? _dv(currentTarget) : targetDefense;
@@ -722,6 +656,7 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
       : (hit ? "✅ Treffer — Zauber wirkt!" : "❌ Kein Treffer — Zauber verpufft");
     const critNote = roll.critical
       ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>` : "";
+    const dmg = hit ? _spellDamage(hpBase, attackValue, currentDefense, roll.critical) : null;
 
     const targetLabel = currentTarget ? currentTarget.name : (i === 0 ? (targetActor?.name ?? "—") : "—");
     const headerLabel = targets.length > 1 ? `Ziel ${i + 1}: ${targetLabel}` : targetLabel;
@@ -734,10 +669,11 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
         <div class="ac-row"><span>Verteidigungswert</span><span>${currentDefense}</span></div>
       </div>
       <div class="ac-result ${resultClass}">${resultLabel}</div>
-      ${critNote}`;
+      ${critNote}
+      ${_buildSpellDamageSection(dmg)}`;
 
     if (hit && currentTarget) {
-      effectHtml += await _applySpellEffectsToTarget(spell, baseCost ?? mpCost, currentTarget);
+      effectHtml += await _applySpellEffectsToTarget(spell, spellMpCost, currentTarget, dmg?.total ?? null);
     }
   }
 
@@ -761,52 +697,6 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
     content: cardContent,
     flags:   { "aborea-v7": { spellAttackResult: { itemId: spell.id, mpCost, targetCount: targets.length } } }
   });
-}
-
-// ══════════════════════════════════════════════════════════════════
-//  Targeted Spell Attack Dialog
-// ══════════════════════════════════════════════════════════════════
-
-export async function openSpellAttackDialog(attackerActor, item, mpCost) {
-  const params = await new Promise(resolve => {
-    new AboreaSpellAttackDialog({ attackerActor, item, mpCost, resolve }).render(true);
-  });
-  if (!params) return null;
-
-  const roll = await rollOpenD10({ label: `Gezielter Zauber: ${item.name}`, skipVisual: true });
-  const attackValue = roll.total + params.spellBonus + params.situMod;
-  const hit = !roll.naturalOne && attackValue > params.targetDefense;
-
-  const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
-  const resultLabel = roll.naturalOne
-    ? "⛔ Patzer — automatischer Fehlschlag"
-    : (hit ? "✅ Treffer — Zauber wirkt!" : "❌ Kein Treffer — Zauber verpufft");
-
-  const critNote = roll.critical
-    ? `<div class="ac-note critical">💥 Kritisch — 10er offen gewürfelt!</div>` : "";
-
-  // Karte wird NICHT hier gepostet — _castPower hängt Effekte an und postet dann
-  const cardOpen = `<div class="aborea-chat-card aborea-attack-card">
-    ${_buildCardHeader(attackerActor.name, params.attackerImg, params.targetActor?.name, params.targetImg)}
-    <div class="ac-body">
-      <div class="ac-row"><span>Zauber</span><span>${item.name} (${mpCost} MP)</span></div>
-      <div class="ac-row"><span>Würfelwurf</span><span>${roll.formula}</span></div>
-      <div class="ac-row"><span>Angriffsbonus</span><span>${_sign(params.spellBonus)}</span></div>
-      ${params.situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(params.situMod)}</span></div>` : ""}
-      <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${roll.naturalOne ? "—" : attackValue}</strong></span></div>
-      <div class="ac-row"><span>Verteidigungswert</span><span>${params.targetDefense}</span></div>
-    </div>
-    <div class="ac-result ${resultClass}">${resultLabel}</div>
-    ${critNote}`;
-
-  return {
-    hit,
-    targetActor: params.targetActor,
-    rolls:       roll.rolls,
-    cardOpen,    // noch offen — caller schließt mit </div> + Effekte
-    flags:       { "aborea-v7": { spellAttackResult: { hit, targetActorId: params.targetActor?.id ?? null, itemId: item.id, mpCost } } },
-    speaker:     ChatMessage.getSpeaker({ actor: attackerActor }),
-  };
 }
 
 // ── Internal: roll + chat ────────────────────────────────────────

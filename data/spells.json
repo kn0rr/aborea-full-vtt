@@ -1067,8 +1067,7 @@
       "school": "Weiße Magie",
       "hpEffect": {
         "type": "heal",
-        "multiplier": 1,
-        "max": 0
+        "multiplier": 1
       }
     }
   },

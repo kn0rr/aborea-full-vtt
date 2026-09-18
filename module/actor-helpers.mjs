@@ -357,7 +357,9 @@ export function inferDirectHp(item, mpCost) {
   const hpEffect = item.system?.hpEffect;
   if (!hpEffect?.type) return null;
   const raw    = Math.round((hpEffect.multiplier ?? 1) * mpCost);
-  const amount = hpEffect.max != null ? Math.min(hpEffect.max, raw) : raw;
+  // max > 0 deckelt den MP-gekauften Anteil; max 0/null/undefined = kein Limit
+  // (ein Deckel von 0 hieße "kein Effekt" und ist immer ein Datenfehler).
+  const amount = hpEffect.max > 0 ? Math.min(hpEffect.max, raw) : raw;
   return { type: hpEffect.type, amount };
 }
 
