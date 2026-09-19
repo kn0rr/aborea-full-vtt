@@ -2,6 +2,7 @@
 
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
+import { skillBonus, attributeValue, formatBreakdown } from "./bonuses.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -107,40 +108,26 @@ function _maneuverLabel(key, val) {
 //  Core check logic
 // ══════════════════════════════════════════════════════════════════
 
+/**
+ * Bonus einer Probe — Attributprobe oder Fertigkeitsprobe.
+ * Fertigkeiten laufen über skillBonus(), dieselbe Quelle wie Bogen und Kampf.
+ */
+function _resolveBonus(actor, checkType, checkKey) {
+  if (checkType === "attr") {
+    const bonus = ABOREA.attributeBonus(attributeValue(actor, checkKey));
+    const label = game.i18n.localize(ABOREA.attributes[checkKey] ?? checkKey);
+    return { bonus, label, breakdown: [`${label}: ${bonus >= 0 ? "+" : ""}${bonus}`] };
+  }
+  const b = skillBonus(actor, checkKey);
+  return { bonus: b.total, label: game.i18n.localize(b.label), breakdown: formatBreakdown(b.breakdown) };
+}
+
 export async function performCheck(actor, { checkType, checkKey, situMod = 0, difficulty = 10 }) {
   situMod   = Number(situMod) || 0;
   difficulty = Number(difficulty) || 10;
 
   const roll = await rollOpenD10({ label: "Probe" });
-  let bonus  = 0;
-  let label  = checkKey;
-  let breakdown = [];
-
-  if (checkType === "attr") {
-    const attrVal = actor.system.finalAttributes?.[checkKey]?.value
-                 ?? actor.system.attributes?.[checkKey]?.value ?? 5;
-    bonus = ABOREA.attributeBonus(attrVal);
-    label = game.i18n.localize(ABOREA.attributes[checkKey] ?? checkKey);
-    breakdown.push(`${label}: ${bonus >= 0 ? "+" : ""}${bonus}`);
-  } else {
-    const custom  = (actor.system.customSkills ?? []).find(s => s.key === checkKey);
-    const skillDef = custom ?? actor.system.skills?.[checkKey] ?? { rank: 0, attribute: "in" };
-    const isMagicSkill = ABOREA.spellListSkillKeys?.includes(checkKey) || checkKey === "magieEntwickeln";
-    const classItem = isMagicSkill ? actor.items?.find(i => i.type === "class") : null;
-    const attrKey  = (isMagicSkill && classItem?.system?.magicAttribute)
-      ? classItem.system.magicAttribute
-      : (skillDef.attribute || ABOREA.skills?.[checkKey]?.attribute || "in");
-    const attrVal  = actor.system.finalAttributes?.[attrKey]?.value
-                  ?? actor.system.attributes?.[attrKey]?.value ?? 5;
-    const attrBonus = ABOREA.attributeBonus(attrVal);
-    const rank      = Number(skillDef.rank ?? 0);
-    const classBonus = Number(actor.system.classFeatures?.bonuses?.[checkKey] ?? skillDef.bonus ?? 0);
-    label = skillDef.label ?? skillDef.name ?? game.i18n.localize(ABOREA.skills?.[checkKey]?.label ?? checkKey);
-    bonus = attrBonus + rank + classBonus;
-    breakdown.push(`${game.i18n.localize(ABOREA.attributes[attrKey])}: ${attrBonus >= 0 ? "+" : ""}${attrBonus}`);
-    if (rank)       breakdown.push(`Rang: ${rank >= 0 ? "+" : ""}${rank}`);
-    if (classBonus) breakdown.push(`Klassenbonus: +${classBonus}`);
-  }
+  const { bonus, label, breakdown } = _resolveBonus(actor, checkType, checkKey);
 
   if (situMod) breakdown.push(`Situationsmod.: ${situMod >= 0 ? "+" : ""}${situMod}`);
 
@@ -173,30 +160,7 @@ async function _rollSilent(actor, { checkType, checkKey, situMod, difficulty }) 
   difficulty = Number(difficulty) || 0;
 
   const roll = await rollOpenD10({ label: checkKey, skipVisual: true });
-  let bonus  = 0;
-  let label  = checkKey;
-
-  if (checkType === "attr") {
-    const attrVal = actor.system.finalAttributes?.[checkKey]?.value
-                 ?? actor.system.attributes?.[checkKey]?.value ?? 5;
-    bonus = ABOREA.attributeBonus(attrVal);
-    label = game.i18n.localize(ABOREA.attributes[checkKey] ?? checkKey);
-  } else {
-    const custom  = (actor.system.customSkills ?? []).find(s => s.key === checkKey);
-    const skillDef = custom ?? actor.system.skills?.[checkKey] ?? { rank: 0, attribute: "in" };
-    const isMagicSkill = ABOREA.spellListSkillKeys?.includes(checkKey) || checkKey === "magieEntwickeln";
-    const classItem = isMagicSkill ? actor.items?.find(i => i.type === "class") : null;
-    const attrKey  = (isMagicSkill && classItem?.system?.magicAttribute)
-      ? classItem.system.magicAttribute
-      : (skillDef.attribute || ABOREA.skills?.[checkKey]?.attribute || "in");
-    const attrVal  = actor.system.finalAttributes?.[attrKey]?.value
-                  ?? actor.system.attributes?.[attrKey]?.value ?? 5;
-    const attrBonus = ABOREA.attributeBonus(attrVal);
-    const rank      = Number(skillDef.rank ?? 0);
-    const classBonus = Number(actor.system.classFeatures?.bonuses?.[checkKey] ?? skillDef.bonus ?? 0);
-    label  = skillDef.label ?? skillDef.name ?? game.i18n.localize(ABOREA.skills?.[checkKey]?.label ?? checkKey);
-    bonus  = attrBonus + rank + classBonus;
-  }
+  const { bonus, label } = _resolveBonus(actor, checkType, checkKey);
 
   const total   = roll.total + bonus + situMod;
   const success = difficulty > 0 ? (!roll.naturalOne && total >= difficulty) : null;

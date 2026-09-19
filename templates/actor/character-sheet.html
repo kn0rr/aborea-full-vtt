@@ -211,6 +211,10 @@
               <div class="skill-submeta">
                 <label>Attr: <select class="custom-skill-field" data-field="attribute">{{#each ../config.attributes as |lbl k|}}<option value="{{k}}" {{#if (aboreaEq k skill.attribute)}}selected{{/if}}>{{localize lbl}}</option>{{/each}}</select></label>
                 <label>AP: <input type="text" class="skill-cost-input custom-skill-field" data-field="cost" value="{{skill.cost}}" placeholder="1" style="width:3em" /></label>
+                <label title="Waffen- und Wissensfertigkeiten geben ungelernt −2">Ungelernt: <select class="custom-skill-field" data-field="untrained">
+                  <option value="0" {{#unless skill.untrained}}selected{{/unless}}>kein Malus</option>
+                  <option value="-2" {{#if skill.untrained}}selected{{/if}}>−2</option>
+                </select></label>
               </div>
             </div>
             <div class="skill-controls inline-controls">

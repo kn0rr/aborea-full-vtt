@@ -1144,6 +1144,13 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
             <label>AP-Kosten pro Rang (z.B. "2" oder "1/2")</label>
             <input type="text" name="cost" value="1" placeholder="1" />
           </div>
+          <div class="form-group">
+            <label>Kategorie</label>
+            <select name="untrained">
+              <option value="0">Normal (ungelernt ohne Malus)</option>
+              <option value="-2">Waffen-/Wissensfertigkeit (ungelernt −2)</option>
+            </select>
+          </div>
         </form>`,
         buttons: {
           ok: {
@@ -1152,10 +1159,11 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
               const name = html.find("[name=name]").val().trim();
               const attr = html.find("[name=attr]").val();
               const cost = html.find("[name=cost]").val().trim();
+              const untrained = Number(html.find("[name=untrained]").val()) || 0;
               if (!name) { ui.notifications.warn("ABOREA: Name darf nicht leer sein."); return resolve(null); }
               if (!attr) { ui.notifications.warn("ABOREA: Bitte ein Attribut wählen."); return resolve(null); }
               if (!cost || !/^[\d/]+$/.test(cost)) { ui.notifications.warn("ABOREA: Ungültige AP-Kosten (z.B. \"1\" oder \"1/2\")."); return resolve(null); }
-              resolve({ name, attr, cost });
+              resolve({ name, attr, cost, untrained });
             }
           },
           cancel: { label: "Abbruch", callback: () => resolve(null) }
@@ -1166,7 +1174,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (!result) return;
     const list = foundry.utils.deepClone(normalizeCustomSkills(this.actor.system.customSkills));
     const uid = `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    list.push({ key: uid, name: result.name, attribute: result.attr, rank: 0, cost: result.cost, source: "custom" });
+    list.push({ key: uid, name: result.name, attribute: result.attr, rank: 0, cost: result.cost,
+                untrained: result.untrained ?? 0, source: "custom" });
     await this.actor.update({ "system.customSkills": list });
   }
 
@@ -1188,6 +1197,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       const val = el.value.trim();
       if (!val) { ui.notifications.warn("ABOREA: Name darf nicht leer sein."); el.value = list[idx].name; return; }
       list[idx].name = val;
+    } else if (field === "untrained") {
+      list[idx].untrained = Number(el.value) || 0;
     } else {
       list[idx][field] = el.value;
     }

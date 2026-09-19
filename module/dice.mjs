@@ -1,24 +1,5 @@
 import { ABOREA } from "./config.mjs";
-
-/** Berechnet den live Skill-Bonus eines Charakters (Klasse + Talente + Magiegegenstände). */
-function computeLiveSkillBonus(actor, skillKey) {
-  let bonus = 0;
-  const classItem = actor.items?.find(i => i.type === "class");
-  const level = Number(actor.system?.resources?.level ?? 1);
-  for (const f of ABOREA.activeClassFeatures(classItem?.system ?? {}, level)) {
-    const tgt = String(f.target || "").toLowerCase();
-    if (tgt === skillKey && Number(f.value) && f.type !== "situationalBonus") {
-      bonus += Number(f.value);
-    }
-  }
-  for (const talent of (actor.system?.talents ?? [])) {
-    bonus += Number(talent.skillBonuses?.[skillKey] ?? 0);
-  }
-  for (const mItem of (actor.items?.filter(i => i.type === "magic" && i.system.equipped) ?? [])) {
-    bonus += Number(mItem.system.skillBonuses?.[skillKey] ?? 0);
-  }
-  return bonus;
-}
+import { skillBonus, formatBreakdown } from "./bonuses.mjs";
 
 function ensureDiceOverlay() {
   let overlay = document.getElementById("aborea-dice-overlay");
@@ -144,39 +125,17 @@ export async function rollAttribute(actor, attrKey) {
 }
 
 export async function rollSkill(actor, skillKey) {
-  const custom = (actor.system.customSkills || []).find(s => s.key === skillKey);
-  const skill = custom ?? actor.system.skills?.[skillKey] ?? { rank: 0, attribute: "in" };
-  const isMagicSkill = ABOREA.spellListSkillKeys?.includes(skillKey) || skillKey === "magieEntwickeln";
-  const classItem = isMagicSkill ? actor.items?.find(i => i.type === "class") : null;
-  const attrKey = (isMagicSkill && classItem?.system?.magicAttribute)
-    ? classItem.system.magicAttribute
-    : (skill.attribute || ABOREA.skills?.[skillKey]?.attribute || "in");
-  const attrValue = actor.system.attributes?.[attrKey]?.value ?? 5;
-  const attrBonus = ABOREA.attributeBonus(attrValue);
-  const rank = Number(skill.rank ?? 0);
-  const classBonus = computeLiveSkillBonus(actor, skillKey);
-
-  // Rassentraits: direkt vom Race-Item lesen (system.traits kann veraltet sein)
-  const raceItem  = actor.items?.find(i => i.type === "race");
-  const raceSkillBonuses = raceItem?.system?.traits?.skillBonuses
-                        ?? actor.system.traits?.skillBonuses ?? {};
-  const traitBonus = Number(raceSkillBonuses[skillKey] ?? 0);
-  const traitLabel = traitBonus ? game.i18n.localize("ABOREA.RacialBonus") : "";
-
-  const roll = await rollOpenD10({ label: skill.label ?? skill.name ?? skillKey });
-  const total = roll.total + attrBonus + rank + classBonus + traitBonus;
-  const label = skill.label ?? skill.name ?? ABOREA.skills?.[skillKey]?.label ?? skillKey;
+  const b    = skillBonus(actor, skillKey);
+  const roll = await rollOpenD10({ label: b.label });
+  const total = roll.total + b.total;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
     content: `
       <div class="aborea-chat-card">
-        <h3>${game.i18n.localize(label)}</h3>
+        <h3>${game.i18n.localize(b.label)}</h3>
         <p>${game.i18n.localize("ABOREA.Roll")}: ${roll.formula}</p>
-        <p>${game.i18n.localize(ABOREA.attributes[attrKey])}: ${attrBonus >= 0 ? "+" : ""}${attrBonus}</p>
-        <p>${game.i18n.localize("ABOREA.Rank")}: ${rank >= 0 ? "+" : ""}${rank}</p>
-        <p>${game.i18n.localize("ABOREA.ClassBonus")}: ${classBonus >= 0 ? "+" : ""}${classBonus}</p>
-        ${traitBonus ? `<p>${traitLabel}: +${traitBonus}</p>` : ""}
+        ${formatBreakdown(b.breakdown).map(l => `<p>${l}</p>`).join("")}
         <p><strong>${game.i18n.localize("ABOREA.Total")}: ${total}</strong></p>
       </div>
     `

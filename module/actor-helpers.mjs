@@ -56,6 +56,8 @@ export function normalizeCustomSkills(raw) {
     attribute: String(s.attribute ?? "in"),
     rank:      Math.max(0, Number(s.rank ?? 0)),
     cost:      String(s.cost ?? "1"),
+    // 0 = normale Fertigkeit, -2 = Waffen-/Wissensfertigkeit (Ungelernt-Malus)
+    untrained: Number(s.untrained ?? 0) || 0,
     source:    String(s.source ?? "custom")
   })).filter(s => {
     if (seen.has(s.key)) return false;
