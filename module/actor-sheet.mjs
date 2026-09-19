@@ -5,7 +5,8 @@
 import { ABOREA } from "./config.mjs";
 import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
-import { rollAttack, rollSkill, rollAttribute } from "./dice.mjs";
+import { rollSkill, rollAttribute } from "./dice.mjs";
+import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
 import { openAttackDialog } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
@@ -196,18 +197,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       ))].filter(k => ABOREA.weaponSkillKeys.includes(k));
       const keysToCheck = equippedSkillKeys.length ? equippedSkillKeys : ABOREA.weaponSkillKeys;
 
-      let best = { cb: -99, label: "", attrKey: "st", rank: 0, attrBonus: 0 };
-      for (const key of keysToCheck) {
-        const rank     = Number(system.skills?.[key]?.rank ?? 0);
-        const attrKey  = ABOREA.skills?.[key]?.attribute ?? "st";
-        const attrBonus = ABOREA.attributeBonus(system.displayAttributes?.[attrKey]?.value ?? 5);
-        const cb = ABOREA.combatBonus(attrBonus, rank);
-        if (cb > best.cb) best = { cb, label: game.i18n.localize(ABOREA.skills[key]?.label ?? key), attrKey, rank, attrBonus };
-      }
+      const best = weaponCombatBonus(actor, { skillKeys: keysToCheck });
       const sign = n => n >= 0 ? `+${n}` : `${n}`;
-      const penalty = best.rank > 0 ? "" : " − 2 (ungelernt)";
-      system.combat.combatBonusTooltip = best.label
-        ? `${best.label}: ${sign(best.attrBonus)} (${best.attrKey.toUpperCase()}) + ${best.rank} (Rang)${penalty} = ${best.cb}`
+      system.combat.combatBonusTooltip = best
+        ? `${game.i18n.localize(best.label)}: ${best.breakdown.map(p => `${p.label} ${sign(p.value)}`).join(" + ")} = ${sign(best.total)}`
         : "";
     }
     // HP/MP Prozent für Fortschrittsbalken
@@ -447,11 +440,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const sign = n => n >= 0 ? `+${n}` : `${n}`;
     let bestCB = null; let bestCBLabel = ""; let bestCBDetail = "";
     system.weaponSkillRows = ABOREA.weaponSkillKeys.map(key => {
-      const rank      = Number(system.weaponSkills?.[key] ?? 0);
-      const attrKey   = ABOREA.skills?.[key]?.attribute ?? "st";
-      const attrBonus = ABOREA.attributeBonus(Number(system.attributes?.[attrKey]?.value ?? 5));
-      const cb        = ABOREA.combatBonus(attrBonus, rank);
-      const penalty   = rank > 0 ? "" : " − 2";
+      const b         = skillBonus(actor, key, { minStrength: false });
+      const rank      = b.rank;
+      const attrKey   = b.attrKey;
+      const attrBonus = b.attrBonus;
+      const cb        = b.total;
+      const penalty   = b.untrained ? ` − ${Math.abs(b.untrained)}` : "";
       // Besten Kampfbonus tracken (nur ausgebildete Fertigkeiten bevorzugen)
       if (rank > 0 && (bestCB === null || cb > bestCB)) {
         bestCB = cb; bestCBLabel = ABOREA.skills[key]?.label ?? key;
@@ -505,17 +499,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   async _recomputeNpcCombatBonus() {
     const system = this.actor.system;
-    const attributes = system.attributes ?? {};
-    let bestCB = null;
-    for (const key of ABOREA.weaponSkillKeys) {
-      const rank = Number(system.weaponSkills?.[key] ?? 0);
-      if (rank === 0) continue;
-      const attrKey   = ABOREA.skills?.[key]?.attribute ?? "st";
-      const attrBonus = ABOREA.attributeBonus(Number(attributes[attrKey]?.value ?? 5));
-      const cb        = ABOREA.combatBonus(attrBonus, rank);
-      if (bestCB === null || cb > bestCB) bestCB = cb;
-    }
-    if (bestCB === null) return; // keine ausgebildeten Fertigkeiten → manuell belassen
+    const best   = weaponCombatBonus(this.actor, { skillKeys: ABOREA.weaponSkillKeys, trainedOnly: true });
+    if (!best) return; // keine ausgebildeten Fertigkeiten → manuell belassen
+    const bestCB = best.total;
     // Bestehende Off/Def-Aufteilung proportional beibehalten
     const prevCB  = Number(system.combat?.combatBonus ?? bestCB) || bestCB;
     const prevOff = Number(system.combat?.offensiveBonus ?? prevCB);
@@ -1316,14 +1302,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const skillUpdates = {};
 
     // Kampfbonus automatisch aus bester Waffenfertigkeit berechnen
-    let bestCombatBonus = ABOREA.combatBonus(ABOREA.attributeBonus(finalAttrs.st?.value ?? 5), 0);
-    for (const key of ABOREA.weaponSkillKeys) {
-      const rank    = Number(actorSystem.skills?.[key]?.rank ?? 0);
-      const attrKey = ABOREA.skills?.[key]?.attribute ?? "st";
-      const attrVal = finalAttrs[attrKey]?.value ?? 5;
-      const cb = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
-      if (cb > bestCombatBonus) bestCombatBonus = cb;
-    }
+    // finalAttrs ist hier noch nicht persistiert — als Attributquelle durchreichen
+    const bestCombatBonus = weaponCombatBonus(this.actor, {
+      skillKeys: ABOREA.weaponSkillKeys, attributes: finalAttrs,
+    })?.total ?? 0;
     // Bestehende Offensive/Defensive-Aufteilung beibehalten, aber auf neuen Total kappen
     const prevOff = Number(actorSystem.combat?.offensiveBonus ?? bestCombatBonus);
     const newOff  = Math.min(prevOff, bestCombatBonus);

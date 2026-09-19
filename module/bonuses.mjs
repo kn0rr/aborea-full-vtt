@@ -15,8 +15,8 @@ import { ABOREA } from "./config.mjs";
  * initial 5 und deshalb auch ungeschrieben vorhanden: ein `finalAttributes ??
  * attributes` liefert bei NPCs immer 5 statt des echten Werts.
  */
-export function attributeValue(actor, attrKey) {
-  return Number(actor?.system?.attributes?.[attrKey]?.value ?? 5);
+export function attributeValue(actor, attrKey, attributes = null) {
+  return Number((attributes ?? actor?.system?.attributes)?.[attrKey]?.value ?? 5);
 }
 
 /**
@@ -127,8 +127,8 @@ export function untrainedPenalty(actor, skillKey, skillDef = null) {
  * der Stärke des Actors liegt. Gilt auf Angriff sowie auf Stärke- und
  * Geschicklichkeitsproben.
  */
-export function minStrengthPenalty(actor) {
-  const st = attributeValue(actor, "st");
+export function minStrengthPenalty(actor, attributes = null) {
+  const st = attributeValue(actor, "st", attributes);
   const offending = (actor?.items ?? []).filter(i =>
     ["weapon", "armor"].includes(i.type) && i.system?.equipped
     && Number(i.system?.minStrength ?? 0) > st);
@@ -143,21 +143,23 @@ export function minStrengthPenalty(actor) {
  * @param {object} [opts]
  * @param {string} [opts.attrKey]      Attribut übersteuern (Waffen mit attrChoices).
  * @param {boolean|"auto"} [opts.minStrength="auto"]  "auto" = nur bei ST/GE.
+ * @param {object} [opts.attributes]  Attributblock übersteuern — für den Recalc,
+ *        der mit frisch berechneten, noch nicht persistierten Werten arbeitet.
  * @returns {{attrKey, attrBonus, rank, classBonus, raceBonus, untrained,
  *            minStrength, total, label, breakdown}}
  *          `breakdown` ist eine Liste aus {label, value} für Karten und Dialoge.
  */
-export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStrength = "auto" } = {}) {
+export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStrength = "auto", attributes = null } = {}) {
   const def       = getSkillDef(actor, skillKey);
   const attrKey   = resolveAttributeKey(actor, skillKey, def, attrOverride);
-  const attrBonus = ABOREA.attributeBonus(attributeValue(actor, attrKey));
+  const attrBonus = ABOREA.attributeBonus(attributeValue(actor, attrKey, attributes));
   const rank      = Number(def.rank ?? 0);
   const classBonus = liveClassBonus(actor, skillKey);
   const raceBonus  = raceSkillBonus(actor, skillKey);
   const untrained  = untrainedPenalty(actor, skillKey, def);
 
   const applyMinSt = minStrength === "auto" ? ["st", "ge"].includes(attrKey) : !!minStrength;
-  const minSt      = applyMinSt ? minStrengthPenalty(actor) : 0;
+  const minSt      = applyMinSt ? minStrengthPenalty(actor, attributes) : 0;
 
   const breakdown = [{ label: game.i18n.localize(ABOREA.attributes[attrKey] ?? attrKey), value: attrBonus }];
   if (rank)       breakdown.push({ label: game.i18n.localize("ABOREA.Rank"),      value: rank });
@@ -173,6 +175,39 @@ export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStr
     label: def.label ?? def.name ?? game.i18n.localize(ABOREA.skills?.[skillKey]?.label ?? skillKey),
     breakdown,
   };
+}
+
+/** Waffenfertigkeiten einer Waffe. */
+export function weaponSkillKeys(weapon) {
+  const arr = weapon?.system?.skills;
+  return Array.isArray(arr) ? arr.filter(Boolean) : [];
+}
+
+/**
+ * Kampfbonus = bester Fertigkeitsbonus über die infrage kommenden
+ * Waffenfertigkeiten, inklusive Klassen-, Talent-, Magie- und Rassenboni sowie
+ * dem Ungelernt-Malus.
+ *
+ * Der Mindeststärke-Malus steckt bewusst NICHT drin: er wirkt laut Regel auf
+ * den Angriff, nicht auf den Kampfbonus — sonst würde er auch die defensive
+ * Hälfte der Aufteilung drücken.
+ *
+ * @param {object}  [opts]
+ * @param {Item}    [opts.weapon]        Waffe — liefert Fertigkeiten und Attribut.
+ * @param {string[]}[opts.skillKeys]     Fertigkeiten direkt vorgeben.
+ * @param {boolean} [opts.trainedOnly]   Nur Fertigkeiten mit Rang > 0 betrachten.
+ * @returns {object|null} bestes skillBonus()-Ergebnis plus skillKey, oder null.
+ */
+export function weaponCombatBonus(actor, { weapon = null, skillKeys = null, trainedOnly = false, attributes = null } = {}) {
+  const own        = skillKeys ?? weaponSkillKeys(weapon);
+  const candidates = own.length ? own : ABOREA.weaponSkillKeys;
+  let best = null;
+  for (const key of candidates) {
+    if (trainedOnly && Number(getSkillDef(actor, key).rank ?? 0) <= 0) continue;
+    const b = skillBonus(actor, key, { attrKey: weapon?.system?.attr || "", minStrength: false, attributes });
+    if (!best || b.total > best.total) best = { ...b, skillKey: key };
+  }
+  return best;
 }
 
 /** Formatiert eine breakdown-Liste als "+2" / "−1" Zeilen. */

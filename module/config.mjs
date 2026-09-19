@@ -174,10 +174,6 @@ export const ABOREA = {
       : 0;
     return geBonus + weaponMod;
   },
-  combatBonus(attributeBonus, skillRank = 0) {
-    const learnedPenalty = Number(skillRank) > 0 ? 0 : -2;
-    return Number(attributeBonus) + Number(skillRank) + learnedPenalty;
-  },
   defenseValue(armorValue = 5, defensiveBonus = 0) {
     return Number(armorValue) + Number(defensiveBonus);
   },

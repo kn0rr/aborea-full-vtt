@@ -30,13 +30,31 @@
 
     <div class="form-group untrained-row" {{#unless initialPenalty}}style="display:none"{{/unless}}>
       <label>Ungelernt <span class="hint">(Waffenfertigkeit Rang 0)</span></label>
-      <span class="untrained-display">−2</span>
+      <span class="untrained-display">−2 <span class="hint">(bereits im Kampfbonus)</span></span>
     </div>
 
     <div class="form-group">
       <label>Offensivbonus <span class="hint">(Kampfbonus: <span class="combat-bonus-hint">{{combatBonus}}</span>)</span></label>
       <input type="number" name="offBonus" value="{{currentOffBonus}}" min="-20" max="{{combatBonus}}" />
     </div>
+
+    <div class="form-group attack-breakdown-row">
+      <span class="hint combat-bonus-breakdown"></span>
+    </div>
+
+    {{#if maneuverMod}}
+    <div class="form-group">
+      <label>Manöverbonus <span class="hint">(aus Zaubereffekten)</span></label>
+      <span class="attack-mod-display">{{maneuverMod}}</span>
+    </div>
+    {{/if}}
+
+    {{#if minStrengthMod}}
+    <div class="form-group">
+      <label>Mindeststärke <span class="hint">(Ausrüstung zu schwer)</span></label>
+      <span class="attack-mod-display penalty">{{minStrengthMod}}</span>
+    </div>
+    {{/if}}
     {{else}}
     <p class="hint-text">Keine ausgerüstete Waffe.</p>
     {{/if}}

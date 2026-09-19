@@ -1103,6 +1103,10 @@
 .aborea-attack-dialog-body .form-group select { width: 140px; }
 .aborea-attack-dialog-body .hint { font-size: .72rem; opacity: .65; font-weight: 400; display: block; }
 .aborea-attack-dialog-body .untrained-display { color: #b91c1c; font-weight: 700; font-size: .85rem; }
+.aborea-attack-dialog-body .attack-mod-display { font-weight: 700; font-size: .85rem; }
+.aborea-attack-dialog-body .attack-mod-display.penalty { color: #b91c1c; }
+.aborea-attack-dialog-body .attack-breakdown-row { margin-top: -4px; }
+.aborea-attack-dialog-body .combat-bonus-breakdown { font-size: .78rem; opacity: .85; }
 .aborea-attack-dialog-body .spell-info-row { background: #e8f4e8; border-radius: 5px; padding: 4px 8px; }
 .aborea-attack-dialog-body .spell-info-value { font-size: .87rem; }
 

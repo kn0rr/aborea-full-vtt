@@ -1,6 +1,7 @@
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
+import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, formatBreakdown } from "./bonuses.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -71,51 +72,36 @@ export class AboreaCombat extends Combat {
 //  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
-/** Returns the skill keys for a weapon from system.skills array. */
-function _weaponSkillKeys(weapon) {
-  const arr = weapon?.system?.skills;
-  return Array.isArray(arr) ? arr.filter(Boolean) : [];
+/** Manöverbonus aus Active Effects (Beistand, Fluch, Trübung …). */
+function _maneuverBonus(actor) {
+  return Number(actor?.system?.traits?.maneuverBonus ?? 0);
 }
 
-/** Returns the best skill rank the actor has for any of the weapon's skills. */
-function _bestWeaponRank(actor, weapon) {
-  return _weaponSkillKeys(weapon).reduce((best, key) => {
-    return Math.max(best, Number(actor.system.skills?.[key]?.rank ?? 0));
-  }, 0);
+/** Zusätzlicher Waffenschaden aus Active Effects (Flammenschwert …). */
+function _bonusWeaponDamage(actor) {
+  return Number(actor?.flags?.aborea?.extraWeaponDamage ?? 0);
 }
 
-function _getUntrainedPenalty(actor, weapon) {
-  if (!weapon) return 0;
-  const keys = _weaponSkillKeys(weapon);
-  if (!keys.length) return 0;
-  if (_bestWeaponRank(actor, weapon) > 0) return 0;
-  const minimums = actor.system.classFeatures?.weaponMinimums ?? {};
-  if ("all" in minimums) return 0;
-  if (keys.some(k => k === "boegen" || k === "armbrust") && "bows-crossbows" in minimums) return 0;
-  // Götterwaffe: gespeicherte weaponMinimums ODER direkt aus dem Klassenitem lesen (Fallback für alte Charaktere)
-  const level = Number(actor.system.resources?.level ?? 1);
-  const hasDeityWeapon = "deityWeapon" in minimums || actor.items.find(i => i.type === "class")
-    ?.system?.levelFeatures?.some(f => f.type === "weaponMinimum" && f.target === "deityWeapon" && Number(f.level ?? 1) <= level);
-  if (hasDeityWeapon) {
-    const godItem = actor.items.find(i => i.type === "god");
-    const deitySkills = godItem?.system?.weaponSkills ?? [];
-    if (keys.some(k => deitySkills.includes(k))) return 0;
-  }
-  return -2;
-}
-
+/**
+ * Verteidigungswert: Rüstung (Grundwert + Rassen-/Klassenbonus + getragene
+ * Rüstungen) plus Defensivbonus und Manöverbonus.
+ *
+ * Früher las der Charakterzweig system.combat.totalArmorValue — das wird aber
+ * nur auf dem Sheet-Klon gesetzt und nie persistiert, der Zweig lief also nie.
+ * Der Rest liess Rassen- und Klassenbonus fallen, sodass der RW im Kampf nicht
+ * zum RW auf dem Bogen passte.
+ */
 function _dv(actor) {
   if (!actor) return 5;
-  if (actor.type === "character" && actor.system.combat?.totalArmorValue != null) {
-    return ABOREA.defenseValue(
-      Number(actor.system.combat.totalArmorValue),
-      Number(actor.system.combat?.defensiveBonus ?? 0));
-  }
-  const baseArmor      = Number(actor.system.combat?.armorValue ?? 0);
+  const baseArmor = Number(actor.system.combat?.armorValue ?? 0)
+                  + Number(actor.system.traits?.racialArmorBonus ?? 0)
+                  + Number(actor.system.classFeatures?.armorBonus ?? 0);
   const armorFromItems = actor.items
     .filter(i => i.type === "armor" && i.system.equipped)
     .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-  return ABOREA.defenseValue(baseArmor + armorFromItems, Number(actor.system.combat?.defensiveBonus ?? 0));
+  return ABOREA.defenseValue(
+    baseArmor + armorFromItems,
+    Number(actor.system.combat?.defensiveBonus ?? 0) + _maneuverBonus(actor));
 }
 
 function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
@@ -193,7 +179,10 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const currentOffBonus = storedOffBonus;
     const combatBonus     = storedCB;
     const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
-    const initialPenalty  = weapons[0] ? _getUntrainedPenalty(actor, weapons[0]) : 0;
+    const initialBonus    = weapons[0] ? weaponCombatBonus(actor, { weapon: weapons[0] }) : null;
+    const initialPenalty  = initialBonus?.untrained ?? 0;
+    const minStrengthMod  = minStrengthPenalty(actor);
+    const maneuverMod     = _maneuverBonus(actor);
 
     // Gezielte Zauber & Wunder
     const targetedSpells = actor.items.filter(i =>
@@ -212,7 +201,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       id:     w.id,
       name:   w.name,
       damage: w.system.damage ?? 0,
-      skill:  _weaponSkillKeys(w)
+      skill:  weaponSkillKeys(w)
         .map(k => game.i18n.localize(ABOREA.skills[k]?.label ?? k))
         .join(", "),
     }));
@@ -255,6 +244,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       currentOffBonus,
       globalSituMod,
       initialPenalty,
+      minStrengthMod,
+      maneuverMod,
     };
   }
 
@@ -312,27 +303,21 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     // Weapon untrained penalty + dynamic combat bonus per weapon's best skill
     const offBonusInput   = html.querySelector("[name=offBonus]");
     const cbHint          = html.querySelector(".combat-bonus-hint");
+    const cbBreakdown     = html.querySelector(".combat-bonus-breakdown");
     const _isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
     const _storedCB        = Number(actor.system.combat?.combatBonus ?? 0);
     const updateWeapon = () => {
       const wId     = weaponSelect?.value;
       const weapon  = (wId && wId !== "__native__") ? actor.items.get(wId) : null;
-      const penalty = _getUntrainedPenalty(actor, weapon);
+      // Kampfbonus aus der geteilten Rechnung — dieselbe Quelle wie
+      // Fertigkeitsprobe und Charakterbogen. Enthält Attribut, Rang,
+      // Klassen-/Talent-/Magie-/Rassenboni und den Ungelernt-Malus.
+      const cb      = weaponSkillKeys(weapon).length ? weaponCombatBonus(actor, { weapon }) : null;
+      const penalty = cb?.untrained ?? 0;
       if (untrainedRow) untrainedRow.style.display = penalty ? "" : "none";
-
-      // Recompute combat bonus from best matching skill for this weapon
-      const skillKeys = _weaponSkillKeys(weapon);
-      let bestCB = _storedCB; // Fallback: gespeicherter Kampfbonus wenn keine Skills konfiguriert
-      if (skillKeys.length) {
-        bestCB = 0;
-        for (const key of skillKeys) {
-          const rank    = Number(actor.system.skills?.[key]?.rank ?? 0);
-          const attrKey = weapon.system.attr || (ABOREA.skills?.[key]?.attribute ?? "st");
-          const attrVal = Number(actor.system.finalAttributes?.[attrKey]?.value ?? actor.system.attributes?.[attrKey]?.value ?? 5);
-          const cb      = ABOREA.combatBonus(ABOREA.attributeBonus(attrVal), rank);
-          if (cb > bestCB) bestCB = cb;
-        }
-      }
+      // Fallback: gespeicherter Kampfbonus, wenn die Waffe keine Fertigkeiten führt
+      const bestCB  = cb?.total ?? _storedCB;
+      if (cbBreakdown) cbBreakdown.textContent = cb ? formatBreakdown(cb.breakdown).join(" · ") : "";
       if (_isCreatureOrNpc) {
         if (cbHint) cbHint.textContent = _storedCB;
         if (offBonusInput) offBonusInput.max = 99;
@@ -497,7 +482,10 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         mode:             "weapon",
         weapon,
         offBonus:         Number(data.offBonus || 0),
-        untrainedPenalty: weapon ? _getUntrainedPenalty(actor, weapon) : 0,
+        // Der Ungelernt-Malus steckt bereits im Kampfbonus und damit im Deckel
+        // des Offensivbonus — hier würde er ein zweites Mal ziehen.
+        minStrengthMod:   minStrengthPenalty(actor),
+        maneuverMod:      _maneuverBonus(actor),
         situMod:          Number(data.situMod || 0),
         targetActor,
         targetDefense:    targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
@@ -699,8 +687,9 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
 
 // ── Internal: roll + chat ────────────────────────────────────────
 
-async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalty = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
-  const effectiveOffBonus = offBonus + untrainedPenalty;
+async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
+  // Der Ungelernt-Malus steckt schon im Kampfbonus und damit im Offensivbonus.
+  const effectiveOffBonus = offBonus + maneuverMod + minStrengthMod;
   const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
 
   if (roll.naturalOne) {
@@ -712,7 +701,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
         target: targetActor?.name, targetImg,
         weapon: weapon.name,
         rollFormula: roll.formula, rollTotal: 0,
-        offBonus, untrainedPenalty, situMod,
+        offBonus, minStrengthMod, maneuverMod, situMod,
         attackValue: 0, defenseValue: targetDefense,
         hit: false, damage: 0, patzer: true, critical: false,
       })
@@ -722,7 +711,9 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
 
   const attackValue = roll.total + effectiveOffBonus + situMod;
   const hit    = attackValue > targetDefense;
-  const weaponDmg = Number(weapon.system.damage ?? 0);
+  // Waffenschaden inkl. Active-Effect-Bonus (Flammenschwert)
+  const bonusDmg  = _bonusWeaponDamage(attackerActor);
+  const weaponDmg = Number(weapon.system.damage ?? 0) + bonusDmg;
   const critBonus = (hit && roll.critical) ? Math.max(0, weaponDmg) : 0;
   const damage = hit ? Math.max(1, (attackValue - targetDefense) + weaponDmg + critBonus) : 0;
 
@@ -735,10 +726,10 @@ async function _executeAttack(attackerActor, { weapon, offBonus, untrainedPenalt
       targetActorId: targetActor?.id,
       weapon: weapon.name,
       rollFormula: roll.formula, rollTotal: roll.total,
-      offBonus, untrainedPenalty, situMod,
+      offBonus, minStrengthMod, maneuverMod, situMod,
       attackValue, defenseValue: targetDefense,
       hit, damage, patzer: false, critical: roll.critical,
-      weaponDamage: weaponDmg, critBonus,
+      weaponDamage: weaponDmg, bonusDamage: bonusDmg, critBonus,
     }),
     flags: { "aborea-v7": { attackResult: { hit, damage, targetActorId: targetActor?.id ?? null } } }
   });
@@ -770,16 +761,20 @@ function _buildCardHeader(attacker, attackerImg, target, targetImg) {
 function _buildAttackCard({
   attacker, attackerImg = "",
   target,   targetImg = "",   targetActorId,
-  weapon, rollFormula, rollTotal, offBonus, untrainedPenalty = 0, situMod,
-  attackValue, defenseValue, hit, damage, patzer, critical, weaponDamage = 0, critBonus = 0
+  weapon, rollFormula, rollTotal, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod,
+  attackValue, defenseValue, hit, damage, patzer, critical,
+  weaponDamage = 0, bonusDamage = 0, critBonus = 0
 }) {
   const resultClass = patzer ? "patzer" : (hit ? "hit" : "miss");
   const resultLabel = patzer
     ? "⛔ Patzer — automatischer Fehlschlag"
     : (hit ? "✅ Treffer" : "❌ Kein Treffer");
 
-  const untrainedRow = untrainedPenalty
-    ? `<div class="ac-row ac-penalty"><span>Ungelernt</span><span>${_sign(untrainedPenalty)}</span></div>`
+  const minStrengthRow = minStrengthMod
+    ? `<div class="ac-row ac-penalty"><span>Mindeststärke</span><span>${_sign(minStrengthMod)}</span></div>`
+    : "";
+  const maneuverRow = maneuverMod
+    ? `<div class="ac-row"><span>Manöverbonus</span><span>${_sign(maneuverMod)}</span></div>`
     : "";
   const modRow = situMod !== 0
     ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>`
@@ -796,7 +791,7 @@ function _buildAttackCard({
       </div>
       <div class="ac-row">
         <span>Waffenschaden</span>
-        <span>${_sign(weaponDamage)}</span>
+        <span>${_sign(weaponDamage)}${bonusDamage ? ` <em>(inkl. ${_sign(bonusDamage)} Zauber)</em>` : ""}</span>
       </div>
       ${critBonus ? `<div class="ac-row critical-bonus"><span>💥 Kritisch (Waffenschaden ×2)</span><span>+${critBonus}</span></div>` : ""}
       <div class="ac-row ac-total">
@@ -816,7 +811,8 @@ function _buildAttackCard({
       <div class="ac-row"><span>Waffe</span><span>${weapon}</span></div>
       <div class="ac-row"><span>Würfelwurf</span><span>${rollFormula}${patzer ? " (Patzer!)" : ""}</span></div>
       <div class="ac-row"><span>Offensivbonus</span><span>${_sign(offBonus)}</span></div>
-      ${untrainedRow}
+      ${maneuverRow}
+      ${minStrengthRow}
       ${modRow}
       <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${patzer ? "—" : attackValue}</strong></span></div>
       <div class="ac-row"><span>Verteidigungswert</span><span>${defenseValue}</span></div>
