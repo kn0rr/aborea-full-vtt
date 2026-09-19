@@ -904,6 +904,7 @@ export {
   _spellDamage       as spellDamage,
   _maneuverBonus     as maneuverBonus,
   _bonusWeaponDamage as bonusWeaponDamage,
+  _hpColor           as hpColor,
 };
 
 // ══════════════════════════════════════════════════════════════════

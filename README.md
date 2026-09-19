@@ -267,9 +267,16 @@ Was geprüft wird:
 
 | Datei | Inhalt |
 |---|---|
+| `tests/dice.test.mjs` | offener W10: Explodieren auf 10, Patzer nur im ersten Wurf |
 | `tests/bonuses.test.mjs` | Attributquelle, Fertigkeitsränge, Ungelernt-Malus je Kategorie, Klassenbefreiungen, Mindeststärke, Kampfbonus |
-| `tests/combat.test.mjs` | Verteidigungswert, Manöverbonus, Zauberschaden |
+| `tests/combat.test.mjs` | Verteidigungswert, Manöverbonus, Zauberschaden, Initiative |
+| `tests/effects.test.mjs` | Zauberdauer, Active Effects, Manöverschwierigkeit |
+| `tests/progression.test.mjs` | Attributbonus-Tabelle, XP/Stufe, AP-Kosten |
+| `tests/pack-builder.test.mjs` | Schutz manuell geänderter Kompendium-Einträge |
 | `tests/data.test.mjs` | Kompendiumsdaten gegen Schema und Config |
+
+Als `todo` markierte Tests beschreiben bekannte, noch nicht behobene Fehler.
+Sie lassen den Lauf nicht scheitern, tauchen aber in der Ausgabe auf.
 
 `tests/data.test.mjs` fängt die Fehlerklasse ab, die hier mehrfach aufgetreten
 ist: ein Feld, das syntaktisch gültig ist, aber vom Code anders gemeint war —

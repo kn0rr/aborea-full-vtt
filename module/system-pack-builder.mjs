@@ -45,6 +45,9 @@ function protectManualImg(payload, existing) {
   return payload;
 }
 
+// Reine Helfer — exportiert für tests/pack-builder.test.mjs
+export { sourceFlag, normalizeDocs, protectManualImg };
+
 async function ensureUnlocked(pack) {
   if (pack.locked && pack.configure) await pack.configure({locked: false});
 }

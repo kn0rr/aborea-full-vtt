@@ -6,7 +6,8 @@
 import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage } from "../module/combat.mjs";
+import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor } from "../module/combat.mjs";
+import { ABOREA } from "../module/config.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
 
 test("Verteidigungswert", async t => {
@@ -90,4 +91,41 @@ test("inferDirectHp: max 0 ist kein Deckel", async t => {
   await t.test("max 0 wird ignoriert", () => assert.equal(inferDirectHp(kaputt, 5).amount, 5));
   await t.test("max > 0 deckelt",      () =>
     assert.equal(inferDirectHp({ system: { hpEffect: { type: "heal", multiplier: 1, max: 3 } } }, 5).amount, 3));
+});
+
+test("Initiative ist ein fester Wert, kein Wurf", async t => {
+  // GE-Bonus + bester Initiative-Mod der ausgerüsteten Waffen. Bei Gleichstand
+  // wird im Tracker manuell ein W10 nachgeworfen.
+  const init = (attrs, items = []) => ABOREA.initiativeBonus({ system: { attributes: attrs }, items });
+  const ge = v => ({ ge: { value: v } });
+
+  await t.test("nur GE, keine Waffe", () => assert.equal(init(ge(9)), 2));
+  await t.test("GE 5 ist neutral",     () => assert.equal(init(ge(5)), 0));
+  await t.test("negativer GE-Bonus",   () => assert.equal(init(ge(2)), -2));
+
+  await t.test("Waffen-Initiative kommt dazu", () =>
+    assert.equal(init(ge(9), [weapon({ initiative: 2 })]), 4));
+
+  await t.test("beste ausgerüstete Waffe zählt", () =>
+    assert.equal(init(ge(9), [weapon({ initiative: 1 }), weapon({ initiative: 3 })]), 5));
+
+  await t.test("nicht ausgerüstete Waffen zählen nicht", () =>
+    assert.equal(init(ge(9), [{ type: "weapon", system: { equipped: false, initiative: 9 } }]), 2));
+
+  await t.test("negative Waffen-Initiative drückt", () =>
+    assert.equal(init(ge(9), [weapon({ initiative: -2 })]), 0));
+
+  await t.test("ohne Actor kein Absturz", () => assert.equal(ABOREA.initiativeBonus(null), 0));
+
+  await t.test("Kreatur: Attribut kommt aus attributes", () =>
+    assert.equal(ABOREA.initiativeBonus(creature({ attributes: { ge: { value: 11 } } })), 3));
+});
+
+test("HP-Farbe für Balken und Zielvorschau", async t => {
+  await t.test("gesund grün",   () => assert.equal(hpColor(100), "#2d8a3e"));
+  await t.test("knapp über 60",  () => assert.equal(hpColor(61), "#2d8a3e"));
+  await t.test("60 ist gelb",    () => assert.equal(hpColor(60), "#c08a00"));
+  await t.test("26 ist gelb",    () => assert.equal(hpColor(26), "#c08a00"));
+  await t.test("25 ist rot",     () => assert.equal(hpColor(25), "#b91c1c"));
+  await t.test("0 ist rot",      () => assert.equal(hpColor(0), "#b91c1c"));
 });
