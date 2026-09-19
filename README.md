@@ -244,3 +244,10 @@ Neue Versionen werden als GitHub Releases veröffentlicht. Der Workflow läuft a
 1. `system.json` wird mit der neuen Version aktualisiert.
 2. Ein ZIP-Archiv wird erstellt und als Release-Asset hochgeladen.
 3. Foundry erkennt das Update über die Manifest-URL.
+
+Die Versionsnummer im Release kommt ausschließlich aus dem Tag — der Workflow
+überschreibt `version` in `system.json` damit. Die Nummer in der Datei trägt
+deshalb die **kommende** Version und wird beim Entwickeln hochgezählt, damit
+Foundry beim Reload nicht auf gecachten Modulen sitzen bleibt. Beide Nummern
+gehören in dieselbe Linie, sonst bietet Foundry einem lokalen Checkout
+dauerhaft ein vermeintliches Update an.
