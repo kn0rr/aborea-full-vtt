@@ -132,7 +132,7 @@ export function minStrengthPenalty(actor, attributes = null) {
   const offending = (actor?.items ?? []).filter(i =>
     ["weapon", "armor"].includes(i.type) && i.system?.equipped
     && Number(i.system?.minStrength ?? 0) > st);
-  return offending.length * -2;
+  return offending.length ? offending.length * -2 : 0;  // nicht -0
 }
 
 /**

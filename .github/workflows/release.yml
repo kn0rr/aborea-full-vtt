@@ -35,6 +35,10 @@ jobs:
             --exclude "*.gitignore" \
             --exclude "examples/*" \
             --exclude "scripts/*" \
+            --exclude "tests/*" \
+            --exclude "package.json" \
+            --exclude "package-lock.json" \
+            --exclude "node_modules/*" \
             --exclude "README.md" \
             --exclude "*.zip"
 

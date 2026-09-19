@@ -1,0 +1,25 @@
+#!/bin/sh
+# ABOREA — Syntaxprüfung und Testsuite vor jedem Commit.
+#
+# Installieren:            npm run hooks:install
+# Einmalig überspringen:   git commit --no-verify
+#                          ABOREA_SKIP_TESTS=1 git commit …
+
+[ -n "$ABOREA_SKIP_TESTS" ] && { echo "ABOREA: Prüfung übersprungen (ABOREA_SKIP_TESTS)"; exit 0; }
+
+root=$(git rev-parse --show-toplevel) || exit 0
+cd "$root" || exit 0
+
+# Kein Node? Dann nicht im Weg stehen, aber sichtbar warnen.
+command -v node >/dev/null 2>&1 || {
+  echo "ABOREA: node nicht gefunden — Prüfung übersprungen." >&2
+  exit 0
+}
+
+echo "ABOREA: prüfe Syntax und Tests …"
+if ! node scripts/check.mjs; then
+  echo "" >&2
+  echo "ABOREA: Commit abgebrochen — siehe Fehler oben." >&2
+  echo "         Trotzdem committen: git commit --no-verify" >&2
+  exit 1
+fi

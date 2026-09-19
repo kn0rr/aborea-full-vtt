@@ -1,0 +1,11 @@
+{
+  "name": "aborea-full-vtt",
+  "private": true,
+  "type": "module",
+  "description": "Entwicklungswerkzeuge für das ABOREA-V7-System. Foundry lädt module/ direkt — hier stehen nur Tests und Hooks.",
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.mjs\"",
+    "check": "node scripts/check.mjs",
+    "hooks:install": "node scripts/install-hooks.mjs"
+  }
+}

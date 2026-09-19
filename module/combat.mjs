@@ -896,6 +896,17 @@ async function _resolveTiebreak(combat) {
 }
 
 // ══════════════════════════════════════════════════════════════════
+//  Reine Regel-Rechnungen — exportiert für tests/combat.test.mjs
+// ══════════════════════════════════════════════════════════════════
+
+export {
+  _dv                as actorDefenseValue,
+  _spellDamage       as spellDamage,
+  _maneuverBonus     as maneuverBonus,
+  _bonusWeaponDamage as bonusWeaponDamage,
+};
+
+// ══════════════════════════════════════════════════════════════════
 //  Hooks
 // ══════════════════════════════════════════════════════════════════
 

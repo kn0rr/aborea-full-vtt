@@ -238,6 +238,46 @@ Das System unterstützt das Modul **Dice So Nice** automatisch. Wenn installiert
 
 ---
 
+## Entwicklung: Tests
+
+Die Regel-Rechnungen (Fertigkeits- und Kampfboni, Verteidigungswert,
+Zauberschaden) und die Kompendiumsdaten sind durch eine lokale Testsuite
+abgedeckt. Sie braucht keine Abhängigkeiten — nur Node 18+ mit dem
+eingebauten Testrunner.
+
+```
+npm test          # nur die Tests
+npm run check     # Syntaxprüfung aller Module + Tests
+```
+
+Damit das bei jedem Commit automatisch läuft, einmalig den Hook aktivieren:
+
+```
+npm run hooks:install
+```
+
+Der Hook bricht den Commit ab, wenn etwas fehlschlägt. Einzelfall
+überspringen: `git commit --no-verify`. Wieder entfernen:
+`npm run hooks:install -- --remove`.
+
+Installiert wird nur ein Aufrufer — die Logik steht versioniert in
+`.githooks/pre-commit`, Änderungen dort wirken ohne erneute Installation.
+
+Was geprüft wird:
+
+| Datei | Inhalt |
+|---|---|
+| `tests/bonuses.test.mjs` | Attributquelle, Fertigkeitsränge, Ungelernt-Malus je Kategorie, Klassenbefreiungen, Mindeststärke, Kampfbonus |
+| `tests/combat.test.mjs` | Verteidigungswert, Manöverbonus, Zauberschaden |
+| `tests/data.test.mjs` | Kompendiumsdaten gegen Schema und Config |
+
+`tests/data.test.mjs` fängt die Fehlerklasse ab, die hier mehrfach aufgetreten
+ist: ein Feld, das syntaktisch gültig ist, aber vom Code anders gemeint war —
+etwa `"max": 0`, das statt „kein Limit“ „kein Effekt“ bedeutet, oder ein
+Feldname, den das DataModel still verwirft.
+
+---
+
 ## Releases & Updates
 
 Neue Versionen werden als GitHub Releases veröffentlicht. Der Workflow läuft automatisch beim Setzen eines `v*.*.*`-Tags:
