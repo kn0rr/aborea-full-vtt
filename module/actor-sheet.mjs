@@ -7,7 +7,7 @@ import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
 import { rollSkill, rollAttribute } from "./dice.mjs";
 import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
-import { openAttackDialog } from "./combat.mjs";
+import { openAttackDialog, markSpellcast } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
   makeHistoryEntry, logListPush,
@@ -1628,6 +1628,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (currentMp<mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
     await this._cleanupExpiredCompanions();
     await this.actor.update({"system.resources.mp.value":Math.max(0,currentMp-mpCost)});
+    // Auch ungezielte Zauber binden den Kampfbonus offensiv
+    await markSpellcast(this.actor);
 
     const targets = Array.from(game.user.targets||[]).map(t=>t.actor).filter(Boolean);
     const hp = inferDirectHp(item,mpCost);

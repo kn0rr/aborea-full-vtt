@@ -6,7 +6,7 @@
 import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor } from "../module/combat.mjs";
+import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor, hasCastThisRound } from "../module/combat.mjs";
 import { ABOREA } from "../module/config.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
 
@@ -128,4 +128,49 @@ test("HP-Farbe für Balken und Zielvorschau", async t => {
   await t.test("26 ist gelb",    () => assert.equal(hpColor(26), "#c08a00"));
   await t.test("25 ist rot",     () => assert.equal(hpColor(25), "#b91c1c"));
   await t.test("0 ist rot",      () => assert.equal(hpColor(0), "#b91c1c"));
+});
+
+test("Zaubern bindet den Kampfbonus offensiv", async t => {
+  // Der Kampfbonus ist eine Ressource pro Runde. Beim Zaubern zaehlt er
+  // vollstaendig offensiv, es bleibt also kein Defensivbonus uebrig.
+  const zauberer = (round, system = {}) => ({
+    type: "character", items: [],
+    flags: round == null ? {} : { "aborea-v7": { spellcastRound: round } },
+    system: { combat: { armorValue: 5, defensiveBonus: 3 }, ...system },
+  });
+  const inRunde = n => { globalThis.game.combat = n == null ? undefined : { round: n }; };
+
+  await t.test("ohne Kampf greift die Regel nicht", () => {
+    inRunde(null);
+    assert.equal(hasCastThisRound(zauberer(2)), false);
+    assert.equal(actorDefenseValue(zauberer(2)), 8);
+  });
+
+  await t.test("nicht gezaubert: Defensivbonus zaehlt", () => {
+    inRunde(3);
+    assert.equal(hasCastThisRound(zauberer(null)), false);
+    assert.equal(actorDefenseValue(zauberer(null)), 8);
+  });
+
+  await t.test("in dieser Runde gezaubert: kein Defensivbonus", () => {
+    inRunde(3);
+    assert.equal(hasCastThisRound(zauberer(3)), true);
+    assert.equal(actorDefenseValue(zauberer(3)), 5);
+  });
+
+  await t.test("naechste Runde zaehlt er wieder", () => {
+    inRunde(4);
+    assert.equal(hasCastThisRound(zauberer(3)), false);
+    assert.equal(actorDefenseValue(zauberer(3)), 8);
+  });
+
+  await t.test("Ruestung und Manoeverbonus bleiben unberuehrt", () => {
+    inRunde(3);
+    // Nur der Defensivbonus entfaellt: 5 Grund + 2 Manoever, ohne die 3
+    assert.equal(actorDefenseValue(zauberer(3, {
+      combat: { armorValue: 5, defensiveBonus: 3 }, traits: { maneuverBonus: 2 },
+    })), 7);
+  });
+
+  inRunde(null);   // globalen Stub wieder aufraeumen
 });

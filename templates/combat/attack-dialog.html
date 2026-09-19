@@ -114,10 +114,15 @@
     <div class="spell-effect-preview" style="display:none"></div>
 
     <div class="spell-bonus-breakdown">
-      <span class="hint">Angriffsbonus: IN {{signedAttrBonus}} + Gez. Sprüche {{signedSkillRank}} + Klasse {{signedClassBonus}} = </span>
+      <span class="hint">Angriffsbonus: {{spellBonusBreakdown}} = </span>
       <strong>{{spellAttackBonus}}</strong>
     </div>
     <input type="hidden" name="spellBonus" value="{{spellAttackBonus}}" />
+
+    <div class="spell-defense-warning">
+      ⚠ Beim Zaubern zählt der Kampfbonus vollständig offensiv —
+      <strong>in dieser Runde kein Defensivbonus</strong>.
+    </div>
   </div>
   {{/if}}
 

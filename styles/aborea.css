@@ -1103,6 +1103,10 @@
 .aborea-attack-dialog-body .form-group select { width: 140px; }
 .aborea-attack-dialog-body .hint { font-size: .72rem; opacity: .65; font-weight: 400; display: block; }
 .aborea-attack-dialog-body .untrained-display { color: #b91c1c; font-weight: 700; font-size: .85rem; }
+.aborea-attack-dialog-body .spell-defense-warning {
+  margin: 6px 0; padding: 6px 8px; font-size: .8rem;
+  border-left: 3px solid #b91c1c; background: rgba(185, 28, 28, .07);
+}
 .aborea-attack-dialog-body .attack-mod-display { font-weight: 700; font-size: .85rem; }
 .aborea-attack-dialog-body .attack-mod-display.penalty { color: #b91c1c; }
 .aborea-attack-dialog-body .attack-breakdown-row { margin-top: -4px; }

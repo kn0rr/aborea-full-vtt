@@ -1,21 +1,9 @@
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
-import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, formatBreakdown } from "./bonuses.mjs";
+import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
-
-// Gibt den Rang von "gezielteSprueche" zurück — Characters/NPCs: skills.gezielteSprueche.rank, Kreaturen: magicSkills.gezielteSprueche
-function _getGezielteSpruecheRank(actor) {
-  if (actor.type === "creature") return Number(actor.system.magicSkills?.gezielteSprueche ?? 0);
-  return Number(actor.system.skills?.gezielteSprueche?.rank ?? 0);
-}
-
-// Gibt den magischen Angriffs-Attribut-Schlüssel zurück (aus Klassen-Item oder Fallback "in")
-function _getMagicAttrKey(actor) {
-  const classItem = actor.items?.find(i => i.type === "class");
-  return classItem?.system?.magicAttribute || "in";
-}
 
 // Gibt den aktuellen MP-Wert zurück (alle Actor-Typen nutzen resources.mp.value)
 function _getCurrentMp(actor) {
@@ -72,6 +60,25 @@ export class AboreaCombat extends Combat {
 //  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
+/**
+ * Wer in dieser Runde gezaubert hat, bekommt keinen Defensivbonus: der
+ * Kampfbonus zählt beim Zaubern vollständig offensiv.
+ *
+ * Gemerkt wird die Rundennummer, nicht ein Schalter — damit gilt es genau
+ * für diese Runde und löst sich von selbst auf, ohne die gespeicherte
+ * Offensiv/Defensiv-Aufteilung des Charakters anzutasten.
+ */
+export async function markSpellcast(actor) {
+  const round = game.combat?.round;
+  if (!round || !actor) return;
+  await actor.setFlag("aborea-v7", "spellcastRound", round);
+}
+
+function _hasCastThisRound(actor) {
+  const round = game.combat?.round;
+  return !!round && Number(actor?.flags?.["aborea-v7"]?.spellcastRound) === round;
+}
+
 /** Manöverbonus aus Active Effects (Beistand, Fluch, Trübung …). */
 function _maneuverBonus(actor) {
   return Number(actor?.system?.traits?.maneuverBonus ?? 0);
@@ -99,9 +106,10 @@ function _dv(actor) {
   const armorFromItems = actor.items
     .filter(i => i.type === "armor" && i.system.equipped)
     .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-  return ABOREA.defenseValue(
-    baseArmor + armorFromItems,
-    Number(actor.system.combat?.defensiveBonus ?? 0) + _maneuverBonus(actor));
+  const defensiveBonus = _hasCastThisRound(actor)
+    ? 0
+    : Number(actor.system.combat?.defensiveBonus ?? 0);
+  return ABOREA.defenseValue(baseArmor + armorFromItems, defensiveBonus + _maneuverBonus(actor));
 }
 
 function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
@@ -188,12 +196,12 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const targetedSpells = actor.items.filter(i =>
       ["spell", "miracle"].includes(i.type) && i.system.targeted
     );
-    const magicAttr  = _getMagicAttrKey(actor);
-    const attrValue  = Number(actor.system.finalAttributes?.[magicAttr]?.value ?? actor.system.attributes?.[magicAttr]?.value ?? 5);
-    const attrBonus  = ABOREA.attributeBonus(attrValue);
-    const skillRank  = _getGezielteSpruecheRank(actor);
-    const classBonus = Number(actor.system.classFeatures?.bonuses?.gezielteSprueche ?? 0);
-    const spellAttackBonus = attrBonus + skillRank + classBonus;
+    // Zauberangriffsbonus aus derselben Quelle wie Fertigkeitsprobe und Waffen.
+    // skillBonus kennt das magicAttribute der Klasse, holt NPC- und
+    // Kreaturenränge aus magicSkills und vergibt bei Magie keinen
+    // Ungelernt-Malus.
+    const spellB = skillBonus(actor, "gezielteSprueche");
+    const spellAttackBonus = spellB.total;
     const currentMp    = _getCurrentMp(actor);
     const currentMpMax = Number(actor.system.resources?.mp?.max ?? currentMp);
 
@@ -234,9 +242,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       }),
       hasSpells:        targetedSpells.length > 0,
       spellAttackBonus,
-      signedAttrBonus:  _sign(attrBonus),
-      signedSkillRank:  _sign(skillRank),
-      signedClassBonus: _sign(classBonus),
+      spellBonusBreakdown: formatBreakdown(spellB.breakdown).join(" + "),
       currentMp,
       currentMpMax,
       targetCandidates: _buildTargetCandidates(attackerTokenId),
@@ -616,6 +622,7 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
   const currentMp = _getCurrentMp(attackerActor);
   if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
   await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
+  await markSpellcast(attackerActor);
 
   // Pro Ziel: eigener Treffer-Wurf
   const rolls = [];
@@ -672,6 +679,7 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
       <div class="ac-row"><span>Angriffsbonus</span><span>${_sign(spellBonus)}</span></div>
       ${situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>` : ""}
       ${targets.length > 1 ? `<div class="ac-row"><span>Ziele</span><span>${targets.length}</span></div>` : ""}
+      <div class="ac-row ac-penalty"><span>Defensivbonus</span><span>entfällt diese Runde</span></div>
     </div>
     ${cardRows}
     ${effectSection}
@@ -905,6 +913,7 @@ export {
   _maneuverBonus     as maneuverBonus,
   _bonusWeaponDamage as bonusWeaponDamage,
   _hpColor           as hpColor,
+  _hasCastThisRound  as hasCastThisRound,
 };
 
 // ══════════════════════════════════════════════════════════════════
