@@ -33,7 +33,9 @@ else console.log(`✔ Syntax: ${modules.length} Module in Ordnung`);
 
 // ── 2. Testsuite ──────────────────────────────────────────────────────────
 console.log("");
-const tests = run(["--test", "tests/**/*.test.mjs"]);
+// dot-Reporter: eine Zeile statt 200. Bei Fehlern bleiben die Diagnosen.
+const reporter = process.env.ABOREA_TEST_VERBOSE ? "spec" : "dot";
+const tests = run(["--test", `--test-reporter=${reporter}`, "tests/**/*.test.mjs"]);
 if (tests.status !== 0) failed = true;
 
 if (failed) {
