@@ -308,22 +308,46 @@ export async function chooseMpCost(item) {
   });
 }
 
+const WORD_NUMBERS = {
+  ein: 1, eine: 1, einen: 1, einem: 1, einer: 1,
+  zwei: 2, drei: 3, vier: 4, fünf: 5, sechs: 6,
+  sieben: 7, acht: 8, neun: 9, zehn: 10, zwölf: 12,
+};
+
+// Die Menge steht optional vor der Einheit: "3 Runden", "eine Stunde",
+// oder gar nichts ("Stunde/1 MP").
+const DURATION_UNITS = [
+  [/(?:(\d+|[a-zäöüß]+)\s*)?\brunde/,  n => ({ rounds:  n })],
+  [/(?:(\d+|[a-zäöüß]+)\s*)?\bmin/,    n => ({ seconds: n * 60 })],
+  [/(?:(\d+|[a-zäöüß]+)\s*)?\bstunde/, n => ({ seconds: n * 3600 })],
+  [/(?:(\d+|[a-zäöüß]+)\s*)?\btag/,    n => ({ seconds: n * 86400 })],
+];
+
+/** Ziffer oder ausgeschriebene Zahl aus einem Einheiten-Treffer; sonst 1. */
+function _amount(match) {
+  if (match[1] === undefined) return 1;
+  return /^\d+$/.test(match[1]) ? Number(match[1]) : (WORD_NUMBERS[match[1]] ?? 1);
+}
+
+/**
+ * Liest eine Dauerangabe wie "3 Runden/1 MP" oder "eine Stunde/2 MP".
+ *
+ * Die Menge vor der Einheit ist der Faktor, "/N MP" der Teiler: bei 5 MP
+ * ergibt "3 Runden/1 MP" 15 Runden und "eine Stunde/2 MP" zwei Stunden.
+ * Ohne erkennbare Einheit bleibt der Effekt dauerhaft.
+ */
 export function parseSimpleDuration(item, mpCost) {
   const txt = String(item.system?.duration || "").toLowerCase();
-  const roundsMatch  = txt.match(/(\d+)\s*runde/);
-  const minutesMatch = txt.match(/(\d+)\s*min/);
-  const hoursMatch   = txt.match(/(\d+)\s*stunde/);
-  const daysMatch    = txt.match(/(\d+)\s*tag/);
-  if (txt.includes("/1 mp")) {
-    if (txt.includes("runde"))  return { rounds:  Math.max(1, mpCost) };
-    if (txt.includes("min"))    return { seconds: 60   * Math.max(1, mpCost) };
-    if (txt.includes("stunde")) return { seconds: 3600 * Math.max(1, mpCost) };
-    if (txt.includes("tag"))    return { seconds: 86400 * Math.max(1, mpCost) };
+  if (!txt) return {};
+
+  const perMp    = txt.match(/\/\s*(\d+)\s*mp/);
+  const mp       = Math.max(1, Number(mpCost) || 0);
+  const portions = perMp ? Math.max(1, Math.floor(mp / Number(perMp[1]))) : 1;
+
+  for (const [pattern, build] of DURATION_UNITS) {
+    const m = txt.match(pattern);
+    if (m) return build(_amount(m) * portions);
   }
-  if (roundsMatch)  return { rounds:  Number(roundsMatch[1]) };
-  if (minutesMatch) return { seconds: 60   * Number(minutesMatch[1]) };
-  if (hoursMatch)   return { seconds: 3600 * Number(hoursMatch[1]) };
-  if (daysMatch)    return { seconds: 86400 * Number(daysMatch[1]) };
   return {};
 }
 

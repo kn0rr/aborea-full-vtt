@@ -37,16 +37,44 @@ test("parseSimpleDuration: Formen, die im Kompendium vorkommen", async t => {
     assert.deepEqual(parseSimpleDuration(mitDauer("EINE RUNDE/1 MP"), 2), { rounds: 2 }));
 });
 
-test("parseSimpleDuration: ausgeschriebene Zahlen", { todo: "Parser erkennt nur Ziffern — siehe Befund" }, async t => {
-  // Sieben von 36 Dauer-Texten im Kompendium ergeben heute {} und damit einen
-  // dauerhaften Effekt, weil die Regexe eine Ziffer verlangen:
-  //   "eine Stunde", "einen Tag", "eine Stunde/2 MP", "ein Jahr/1 MP …"
+test("parseSimpleDuration: ausgeschriebene Zahlen", async t => {
+  // Das Kompendium schreibt Zahlen aus; früher verlangten die Regexe eine
+  // Ziffer und lieferten {} — der Effekt wurde dadurch dauerhaft.
   await t.test("eine Stunde", () =>
     assert.deepEqual(parseSimpleDuration(mitDauer("eine Stunde"), 5), { seconds: 3600 }));
   await t.test("einen Tag", () =>
     assert.deepEqual(parseSimpleDuration(mitDauer("einen Tag"), 5), { seconds: 86400 }));
-  await t.test("eine Stunde/2 MP", () =>
-    assert.deepEqual(parseSimpleDuration(mitDauer("eine Stunde/2 MP"), 4), { seconds: 2 * 3600 }));
+  await t.test("drei Runden", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("drei Runden"), 5), { rounds: 3 }));
+  await t.test("unbekanntes Wort davor zählt als 1", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("lange Stunde"), 5), { seconds: 3600 }));
+});
+
+test("parseSimpleDuration: Faktor und Teiler", async t => {
+  // Die Menge vor der Einheit ist der Faktor, "/N MP" der Teiler.
+  await t.test("3 Runden/1 MP bei 5 MP sind 15 Runden", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("3 Runden/1 MP"), 5), { rounds: 15 }));
+  await t.test("10 Min./1 MP bei 5 MP sind 50 Minuten", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("10 Min./1 MP"), 5), { seconds: 3000 }));
+  await t.test("eine Stunde/2 MP bei 5 MP sind 2 Stunden", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("eine Stunde/2 MP"), 5), { seconds: 7200 }));
+  await t.test("eine Stunde/2 MP bei 1 MP bleibt 1 Stunde", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("eine Stunde/2 MP"), 1), { seconds: 3600 }));
+  await t.test("1 Min./5 MP bei 5 MP ist 1 Minute", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("1 Min./5 MP"), 5), { seconds: 60 }));
+  await t.test("ohne MP-Angabe zählt die Dauer einmal", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("2 Stunden"), 9), { seconds: 7200 }));
+});
+
+test("parseSimpleDuration: Randfälle aus dem Kompendium", async t => {
+  await t.test("Einheit ohne Menge", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("Stunde/1 MP"), 5), { seconds: 18000 }));
+  await t.test("Fließtext um die Angabe herum", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("eine Stunde beizustehen (Stufe/1 MP)"), 5), { seconds: 18000 }));
+  await t.test("Stunde enthält kein Runde", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("eine Stunde"), 1), { seconds: 3600 }));
+  await t.test("ohne Zeiteinheit dauerhaft", () =>
+    assert.deepEqual(parseSimpleDuration(mitDauer("Dauer des Auftritts"), 5), {}));
 });
 
 test("inferEffects", async t => {

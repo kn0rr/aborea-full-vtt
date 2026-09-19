@@ -275,8 +275,6 @@ Was geprüft wird:
 | `tests/pack-builder.test.mjs` | Schutz manuell geänderter Kompendium-Einträge |
 | `tests/data.test.mjs` | Kompendiumsdaten gegen Schema und Config |
 
-Als `todo` markierte Tests beschreiben bekannte, noch nicht behobene Fehler.
-Sie lassen den Lauf nicht scheitern, tauchen aber in der Ausgabe auf.
 
 `tests/data.test.mjs` fängt die Fehlerklasse ab, die hier mehrfach aufgetreten
 ist: ein Feld, das syntaktisch gültig ist, aber vom Code anders gemeint war —
