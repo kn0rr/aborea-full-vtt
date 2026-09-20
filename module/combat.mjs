@@ -2,7 +2,8 @@ import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
-import { roundSplit, buildDeclaration, splitLabel, canRedeclare, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
+import { roundSplit, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
+         SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan } from "./targeting.mjs";
 import { SETTINGS, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
          shouldResetSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
@@ -257,6 +258,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       targetCandidates: _buildTargetCandidates(attackerTokenId),
       combatBonus,
       currentOffBonus,
+      splitMin: splitRange(combatBonus).min,
+      splitMax: splitRange(combatBonus).max,
       globalSituMod,
       initialPenalty,
       minStrengthMod,
@@ -335,12 +338,16 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       if (cbBreakdown) cbBreakdown.textContent = cb ? formatBreakdown(cb.breakdown).join(" · ") : "";
       if (_isCreatureOrNpc) {
         if (cbHint) cbHint.textContent = _storedCB;
-        if (offBonusInput) offBonusInput.max = 99;
+        if (offBonusInput) { offBonusInput.min = -99; offBonusInput.max = 99; }
       } else {
         if (cbHint) cbHint.textContent = bestCB;
         if (offBonusInput) {
-          offBonusInput.max = bestCB;
-          if (Number(offBonusInput.value) > bestCB) offBonusInput.value = bestCB;
+          // Ein negativer Kampfbonus ist ein Malus, der sich verschieben
+          // lässt: bei −1 sind −2 offensiv und dafür +1 defensiv erlaubt.
+          const range = splitRange(bestCB);
+          offBonusInput.min = range.min;
+          offBonusInput.max = range.max;
+          offBonusInput.value = clampOffensive(offBonusInput.value, bestCB);
         }
       }
     };
@@ -1088,7 +1095,10 @@ function _buildCombatantState(actor, round) {
       </span>
     </div>`;
 
-  const canEdit = (actor.isOwner || game.user.isGM) && split.pool > 0 && canRedeclare(actor, round);
+  // Auch ein negativer Kampfbonus laesst sich verschieben — nur bei genau 0
+  // gibt es nichts zu verteilen.
+  const range   = splitRange(split.pool);
+  const canEdit = (actor.isOwner || game.user.isGM) && range.min !== range.max && canRedeclare(actor, round);
   if (!canEdit) return wrap;
 
   const controls = document.createElement("div");
@@ -1096,8 +1106,8 @@ function _buildCombatantState(actor, round) {
   controls.innerHTML = `
     <button type="button" class="acs-mode${split.mode === "weapon" ? " active" : ""}"
             data-mode="weapon" title="Mit der Waffe kämpfen">⚔</button>
-    <input type="range" class="acs-offensive" min="0" max="${split.pool}" value="${split.offensive}"
-           title="Offensivanteil des Kampfbonus" />
+    <input type="range" class="acs-offensive" min="${range.min}" max="${range.max}" value="${split.offensive}"
+           title="Offensivanteil des Kampfbonus (${range.min} bis ${range.max})" />
     <button type="button" class="acs-mode${split.mode === "spell" ? " active" : ""}"
             data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>`;
 

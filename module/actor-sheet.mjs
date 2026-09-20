@@ -7,6 +7,7 @@ import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
 import { rollSkill, rollAttribute } from "./dice.mjs";
 import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
+import { splitRange } from "./declaration.mjs";
 import { openAttackDialog, declareRound } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
@@ -188,6 +189,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     system.combat.totalArmorValue = baseArmor + armorFromItems;
     system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
     system.combat.initiative = ABOREA.initiativeBonus(actor);
+    // Grenzen der Offensiv/Defensiv-Aufteilung — ein negativer Kampfbonus
+    // laesst sich verschieben, darf also nicht auf [0, Bonus] geklemmt werden.
+    Object.assign(system.combat, (({ min, max }) => ({ splitMin: min, splitMax: max }))(
+      splitRange(system.combat?.combatBonus ?? 0)));
 
     // Kampfbonus-Tooltip: Fertigkeit der besten ausgerüsteten Waffe, Fallback auf beste Fertigkeit
     {

@@ -49,8 +49,29 @@ export function roundSplit(actor, round) {
     return { declared: true, locked: !!decl.locked, mode: "spell", pool, offensive: pool, defensive: 0 };
   }
 
-  const offensive = Math.max(0, Math.min(pool, Number(decl.offensive ?? 0)));
+  const offensive = clampOffensive(decl.offensive, pool);
   return { declared: true, locked: !!decl.locked, mode: "weapon", pool, offensive, defensive: pool - offensive };
+}
+
+/**
+ * In welchem Bereich darf der Offensivanteil liegen?
+ *
+ * Die einzige feste Regel ist `offensiv + defensiv = Kampfbonus`. Bei einem
+ * positiven Bonus verteilt man ihn zwischen 0 und dem vollen Wert. Bei einem
+ * **negativen** Bonus ist es ein Malus, den man verschieben kann: wer bei −1
+ * die Offensive mit −2 belastet, bekommt dafür +1 auf die Defensive. Eine
+ * Klemmung auf [0, Kampfbonus] hätte das unmöglich gemacht und jeden
+ * negativen Bonus auf 0/−1 festgenagelt.
+ */
+export function splitRange(pool) {
+  const p = Number(pool) || 0;
+  return { min: Math.min(0, p * 2), max: Math.max(0, p) };
+}
+
+/** Hält den Offensivanteil im erlaubten Bereich — auch bei negativem Bonus. */
+export function clampOffensive(offensive, pool) {
+  const { min, max } = splitRange(pool);
+  return Math.max(min, Math.min(max, Number(offensive) || 0));
 }
 
 /** Eine neue Erklärung für diese Runde — ungespeichert, nur der Wert. */
@@ -58,7 +79,7 @@ export function buildDeclaration(round, { mode = "weapon", offensive = 0, pool =
   return {
     round: Number(round),
     mode:  mode === "spell" ? "spell" : "weapon",
-    offensive: mode === "spell" ? Number(pool) : Math.max(0, Math.min(Number(pool), Number(offensive))),
+    offensive: mode === "spell" ? Number(pool) : clampOffensive(offensive, pool),
     locked: !!locked,
   };
 }

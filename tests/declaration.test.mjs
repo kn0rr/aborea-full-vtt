@@ -8,6 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   declarationFor, roundSplit, buildDeclaration, splitLabel, canRedeclare,
+  splitRange, clampOffensive,
 } from "../module/declaration.mjs";
 
 /** Actor mit Kampfbonus-Pool und optionaler Erklärung. */
@@ -112,4 +113,67 @@ test("splitLabel für den Tracker", async t => {
     assert.equal(splitLabel({ mode: "weapon", offensive: 4, defensive: 2 }), "⚔4 / 🛡2"));
   await t.test("Zauber zeigt den Modus", () =>
     assert.equal(splitLabel({ mode: "spell", offensive: 6, defensive: 0 }), "✨ Zauber"));
+});
+
+test("negativer Kampfbonus laesst sich verschieben", async t => {
+  // Ein negativer Kampfbonus ist ein Malus. Er wird nicht auf [0, Bonus]
+  // geklemmt, sonst waere jede Verteilung unmoeglich: Math.max(0, Math.min(-1, x))
+  // ergibt immer 0.
+  const mit = (pool, offensiv) => roundSplit({
+    type: "character",
+    flags: { "aborea-v7": { declaration: { round: 3, mode: "weapon", offensive: offensiv } } },
+    system: { combat: { combatBonus: pool } },
+  }, 3);
+
+  await t.test("Kampfbonus -1, offensiv -2 gibt defensiv +1", () => {
+    const s = mit(-1, -2);
+    assert.equal(s.offensive, -2);
+    assert.equal(s.defensive, 1);
+  });
+  await t.test("Kampfbonus -1, offensiv -1 gibt defensiv 0", () => {
+    const s = mit(-1, -1);
+    assert.equal(s.defensive, 0);
+  });
+  await t.test("Kampfbonus -1, offensiv 0 gibt defensiv -1", () => {
+    const s = mit(-1, 0);
+    assert.equal(s.defensive, -1);
+  });
+  await t.test("die Summe bleibt immer der Kampfbonus", () => {
+    for (const pool of [-4, -2, -1, 0, 1, 3, 6]) {
+      for (let off = -10; off <= 10; off++) {
+        const s = mit(pool, off);
+        assert.equal(s.offensive + s.defensive, pool,
+          `Pool ${pool}, offensiv ${off}: Summe stimmt nicht`);
+      }
+    }
+  });
+});
+
+test("splitRange: erlaubter Bereich des Offensivanteils", async t => {
+  await t.test("positiver Bonus: 0 bis voller Wert", () =>
+    assert.deepEqual(splitRange(6), { min: 0, max: 6 }));
+  await t.test("negativer Bonus: doppelter Wert bis 0", () =>
+    assert.deepEqual(splitRange(-1), { min: -2, max: 0 }));
+  await t.test("Kampfbonus -3", () =>
+    assert.deepEqual(splitRange(-3), { min: -6, max: 0 }));
+  await t.test("Kampfbonus 0 laesst nichts zu verteilen", () =>
+    assert.deepEqual(splitRange(0), { min: 0, max: 0 }));
+  await t.test("unbrauchbarer Wert wie 0", () =>
+    assert.deepEqual(splitRange(undefined), { min: 0, max: 0 }));
+});
+
+test("clampOffensive", async t => {
+  await t.test("im Bereich unveraendert", () => assert.equal(clampOffensive(4, 6), 4));
+  await t.test("ueber dem Bonus geklemmt", () => assert.equal(clampOffensive(9, 6), 6));
+  await t.test("unter 0 bei positivem Bonus geklemmt", () => assert.equal(clampOffensive(-5, 6), 0));
+  await t.test("negativer Bonus laesst negative Werte zu", () => assert.equal(clampOffensive(-2, -1), -2));
+  await t.test("negativer Bonus klemmt beim doppelten", () => assert.equal(clampOffensive(-9, -1), -2));
+  await t.test("negativer Bonus klemmt nach oben bei 0", () => assert.equal(clampOffensive(3, -1), 0));
+});
+
+test("buildDeclaration mit negativem Kampfbonus", async t => {
+  await t.test("erlaubt die Verschiebung", () =>
+    assert.equal(buildDeclaration(3, { mode: "weapon", offensive: -2, pool: -1 }).offensive, -2));
+  await t.test("klemmt jenseits des Bereichs", () =>
+    assert.equal(buildDeclaration(3, { mode: "weapon", offensive: -99, pool: -1 }).offensive, -2));
 });

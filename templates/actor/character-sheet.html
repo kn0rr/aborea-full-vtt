@@ -319,7 +319,7 @@
             <div class="combat-split-bars">
               <div class="split-bar-off" style="flex:{{system.combat.offensiveBonus}}">
                 <span>⚔ {{localize "ABOREA.OffensiveBonus"}}</span>
-                <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" min="0" max="{{system.combat.combatBonus}}" />
+                <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" min="{{system.combat.splitMin}}" max="{{system.combat.splitMax}}" />
               </div>
               <div class="split-bar-def" style="flex:{{system.combat.defensiveBonus}}">
                 <span>🛡 {{localize "ABOREA.DefensiveBonus"}}</span>
