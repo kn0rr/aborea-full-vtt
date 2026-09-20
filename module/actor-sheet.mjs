@@ -7,7 +7,7 @@ import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
 import { rollSkill, rollAttribute } from "./dice.mjs";
 import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
-import { splitRange } from "./declaration.mjs";
+import { splitRange, carrySplit } from "./declaration.mjs";
 import { openAttackDialog, declareRound } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
@@ -507,16 +507,16 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const best   = weaponCombatBonus(this.actor, { skillKeys: ABOREA.weaponSkillKeys, trainedOnly: true });
     if (!best) return; // keine ausgebildeten Fertigkeiten → manuell belassen
     const bestCB = best.total;
-    // Bestehende Off/Def-Aufteilung proportional beibehalten
-    const prevCB  = Number(system.combat?.combatBonus ?? bestCB) || bestCB;
+    // Bestehende Off/Def-Aufteilung proportional beibehalten. Die Summe muss
+    // den Kampfbonus ergeben — ein Klemmen beider Haelften auf >= 0 hat bei
+    // negativem Bonus beide auf 0 gesetzt und die Aufteilung zerstoert.
+    const prevCB  = Number(system.combat?.combatBonus ?? bestCB);
     const prevOff = Number(system.combat?.offensiveBonus ?? prevCB);
-    const ratio   = prevOff / prevCB;
-    const newOff  = Math.round(bestCB * ratio);
-    const newDef  = bestCB - newOff;
+    const newOff  = carrySplit(prevOff, prevCB, bestCB);
     await this.actor.update({
       "system.combat.combatBonus":    bestCB,
-      "system.combat.offensiveBonus": Math.max(0, Math.min(bestCB, newOff)),
-      "system.combat.defensiveBonus": Math.max(0, newDef)
+      "system.combat.offensiveBonus": newOff,
+      "system.combat.defensiveBonus": bestCB - newOff
     });
   }
 
@@ -1313,9 +1313,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const bestCombatBonus = weaponCombatBonus(this.actor, {
       skillKeys: ABOREA.weaponSkillKeys, attributes: finalAttrs,
     })?.total ?? 0;
-    // Bestehende Offensive/Defensive-Aufteilung beibehalten, aber auf neuen Total kappen
+    // Bestehende Offensive/Defensive-Aufteilung auf den neuen Bonus uebertragen
+    const prevCB  = Number(actorSystem.combat?.combatBonus ?? bestCombatBonus);
     const prevOff = Number(actorSystem.combat?.offensiveBonus ?? bestCombatBonus);
-    const newOff  = Math.min(prevOff, bestCombatBonus);
+    const newOff  = carrySplit(prevOff, prevCB, bestCombatBonus);
     const newDef  = bestCombatBonus - newOff;
 
     await this.actor.update({

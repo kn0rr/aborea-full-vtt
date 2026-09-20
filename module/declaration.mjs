@@ -74,6 +74,22 @@ export function clampOffensive(offensive, pool) {
   return Math.max(min, Math.min(max, Number(offensive) || 0));
 }
 
+/**
+ * Überträgt eine bestehende Aufteilung auf einen neuen Kampfbonus, wenn der
+ * sich ändert (Fertigkeit gesteigert, Waffe gewechselt, Stufe aufgestiegen).
+ *
+ * Das Verhältnis bleibt erhalten, soweit es eins gibt. Ohne brauchbare
+ * Vorgeschichte — etwa wenn der alte Bonus 0 war — geht alles offensiv;
+ * eine Division durch 0 hätte sonst NaN in den Actor geschrieben.
+ */
+export function carrySplit(previousOffensive, previousPool, newPool) {
+  const prevPool = Number(previousPool) || 0;
+  const prevOff  = Number(previousOffensive) || 0;
+  const pool     = Number(newPool) || 0;
+  const ratio    = prevPool !== 0 ? prevOff / prevPool : 1;
+  return clampOffensive(Math.round(pool * ratio), pool);
+}
+
 /** Eine neue Erklärung für diese Runde — ungespeichert, nur der Wert. */
 export function buildDeclaration(round, { mode = "weapon", offensive = 0, pool = 0, locked = false } = {}) {
   return {

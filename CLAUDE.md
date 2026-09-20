@@ -22,6 +22,29 @@ umgehen ist kein Weg, einen fehlschlagenden Test loszuwerden.
 Alles, was rechnet oder entscheidet: Boni, Schaden, Verteidigungswert,
 Würfelmechanik, Dauern, Fortschritt, Datenkonsistenz der Kompendien.
 
+### Tests müssen die Regel prüfen, nicht den Code
+
+Ein Test, der aus der fertigen Implementierung abgeleitet wird, bestätigt
+deren blinde Flecken, statt sie zu finden.
+
+Die Aufteilung des Kampfbonus war auf `[0, Kampfbonus]` geklemmt. Dazu gab es
+neun Tests — alle mit einem Kampfbonus von 6. Sie prüften die Grenzen, die ich
+gebaut hatte, statt der Regel, die gilt: *offensiv und defensiv ergeben
+zusammen den Kampfbonus*. Bei einem negativen Bonus fiel die Aufteilung damit
+auf 0 zusammen, und kein Test schlug an. Ein negativer Kampfbonus ist dabei
+nicht exotisch, sondern der Normalfall für eine ungelernte Waffe.
+
+Daraus drei Gewohnheiten:
+
+- **Die Invariante prüfen**, nicht nur einzelne Fälle. Eine Schleife über einen
+  Wertebereich, die `offensiv + defensiv === Kampfbonus` sicherstellt, hätte
+  den Fehler sofort gezeigt.
+- **Den Eingabebereich variieren.** Negative Werte, 0, leere Eingaben. Wer
+  jeden Test mit demselben Wert schreibt, testet einen Punkt, keine Funktion.
+- **Nach Division und Klemmung fragen:** Was passiert bei 0? Bei negativen
+  Zahlen? Kommt eine endliche Zahl heraus? Ein `prevOff / prevPool` hat NaN in
+  einen Actor geschrieben, weil niemand nach dem Nenner 0 gefragt hat.
+
 ### Was nicht getestet werden kann
 
 Foundry-Interaktion — Dialoge, Chatkarten, Sheet-Rendering, das Anlegen von

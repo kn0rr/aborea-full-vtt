@@ -8,7 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   declarationFor, roundSplit, buildDeclaration, splitLabel, canRedeclare,
-  splitRange, clampOffensive,
+  splitRange, clampOffensive, carrySplit,
 } from "../module/declaration.mjs";
 
 /** Actor mit Kampfbonus-Pool und optionaler Erklärung. */
@@ -176,4 +176,47 @@ test("buildDeclaration mit negativem Kampfbonus", async t => {
     assert.equal(buildDeclaration(3, { mode: "weapon", offensive: -2, pool: -1 }).offensive, -2));
   await t.test("klemmt jenseits des Bereichs", () =>
     assert.equal(buildDeclaration(3, { mode: "weapon", offensive: -99, pool: -1 }).offensive, -2));
+});
+
+test("carrySplit: Aufteilung auf einen neuen Kampfbonus uebertragen", async t => {
+  await t.test("Verhaeltnis bleibt erhalten", () =>
+    assert.equal(carrySplit(4, 6, 3), 2));          // zwei Drittel offensiv
+  await t.test("alles offensiv bleibt alles offensiv", () =>
+    assert.equal(carrySplit(6, 6, 4), 4));
+  await t.test("alles defensiv bleibt alles defensiv", () =>
+    assert.equal(carrySplit(0, 6, 4), 0));
+
+  await t.test("negativer neuer Bonus zerstoert die Aufteilung nicht", () => {
+    // Vorher wurden beide Haelften auf >= 0 geklemmt und ergaben 0/0 statt
+    // einer Summe von -2.
+    const off = carrySplit(4, 6, -2);
+    assert.equal(off + (-2 - off), -2);
+    assert.ok(off >= -4 && off <= 0, `Offensivanteil ${off} liegt ausserhalb des erlaubten Bereichs`);
+  });
+
+  await t.test("alter Bonus 0 ergibt kein NaN", () => {
+    // prevOff / prevPool war eine Division durch 0 und schrieb NaN in den
+    // Actor.
+    const off = carrySplit(0, 0, -2);
+    assert.ok(Number.isFinite(off), `carrySplit lieferte ${off}`);
+    assert.equal(off, -2);
+  });
+
+  await t.test("unbrauchbare Eingaben ergeben endliche Werte", () => {
+    for (const args of [[undefined, undefined, 4], [NaN, 3, 4], ["x", "y", 6], [4, 6, undefined]]) {
+      assert.ok(Number.isFinite(carrySplit(...args)), `carrySplit(${args}) ist nicht endlich`);
+    }
+  });
+
+  await t.test("die Summe ergibt immer den neuen Bonus", () => {
+    for (const prevPool of [-3, 0, 2, 6]) {
+      for (const prevOff of [-4, 0, 2, 6]) {
+        for (const newPool of [-3, -1, 0, 1, 5]) {
+          const off = carrySplit(prevOff, prevPool, newPool);
+          assert.equal(off + (newPool - off), newPool);
+          assert.ok(Number.isFinite(off));
+        }
+      }
+    }
+  });
 });
