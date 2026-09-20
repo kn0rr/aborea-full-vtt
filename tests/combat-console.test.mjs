@@ -6,7 +6,7 @@
 import "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildConsoleRows, assignableTargets, isDefeated, maneuverChoices } from "../module/combat-console.mjs";
+import { buildConsoleRows, assignableTargets, isDefeated } from "../module/combat-console.mjs";
 
 const eintrag = (id, over = {}) => ({
   id, actorId: `a-${id}`, name: over.name ?? id,
@@ -108,15 +108,4 @@ test("assignableTargets", async t => {
     assert.deepEqual(assignableTargets(rows, "c1").map(r => r.name), ["Goblin"]));
   await t.test("leere Eingabe", () =>
     assert.deepEqual(assignableTargets(null, "c1"), []));
-});
-
-test("maneuverChoices", async t => {
-  const choices = maneuverChoices();
-  await t.test("alle Stufen", () => assert.ok(choices.length >= 8));
-  await t.test("Wert im Label", () =>
-    assert.ok(choices.every(c => c.label.includes(String(c.value)))));
-  await t.test("aufsteigend schwerer", () => {
-    const werte = choices.map(c => c.value);
-    assert.deepEqual(werte, [...werte].sort((a, b) => a - b));
-  });
 });

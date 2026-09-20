@@ -3,7 +3,8 @@ import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
 import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
-         defenseAgainst, defenseRemaining, spendDefense, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
+         defenseAgainst, defenseRemaining, spendDefense, fleeDefenseBonus, isFleeing,
+         SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan } from "./targeting.mjs";
 import { SETTINGS, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
          shouldResetSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
@@ -89,6 +90,23 @@ export async function declareRound(actor, { mode = "weapon", offensive = 0, lock
   return roundSplit(actor, round);
 }
 
+/** Initiative eines Actors im laufenden Kampf. */
+function _initiativeOf(actor) {
+  const c = (game.combat?.combatants ?? []).find?.(x => x.actor?.id === actor?.id)
+         ?? [...(game.combat?.combatants ?? [])].find(x => x.actor?.id === actor?.id);
+  return Number(c?.initiative ?? 0) || 0;
+}
+
+/**
+ * Fluchtbonus auf den Defensivbonus gegen diesen Angreifer.
+ * Nur wer Flucht erklärt hat und schneller ist als der Angreifer, bekommt
+ * die Initiative-Differenz gutgeschrieben.
+ */
+function _fleeBonus(defender, attackerActor) {
+  if (!attackerActor || !isFleeing(defender, game.combat?.round)) return 0;
+  return fleeDefenseBonus(_initiativeOf(defender), _initiativeOf(attackerActor));
+}
+
 /** Manöverbonus aus Active Effects (Beistand, Fluch, Trübung …). */
 function _maneuverBonus(actor) {
   return Number(actor?.system?.traits?.maneuverBonus ?? 0);
@@ -150,7 +168,8 @@ async function _dvConsuming(defender, attackerActor, wanted = null) {
   const armorFromItems = defender.items
     .filter(i => i.type === "armor" && i.system.equipped)
     .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-  return ABOREA.defenseValue(baseArmor + armorFromItems, applied + _maneuverBonus(defender));
+  return ABOREA.defenseValue(baseArmor + armorFromItems,
+    applied + _maneuverBonus(defender) + _fleeBonus(defender, attackerActor));
 }
 
 function _dv(actor, attackerActor = null) {
@@ -163,7 +182,7 @@ function _dv(actor, attackerActor = null) {
     .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
   return ABOREA.defenseValue(
     baseArmor + armorFromItems,
-    _defensiveFor(actor, attackerActor) + _maneuverBonus(actor));
+    _defensiveFor(actor, attackerActor) + _maneuverBonus(actor) + _fleeBonus(actor, attackerActor));
 }
 
 function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
@@ -575,6 +594,12 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 // ══════════════════════════════════════════════════════════════════
 
 export async function openAttackDialog(attackerActor, options = {}) {
+  // Flucht ist die einzige Handlung der Runde — wer sie erklärt hat, greift
+  // nicht mehr an.
+  if (isFleeing(attackerActor, game.combat?.round)) {
+    ui.notifications.warn(`ABOREA: ${attackerActor.name} flieht in dieser Runde und kann nicht angreifen.`);
+    return;
+  }
   const weapons       = attackerActor.items.filter(i => i.type === "weapon" && i.system.equipped);
   const targetedSpells = attackerActor.items.filter(i =>
     ["spell", "miracle"].includes(i.type) && i.system.targeted
@@ -1169,7 +1194,9 @@ function _buildCombatantState(actor, round) {
     <input type="range" class="acs-offensive" min="${range.min}" max="${range.max}" value="${split.offensive}"
            title="Offensivanteil des Kampfbonus (${range.min} bis ${range.max})" />
     <button type="button" class="acs-mode${split.mode === "spell" ? " active" : ""}"
-            data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>`;
+            data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>
+    <button type="button" class="acs-mode${split.mode === "flee" ? " active" : ""}"
+            data-mode="flee" title="Fliehen — einzige Handlung, der Gegner schlägt noch einmal zu">🏃</button>`;
 
   const slider = controls.querySelector(".acs-offensive");
   slider.addEventListener("change", ev => {

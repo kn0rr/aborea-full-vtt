@@ -10,6 +10,7 @@ import {
   declarationFor, roundSplit, buildDeclaration, splitLabel, canRedeclare,
   splitRange, clampOffensive, carrySplit,
   defenseSpentTotal, defenseRemaining, spendDefense, defenseAgainst,
+  fleeDefenseBonus, isFleeing,
 } from "../module/declaration.mjs";
 
 /** Actor mit Kampfbonus-Pool und optionaler Erklärung. */
@@ -336,4 +337,62 @@ test("buildDeclaration mit Verbrauch", async t => {
   await t.test("beim Zaubern weggelassen", () =>
     assert.equal("defenseSpent" in buildDeclaration(1, { mode: "spell", pool: 5,
       defenseSpent: { g1: 2 } }), false));
+});
+
+test("Flucht: der Gegner schlaegt noch einmal zu", async t => {
+  // Wer flieht, bekommt (fast) immer noch einen letzten Angriff ab. Nur die
+  // Initiative entscheidet, wie schwer der zu treffen ist.
+
+  await t.test("Beispiel aus dem Buch: INI +2 gegen INI -1 gibt +3", () =>
+    assert.equal(fleeDefenseBonus(2, -1), 3));
+
+  await t.test("langsamer als der Gegner: kein Bonus, aber auch kein Abzug", () => {
+    assert.equal(fleeDefenseBonus(-1, 2), 0);
+    assert.equal(fleeDefenseBonus(0, 5), 0);
+  });
+
+  await t.test("gleiche Initiative gibt nichts", () =>
+    assert.equal(fleeDefenseBonus(3, 3), 0));
+
+  await t.test("beide negativ", () => assert.equal(fleeDefenseBonus(-1, -4), 3));
+
+  await t.test("unbrauchbare Werte zaehlen als 0", () => {
+    assert.equal(fleeDefenseBonus(undefined, -2), 2);
+    assert.equal(fleeDefenseBonus("x", "y"), 0);
+  });
+
+  await t.test("der Bonus ist nie negativ", () => {
+    for (let a = -6; a <= 6; a++)
+      for (let b = -6; b <= 6; b++)
+        assert.ok(fleeDefenseBonus(a, b) >= 0, `${a} gegen ${b}`);
+  });
+});
+
+test("Fluchtmodus in der Erklaerung", async t => {
+  const fliehend = (pool = 5) => ({
+    type: "character",
+    flags: { "aborea-v7": { declaration: { round: 3, mode: "flee", offensive: 4 } } },
+    system: { combat: { combatBonus: pool } },
+  });
+
+  await t.test("erkannt", () => assert.equal(isFleeing(fliehend(), 3), true));
+  await t.test("nur in der erklaerten Runde", () => assert.equal(isFleeing(fliehend(), 4), false));
+  await t.test("ohne Erklaerung nicht", () =>
+    assert.equal(isFleeing({ type: "character", flags: {}, system: { combat: {} } }, 3), false));
+
+  await t.test("kein Offensivanteil - Flucht ist die einzige Handlung", () =>
+    assert.equal(roundSplit(fliehend(), 3).offensive, 0));
+  await t.test("der Kampfbonus steht vollstaendig der Verteidigung zur Verfuegung", () =>
+    assert.equal(roundSplit(fliehend(5), 3).defensive, 5));
+  await t.test("negativer Kampfbonus gibt keine Verteidigung", () =>
+    assert.equal(roundSplit(fliehend(-2), 3).defensive, 0));
+
+  await t.test("buildDeclaration setzt den Offensivanteil auf 0", () =>
+    assert.equal(buildDeclaration(3, { mode: "flee", offensive: 4, pool: 5 }).offensive, 0));
+  await t.test("der Defensivvorrat wird auch beim Fliehen gefuehrt", () =>
+    assert.deepEqual(buildDeclaration(3, { mode: "flee", pool: 5,
+      defenseSpent: { g1: 2 } }).defenseSpent, { g1: 2 }));
+
+  await t.test("Kennzeichnung im Tracker", () =>
+    assert.ok(splitLabel(roundSplit(fliehend(5), 3)).startsWith("\u{1F3C3} Flucht")));
 });

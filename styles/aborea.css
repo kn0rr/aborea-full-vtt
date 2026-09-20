@@ -1136,6 +1136,7 @@
 }
 .aborea-combat-console .cc-mode.active { background: rgba(0,0,0,.12); font-weight: 700; }
 .aborea-combat-console .cc-open { color: #c08a00; font-weight: 700; }
+.aborea-combat-console .cc-flee { opacity: .7; font-size: .76rem; }
 .aborea-combat-console .cc-pool { font-variant-numeric: tabular-nums; }
 .aborea-combat-console .cc-pool em { opacity: .6; font-size: .72rem; }
 .aborea-combat-console .cc-actions { display: flex; gap: 3px; }

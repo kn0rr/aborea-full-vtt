@@ -51,6 +51,14 @@ export function roundSplit(actor, round) {
              offensive: pool, defensive: 0, defenseSpent: null };
   }
 
+  // Flucht ist die einzige Handlung der Runde — es wird nicht angegriffen,
+  // der Kampfbonus steht also vollständig der Verteidigung zur Verfügung.
+  if (decl.mode === "flee") {
+    return { declared: true, locked: !!decl.locked, mode: "flee", pool,
+             offensive: 0, defensive: Math.max(0, pool),
+             defenseSpent: decl.defenseSpent ?? null };
+  }
+
   const offensive = clampOffensive(decl.offensive, pool);
   return {
     declared: true, locked: !!decl.locked, mode: "weapon", pool, offensive,
@@ -105,12 +113,14 @@ export function buildDeclaration(round, {
 } = {}) {
   const decl = {
     round: Number(round),
-    mode:  mode === "spell" ? "spell" : "weapon",
-    offensive: mode === "spell" ? Number(pool) : clampOffensive(offensive, pool),
+    mode:  ["spell", "flee"].includes(mode) ? mode : "weapon",
+    offensive: mode === "spell" ? Number(pool)
+             : mode === "flee"  ? 0
+             : clampOffensive(offensive, pool),
     locked: !!locked,
   };
-  // Zaubern bindet den Kampfbonus offensiv — es bleibt nichts zu verbrauchen.
-  if (decl.mode === "weapon" && defenseSpent && Object.keys(defenseSpent).length) {
+  // Beim Zaubern bleibt nichts zu verbrauchen; beim Fliehen und Kämpfen schon.
+  if (decl.mode !== "spell" && defenseSpent && Object.keys(defenseSpent).length) {
     decl.defenseSpent = defenseSpent;
   }
   return decl;
@@ -174,7 +184,31 @@ export function defenseAgainst(defensive, spent, attackerId) {
 /** Kurzform für den Combat Tracker: "⚔4 / 🛡2" oder "✨ Zauber". */
 export function splitLabel(split) {
   if (split.mode === "spell") return "✨ Zauber";
+  if (split.mode === "flee")  return `🏃 Flucht / 🛡${split.defensive}`;
   return `⚔${split.offensive} / 🛡${split.defensive}`;
+}
+
+// ── Flucht ───────────────────────────────────────────────────────
+//
+// Wer flieht, bekommt vom Gegner (fast) immer noch einen letzten Angriff ab.
+// Nur die Initiative entscheidet, wie schwer der zu treffen ist.
+
+/**
+ * Bonus auf den Defensivbonus des Fliehenden gegen diesen einen Angreifer.
+ *
+ * Ist der Fliehende schneller, bekommt er die Initiative-Differenz auf den DB
+ * gutgeschrieben: bei Flucht mit INI +2 gegen einen Gegner mit INI −1 sind
+ * das 2 − (−1) = 3 Punkte. Ist er langsamer, gibt es keinen Abzug — der
+ * Gegner schlägt schlicht noch einmal zu.
+ */
+export function fleeDefenseBonus(fleeingInitiative, attackerInitiative) {
+  const diff = (Number(fleeingInitiative) || 0) - (Number(attackerInitiative) || 0);
+  return Math.max(0, diff);
+}
+
+/** Flieht dieser Actor in der angegebenen Runde? */
+export function isFleeing(actor, round) {
+  return declarationFor(actor, round)?.mode === "flee";
 }
 
 /**

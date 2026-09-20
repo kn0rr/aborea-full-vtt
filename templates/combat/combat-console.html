@@ -9,12 +9,6 @@
     <label>Situationsmod.
       <input type="number" class="cc-situ" value="{{situMod}}" min="-10" max="10" />
     </label>
-    <label>Manöver
-      <select class="cc-maneuver">
-        <option value="">—</option>
-        {{#each maneuvers}}<option value="{{value}}">{{label}}</option>{{/each}}
-      </select>
-    </label>
     <button type="button" class="cc-refresh btn-sm" title="Neu einlesen">↻</button>
   </div>
 
@@ -55,6 +49,8 @@
           <span class="cc-def">🛡{{defensive}}</span>
           <button type="button" class="cc-mode{{#if (aboreaEq mode "spell")}} active{{/if}}"
                   data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>
+          <button type="button" class="cc-mode{{#if fleeing}} active{{/if}}"
+                  data-mode="flee" title="Fliehen — einzige Handlung; der Gegner schlägt noch einmal zu">🏃</button>
           {{#unless declared}}<em class="cc-open" title="Noch nicht erklärt">?</em>{{/unless}}
           {{#if locked}}<em class="cc-locked" title="Hat bereits gehandelt">🔒</em>{{/if}}
         {{/if}}
@@ -68,7 +64,7 @@
       </span>
 
       <span class="cc-assign">
-        {{#unless defeated}}
+        {{#unless defeated}}{{#unless fleeing}}
         <select class="cc-target">
           <option value="">— Ziel wählen —</option>
           {{#each ../alive}}
@@ -77,13 +73,13 @@
             {{/unless}}
           {{/each}}
         </select>
-        {{/unless}}
+        {{/unless}}{{else}}<em class="cc-flee">flieht</em>{{/unless}}
       </span>
 
       <span class="cc-actions">
-        {{#unless defeated}}
+        {{#unless defeated}}{{#unless fleeing}}
         <button type="button" class="cc-attack btn-sm" title="Angriff ausführen">⚔</button>
-        {{/unless}}
+        {{/unless}}{{/unless}}
         <button type="button" class="cc-defeat btn-sm" title="Besiegt umschalten">💀</button>
       </span>
     </div>

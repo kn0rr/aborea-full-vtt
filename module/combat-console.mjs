@@ -7,7 +7,6 @@
 // Die Aufbereitung der Zeilen ist eine reine Funktion (buildConsoleRows) und
 // deshalb ohne Foundry prüfbar; die Klasse darunter macht nur Oberfläche.
 
-import { ABOREA } from "./config.mjs";
 import { roundSplit, splitRange, defenseRemaining, defenseSpentTotal } from "./declaration.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -59,6 +58,7 @@ export function buildConsoleRows(combatants = [], { activeId = "" } = {}) {
       splitMin: range.min,
       splitMax: range.max,
       canSplit: range.min !== range.max,
+      fleeing: split.mode === "flee",
     };
   });
 
@@ -76,18 +76,6 @@ export function buildConsoleRows(combatants = [], { activeId = "" } = {}) {
  */
 export function assignableTargets(rows, attackerId) {
   return (rows ?? []).filter(r => !r.defeated && r.id !== attackerId);
-}
-
-/** Die Manöverschwierigkeiten als auswählbare Liste. */
-export function maneuverChoices() {
-  const labels = {
-    routine: "Routine", sehrEinfach: "Sehr einfach", einfach: "Einfach",
-    schwer: "Schwer", sehrSchwer: "Sehr schwer", aeusserstSchwer: "Äußerst schwer",
-    blankerLeichtsinn: "Blanker Leichtsinn", absurd: "Absurd",
-  };
-  return Object.entries(ABOREA.maneuvers).map(([key, value]) => ({
-    key, value, label: `${labels[key] ?? key} (${value})`,
-  }));
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -136,7 +124,6 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
       hasCombat: !!combat,
       round,
       rows, alive, defeated,
-      maneuvers: maneuverChoices(),
       situMod: Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0),
     };
   }
@@ -188,7 +175,7 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
       this.render();
     }));
 
-    // Situationsmodifikator und Manöverschwierigkeit
+    // Situationsmodifikator
     html.querySelector(".cc-situ")?.addEventListener("change", async ev => {
       const { clampSituMod } = await import("./settings.mjs");
       await game.settings.set("aborea-v7", "globalSituMod", clampSituMod(ev.target.value));
