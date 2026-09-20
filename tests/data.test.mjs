@@ -166,6 +166,13 @@ test("Fertigkeits-Config ist konsistent", async t => {
     }
   });
 
+  await t.test("keine zweite Angriffsrechnung in der Config", () => {
+    // ABOREA.attackValue/damage waren eine Parallelimplementierung zum Kampf
+    // in combat.mjs und liefen seit dem Umbau auseinander.
+    assert.equal(ABOREA.attackValue, undefined, "ABOREA.attackValue ist zurück");
+    assert.equal(ABOREA.damage, undefined, "ABOREA.damage ist zurück");
+  });
+
   await t.test("ABOREA.combatBonus ist entfernt", () => {
     // Jede signaturkompatible Variante wäre falsch: sie kann Klassenboni und
     // Befreiungen nicht kennen. Ersatz ist weaponCombatBonus().

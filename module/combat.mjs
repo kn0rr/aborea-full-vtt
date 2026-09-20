@@ -3,6 +3,7 @@ import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
 import { roundSplit, buildDeclaration, splitLabel, canRedeclare, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
+import { selectTargetTokens, attackPlan } from "./targeting.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -125,17 +126,17 @@ function _hpColor(pct) {
   return "#b91c1c";
 }
 
-/**
- * Builds a target candidate list from combat participants, excluding the given token id.
- * Ohne aktiven Kampf leer — dann nur "Kein Ziel" mit manueller RW-Eingabe.
- */
+/** Zielliste für den Angriffsdialog, ohne den Angreifer selbst. */
 function _buildTargetCandidates(attackerTokenId) {
-  if (!game.combat?.combatants.size) return [];
-  const combatTokenIds = new Set(game.combat.combatants.map(c => c.tokenId).filter(Boolean));
-  return (canvas?.tokens?.placeables ?? [])
-    .filter(t => t.actor && t.id !== attackerTokenId)
-    .filter(t => combatTokenIds.has(t.id))
-    .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang))
+  // Mit laufendem Kampf nur die Kombattanten, sonst alles Bespielbare auf der
+  // Szene — ein Hinterhalt außerhalb der Initiative soll nicht an einer leeren
+  // Auswahl scheitern.
+  const combatTokenIds = game.combat?.combatants.size
+    ? new Set(game.combat.combatants.map(c => c.tokenId).filter(Boolean))
+    : null;
+  return selectTargetTokens(canvas?.tokens?.placeables ?? [], {
+    attackerTokenId, combatTokenIds, lang: game.i18n.lang,
+  })
     .map(t => {
       const hp    = t.actor.system.resources?.hp ?? {};
       const hpVal = Number(hp.value ?? 0);
@@ -754,6 +755,79 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
   });
 }
 
+/**
+ * Gruppenangriff: mehrere Angreifer gegen ein Ziel, ein Wurf je Angreifer,
+ * eine Sammelkarte. Spart fünf Dialoge und fünf Chatkarten, wenn eine Horde
+ * Goblins auf denselben Charakter einschlägt.
+ *
+ * Der Verteidigungswert wird einmal vor dem ersten Wurf bestimmt: alle
+ * Angriffe einer Runde treffen auf denselben Schild, auch wenn zwischendurch
+ * Schaden angewendet wird.
+ */
+export async function executeGroupAttack(attackers, { targetToken, situMod = 0 } = {}) {
+  const targetActor = targetToken?.actor ?? null;
+  if (!attackers?.length || !targetActor) return;
+
+  const targetDefense = _dv(targetActor);
+  const round         = game.combat?.round;
+  const rolls = [];
+  let rows = "";
+  let anyHit = false;
+
+  for (const actor of attackers) {
+    const plan = attackPlan(actor, { round, situMod });
+    await declareRound(actor, { mode: "weapon", offensive: plan.offBonus, lock: true });
+
+    const minStrengthMod = minStrengthPenalty(actor);
+    const maneuverMod    = _maneuverBonus(actor);
+    const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
+    rolls.push(...roll.rolls);
+
+    const attackValue = roll.naturalOne
+      ? 0
+      : roll.total + plan.offBonus + maneuverMod + minStrengthMod + plan.situMod;
+    const hit = !roll.naturalOne && attackValue > targetDefense;
+    if (hit) anyHit = true;
+
+    const weaponDmg = plan.weapon
+      ? Number(plan.weapon.system.damage ?? 0) + _bonusWeaponDamage(actor)
+      : _bonusWeaponDamage(actor);
+    const critBonus = (hit && roll.critical) ? Math.max(0, weaponDmg) : 0;
+    const damage    = hit ? Math.max(1, (attackValue - targetDefense) + weaponDmg + critBonus) : 0;
+
+    const resultClass = roll.naturalOne ? "patzer" : (hit ? "hit" : "miss");
+    const resultLabel = roll.naturalOne ? "⛔ Patzer" : (hit ? `✅ ${damage} Schaden` : "❌ Fehlschlag");
+
+    rows += `
+      <div class="ac-group-row ${resultClass}">
+        <span class="acg-name">${actor.name}</span>
+        <span class="acg-weapon">${plan.weapon?.name ?? "Angriff"}</span>
+        <span class="acg-roll">${roll.formula}${_sign(plan.offBonus + maneuverMod + minStrengthMod + plan.situMod)}</span>
+        <span class="acg-value">${roll.naturalOne ? "—" : attackValue}</span>
+        <span class="acg-result">${resultLabel}</span>
+        ${damage && targetActor.id
+          ? `<button type="button" class="apply-damage-btn btn-sm"
+                     data-target-id="${targetActor.id}" data-damage="${damage}">💢</button>`
+          : ""}
+      </div>`;
+  }
+
+  await ChatMessage.create({
+    content: `<div class="aborea-chat-card aborea-attack-card aborea-group-attack">
+      <div class="ac-header">
+        <span class="ac-attacker">⚔ Gruppenangriff (${attackers.length})</span>
+        <span class="ac-arrow">→</span>
+        <span class="ac-target">${targetActor.name}</span>
+      </div>
+      <div class="ac-row"><span>Verteidigungswert</span><span><strong>${targetDefense}</strong></span></div>
+      ${situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>` : ""}
+      <div class="ac-group-rows">${rows}</div>
+      ${anyHit ? "" : `<div class="ac-result miss">Kein Angriff kam durch.</div>`}
+    </div>`,
+    rolls,
+  });
+}
+
 function _buildCardHeader(attacker, attackerImg, target, targetImg) {
   const attackerPortrait = attackerImg
     ? `<img class="ac-portrait" src="${attackerImg}" alt="${attacker}" />`
@@ -1136,4 +1210,79 @@ export function registerCombatHooks() {
   Hooks.on("renderCombatTrackerHTML", _onRenderTracker);
   // Fallback für den Fall dass der CombatTracker noch V1 ist
   Hooks.on("renderCombatTracker", _onRenderTracker);
+
+  // ── Angriff direkt vom Token ──────────────────────────────────────
+  // Vorher war der Dialog nur über den Tracker (aktiver Kombattant) oder den
+  // geöffneten Charakterbogen erreichbar — für den Spielleiter der Umweg.
+  Hooks.on("renderTokenHUD", (hud, html) => {
+    const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+    const actor = hud?.object?.actor;
+    if (!root?.querySelector || !actor || actor.type === "loot") return;
+    if (!actor.isOwner && !game.user.isGM) return;
+
+    const column = root.querySelector(".col.left") ?? root.querySelector(".left");
+    if (!column) return;
+
+    const btn = document.createElement("button");
+    btn.type      = "button";
+    btn.className = "control-icon aborea-hud-attack";
+    btn.title     = "Angreifen";
+    btn.innerHTML = "⚔";
+    btn.addEventListener("click", ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openAttackDialog(actor);
+    });
+    column.appendChild(btn);
+  });
+
+  // ── Gruppenangriff als Szenenwerkzeug ─────────────────────────────
+  const _groupAttackTool = {
+    name: "aborea-group-attack",
+    title: "ABOREA: Gruppenangriff",
+    icon: "fas fa-users",
+    button: true,
+    visible: true,
+    onChange: () => _startGroupAttack(),
+    onClick:  () => _startGroupAttack(),
+  };
+  const _addTool = controls => {
+    if (!game.user.isGM) return;
+    const tokenControls = Array.isArray(controls)
+      ? controls.find(c => c.name === "token")
+      : controls?.token;
+    if (!tokenControls) return;
+    if (Array.isArray(tokenControls.tools)) {
+      if (!tokenControls.tools.some(t => t.name === _groupAttackTool.name)) tokenControls.tools.push(_groupAttackTool);
+    } else if (tokenControls.tools) {
+      tokenControls.tools[_groupAttackTool.name] ??= _groupAttackTool;
+    }
+  };
+  Hooks.on("getSceneControlButtonsV2", _addTool);
+  Hooks.on("getSceneControlButtons",   _addTool);
+}
+
+/**
+ * Sammelt die ausgewählten Tokens als Angreifer und das markierte Token als
+ * Ziel. Beides kommt aus dem, was der Spielleiter ohnehin auf der Szene tut —
+ * auswählen und mit T markieren — statt aus einem weiteren Dialog.
+ */
+async function _startGroupAttack() {
+  const attackers = (canvas?.tokens?.controlled ?? [])
+    .map(t => t.actor).filter(a => a && a.type !== "loot");
+  if (attackers.length < 2) {
+    ui.notifications.warn("ABOREA: Mindestens zwei Tokens auswählen, die angreifen sollen.");
+    return;
+  }
+  const targetToken = game.user.targets.first();
+  if (!targetToken?.actor) {
+    ui.notifications.warn("ABOREA: Kein Ziel markiert — mit T ein Ziel wählen.");
+    return;
+  }
+  if (attackers.some(a => a.id === targetToken.actor.id)) {
+    ui.notifications.warn("ABOREA: Das Ziel ist unter den Angreifern.");
+    return;
+  }
+  const situMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+  await executeGroupAttack(attackers, { targetToken, situMod });
 }

@@ -922,7 +922,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       const { actorId, itemId } = ev.currentTarget.dataset;
       const vActor = game.actors.get(actorId);
       const item = vActor?.items.get(itemId);
-      if (item) await import("./combat.mjs").then(m => m.rollAttack?.(this.actor, item));
+      // combat.mjs exportiert kein rollAttack — das Optional-Chaining hat den
+      // Knopf jahrelang still verschluckt.
+      if (item) await openAttackDialog(vActor ?? this.actor);
     });
   }
 

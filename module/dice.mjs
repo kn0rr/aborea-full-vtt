@@ -143,34 +143,3 @@ export async function rollSkill(actor, skillKey) {
 
   return total;
 }
-
-export async function rollAttack(actor, weapon, { targetDefense = null, situational = 0 } = {}) {
-  const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack") });
-  const offensiveBonus = Number(actor.system.combat?.offensiveBonus ?? 0);
-  const attackValue = ABOREA.attackValue(roll.total, offensiveBonus, situational);
-  const weaponDamage = Number(weapon?.system?.damage ?? 0);
-  const defense = targetDefense ?? Number(actor.system.combat?.targetDefense ?? 5);
-  const isNaturalOneMiss = roll.naturalOne;
-  const hit = !isNaturalOneMiss && attackValue > defense;
-  const damage = hit ? ABOREA.damage(attackValue, defense, weaponDamage) : 0;
-
-  await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content: `
-      <div class="aborea-chat-card">
-        <h3>${weapon?.name ?? game.i18n.localize("ABOREA.Attack")}</h3>
-        <p>${game.i18n.localize("ABOREA.Roll")}: ${roll.formula}</p>
-        <p>${game.i18n.localize("ABOREA.OffensiveBonus")}: ${offensiveBonus >= 0 ? "+" : ""}${offensiveBonus}</p>
-        <p>${game.i18n.localize("ABOREA.SituationalModifier")}: ${Number(situational) >= 0 ? "+" : ""}${Number(situational)}</p>
-        <p>${game.i18n.localize("ABOREA.AttackValue")}: ${attackValue}</p>
-        <p>${game.i18n.localize("ABOREA.DefenseValue")}: ${defense}</p>
-        <p><strong>${hit ? game.i18n.localize("ABOREA.Hit") : game.i18n.localize("ABOREA.Miss")}</strong></p>
-        ${hit ? `<p>${game.i18n.localize("ABOREA.Damage")}: ${damage}</p>` : ""}
-        ${roll.critical ? `<p>${game.i18n.localize("ABOREA.CriticalHint")}</p>` : ""}
-        ${isNaturalOneMiss ? `<p>${game.i18n.localize("ABOREA.NaturalOneMiss")}</p>` : ""}
-      </div>
-    `
-  });
-
-  return { attackValue, defense, hit, damage, critical: roll.critical, naturalOne: isNaturalOneMiss };
-}

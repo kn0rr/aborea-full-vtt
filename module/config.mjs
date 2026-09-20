@@ -177,12 +177,6 @@ export const ABOREA = {
   defenseValue(armorValue = 5, defensiveBonus = 0) {
     return Number(armorValue) + Number(defensiveBonus);
   },
-  attackValue(rollTotal, offensiveBonus = 0, situational = 0) {
-    return Number(rollTotal) + Number(offensiveBonus) + Number(situational);
-  },
-  damage(attackValue, defenseValue, weaponDamage = 0) {
-    return Math.max(1, Number(attackValue) - Number(defenseValue) + Number(weaponDamage));
-  },
   naturalHealingPerDay(conBonus = 0) {
     return 1 + Number(conBonus);
   },
