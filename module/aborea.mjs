@@ -5,6 +5,7 @@ import { AboreaItemSheet } from "./item-sheet.mjs";
 import { buildSystemPacks, resetSystemPacks } from "./system-pack-builder.mjs";
 import { AboreaSoundboard } from "./audio-manager.mjs";
 import { AboreaCombat, openAttackDialog, registerCombatHooks } from "./combat.mjs";
+import { AboreaCombatConsole, registerCombatConsole } from "./combat-console.mjs";
 import { registerConditions, registerConditionHooks } from "./conditions.mjs";
 import { openCheckDialog, openGroupCheckDialog, registerCheckHooks } from "./checks.mjs";
 import { registerQuickNpcSceneControl } from "./quick-npc.mjs";
@@ -58,6 +59,7 @@ Hooks.once("init", async function () {
     audio: AboreaSoundboard,
     openSoundboard: () => AboreaSoundboard.openDialog(),
     attack:      openAttackDialog,
+    combatConsole: () => AboreaCombatConsole.open(),
     check:       openCheckDialog,
     groupCheck:  openGroupCheckDialog,
   };
@@ -88,6 +90,7 @@ Hooks.once("init", async function () {
   AboreaSoundboard.registerSettings();
   AboreaSoundboard.registerSceneControl();
   registerCombatHooks();
+  registerCombatConsole();
   registerConditionHooks();
   registerCheckHooks();
   registerQuickNpcSceneControl();
@@ -108,6 +111,7 @@ Hooks.once("init", async function () {
     "systems/aborea-v7/templates/combat/check-dialog.html",
     "systems/aborea-v7/templates/audio/soundboard.html",
     "systems/aborea-v7/templates/combat/attack-dialog.html",
+    "systems/aborea-v7/templates/combat/combat-console.html",
     "systems/aborea-v7/templates/actor/loot-sheet.html",
     "systems/aborea-v7/templates/loot/item-picker.html",
   ]);

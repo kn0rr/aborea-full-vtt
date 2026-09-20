@@ -2,8 +2,8 @@ import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
-import { roundSplit, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
-         allocateDefense, defenseAgainst, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
+import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
+         defenseAgainst, defenseRemaining, spendDefense, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan } from "./targeting.mjs";
 import { SETTINGS, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
          shouldResetSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
@@ -108,28 +108,49 @@ function _bonusWeaponDamage(actor) {
  * Der Rest liess Rassen- und Klassenbonus fallen, sodass der RW im Kampf nicht
  * zum RW auf dem Bogen passte.
  */
-/** Kombattanten der laufenden Runde in Initiative-Reihenfolge, als Actor-Ids. */
-function _initiativeOrder(exceptActorId = null) {
-  return (game.combat?.turns ?? [])
-    .map(c => c.actor?.id)
-    .filter(id => id && id !== exceptActorId);
-}
-
 /**
  * Der Anteil des Defensivbonus, der gegen einen bestimmten Angreifer zählt.
  *
  * Ohne Angreifer gilt der volle Defensivbonus — das ist die Anzeige im
- * Tracker und in der Zielvorschau. Für die Auflösung eines Angriffs wird der
- * Angreifer übergeben, dann greift die Verteilung nach S. 33.
+ * Tracker. Mit Angreifer der noch verfügbare Vorrat beziehungsweise der
+ * bereits gegen ihn eingesetzte Anteil (S. 33).
  */
 function _defensiveFor(actor, attackerActor = null) {
   const split = _split(actor);
   if (!attackerActor || split.defensive <= 0) return split.defensive;
-  return defenseAgainst(
-    split.defensive,
-    _initiativeOrder(actor.id),
-    split.defenseAllocation,
-    attackerActor.id);
+  return defenseAgainst(split.defensive, split.defenseSpent, attackerActor.id);
+}
+
+/**
+ * Verbraucht den Defensivbonus des Verteidigers gegen diesen Angreifer und
+ * gibt den Anteil zurück, der gegen ihn zählt. Wird beim Auflösen eines
+ * Angriffs aufgerufen, nicht beim blossen Anzeigen.
+ */
+async function _consumeDefense(defender, attackerActor, wanted = null) {
+  const round = game.combat?.round;
+  const split = _split(defender);
+  if (!round || !attackerActor || split.defensive <= 0) return split.defensive;
+
+  const result = spendDefense(split.defensive, split.defenseSpent, attackerActor.id, wanted);
+  if (JSON.stringify(result.spent) !== JSON.stringify(split.defenseSpent ?? {})) {
+    const decl = declarationFor(defender, round)
+      ?? buildDeclaration(round, { mode: "weapon", offensive: split.offensive, pool: split.pool });
+    await defender.setFlag(SYSTEM_FLAG, DECLARATION, { ...decl, defenseSpent: result.spent });
+  }
+  return result.applied;
+}
+
+/** Verteidigungswert gegen einen Angreifer, mit Verbrauch des Vorrats. */
+async function _dvConsuming(defender, attackerActor, wanted = null) {
+  if (!defender) return 5;
+  const applied = await _consumeDefense(defender, attackerActor, wanted);
+  const baseArmor = Number(defender.system.combat?.armorValue ?? 0)
+                  + Number(defender.system.traits?.racialArmorBonus ?? 0)
+                  + Number(defender.system.classFeatures?.armorBonus ?? 0);
+  const armorFromItems = defender.items
+    .filter(i => i.type === "armor" && i.system.equipped)
+    .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+  return ABOREA.defenseValue(baseArmor + armorFromItems, applied + _maneuverBonus(defender));
 }
 
 function _dv(actor, attackerActor = null) {
@@ -703,7 +724,9 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
 
   for (let i = 0; i < Math.max(1, targets.length || 1); i++) {
     const currentTarget     = targets[i] ?? null;
-    const currentDefense    = currentTarget ? _dv(currentTarget, attackerActor) : targetDefense;
+    const currentDefense    = currentTarget
+      ? await _dvConsuming(currentTarget, attackerActor)
+      : targetDefense;
     const currentTargetImg  = currentTarget?.img ?? targetImg;
     const roll       = await rollOpenD10({ label: `Gezielter Zauber: ${spell.name}`, skipVisual: true });
     const attackValue = roll.total + spellBonus + situMod;
@@ -774,6 +797,8 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
 async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
   // Der Angriff ist zugleich die Erklärung, falls noch keine vorliegt.
   await declareRound(attackerActor, { mode: "weapon", offensive: offBonus, lock: true });
+  // Der Verteidiger verbraucht jetzt seinen Defensivbonus gegen diesen Angreifer.
+  if (targetActor) targetDefense = await _dvConsuming(targetActor, attackerActor);
   // Der Ungelernt-Malus steckt schon im Kampfbonus und damit im Offensivbonus.
   const effectiveOffBonus = offBonus + maneuverMod + minStrengthMod;
   const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
@@ -854,8 +879,10 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = 0 }
 
   // Der Defensivbonus wird auf die Angreifer verteilt (S. 33) — jeder trifft
   // deshalb auf seinen eigenen Verteidigungswert.
-  const defenseByAttacker = Object.fromEntries(
-    attackers.map(a => [a.id, _dv(targetActor, a)]));
+  // Der Vorrat wird in der Reihenfolge verbraucht, in der die Angriffe
+  // eintreffen — das ist hier die Initiative-Reihenfolge der Angreifer.
+  const defenseByAttacker = {};
+  for (const a of attackers) defenseByAttacker[a.id] = await _dvConsuming(targetActor, a);
 
   for (const actor of attackers) {
     const targetDefense = defenseByAttacker[actor.id];
@@ -1112,6 +1139,7 @@ function _buildCombatantState(actor, round) {
   const hpMax = Number(hp.max ?? 1);
   const pct   = hpMax > 0 ? Math.round((hpVal / hpMax) * 100) : 0;
   const split = roundSplit(actor, round);
+  const rest  = defenseRemaining(split.defensive, split.defenseSpent);
 
   const hint = split.declared
     ? (split.locked ? "Erklärt und festgesetzt — es wurde bereits gehandelt" : "Für diese Runde erklärt")
@@ -1123,7 +1151,7 @@ function _buildCombatantState(actor, round) {
       <span class="acs-hp">${hpVal}/${hpMax}</span>
       <span class="acs-dv" title="Verteidigungswert mit vollem Defensivbonus — gegen einzelne Angreifer kann er niedriger sein">RW ${_dv(actor)}</span>
       <span class="acs-split${split.declared ? "" : " undeclared"}${split.locked ? " locked" : ""}" title="${hint}">
-        ${splitLabel(split)}${split.declared ? "" : " ?"}
+        ${splitLabel(split)}${rest !== split.defensive ? ` (${rest} übrig)` : ""}${split.declared ? "" : " ?"}
       </span>
     </div>`;
 

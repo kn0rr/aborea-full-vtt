@@ -1,0 +1,98 @@
+<div class="cc-body">
+
+  {{#unless hasCombat}}
+  <p class="hint-text">Kein Kampf aktiv. Starte einen Kampf, um das Pult zu benutzen.</p>
+  {{else}}
+
+  <div class="cc-toolbar">
+    <span class="cc-round">Runde {{round}}</span>
+    <label>Situationsmod.
+      <input type="number" class="cc-situ" value="{{situMod}}" min="-10" max="10" />
+    </label>
+    <label>Manöver
+      <select class="cc-maneuver">
+        <option value="">—</option>
+        {{#each maneuvers}}<option value="{{value}}">{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <button type="button" class="cc-refresh btn-sm" title="Neu einlesen">↻</button>
+  </div>
+
+  <div class="cc-table">
+    <div class="cc-head">
+      <span>Kombattant</span>
+      <span>Zustand</span>
+      <span>Erklärung</span>
+      <span>Defensivvorrat</span>
+      <span>Angriff auf</span>
+      <span></span>
+    </div>
+
+    {{#each rows}}
+    <div class="cc-row{{#if active}} active{{/if}}{{#if defeated}} defeated{{/if}}"
+         data-combatant-id="{{id}}">
+
+      <span class="cc-name">
+        <img src="{{img}}" alt="{{name}}" />
+        <span>{{name}}</span>
+        {{#if initiative}}<em class="cc-init">{{initiative}}</em>{{/if}}
+      </span>
+
+      <span class="cc-state">
+        <span class="cc-hp">{{hp}}/{{hpMax}}</span>
+        <span class="cc-hpbar"><span style="width:{{hpPct}}%"></span></span>
+      </span>
+
+      <span class="cc-decl">
+        {{#if defeated}}
+          <em>ausgeschieden</em>
+        {{else}}
+          <button type="button" class="cc-mode{{#if (aboreaEq mode "weapon")}} active{{/if}}"
+                  data-mode="weapon" title="Mit der Waffe kämpfen">⚔</button>
+          <input type="number" class="cc-offensive" value="{{offensive}}"
+                 min="{{splitMin}}" max="{{splitMax}}" {{#unless canSplit}}disabled{{/unless}}
+                 title="Offensivanteil des Kampfbonus {{pool}}" />
+          <span class="cc-def">🛡{{defensive}}</span>
+          <button type="button" class="cc-mode{{#if (aboreaEq mode "spell")}} active{{/if}}"
+                  data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>
+          {{#unless declared}}<em class="cc-open" title="Noch nicht erklärt">?</em>{{/unless}}
+          {{#if locked}}<em class="cc-locked" title="Hat bereits gehandelt">🔒</em>{{/if}}
+        {{/if}}
+      </span>
+
+      <span class="cc-pool">
+        {{#if defeated}}—{{else}}
+          {{defenseLeft}} / {{defensive}}
+          {{#if defenseUsed}}<em title="bereits eingesetzt">({{defenseUsed}} weg)</em>{{/if}}
+        {{/if}}
+      </span>
+
+      <span class="cc-assign">
+        {{#unless defeated}}
+        <select class="cc-target">
+          <option value="">— Ziel wählen —</option>
+          {{#each ../alive}}
+            {{#unless (aboreaEq id ../id)}}
+            <option value="{{id}}">{{name}}</option>
+            {{/unless}}
+          {{/each}}
+        </select>
+        {{/unless}}
+      </span>
+
+      <span class="cc-actions">
+        {{#unless defeated}}
+        <button type="button" class="cc-attack btn-sm" title="Angriff ausführen">⚔</button>
+        {{/unless}}
+        <button type="button" class="cc-defeat btn-sm" title="Besiegt umschalten">💀</button>
+      </span>
+    </div>
+    {{/each}}
+  </div>
+
+  {{#if defeated.length}}
+  <p class="cc-footer">{{defeated.length}} ausgeschieden — sie stehen nicht mehr als Ziel zur Wahl.</p>
+  {{/if}}
+
+  {{/unless}}
+</div>

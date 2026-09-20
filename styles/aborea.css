@@ -1103,6 +1103,44 @@
 .aborea-attack-dialog-body .form-group select { width: 140px; }
 .aborea-attack-dialog-body .hint { font-size: .72rem; opacity: .65; font-weight: 400; display: block; }
 .aborea-attack-dialog-body .untrained-display { color: #b91c1c; font-weight: 700; font-size: .85rem; }
+/* Kampfpult */
+.aborea-combat-console .cc-body { padding: 8px; font-size: .82rem; }
+.aborea-combat-console .cc-toolbar {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding-bottom: 6px; margin-bottom: 6px;
+  border-bottom: 1px solid var(--aborea-border-light);
+}
+.aborea-combat-console .cc-round { font-weight: 700; }
+.aborea-combat-console .cc-toolbar input[type=number] { width: 4em; }
+.aborea-combat-console .cc-head,
+.aborea-combat-console .cc-row {
+  display: grid; align-items: center; gap: 8px;
+  grid-template-columns: minmax(9em, 1.4fr) 7em minmax(11em, auto) 6em minmax(8em, 1fr) auto;
+  padding: 3px 2px;
+}
+.aborea-combat-console .cc-head { font-weight: 700; opacity: .7; font-size: .74rem; }
+.aborea-combat-console .cc-row { border-top: 1px solid var(--aborea-border-light); }
+.aborea-combat-console .cc-row.active { background: rgba(0,0,0,.06); }
+.aborea-combat-console .cc-row.defeated { opacity: .45; }
+.aborea-combat-console .cc-name { display: flex; align-items: center; gap: 5px; }
+.aborea-combat-console .cc-name img { width: 22px; height: 22px; border: 0; border-radius: 3px; }
+.aborea-combat-console .cc-init { opacity: .6; font-size: .72rem; }
+.aborea-combat-console .cc-hp { font-variant-numeric: tabular-nums; font-size: .76rem; }
+.aborea-combat-console .cc-hpbar { display: block; height: 3px; background: rgba(0,0,0,.18); border-radius: 2px; }
+.aborea-combat-console .cc-hpbar span { display: block; height: 100%; background: #2d8a3e; }
+.aborea-combat-console .cc-decl { display: flex; align-items: center; gap: 3px; }
+.aborea-combat-console .cc-offensive { width: 3.2em; }
+.aborea-combat-console .cc-mode {
+  padding: 0 4px; border: 1px solid var(--aborea-border-light);
+  border-radius: 3px; background: transparent; cursor: pointer;
+}
+.aborea-combat-console .cc-mode.active { background: rgba(0,0,0,.12); font-weight: 700; }
+.aborea-combat-console .cc-open { color: #c08a00; font-weight: 700; }
+.aborea-combat-console .cc-pool { font-variant-numeric: tabular-nums; }
+.aborea-combat-console .cc-pool em { opacity: .6; font-size: .72rem; }
+.aborea-combat-console .cc-actions { display: flex; gap: 3px; }
+.aborea-combat-console .cc-footer { margin-top: 8px; opacity: .6; font-size: .76rem; }
+
 /* Situationsmodifikator: Presets */
 .situ-mod-presets { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
 .situ-mod-presets .situ-preset {

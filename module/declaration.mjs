@@ -41,21 +41,21 @@ export function roundSplit(actor, round) {
       declared: false, locked: false, mode: "weapon", pool,
       offensive: Number(combat.offensiveBonus ?? 0),
       defensive: Number(combat.defensiveBonus ?? 0),
-      defenseAllocation: null,
+      defenseSpent: null,
     };
   }
 
   // Zaubern bindet den Kampfbonus vollständig offensiv.
   if (decl.mode === "spell") {
     return { declared: true, locked: !!decl.locked, mode: "spell", pool,
-             offensive: pool, defensive: 0, defenseAllocation: null };
+             offensive: pool, defensive: 0, defenseSpent: null };
   }
 
   const offensive = clampOffensive(decl.offensive, pool);
   return {
     declared: true, locked: !!decl.locked, mode: "weapon", pool, offensive,
     defensive: pool - offensive,
-    defenseAllocation: decl.defenseAllocation ?? null,
+    defenseSpent: decl.defenseSpent ?? null,
   };
 }
 
@@ -101,7 +101,7 @@ export function carrySplit(previousOffensive, previousPool, newPool) {
 
 /** Eine neue Erklärung für diese Runde — ungespeichert, nur der Wert. */
 export function buildDeclaration(round, {
-  mode = "weapon", offensive = 0, pool = 0, locked = false, defenseAllocation = null,
+  mode = "weapon", offensive = 0, pool = 0, locked = false, defenseSpent = null,
 } = {}) {
   const decl = {
     round: Number(round),
@@ -109,47 +109,66 @@ export function buildDeclaration(round, {
     offensive: mode === "spell" ? Number(pool) : clampOffensive(offensive, pool),
     locked: !!locked,
   };
-  // Zaubern bindet den Kampfbonus offensiv — es bleibt nichts zu verteilen.
-  if (decl.mode === "weapon" && defenseAllocation && Object.keys(defenseAllocation).length) {
-    decl.defenseAllocation = defenseAllocation;
+  // Zaubern bindet den Kampfbonus offensiv — es bleibt nichts zu verbrauchen.
+  if (decl.mode === "weapon" && defenseSpent && Object.keys(defenseSpent).length) {
+    decl.defenseSpent = defenseSpent;
   }
   return decl;
 }
 
-/**
- * Verteilt den Defensivbonus auf die Angreifer.
- *
- * Regelwerk S. 33: der DB kann bei mehreren Angreifern aufgeteilt werden;
- * reicht er nicht für alle, wird er nur bei den zuerst bedachten Gegnern
- * abgezogen. „Zuerst" heißt hier Initiative-Reihenfolge.
- *
- * Ohne ausdrückliche Zuweisung bekommt der erste Angreifer den vollen Bonus
- * und die übrigen nichts — so greift er einmal statt gegen jeden.
- *
- * @param {number}   pool         Defensivbonus des Verteidigers
- * @param {string[]} attackerIds  Angreifer in Initiative-Reihenfolge
- * @param {object}   [allocation] ausdrückliche Zuweisung { id: Anteil }
- * @returns {object} vollständige Zuweisung; die Summe übersteigt nie den Pool
- */
-export function allocateDefense(pool, attackerIds = [], allocation = null) {
-  const total = Math.max(0, Number(pool) || 0);
-  const ids   = Array.isArray(attackerIds) ? attackerIds : [];
-  const explicit = allocation && Object.keys(allocation).length > 0;
+// ── Defensivbonus als Vorrat ────────────────────────────────────────────────
+//
+// Regelwerk S. 33: der DB kann bei mehreren Angreifern aufgeteilt werden;
+// reicht er nicht für alle, wird er nur bei den zuerst bedachten Gegnern
+// abgezogen.
+//
+// Eine Verteilung zu Rundenbeginn wäre Raten: die Zugreihenfolge steht zwar
+// fest, wer wen angreift aber nicht. Deshalb ist der DB ein **Vorrat**, der
+// sich verbraucht, wenn die Angriffe tatsächlich eintreffen. „Zuerst bedacht"
+// sind damit die, bei denen zuerst abgezogen wurde.
 
-  const out = {};
-  let left = total;
-  for (const id of ids) {
-    const wanted = explicit ? Math.max(0, Number(allocation[id]) || 0) : left;
-    const give   = Math.min(wanted, left);
-    out[id] = give;
-    left -= give;
-  }
-  return out;
+/** Wie viel des Defensivbonus bereits verbraucht ist. */
+export function defenseSpentTotal(spent) {
+  return Object.values(spent ?? {}).reduce((sum, v) => sum + (Math.max(0, Number(v)) || 0), 0);
 }
 
-/** Der Anteil, der gegen einen bestimmten Angreifer zählt. */
-export function defenseAgainst(pool, attackerIds, allocation, attackerId) {
-  return allocateDefense(pool, attackerIds, allocation)[attackerId] ?? 0;
+/** Wie viel vom Defensivbonus noch übrig ist. */
+export function defenseRemaining(defensive, spent) {
+  return Math.max(0, (Math.max(0, Number(defensive)) || 0) - defenseSpentTotal(spent));
+}
+
+/**
+ * Zieht einen Anteil des Defensivbonus für einen Angreifer ab.
+ *
+ * Gegen denselben Angreifer zählt in einer Runde derselbe Anteil — ein
+ * zweiter Angriff desselben Gegners kostet nichts zusätzlich, sonst würde
+ * der Vorrat bei mehreren Schlägen doppelt schmelzen.
+ *
+ * @param {number} defensive  Defensivbonus dieser Runde
+ * @param {object} spent      bisher Verbrauchtes { angreiferId: Anteil }
+ * @param {string} attackerId
+ * @param {number} [wanted]   gewünschter Anteil; ohne Angabe alles Verbliebene
+ * @returns {{applied, spent, remaining}} applied zählt gegen diesen Angreifer
+ */
+export function spendDefense(defensive, spent, attackerId, wanted = null) {
+  const current = spent?.[attackerId];
+  if (current != null) {
+    // Schon gegen diesen Angreifer eingesetzt — gilt weiter, kostet nichts.
+    const applied = Math.max(0, Number(current)) || 0;
+    return { applied, spent: { ...spent }, remaining: defenseRemaining(defensive, spent) };
+  }
+  const left    = defenseRemaining(defensive, spent);
+  const ask     = wanted == null ? left : Math.max(0, Number(wanted) || 0);
+  const applied = Math.min(ask, left);
+  const next    = { ...(spent ?? {}), [attackerId]: applied };
+  return { applied, spent: next, remaining: defenseRemaining(defensive, next) };
+}
+
+/** Der Anteil, der gegen einen Angreifer zählt, ohne etwas zu verbrauchen. */
+export function defenseAgainst(defensive, spent, attackerId) {
+  const current = spent?.[attackerId];
+  if (current != null) return Math.max(0, Number(current)) || 0;
+  return defenseRemaining(defensive, spent);
 }
 
 /** Kurzform für den Combat Tracker: "⚔4 / 🛡2" oder "✨ Zauber". */

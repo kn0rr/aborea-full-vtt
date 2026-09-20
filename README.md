@@ -269,6 +269,7 @@ Was geprüft wird:
 |---|---|
 | `tests/dice.test.mjs` | offener W10: Explodieren auf 10, Patzer nur im ersten Wurf |
 | `tests/bonuses.test.mjs` | Attributquelle, Fertigkeitsränge, Ungelernt-Malus je Kategorie, Klassenbefreiungen, Mindeststärke, Kampfbonus |
+| `tests/combat-console.test.mjs` | Kampfpult: Zeilenaufbereitung, Ausgeschiedene, Zielauswahl |
 | `tests/settings.test.mjs` | Schadensanwendung, Situationsmodifikator, Rückgängig-Einträge |
 | `tests/targeting.test.mjs` | Zielauswahl mit und ohne Kampf, Waffenwahl, Angriffsplan |
 | `tests/declaration.test.mjs` | Rundenerklärung: Aufteilung des Kampfbonus, Zaubermodus, Festsetzung |
