@@ -11,6 +11,9 @@ export const SETTINGS = {
   autoInitiative: "autoRollInitiative",
 };
 
+/** Flag-Schlüssel für den persönlichen Situationsmodifikator. */
+export const SITU_FLAG = "situMod";
+
 /** Grenzen des Situationsmodifikators — darüber hinaus wird geklemmt. */
 export const SITU_MIN = -10;
 export const SITU_MAX = 10;
@@ -56,6 +59,19 @@ export function shouldAutoApplyDamage(mode, { isGM = false } = {}) {
 export function shouldResetSituMod(enabled, { previousRound, currentRound } = {}) {
   if (!enabled) return false;
   return Number(currentRound) > Number(previousRound ?? 0);
+}
+
+/**
+ * Der Situationsmodifikator, der für einen Kombattanten gilt.
+ *
+ * Der globale Wert ist die Grundlage für alle — Dunkelheit, Sturm, was die
+ * ganze Szene betrifft. Der persönliche kommt hinzu: erhöhte Position,
+ * Flankenangriff, was nur diesen einen betrifft. Additiv statt ersetzend,
+ * damit der Spielleiter nicht bei jedem Einzelnen den globalen Wert
+ * nachtragen muss.
+ */
+export function effectiveSituMod(globalMod, combatantMod) {
+  return clampSituMod((Number(globalMod) || 0) + (Number(combatantMod) || 0));
 }
 
 /**

@@ -9,6 +9,11 @@
     <label>Situationsmod.
       <input type="number" class="cc-situ" value="{{situMod}}" min="-10" max="10" />
     </label>
+    <span class="cc-turn">
+      <button type="button" class="cc-prev btn-sm" title="Vorheriger Zug">◀</button>
+      <span class="cc-active">{{#if activeName}}{{activeName}}{{else}}—{{/if}}</span>
+      <button type="button" class="cc-next btn-sm" title="Nächster Zug">▶</button>
+    </span>
     <button type="button" class="cc-refresh btn-sm" title="Neu einlesen">↻</button>
   </div>
 
@@ -18,6 +23,7 @@
       <span>Zustand</span>
       <span>Erklärung</span>
       <span>Defensivvorrat</span>
+      <span title="Persoenlicher Situationsmodifikator, zusaetzlich zum globalen">Sit.</span>
       <span>Angriff auf</span>
       <span></span>
     </div>
@@ -61,6 +67,13 @@
           {{defenseLeft}} / {{defensive}}
           {{#if defenseUsed}}<em title="bereits eingesetzt">({{defenseUsed}} weg)</em>{{/if}}
         {{/if}}
+      </span>
+
+      <span class="cc-situ-cell">
+        {{#unless defeated}}
+        <input type="number" class="cc-row-situ" value="{{situMod}}" min="-10" max="10"
+               title="Gilt nur für {{name}}, zusätzlich zum globalen Wert" />
+        {{/unless}}
       </span>
 
       <span class="cc-assign">

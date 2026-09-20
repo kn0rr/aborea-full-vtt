@@ -6,8 +6,8 @@ import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare,
          defenseAgainst, defenseRemaining, spendDefense, fleeDefenseBonus, isFleeing,
          SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan } from "./targeting.mjs";
-import { SETTINGS, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
-         shouldResetSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
+import { SETTINGS, SITU_FLAG, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
+         shouldResetSituMod, effectiveSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -88,6 +88,25 @@ export async function declareRound(actor, { mode = "weapon", offensive = 0, lock
   const decl = buildDeclaration(round, { mode, offensive, pool, locked: lock });
   await actor.setFlag(SYSTEM_FLAG, DECLARATION, decl);
   return roundSplit(actor, round);
+}
+
+/** Persönlicher Situationsmodifikator eines Kombattanten. */
+export function combatantSituMod(actor) {
+  return Number(actor?.flags?.[SYSTEM_FLAG]?.[SITU_FLAG] ?? 0) || 0;
+}
+
+/** Setzt ihn; 0 entfernt das Flag wieder. */
+export async function setCombatantSituMod(actor, value) {
+  const v = clampSituMod(value);
+  if (!actor) return 0;
+  if (v === 0) await actor.unsetFlag(SYSTEM_FLAG, SITU_FLAG);
+  else         await actor.setFlag(SYSTEM_FLAG, SITU_FLAG, v);
+  return v;
+}
+
+/** Global plus persönlich — das, was tatsächlich in den Wurf geht. */
+function _situModFor(actor) {
+  return effectiveSituMod(game.settings.get("aborea-v7", SETTINGS.situMod), combatantSituMod(actor));
 }
 
 /** Initiative eines Actors im laufenden Kampf. */
@@ -252,7 +271,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext() {
     const actor         = this.options.attackerActor;
     const weapons       = actor.items.filter(i => i.type === "weapon" && i.system.equipped);
-    const globalSituMod = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
+    const globalSituMod = _situModFor(actor);
     const isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
     // Vorbelegung aus der Rundenerklärung, sonst aus der Aufteilung am Bogen
     const storedOffBonus  = _split(actor).offensive;
@@ -893,7 +912,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
  * Angriffe einer Runde treffen auf denselben Schild, auch wenn zwischendurch
  * Schaden angewendet wird.
  */
-export async function executeGroupAttack(attackers, { targetToken, situMod = 0 } = {}) {
+export async function executeGroupAttack(attackers, { targetToken, situMod = null } = {}) {
   const targetActor = targetToken?.actor ?? null;
   if (!attackers?.length || !targetActor) return;
 
@@ -911,7 +930,8 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = 0 }
 
   for (const actor of attackers) {
     const targetDefense = defenseByAttacker[actor.id];
-    const plan = attackPlan(actor, { round, situMod });
+    // Der Situationsmodifikator ist je Kombattant verschieden.
+    const plan = attackPlan(actor, { round, situMod: situMod ?? _situModFor(actor) });
     await declareRound(actor, { mode: "weapon", offensive: plan.offBonus, lock: true });
 
     const minStrengthMod = minStrengthPenalty(actor);
@@ -959,7 +979,6 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = 0 }
       <div class="ac-row"><span>Verteidigungswert</span><span><strong>${
         [...new Set(Object.values(defenseByAttacker))].sort((a, b) => a - b).join(" / ")
       }</strong></span></div>
-      ${situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>` : ""}
       <div class="ac-group-rows">${rows}</div>
       ${anyHit ? "" : `<div class="ac-result miss">Kein Angriff kam durch.</div>`}
     </div>`,
@@ -1429,9 +1448,15 @@ export function registerCombatHooks() {
     const previousRound = Number(options?.aboreaPreviousRound ?? combat.previous?.round ?? 0);
     const enabled = game.settings.get("aborea-v7", SETTINGS.situModReset);
     if (!shouldResetSituMod(enabled, { previousRound, currentRound: changes.round })) return;
-    if (Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0) === 0) return;
+    const nothingSet = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0) === 0
+      && ![...combat.combatants].some(c => c.actor && combatantSituMod(c.actor));
+    if (nothingSet) return;
     await game.settings.set("aborea-v7", SETTINGS.situMod, 0);
-    ui.notifications.info("ABOREA: Situationsmodifikator für die neue Runde zurückgesetzt.");
+    // Auch die persönlichen Werte — sie sind genauso situativ.
+    for (const c of combat.combatants) {
+      if (c.actor && combatantSituMod(c.actor)) await setCombatantSituMod(c.actor, 0);
+    }
+    ui.notifications.info("ABOREA: Situationsmodifikatoren für die neue Runde zurückgesetzt.");
   });
 
   // ── Kampfstart: Initiative für alle ───────────────────────────────
@@ -1491,6 +1516,6 @@ export async function startGroupAttack() {
     ui.notifications.warn("ABOREA: Das Ziel ist unter den Angreifern.");
     return;
   }
-  const situMod = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
-  await executeGroupAttack(attackers, { targetToken, situMod });
+  // Ohne Vorgabe rechnet jeder Angreifer mit seinem eigenen Modifikator.
+  await executeGroupAttack(attackers, { targetToken });
 }

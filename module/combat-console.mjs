@@ -9,6 +9,9 @@
 
 import { roundSplit, splitRange, defenseRemaining, defenseSpentTotal } from "./declaration.mjs";
 import { registerSceneControlGroup } from "./scene-controls.mjs";
+import { clampSituMod, SETTINGS } from "./settings.mjs";
+import { declareRound, executeGroupAttack, openAttackDialog,
+         setCombatantSituMod, combatantSituMod } from "./combat.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -60,6 +63,7 @@ export function buildConsoleRows(combatants = [], { activeId = "" } = {}) {
       splitMax: range.max,
       canSplit: range.min !== range.max,
       fleeing: split.mode === "flee",
+      situMod: Number(c.situMod ?? 0) || 0,
     };
   });
 
@@ -119,6 +123,22 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
     return this.#instance;
   }
 
+  /** Zeichnet das offene Pult neu, falls es eins gibt. */
+  static refresh() {
+    if (this.#instance?.rendered) this.#instance.render();
+  }
+
+  /**
+   * Der Combat Tracker bleibt die Quelle der Wahrheit — über ihn führen die
+   * Spieler ihre Angriffe aus. Das Pult zeichnet ihn deshalb mit, wenn es
+   * selbst etwas geändert hat.
+   */
+  async render(...args) {
+    const result = await super.render(...args);
+    ui.combat?.render();
+    return result;
+  }
+
   async _prepareContext() {
     if (!mayUseConsole(game.user)) return { hasCombat: false, rows: [], alive: [], defeated: [] };
     const combat = game.combat;
@@ -132,6 +152,7 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
       initiative: c.initiative,
       hp: c.actor?.system?.resources?.hp,
       split: c.actor ? roundSplit(c.actor, round) : null,
+      situMod: c.actor ? combatantSituMod(c.actor) : 0,
     }));
 
     const { rows, alive, defeated } = buildConsoleRows(entries, {
@@ -142,7 +163,8 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
       hasCombat: !!combat,
       round,
       rows, alive, defeated,
-      situMod: Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0),
+      situMod: Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0),
+      activeName: rows.find(r => r.active)?.name ?? "",
     };
   }
 
@@ -150,53 +172,64 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
     const html = this.element;
     if (!html) return;
 
-    const combat   = game.combat;
-    const actorOf  = id => combat?.combatants.get(id)?.actor ?? null;
-    const rowOf    = el => el.closest("[data-combatant-id]")?.dataset.combatantId;
+    const combat  = game.combat;
+    const actorOf = id => combat?.combatants.get(id)?.actor ?? null;
 
-    // Angriff zuweisen: Angreifer wählen, Ziel wählen, ausführen
-    html.querySelectorAll(".cc-attack").forEach(btn => btn.addEventListener("click", async ev => {
-      const attacker = actorOf(rowOf(ev.currentTarget));
-      const targetId = ev.currentTarget.closest(".cc-row")?.querySelector(".cc-target")?.value;
-      const target   = combat?.combatants.get(targetId)?.token;
-      if (!attacker) return;
-      const { openAttackDialog, executeGroupAttack } = await import("./combat.mjs");
-      if (target) await executeGroupAttack([attacker], { targetToken: target,
-        situMod: Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0) });
-      else await openAttackDialog(attacker);
-      this.render();
-    }));
+    // Alles aus dem DOM wird VOR dem ersten await gelesen: nach einem await
+    // ist die Ereigniszustellung beendet und ev.currentTarget null.
+    const bind = (selector, event, handler) =>
+      html.querySelectorAll(selector).forEach(el => el.addEventListener(event, async ev => {
+        ev.preventDefault();
+        const row  = el.closest("[data-combatant-id]");
+        const id   = row?.dataset.combatantId;
+        const data = {
+          id, row,
+          actor:     actorOf(id),
+          combatant: combat?.combatants.get(id) ?? null,
+          value:     el.value,
+          mode:      el.dataset.mode,
+          offensive: Number(row?.querySelector(".cc-offensive")?.value ?? 0),
+          targetId:  row?.querySelector(".cc-target")?.value,
+        };
+        await handler(data);
+        this.render();
+      }));
 
-    // Offensiv/Defensiv erklären
-    html.querySelectorAll(".cc-offensive").forEach(inp => inp.addEventListener("change", async ev => {
-      const actor = actorOf(rowOf(ev.currentTarget));
+    bind(".cc-attack", "click", async ({ actor, targetId }) => {
       if (!actor) return;
-      const { declareRound } = await import("./combat.mjs");
-      await declareRound(actor, { mode: "weapon", offensive: Number(ev.target.value) });
-      this.render();
-    }));
+      const target = combat?.combatants.get(targetId)?.token;
+      if (target) await executeGroupAttack([actor], { targetToken: target });
+      else await openAttackDialog(actor);
+    });
 
-    html.querySelectorAll(".cc-mode").forEach(btn => btn.addEventListener("click", async ev => {
-      const actor = actorOf(rowOf(ev.currentTarget));
-      if (!actor) return;
-      const mode = ev.currentTarget.dataset.mode;
-      const { declareRound } = await import("./combat.mjs");
-      await declareRound(actor, { mode, offensive: Number(
-        ev.currentTarget.closest(".cc-row")?.querySelector(".cc-offensive")?.value ?? 0) });
-      this.render();
-    }));
+    bind(".cc-offensive", "change", async ({ actor, value }) => {
+      if (actor) await declareRound(actor, { mode: "weapon", offensive: Number(value) });
+    });
 
-    // Besiegt-Markierung
-    html.querySelectorAll(".cc-defeat").forEach(btn => btn.addEventListener("click", async ev => {
-      const c = combat?.combatants.get(rowOf(ev.currentTarget));
-      if (c) await c.update({ defeated: !c.isDefeated });
-      this.render();
-    }));
+    bind(".cc-mode", "click", async ({ actor, mode, offensive }) => {
+      if (actor) await declareRound(actor, { mode, offensive });
+    });
 
-    // Situationsmodifikator
+    bind(".cc-defeat", "click", async ({ combatant }) => {
+      if (combatant) await combatant.update({ defeated: !combatant.isDefeated });
+    });
+
+    // Situationsmodifikator je Kombattant
+    bind(".cc-row-situ", "change", async ({ actor, value }) => {
+      if (actor) await setCombatantSituMod(actor, value);
+    });
+
+    // Zugsteuerung — der Combat Tracker bleibt die Quelle der Wahrheit,
+    // das Pult bedient ihn nur.
+    html.querySelector(".cc-prev")?.addEventListener("click", async () => {
+      await combat?.previousTurn(); this.render();
+    });
+    html.querySelector(".cc-next")?.addEventListener("click", async () => {
+      await combat?.nextTurn(); this.render();
+    });
+
     html.querySelector(".cc-situ")?.addEventListener("change", async ev => {
-      const { clampSituMod } = await import("./settings.mjs");
-      await game.settings.set("aborea-v7", "globalSituMod", clampSituMod(ev.target.value));
+      await game.settings.set("aborea-v7", SETTINGS.situMod, clampSituMod(ev.target.value));
       this.render();
     });
 
@@ -206,13 +239,16 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
 
 /** Hooks, die das Pult auf dem Laufenden halten. */
 export function registerCombatConsole() {
-  const rerender = () => {
-    const app = Object.values(ui.windows ?? {}).find(w => w instanceof AboreaCombatConsole);
-    if (app?.rendered) app.render();
-  };
-  Hooks.on("updateCombat", rerender);
-  Hooks.on("updateCombatant", rerender);
-  Hooks.on("updateActor", rerender);
+  // ApplicationV2-Fenster stehen nicht in ui.windows — das ist die V1-Liste
+  // und bleibt leer. Deshalb hält die Klasse ihre Instanz selbst.
+  const rerender = () => AboreaCombatConsole.refresh();
+  // Zugwechsel, Initiative, Besiegt-Markierung, Lebenspunkte und
+  // Rundenerklärungen — alles, was im Pult steht, kann auch anderswo
+  // geändert werden.
+  for (const hook of ["updateCombat", "createCombatant", "updateCombatant", "deleteCombatant",
+                      "updateActor", "deleteCombat", "combatStart", "combatTurn", "combatRound"]) {
+    Hooks.on(hook, rerender);
+  }
 
   registerSceneControlGroup({
     name:  "aborea-combat",

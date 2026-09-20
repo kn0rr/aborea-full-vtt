@@ -87,6 +87,13 @@ test("buildConsoleRows", async t => {
     assert.equal(r.pool, 0);
   });
 
+  await t.test("persoenlicher Situationsmodifikator wird durchgereicht", () => {
+    const [r] = buildConsoleRows([eintrag("x", {})].map(e => ({ ...e, situMod: -2 }))).rows;
+    assert.equal(r.situMod, -2);
+  });
+  await t.test("ohne Angabe 0", () =>
+    assert.equal(buildConsoleRows([eintrag("x")]).rows[0].situMod, 0));
+
   await t.test("leere Eingabe", () => {
     assert.deepEqual(buildConsoleRows([]).rows, []);
     assert.deepEqual(buildConsoleRows(null).rows, []);

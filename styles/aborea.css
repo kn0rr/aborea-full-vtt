@@ -1111,11 +1111,15 @@
   border-bottom: 1px solid var(--aborea-border-light);
 }
 .aborea-combat-console .cc-round { font-weight: 700; }
+.aborea-combat-console .cc-turn { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+.aborea-combat-console .cc-active { min-width: 7em; text-align: center; font-weight: 700; }
+.aborea-combat-console .cc-row-situ { width: 3.2em; }
+.aborea-combat-console .cc-situ-cell { text-align: center; }
 .aborea-combat-console .cc-toolbar input[type=number] { width: 4em; }
 .aborea-combat-console .cc-head,
 .aborea-combat-console .cc-row {
   display: grid; align-items: center; gap: 8px;
-  grid-template-columns: minmax(9em, 1.4fr) 7em minmax(11em, auto) 6em minmax(8em, 1fr) auto;
+  grid-template-columns: minmax(8em, 1.3fr) 6.5em minmax(11em, auto) 5.5em 3.5em minmax(7em, 1fr) auto;
   padding: 3px 2px;
 }
 .aborea-combat-console .cc-head { font-weight: 700; opacity: .7; font-size: .74rem; }

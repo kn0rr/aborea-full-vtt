@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   SITU_PRESETS, SITU_MIN, SITU_MAX,
-  clampSituMod, shouldAutoApplyDamage, shouldResetSituMod,
+  clampSituMod, shouldAutoApplyDamage, shouldResetSituMod, effectiveSituMod,
   buildUndoRecord, describeUndo,
 } from "../module/settings.mjs";
 
@@ -129,5 +129,23 @@ test("describeUndo", async t => {
   await t.test("ohne Eintrag leer", () => {
     assert.equal(describeUndo(null), "");
     assert.equal(describeUndo({ entries: [] }), "");
+  });
+});
+
+test("effectiveSituMod: global plus persoenlich", async t => {
+  // Der globale Wert betrifft die ganze Szene (Dunkelheit, Sturm), der
+  // persoenliche nur einen Kombattanten (erhoehte Position, Flanke).
+  await t.test("nur global", () => assert.equal(effectiveSituMod(-4, 0), -4));
+  await t.test("nur persoenlich", () => assert.equal(effectiveSituMod(0, 2), 2));
+  await t.test("beide addieren sich", () => assert.equal(effectiveSituMod(-4, 2), -2));
+  await t.test("sie koennen sich aufheben", () => assert.equal(effectiveSituMod(-2, 2), 0));
+  await t.test("die Summe wird geklemmt", () => {
+    assert.equal(effectiveSituMod(8, 8), 10);
+    assert.equal(effectiveSituMod(-8, -8), -10);
+  });
+  await t.test("fehlende Werte zaehlen als 0", () => {
+    assert.equal(effectiveSituMod(undefined, 3), 3);
+    assert.equal(effectiveSituMod(null, null), 0);
+    assert.equal(effectiveSituMod("x", "y"), 0);
   });
 });
