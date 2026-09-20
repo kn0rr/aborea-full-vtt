@@ -8,7 +8,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   declarationFor, roundSplit, buildDeclaration, splitLabel, canRedeclare,
-  splitRange, clampOffensive, carrySplit,
+  splitRange, clampOffensive, carrySplit, allocateDefense, defenseAgainst,
 } from "../module/declaration.mjs";
 
 /** Actor mit Kampfbonus-Pool und optionaler Erklärung. */
@@ -228,4 +228,93 @@ test("carrySplit: Aufteilung auf einen neuen Kampfbonus uebertragen", async t =>
       }
     }
   });
+});
+
+test("allocateDefense: Defensivbonus auf Angreifer verteilen (S. 33)", async t => {
+  const goblins = ["g1", "g2", "g3", "g4"];
+
+  await t.test("ohne Zuweisung bekommt der erste alles", () =>
+    assert.deepEqual(allocateDefense(3, goblins),
+      { g1: 3, g2: 0, g3: 0, g4: 0 }));
+
+  await t.test("ausdrueckliche Verteilung wird uebernommen", () =>
+    assert.deepEqual(allocateDefense(3, goblins, { g1: 2, g2: 1 }),
+      { g1: 2, g2: 1, g3: 0, g4: 0 }));
+
+  await t.test("reicht der Bonus nicht, gehen die spaeteren leer aus", () => {
+    // Initiative-Reihenfolge entscheidet: g1 und g2 bekommen ihren Anteil,
+    // g3 nur den Rest, g4 nichts.
+    const r = allocateDefense(3, goblins, { g1: 2, g2: 1, g3: 2, g4: 2 });
+    assert.deepEqual(r, { g1: 2, g2: 1, g3: 0, g4: 0 });
+  });
+
+  await t.test("der Rest geht an den naechsten, nicht verloren", () =>
+    assert.deepEqual(allocateDefense(3, goblins, { g1: 1, g2: 5 }),
+      { g1: 1, g2: 2, g3: 0, g4: 0 }));
+
+  await t.test("die Summe uebersteigt nie den Bonus", () => {
+    for (const pool of [0, 1, 3, 7]) {
+      for (const alloc of [null, { g1: 9 }, { g1: 1, g2: 1, g3: 1, g4: 1 }, { g4: 5 }]) {
+        const r = allocateDefense(pool, goblins, alloc);
+        const sum = Object.values(r).reduce((a, b) => a + b, 0);
+        assert.ok(sum <= pool, `Pool ${pool}: Summe ${sum} ist zu hoch`);
+        assert.ok(Object.values(r).every(v => v >= 0), "negativer Anteil");
+      }
+    }
+  });
+
+  await t.test("negativer Bonus verteilt nichts", () =>
+    assert.deepEqual(allocateDefense(-2, goblins), { g1: 0, g2: 0, g3: 0, g4: 0 }));
+
+  await t.test("ohne Angreifer leeres Ergebnis", () =>
+    assert.deepEqual(allocateDefense(3, []), {}));
+
+  await t.test("ein einzelner Angreifer bekommt alles", () =>
+    assert.deepEqual(allocateDefense(3, ["g1"]), { g1: 3 }));
+
+  await t.test("unbekannte Ids in der Zuweisung stoeren nicht", () =>
+    assert.deepEqual(allocateDefense(3, ["g1"], { unbekannt: 2, g1: 1 }), { g1: 1 }));
+});
+
+test("defenseAgainst", async t => {
+  const goblins = ["g1", "g2", "g3"];
+  await t.test("der bedachte Gegner", () =>
+    assert.equal(defenseAgainst(3, goblins, { g1: 2, g2: 1 }, "g2"), 1));
+  await t.test("der leer ausgegangene", () =>
+    assert.equal(defenseAgainst(3, goblins, { g1: 2, g2: 1 }, "g3"), 0));
+  await t.test("unbekannter Angreifer bekommt 0", () =>
+    assert.equal(defenseAgainst(3, goblins, null, "fremd"), 0));
+});
+
+test("roundSplit reicht die Zuweisung durch", async t => {
+  const mit = alloc => roundSplit({
+    type: "character",
+    flags: { "aborea-v7": { declaration: { round: 3, mode: "weapon", offensive: 2, defenseAllocation: alloc } } },
+    system: { combat: { combatBonus: 5 } },
+  }, 3);
+
+  await t.test("vorhandene Zuweisung", () =>
+    assert.deepEqual(mit({ g1: 2, g2: 1 }).defenseAllocation, { g1: 2, g2: 1 }));
+  await t.test("ohne Zuweisung null", () =>
+    assert.equal(mit(undefined).defenseAllocation, null));
+  await t.test("beim Zaubern gibt es nichts zu verteilen", () => {
+    const s = roundSplit({
+      type: "character",
+      flags: { "aborea-v7": { declaration: { round: 3, mode: "spell", defenseAllocation: { g1: 2 } } } },
+      system: { combat: { combatBonus: 5 } },
+    }, 3);
+    assert.equal(s.defensive, 0);
+    assert.equal(s.defenseAllocation, null);
+  });
+});
+
+test("buildDeclaration mit Verteilung", async t => {
+  await t.test("wird uebernommen", () =>
+    assert.deepEqual(buildDeclaration(1, { mode: "weapon", offensive: 2, pool: 5,
+      defenseAllocation: { g1: 2 } }).defenseAllocation, { g1: 2 }));
+  await t.test("leere Zuweisung wird weggelassen", () =>
+    assert.equal("defenseAllocation" in buildDeclaration(1, { mode: "weapon", pool: 5, defenseAllocation: {} }), false));
+  await t.test("beim Zaubern weggelassen", () =>
+    assert.equal("defenseAllocation" in buildDeclaration(1, { mode: "spell", pool: 5,
+      defenseAllocation: { g1: 2 } }), false));
 });

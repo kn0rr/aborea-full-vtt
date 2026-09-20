@@ -1115,7 +1115,7 @@
 /* Gruppenangriff: eine Zeile je Angreifer */
 .aborea-group-attack .ac-group-rows { margin-top: 6px; }
 .aborea-group-attack .ac-group-row {
-  display: grid; grid-template-columns: 1fr auto auto 2.2em auto auto;
+  display: grid; grid-template-columns: 1fr auto auto 2.2em auto auto auto;
   gap: 6px; align-items: center; padding: 3px 4px; font-size: .8rem;
   border-top: 1px solid var(--aborea-border-light);
 }
@@ -1123,6 +1123,7 @@
 .aborea-group-attack .acg-weapon { opacity: .7; }
 .aborea-group-attack .acg-roll   { opacity: .7; font-variant-numeric: tabular-nums; }
 .aborea-group-attack .acg-value  { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.aborea-group-attack .acg-dv     { opacity: .65; font-size: .72rem; white-space: nowrap; }
 .aborea-group-attack .ac-group-row.hit    .acg-result { color: #166534; }
 .aborea-group-attack .ac-group-row.miss   .acg-result { color: #6b7280; }
 .aborea-group-attack .ac-group-row.patzer .acg-result { color: #b91c1c; font-weight: 700; }

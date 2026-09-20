@@ -3,7 +3,7 @@ import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
 import { roundSplit, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
-         SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
+         allocateDefense, defenseAgainst, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan } from "./targeting.mjs";
 import { SETTINGS, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
          shouldResetSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
@@ -108,7 +108,31 @@ function _bonusWeaponDamage(actor) {
  * Der Rest liess Rassen- und Klassenbonus fallen, sodass der RW im Kampf nicht
  * zum RW auf dem Bogen passte.
  */
-function _dv(actor) {
+/** Kombattanten der laufenden Runde in Initiative-Reihenfolge, als Actor-Ids. */
+function _initiativeOrder(exceptActorId = null) {
+  return (game.combat?.turns ?? [])
+    .map(c => c.actor?.id)
+    .filter(id => id && id !== exceptActorId);
+}
+
+/**
+ * Der Anteil des Defensivbonus, der gegen einen bestimmten Angreifer zählt.
+ *
+ * Ohne Angreifer gilt der volle Defensivbonus — das ist die Anzeige im
+ * Tracker und in der Zielvorschau. Für die Auflösung eines Angriffs wird der
+ * Angreifer übergeben, dann greift die Verteilung nach S. 33.
+ */
+function _defensiveFor(actor, attackerActor = null) {
+  const split = _split(actor);
+  if (!attackerActor || split.defensive <= 0) return split.defensive;
+  return defenseAgainst(
+    split.defensive,
+    _initiativeOrder(actor.id),
+    split.defenseAllocation,
+    attackerActor.id);
+}
+
+function _dv(actor, attackerActor = null) {
   if (!actor) return 5;
   const baseArmor = Number(actor.system.combat?.armorValue ?? 0)
                   + Number(actor.system.traits?.racialArmorBonus ?? 0)
@@ -118,7 +142,7 @@ function _dv(actor) {
     .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
   return ABOREA.defenseValue(
     baseArmor + armorFromItems,
-    _split(actor).defensive + _maneuverBonus(actor));
+    _defensiveFor(actor, attackerActor) + _maneuverBonus(actor));
 }
 
 function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
@@ -130,7 +154,7 @@ function _hpColor(pct) {
 }
 
 /** Zielliste für den Angriffsdialog, ohne den Angreifer selbst. */
-function _buildTargetCandidates(attackerTokenId) {
+function _buildTargetCandidates(attackerTokenId, attackerActor = null) {
   // Mit laufendem Kampf nur die Kombattanten, sonst alles Bespielbare auf der
   // Szene — ein Hinterhalt außerhalb der Initiative soll nicht an einer leeren
   // Auswahl scheitern.
@@ -148,7 +172,7 @@ function _buildTargetCandidates(attackerTokenId) {
       return {
         id:          t.id,
         name:        t.name,
-        dv:          _dv(t.actor),
+        dv:          _dv(t.actor, attackerActor),
         hp:          hpVal,
         hpMax,
         hpPct:       pct,
@@ -255,7 +279,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       spellBonusBreakdown: formatBreakdown(spellB.breakdown).join(" + "),
       currentMp,
       currentMpMax,
-      targetCandidates: _buildTargetCandidates(attackerTokenId),
+      targetCandidates: _buildTargetCandidates(attackerTokenId, actor),
       combatBonus,
       currentOffBonus,
       splitMin: splitRange(combatBonus).min,
@@ -494,7 +518,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         spellBonus:   Number(data.spellBonus || 0),
         situMod:      Number(data.situMod || 0),
         targetActor,
-        targetDefense: targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
+        targetDefense: targetActor ? _dv(targetActor, actor) : Number(data.manualDefense || 5),
         attackerImg:  actor.img ?? "",
         targetImg:    targetActor?.img ?? "",
       });
@@ -510,7 +534,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         maneuverMod:      _maneuverBonus(actor),
         situMod:          Number(data.situMod || 0),
         targetActor,
-        targetDefense:    targetActor ? _dv(targetActor) : Number(data.manualDefense || 5),
+        targetDefense:    targetActor ? _dv(targetActor, actor) : Number(data.manualDefense || 5),
         attackerImg:      actor.img ?? "",
         targetImg:        targetActor?.img ?? "",
       });
@@ -679,7 +703,7 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
 
   for (let i = 0; i < Math.max(1, targets.length || 1); i++) {
     const currentTarget     = targets[i] ?? null;
-    const currentDefense    = currentTarget ? _dv(currentTarget) : targetDefense;
+    const currentDefense    = currentTarget ? _dv(currentTarget, attackerActor) : targetDefense;
     const currentTargetImg  = currentTarget?.img ?? targetImg;
     const roll       = await rollOpenD10({ label: `Gezielter Zauber: ${spell.name}`, skipVisual: true });
     const attackValue = roll.total + spellBonus + situMod;
@@ -823,13 +847,18 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = 0 }
   const targetActor = targetToken?.actor ?? null;
   if (!attackers?.length || !targetActor) return;
 
-  const targetDefense = _dv(targetActor);
-  const round         = game.combat?.round;
+  const round = game.combat?.round;
   const rolls = [];
   let rows = "";
   let anyHit = false;
 
+  // Der Defensivbonus wird auf die Angreifer verteilt (S. 33) — jeder trifft
+  // deshalb auf seinen eigenen Verteidigungswert.
+  const defenseByAttacker = Object.fromEntries(
+    attackers.map(a => [a.id, _dv(targetActor, a)]));
+
   for (const actor of attackers) {
+    const targetDefense = defenseByAttacker[actor.id];
     const plan = attackPlan(actor, { round, situMod });
     await declareRound(actor, { mode: "weapon", offensive: plan.offBonus, lock: true });
 
@@ -859,6 +888,7 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = 0 }
         <span class="acg-weapon">${plan.weapon?.name ?? "Angriff"}</span>
         <span class="acg-roll">${roll.formula}${_sign(plan.offBonus + maneuverMod + minStrengthMod + plan.situMod)}</span>
         <span class="acg-value">${roll.naturalOne ? "—" : attackValue}</span>
+        <span class="acg-dv" title="Verteidigungswert gegen diesen Angreifer">RW ${targetDefense}</span>
         <span class="acg-result">${resultLabel}</span>
         ${damage && targetActor.id
           ? `<button type="button" class="apply-damage-btn btn-sm"
@@ -874,7 +904,9 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = 0 }
         <span class="ac-arrow">→</span>
         <span class="ac-target">${targetActor.name}</span>
       </div>
-      <div class="ac-row"><span>Verteidigungswert</span><span><strong>${targetDefense}</strong></span></div>
+      <div class="ac-row"><span>Verteidigungswert</span><span><strong>${
+        [...new Set(Object.values(defenseByAttacker))].sort((a, b) => a - b).join(" / ")
+      }</strong></span></div>
       ${situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>` : ""}
       <div class="ac-group-rows">${rows}</div>
       ${anyHit ? "" : `<div class="ac-result miss">Kein Angriff kam durch.</div>`}
@@ -1089,7 +1121,7 @@ function _buildCombatantState(actor, round) {
     <div class="acs-bar"><div class="acs-bar-fill" style="width:${pct}%;background:${_hpColor(pct)}"></div></div>
     <div class="acs-line">
       <span class="acs-hp">${hpVal}/${hpMax}</span>
-      <span class="acs-dv" title="Verteidigungswert">RW ${_dv(actor)}</span>
+      <span class="acs-dv" title="Verteidigungswert mit vollem Defensivbonus — gegen einzelne Angreifer kann er niedriger sein">RW ${_dv(actor)}</span>
       <span class="acs-split${split.declared ? "" : " undeclared"}${split.locked ? " locked" : ""}" title="${hint}">
         ${splitLabel(split)}${split.declared ? "" : " ?"}
       </span>

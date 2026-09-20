@@ -41,16 +41,22 @@ export function roundSplit(actor, round) {
       declared: false, locked: false, mode: "weapon", pool,
       offensive: Number(combat.offensiveBonus ?? 0),
       defensive: Number(combat.defensiveBonus ?? 0),
+      defenseAllocation: null,
     };
   }
 
   // Zaubern bindet den Kampfbonus vollständig offensiv.
   if (decl.mode === "spell") {
-    return { declared: true, locked: !!decl.locked, mode: "spell", pool, offensive: pool, defensive: 0 };
+    return { declared: true, locked: !!decl.locked, mode: "spell", pool,
+             offensive: pool, defensive: 0, defenseAllocation: null };
   }
 
   const offensive = clampOffensive(decl.offensive, pool);
-  return { declared: true, locked: !!decl.locked, mode: "weapon", pool, offensive, defensive: pool - offensive };
+  return {
+    declared: true, locked: !!decl.locked, mode: "weapon", pool, offensive,
+    defensive: pool - offensive,
+    defenseAllocation: decl.defenseAllocation ?? null,
+  };
 }
 
 /**
@@ -94,13 +100,56 @@ export function carrySplit(previousOffensive, previousPool, newPool) {
 }
 
 /** Eine neue Erklärung für diese Runde — ungespeichert, nur der Wert. */
-export function buildDeclaration(round, { mode = "weapon", offensive = 0, pool = 0, locked = false } = {}) {
-  return {
+export function buildDeclaration(round, {
+  mode = "weapon", offensive = 0, pool = 0, locked = false, defenseAllocation = null,
+} = {}) {
+  const decl = {
     round: Number(round),
     mode:  mode === "spell" ? "spell" : "weapon",
     offensive: mode === "spell" ? Number(pool) : clampOffensive(offensive, pool),
     locked: !!locked,
   };
+  // Zaubern bindet den Kampfbonus offensiv — es bleibt nichts zu verteilen.
+  if (decl.mode === "weapon" && defenseAllocation && Object.keys(defenseAllocation).length) {
+    decl.defenseAllocation = defenseAllocation;
+  }
+  return decl;
+}
+
+/**
+ * Verteilt den Defensivbonus auf die Angreifer.
+ *
+ * Regelwerk S. 33: der DB kann bei mehreren Angreifern aufgeteilt werden;
+ * reicht er nicht für alle, wird er nur bei den zuerst bedachten Gegnern
+ * abgezogen. „Zuerst" heißt hier Initiative-Reihenfolge.
+ *
+ * Ohne ausdrückliche Zuweisung bekommt der erste Angreifer den vollen Bonus
+ * und die übrigen nichts — so greift er einmal statt gegen jeden.
+ *
+ * @param {number}   pool         Defensivbonus des Verteidigers
+ * @param {string[]} attackerIds  Angreifer in Initiative-Reihenfolge
+ * @param {object}   [allocation] ausdrückliche Zuweisung { id: Anteil }
+ * @returns {object} vollständige Zuweisung; die Summe übersteigt nie den Pool
+ */
+export function allocateDefense(pool, attackerIds = [], allocation = null) {
+  const total = Math.max(0, Number(pool) || 0);
+  const ids   = Array.isArray(attackerIds) ? attackerIds : [];
+  const explicit = allocation && Object.keys(allocation).length > 0;
+
+  const out = {};
+  let left = total;
+  for (const id of ids) {
+    const wanted = explicit ? Math.max(0, Number(allocation[id]) || 0) : left;
+    const give   = Math.min(wanted, left);
+    out[id] = give;
+    left -= give;
+  }
+  return out;
+}
+
+/** Der Anteil, der gegen einen bestimmten Angreifer zählt. */
+export function defenseAgainst(pool, attackerIds, allocation, attackerId) {
+  return allocateDefense(pool, attackerIds, allocation)[attackerId] ?? 0;
 }
 
 /** Kurzform für den Combat Tracker: "⚔4 / 🛡2" oder "✨ Zauber". */
