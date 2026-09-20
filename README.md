@@ -238,6 +238,24 @@ Das System unterstützt das Modul **Dice So Nice** automatisch. Wenn installiert
 
 ---
 
+## Kampfpult
+
+Das Pult für den Spielleiter zeigt alle Kombattanten auf einem Blatt:
+Zustand, Rundenerklärung, Defensivvorrat — und Angriffe lassen sich von dort
+zuweisen, ohne jeden Token einzeln anzuklicken.
+
+Öffnen auf drei Wegen:
+
+1. **Szenenwerkzeuge**, Gruppe „ABOREA Kampf“ (Schachbrett-Symbol in der
+   linken Leiste) → „Kampfpult öffnen“. Dieselbe Gruppe enthält den
+   Gruppenangriff.
+2. **Konsole**: `game.aborea.combatConsole()`
+3. **Makro** mit demselben Aufruf, wenn du es auf die Leiste legen willst.
+
+Nur für Spielleiter sichtbar.
+
+---
+
 ## Entwicklung: Tests
 
 Die Regel-Rechnungen (Fertigkeits- und Kampfboni, Verteidigungswert,

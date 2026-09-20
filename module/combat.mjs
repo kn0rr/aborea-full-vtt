@@ -1468,30 +1468,6 @@ export function registerCombatHooks() {
     column.appendChild(btn);
   });
 
-  // ── Gruppenangriff als Szenenwerkzeug ─────────────────────────────
-  const _groupAttackTool = {
-    name: "aborea-group-attack",
-    title: "ABOREA: Gruppenangriff",
-    icon: "fas fa-users",
-    button: true,
-    visible: true,
-    onChange: () => _startGroupAttack(),
-    onClick:  () => _startGroupAttack(),
-  };
-  const _addTool = controls => {
-    if (!game.user.isGM) return;
-    const tokenControls = Array.isArray(controls)
-      ? controls.find(c => c.name === "token")
-      : controls?.token;
-    if (!tokenControls) return;
-    if (Array.isArray(tokenControls.tools)) {
-      if (!tokenControls.tools.some(t => t.name === _groupAttackTool.name)) tokenControls.tools.push(_groupAttackTool);
-    } else if (tokenControls.tools) {
-      tokenControls.tools[_groupAttackTool.name] ??= _groupAttackTool;
-    }
-  };
-  Hooks.on("getSceneControlButtonsV2", _addTool);
-  Hooks.on("getSceneControlButtons",   _addTool);
 }
 
 /**
@@ -1499,7 +1475,7 @@ export function registerCombatHooks() {
  * Ziel. Beides kommt aus dem, was der Spielleiter ohnehin auf der Szene tut —
  * auswählen und mit T markieren — statt aus einem weiteren Dialog.
  */
-async function _startGroupAttack() {
+export async function startGroupAttack() {
   const attackers = (canvas?.tokens?.controlled ?? [])
     .map(t => t.actor).filter(a => a && a.type !== "loot");
   if (attackers.length < 2) {

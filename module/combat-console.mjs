@@ -196,24 +196,41 @@ export function registerCombatConsole() {
   Hooks.on("updateCombatant", rerender);
   Hooks.on("updateActor", rerender);
 
-  const addTool = controls => {
-    if (!game.user.isGM) return;
-    const token = Array.isArray(controls) ? controls.find(c => c.name === "token") : controls?.token;
-    if (!token) return;
-    const tool = {
-      name: "aborea-combat-console",
-      title: "ABOREA: Kampfpult",
-      icon: "fas fa-chess-board",
-      button: true, visible: true,
-      onChange: () => AboreaCombatConsole.open(),
-      onClick:  () => AboreaCombatConsole.open(),
-    };
-    if (Array.isArray(token.tools)) {
-      if (!token.tools.some(t => t.name === tool.name)) token.tools.push(tool);
-    } else if (token.tools) {
-      token.tools[tool.name] ??= tool;
-    }
+  // Eigene Werkzeuggruppe — dasselbe Muster wie quick-npc.mjs und
+  // audio-manager.mjs, das in diesem System nachweislich greift. Ein Tool in
+  // die vorhandene Token-Gruppe einzuhängen ist versionsabhängiger.
+  const entry = {
+    name:       "aborea-combat",
+    title:      "ABOREA Kampf",
+    icon:       "fas fa-chess-board",
+    layer:      "tokens",
+    activeTool: "combat-console",
+    tools: [
+      {
+        name:    "combat-console",
+        title:   "Kampfpult öffnen",
+        icon:    "fas fa-chess-board",
+        button:  true,
+        onClick: () => AboreaCombatConsole.open(),
+      },
+      {
+        name:    "group-attack",
+        title:   "Gruppenangriff: ausgewählte Tokens greifen das markierte Ziel an",
+        icon:    "fas fa-users",
+        button:  true,
+        onClick: async () => (await import("./combat.mjs")).startGroupAttack(),
+      },
+    ],
   };
-  Hooks.on("getSceneControlButtonsV2", addTool);
-  Hooks.on("getSceneControlButtons",   addTool);
+
+  Hooks.on("getSceneControlButtonsV2", controls => {
+    if (!game.user?.isGM) return;
+    if (Array.isArray(controls)) controls.push(entry);
+    else if (controls && typeof controls === "object") controls[entry.name] = entry;
+  });
+  Hooks.on("getSceneControlButtons", controls => {
+    if (!game.user?.isGM) return;
+    if (Array.isArray(controls)) controls.push(entry);
+    else if (controls && typeof controls === "object") controls[entry.name] = entry;
+  });
 }
