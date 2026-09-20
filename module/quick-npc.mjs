@@ -1,5 +1,6 @@
 // module/quick-npc.mjs — GM-Tools: Schnell-NSC + Gruppenprobe
 import { openGroupCheckDialog } from "./checks.mjs";
+import { registerSceneControlGroup } from "./scene-controls.mjs";
 
 async function _pickCreature() {
   const pack = game.packs.find(p =>
@@ -84,38 +85,16 @@ export async function spawnCreatureOnScene() {
 }
 
 export function registerQuickNpcSceneControl() {
-  const entry = {
-    name:        "aborea-creatures",
-    title:       "ABOREA Kreaturen",
-    icon:        "fas fa-dragon",
-    layer:       "tokens",          // Foundry v13: Layer-Schlüssel, nicht Klassenname
-    activeTool:  "quick-spawn",
+  registerSceneControlGroup({
+    name:  "aborea-creatures",
+    title: "ABOREA Kreaturen",
+    icon:  "fas fa-dragon",
+    layer: "tokens",
     tools: [
-      {
-        name:    "quick-spawn",
-        title:   "Kreatur schnell auf Szene platzieren",
-        icon:    "fas fa-plus-circle",
-        button:  true,
-        onClick: () => spawnCreatureOnScene(),
-      },
-      {
-        name:    "group-check",
-        title:   "Gruppenprobe würfeln",
-        icon:    "fas fa-users",
-        button:  true,
-        onClick: () => openGroupCheckDialog(),
-      }
-    ]
-  };
-
-  // Foundry v13
-  Hooks.on("getSceneControlButtonsV2", controls => {
-    if (!game.user?.isGM) return;
-    if (Array.isArray(controls)) controls.push(entry);
-  });
-  // Foundry v12 Fallback
-  Hooks.on("getSceneControlButtons", controls => {
-    if (!game.user?.isGM) return;
-    if (Array.isArray(controls)) controls.push(entry);
+      { name: "quick-spawn", title: "Kreatur schnell auf Szene platzieren",
+        icon: "fas fa-plus-circle", onClick: () => spawnCreatureOnScene() },
+      { name: "group-check", title: "Gruppenprobe würfeln",
+        icon: "fas fa-users", onClick: () => openGroupCheckDialog() },
+    ],
   });
 }

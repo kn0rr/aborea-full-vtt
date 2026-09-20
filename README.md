@@ -254,6 +254,19 @@ zuweisen, ohne jeden Token einzeln anzuklicken.
 
 Nur für Spielleiter sichtbar.
 
+### Alle Werkzeuge über die Konsole
+
+Falls die Szenenleiste einmal streikt, ist jedes Werkzeug auch direkt
+erreichbar:
+
+```js
+game.aborea.combatConsole()   // Kampfpult
+game.aborea.groupAttack()     // Gruppenangriff
+game.aborea.spawnCreature()   // Kreatur platzieren
+game.aborea.groupCheck()      // Gruppenprobe
+game.aborea.openSoundboard()  // Soundboard
+```
+
 ---
 
 ## Entwicklung: Tests

@@ -8,7 +8,7 @@ import { AboreaCombat, openAttackDialog, registerCombatHooks } from "./combat.mj
 import { AboreaCombatConsole, registerCombatConsole } from "./combat-console.mjs";
 import { registerConditions, registerConditionHooks } from "./conditions.mjs";
 import { openCheckDialog, openGroupCheckDialog, registerCheckHooks } from "./checks.mjs";
-import { registerQuickNpcSceneControl } from "./quick-npc.mjs";
+import { registerQuickNpcSceneControl, spawnCreatureOnScene } from "./quick-npc.mjs";
 import { normalizeWallet, makeHistoryEntry, logListPush, itemHistoryLabel } from "./actor-helpers.mjs";
 import {
   CharacterDataModel, NpcDataModel, CreatureDataModel, LootDataModel,
@@ -62,6 +62,10 @@ Hooks.once("init", async function () {
     combatConsole: () => AboreaCombatConsole.open(),
     check:       openCheckDialog,
     groupCheck:  openGroupCheckDialog,
+    // Auch ueber die Konsole erreichbar, falls die Szenenwerkzeuge einmal
+    // nicht erscheinen — das war unter Foundry v13 laenger der Fall.
+    spawnCreature: spawnCreatureOnScene,
+    groupAttack:   async () => (await import("./combat.mjs")).startGroupAttack(),
   };
   CONFIG.ABOREA = ABOREA;
 

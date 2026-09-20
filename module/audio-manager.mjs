@@ -1,3 +1,4 @@
+import { registerSceneControlGroup } from "./scene-controls.mjs";
 const ROOT = `systems/aborea-v7`;
 const PRESETS_PATH = `${ROOT}/data/audio-presets.json`;
 
@@ -361,40 +362,17 @@ export class AboreaSoundboard {
   // ── Scene Control ─────────────────────────────────────────────────────────────
 
   static registerSceneControl() {
-    const entry = {
-      name: "aborea-audio",
+    registerSceneControlGroup({
+      name:  "aborea-audio",
       title: "ABOREA Audio",
-      icon: "fas fa-music",
-      layer: "SoundsLayer",
+      icon:  "fas fa-music",
+      layer: "sounds",
       tools: [
-        {
-          name: "open",
-          title: "Soundboard öffnen",
-          icon: "fas fa-sliders-h",
-          button: true,
-          onClick: () => AboreaSoundboard.openDialog()
-        },
-        {
-          name: "stop",
-          title: "Alles stoppen",
-          icon: "fas fa-stop",
-          button: true,
-          onClick: () => AboreaSoundboard.stopAll()
-        }
-      ]
-    };
-
-    // v13+: getSceneControlButtonsV2 übergibt ein Array (gleiche Struktur wie v12)
-    Hooks.on("getSceneControlButtonsV2", controls => {
-      if (!game.user?.isGM) return;
-      if (Array.isArray(controls)) controls.push(entry);
-    });
-
-    // v12 Fallback (kein Warning in v13 da Hook nicht mehr feuert wenn V2 Hook aktiv)
-    Hooks.on("getSceneControlButtons", controls => {
-      if (!game.user?.isGM) return;
-      if (Array.isArray(controls)) controls.push(entry);
-      else if (controls && typeof controls === "object") controls[entry.name] = entry;
+        { name: "open", title: "Soundboard öffnen", icon: "fas fa-sliders-h",
+          onClick: () => AboreaSoundboard.openDialog() },
+        { name: "stop", title: "Alles stoppen", icon: "fas fa-stop",
+          onClick: () => AboreaSoundboard.stopAll() },
+      ],
     });
   }
 }
