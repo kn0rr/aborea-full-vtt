@@ -2,6 +2,7 @@ import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
+import { roundSplit, buildDeclaration, splitLabel, canRedeclare, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -60,23 +61,28 @@ export class AboreaCombat extends Combat {
 //  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
-/**
- * Wer in dieser Runde gezaubert hat, bekommt keinen Defensivbonus: der
- * Kampfbonus zählt beim Zaubern vollständig offensiv.
- *
- * Gemerkt wird die Rundennummer, nicht ein Schalter — damit gilt es genau
- * für diese Runde und löst sich von selbst auf, ohne die gespeicherte
- * Offensiv/Defensiv-Aufteilung des Charakters anzutasten.
- */
-export async function markSpellcast(actor) {
-  const round = game.combat?.round;
-  if (!round || !actor) return;
-  await actor.setFlag("aborea-v7", "spellcastRound", round);
+/** Aufteilung des Kampfbonus für die laufende Runde. */
+function _split(actor) {
+  return roundSplit(actor, game.combat?.round);
 }
 
-function _hasCastThisRound(actor) {
+/**
+ * Erklärt die Runde für einen Actor. `lock` setzt sie fest — das passiert,
+ * sobald gehandelt wurde, damit niemand rückwirkend umentscheidet.
+ *
+ * Eine bereits festgesetzte Erklärung wird nicht überschrieben: wer als
+ * Waffenkämpfer erklärt hat und dann doch zaubert, behält die Erklärung und
+ * bekommt einen Hinweis. Der Spielleiter entscheidet, ob er das zulässt.
+ */
+export async function declareRound(actor, { mode = "weapon", offensive = 0, lock = false } = {}) {
   const round = game.combat?.round;
-  return !!round && Number(actor?.flags?.["aborea-v7"]?.spellcastRound) === round;
+  if (!round || !actor) return null;
+  if (!canRedeclare(actor, round)) return roundSplit(actor, round);
+
+  const pool = Number(actor.system.combat?.combatBonus ?? 0);
+  const decl = buildDeclaration(round, { mode, offensive, pool, locked: lock });
+  await actor.setFlag(SYSTEM_FLAG, DECLARATION, decl);
+  return roundSplit(actor, round);
 }
 
 /** Manöverbonus aus Active Effects (Beistand, Fluch, Trübung …). */
@@ -106,10 +112,9 @@ function _dv(actor) {
   const armorFromItems = actor.items
     .filter(i => i.type === "armor" && i.system.equipped)
     .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-  const defensiveBonus = _hasCastThisRound(actor)
-    ? 0
-    : Number(actor.system.combat?.defensiveBonus ?? 0);
-  return ABOREA.defenseValue(baseArmor + armorFromItems, defensiveBonus + _maneuverBonus(actor));
+  return ABOREA.defenseValue(
+    baseArmor + armorFromItems,
+    _split(actor).defensive + _maneuverBonus(actor));
 }
 
 function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
@@ -181,7 +186,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const weapons       = actor.items.filter(i => i.type === "weapon" && i.system.equipped);
     const globalSituMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
     const isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
-    const storedOffBonus  = Number(actor.system.combat?.offensiveBonus ?? 0);
+    // Vorbelegung aus der Rundenerklärung, sonst aus der Aufteilung am Bogen
+    const storedOffBonus  = _split(actor).offensive;
     const storedCB        = Number(actor.system.combat?.combatBonus ?? 0);
     const storedDef       = Number(actor.system.combat?.defensiveBonus ?? 0);
     const currentOffBonus = storedOffBonus;
@@ -622,7 +628,8 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
   const currentMp = _getCurrentMp(attackerActor);
   if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
   await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
-  await markSpellcast(attackerActor);
+  const castSplit = await declareRound(attackerActor, { mode: "spell", lock: true });
+  const undeclaredSpell = castSplit && castSplit.mode !== "spell";
 
   // Pro Ziel: eigener Treffer-Wurf
   const rolls = [];
@@ -679,7 +686,9 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
       <div class="ac-row"><span>Angriffsbonus</span><span>${_sign(spellBonus)}</span></div>
       ${situMod !== 0 ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>` : ""}
       ${targets.length > 1 ? `<div class="ac-row"><span>Ziele</span><span>${targets.length}</span></div>` : ""}
-      <div class="ac-row ac-penalty"><span>Defensivbonus</span><span>entfällt diese Runde</span></div>
+      ${undeclaredSpell
+        ? `<div class="ac-row ac-penalty"><span>⚠ Abweichung</span><span>als ${splitLabel(castSplit)} erklärt</span></div>`
+        : `<div class="ac-row ac-penalty"><span>Defensivbonus</span><span>entfällt diese Runde</span></div>`}
     </div>
     ${cardRows}
     ${effectSection}
@@ -696,6 +705,8 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
 // ── Internal: roll + chat ────────────────────────────────────────
 
 async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
+  // Der Angriff ist zugleich die Erklärung, falls noch keine vorliegt.
+  await declareRound(attackerActor, { mode: "weapon", offensive: offBonus, lock: true });
   // Der Ungelernt-Malus steckt schon im Kampfbonus und damit im Offensivbonus.
   const effectiveOffBonus = offBonus + maneuverMod + minStrengthMod;
   const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
@@ -913,12 +924,71 @@ export {
   _maneuverBonus     as maneuverBonus,
   _bonusWeaponDamage as bonusWeaponDamage,
   _hpColor           as hpColor,
-  _hasCastThisRound  as hasCastThisRound,
+  _split             as roundSplitOf,
 };
 
 // ══════════════════════════════════════════════════════════════════
 //  Hooks
 // ══════════════════════════════════════════════════════════════════
+
+/**
+ * Zustandszeile eines Kombattanten im Tracker: Lebenspunkte,
+ * Verteidigungswert und die Rundenerklärung. Eigentümer erklären direkt hier —
+ * dafür muss niemand mehr mitten im Kampf seinen Charakterbogen öffnen.
+ *
+ * Reine DOM-Arbeit; gerechnet wird in declaration.mjs und _dv().
+ */
+function _buildCombatantState(actor, round) {
+  const wrap = document.createElement("div");
+  wrap.className = "aborea-combatant-state";
+
+  const hp    = actor.system.resources?.hp ?? {};
+  const hpVal = Number(hp.value ?? 0);
+  const hpMax = Number(hp.max ?? 1);
+  const pct   = hpMax > 0 ? Math.round((hpVal / hpMax) * 100) : 0;
+  const split = roundSplit(actor, round);
+
+  const hint = split.declared
+    ? (split.locked ? "Erklärt und festgesetzt — es wurde bereits gehandelt" : "Für diese Runde erklärt")
+    : "Noch nicht erklärt — es gilt die Aufteilung vom Bogen";
+
+  wrap.innerHTML = `
+    <div class="acs-bar"><div class="acs-bar-fill" style="width:${pct}%;background:${_hpColor(pct)}"></div></div>
+    <div class="acs-line">
+      <span class="acs-hp">${hpVal}/${hpMax}</span>
+      <span class="acs-dv" title="Verteidigungswert">RW ${_dv(actor)}</span>
+      <span class="acs-split${split.declared ? "" : " undeclared"}${split.locked ? " locked" : ""}" title="${hint}">
+        ${splitLabel(split)}${split.declared ? "" : " ?"}
+      </span>
+    </div>`;
+
+  const canEdit = (actor.isOwner || game.user.isGM) && split.pool > 0 && canRedeclare(actor, round);
+  if (!canEdit) return wrap;
+
+  const controls = document.createElement("div");
+  controls.className = "acs-declare";
+  controls.innerHTML = `
+    <button type="button" class="acs-mode${split.mode === "weapon" ? " active" : ""}"
+            data-mode="weapon" title="Mit der Waffe kämpfen">⚔</button>
+    <input type="range" class="acs-offensive" min="0" max="${split.pool}" value="${split.offensive}"
+           title="Offensivanteil des Kampfbonus" />
+    <button type="button" class="acs-mode${split.mode === "spell" ? " active" : ""}"
+            data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>`;
+
+  const slider = controls.querySelector(".acs-offensive");
+  slider.addEventListener("change", ev => {
+    ev.stopPropagation();
+    declareRound(actor, { mode: "weapon", offensive: Number(ev.target.value) });
+  });
+  controls.querySelectorAll(".acs-mode").forEach(btn => btn.addEventListener("click", ev => {
+    ev.stopPropagation();
+    const mode = btn.dataset.mode;
+    declareRound(actor, { mode, offensive: mode === "weapon" ? Number(slider.value) : split.pool });
+  }));
+
+  wrap.appendChild(controls);
+  return wrap;
+}
 
 export function registerCombatHooks() {
   game.settings.register("aborea-v7", "globalSituMod", {
@@ -1032,6 +1102,14 @@ export function registerCombatHooks() {
     }
 
     if (!combat) return;
+
+    // ── Je Kombattant: Zustand und Rundenerklärung ──────────────────
+    root.querySelectorAll(".aborea-combatant-state").forEach(el => el.remove());
+    for (const c of combat.combatants) {
+      const row = root.querySelector(`.combatant[data-combatant-id="${c.id}"]`);
+      if (c.actor && row) row.appendChild(_buildCombatantState(c.actor, combat.round));
+    }
+
     const activeCombatant = combat.combatants.get(combat.current?.combatantId ?? "");
     if (!activeCombatant) return;
 

@@ -6,7 +6,7 @@
 import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor, hasCastThisRound } from "../module/combat.mjs";
+import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor, roundSplitOf } from "../module/combat.mjs";
 import { ABOREA } from "../module/config.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
 
@@ -130,47 +130,66 @@ test("HP-Farbe für Balken und Zielvorschau", async t => {
   await t.test("0 ist rot",      () => assert.equal(hpColor(0), "#b91c1c"));
 });
 
-test("Zaubern bindet den Kampfbonus offensiv", async t => {
-  // Der Kampfbonus ist eine Ressource pro Runde. Beim Zaubern zaehlt er
-  // vollstaendig offensiv, es bleibt also kein Defensivbonus uebrig.
-  const zauberer = (round, system = {}) => ({
-    type: "character", items: [],
-    flags: round == null ? {} : { "aborea-v7": { spellcastRound: round } },
-    system: { combat: { armorValue: 5, defensiveBonus: 3 }, ...system },
+test("Verteidigungswert folgt der Rundenerklaerung", async t => {
+  // Der Kampfbonus ist eine Ressource pro Runde: wer Zaubern erklaert, hat
+  // keinen Defensivbonus - und zwar ab der Erklaerung, nicht erst nach dem
+  // Zauber.
+  const held = (decl, system = {}) => ({
+    type: "character", items: [], flags: decl ? { "aborea-v7": { declaration: decl } } : {},
+    system: {
+      combat: { armorValue: 5, combatBonus: 6, offensiveBonus: 4, defensiveBonus: 2 },
+      ...system,
+    },
   });
   const inRunde = n => { globalThis.game.combat = n == null ? undefined : { round: n }; };
 
-  await t.test("ohne Kampf greift die Regel nicht", () => {
-    inRunde(null);
-    assert.equal(hasCastThisRound(zauberer(2)), false);
-    assert.equal(actorDefenseValue(zauberer(2)), 8);
-  });
-
-  await t.test("nicht gezaubert: Defensivbonus zaehlt", () => {
+  await t.test("ohne Erklaerung gilt die Aufteilung vom Bogen", () => {
     inRunde(3);
-    assert.equal(hasCastThisRound(zauberer(null)), false);
-    assert.equal(actorDefenseValue(zauberer(null)), 8);
+    assert.equal(actorDefenseValue(held(null)), 5 + 2);
   });
 
-  await t.test("in dieser Runde gezaubert: kein Defensivbonus", () => {
+  await t.test("Waffe 4/2 erklaert", () => {
     inRunde(3);
-    assert.equal(hasCastThisRound(zauberer(3)), true);
-    assert.equal(actorDefenseValue(zauberer(3)), 5);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "weapon", offensive: 4 })), 5 + 2);
   });
 
-  await t.test("naechste Runde zaehlt er wieder", () => {
+  await t.test("alles offensiv erklaert: kein Schutz", () => {
+    inRunde(3);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "weapon", offensive: 6 })), 5);
+  });
+
+  await t.test("alles defensiv erklaert", () => {
+    inRunde(3);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "weapon", offensive: 0 })), 5 + 6);
+  });
+
+  await t.test("Zauber erklaert: kein Defensivbonus", () => {
+    inRunde(3);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" })), 5);
+  });
+
+  await t.test("die Erklaerung verfaellt mit der Runde", () => {
     inRunde(4);
-    assert.equal(hasCastThisRound(zauberer(3)), false);
-    assert.equal(actorDefenseValue(zauberer(3)), 8);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" })), 5 + 2);
+  });
+
+  await t.test("ohne Kampf gilt die Vorbelegung", () => {
+    inRunde(null);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" })), 5 + 2);
   });
 
   await t.test("Ruestung und Manoeverbonus bleiben unberuehrt", () => {
     inRunde(3);
-    // Nur der Defensivbonus entfaellt: 5 Grund + 2 Manoever, ohne die 3
-    assert.equal(actorDefenseValue(zauberer(3, {
-      combat: { armorValue: 5, defensiveBonus: 3 }, traits: { maneuverBonus: 2 },
-    })), 7);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" }, { traits: { maneuverBonus: 2 } })), 5 + 2);
   });
 
-  inRunde(null);   // globalen Stub wieder aufraeumen
+  await t.test("roundSplitOf liefert die Aufteilung der laufenden Runde", () => {
+    inRunde(3);
+    const s = roundSplitOf(held({ round: 3, mode: "weapon", offensive: 5 }));
+    assert.equal(s.offensive, 5);
+    assert.equal(s.defensive, 1);
+    assert.equal(s.declared, true);
+  });
+
+  inRunde(null);
 });

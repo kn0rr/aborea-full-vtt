@@ -269,6 +269,7 @@ Was geprüft wird:
 |---|---|
 | `tests/dice.test.mjs` | offener W10: Explodieren auf 10, Patzer nur im ersten Wurf |
 | `tests/bonuses.test.mjs` | Attributquelle, Fertigkeitsränge, Ungelernt-Malus je Kategorie, Klassenbefreiungen, Mindeststärke, Kampfbonus |
+| `tests/declaration.test.mjs` | Rundenerklärung: Aufteilung des Kampfbonus, Zaubermodus, Festsetzung |
 | `tests/combat.test.mjs` | Verteidigungswert, Manöverbonus, Zauberschaden, Initiative |
 | `tests/effects.test.mjs` | Zauberdauer, Active Effects, Manöverschwierigkeit |
 | `tests/progression.test.mjs` | Attributbonus-Tabelle, XP/Stufe, AP-Kosten |

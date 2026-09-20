@@ -1103,6 +1103,25 @@
 .aborea-attack-dialog-body .form-group select { width: 140px; }
 .aborea-attack-dialog-body .hint { font-size: .72rem; opacity: .65; font-weight: 400; display: block; }
 .aborea-attack-dialog-body .untrained-display { color: #b91c1c; font-weight: 700; font-size: .85rem; }
+/* Combat Tracker: Zustandszeile und Rundenerklaerung */
+.aborea-combatant-state { padding: 2px 6px 4px; font-size: .72rem; }
+.acs-bar { height: 3px; border-radius: 2px; background: rgba(0,0,0,.18); overflow: hidden; }
+.acs-bar-fill { height: 100%; transition: width .2s; }
+.acs-line { display: flex; align-items: center; gap: 8px; margin-top: 2px; opacity: .9; }
+.acs-hp { font-variant-numeric: tabular-nums; }
+.acs-dv { opacity: .8; }
+.acs-split { margin-left: auto; font-weight: 700; }
+.acs-split.undeclared { opacity: .5; font-weight: 400; font-style: italic; }
+.acs-split.locked { opacity: .75; }
+.acs-declare { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+.acs-declare .acs-offensive { flex: 1; height: 12px; }
+.acs-declare .acs-mode {
+  padding: 0 4px; line-height: 1.4; font-size: .8rem;
+  border: 1px solid var(--aborea-border-light); border-radius: 3px;
+  background: transparent; cursor: pointer;
+}
+.acs-declare .acs-mode.active { background: rgba(0,0,0,.12); font-weight: 700; }
+
 .aborea-attack-dialog-body .spell-defense-warning {
   margin: 6px 0; padding: 6px 8px; font-size: .8rem;
   border-left: 3px solid #b91c1c; background: rgba(185, 28, 28, .07);
