@@ -6,7 +6,7 @@
 import "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildConsoleRows, assignableTargets, isDefeated } from "../module/combat-console.mjs";
+import { buildConsoleRows, assignableTargets, isDefeated, mayUseConsole } from "../module/combat-console.mjs";
 
 const eintrag = (id, over = {}) => ({
   id, actorId: `a-${id}`, name: over.name ?? id,
@@ -108,4 +108,18 @@ test("assignableTargets", async t => {
     assert.deepEqual(assignableTargets(rows, "c1").map(r => r.name), ["Goblin"]));
   await t.test("leere Eingabe", () =>
     assert.deepEqual(assignableTargets(null, "c1"), []));
+});
+
+test("mayUseConsole: das Pult ist dem Spielleiter vorbehalten", async t => {
+  // Es zeigt jeden Kombattanten samt Lebenspunkten, auch die noch nicht
+  // preisgegebenen Gegner. Der Knopf erscheint Spielern nicht, ueber die
+  // Konsole waere das Fenster sonst aber trotzdem erreichbar.
+  await t.test("Spielleiter", () => assert.equal(mayUseConsole({ isGM: true }), true));
+  await t.test("Spieler", () => assert.equal(mayUseConsole({ isGM: false }), false));
+  await t.test("vertrauter Spieler reicht nicht", () =>
+    assert.equal(mayUseConsole({ isGM: false, isTrusted: true }), false));
+  await t.test("ohne Benutzer", () => {
+    assert.equal(mayUseConsole(null), false);
+    assert.equal(mayUseConsole(undefined), false);
+  });
 });

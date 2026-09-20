@@ -71,6 +71,18 @@ export function buildConsoleRows(combatants = [], { activeId = "" } = {}) {
 }
 
 /**
+ * Darf dieser Benutzer das Pult öffnen?
+ *
+ * Es zeigt jeden Kombattanten samt Lebenspunkten und Rundenerklärung — auch
+ * die Gegner, die der Spielleiter noch nicht preisgegeben hat. Der Knopf in
+ * der Werkzeugleiste erscheint Spielern zwar nicht, über die Konsole oder ein
+ * Makro wäre das Fenster sonst aber trotzdem erreichbar.
+ */
+export function mayUseConsole(user) {
+  return !!user?.isGM;
+}
+
+/**
  * Wer kommt als Ziel für diesen Angreifer infrage?
  * Ausgeschiedene Kombattanten und der Angreifer selbst fallen weg — ein
  * toter Goblin soll nicht mehr in der Auswahl stehen.
@@ -98,12 +110,17 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
   /** Einzelinstanz — ein zweites Pult würde nur auseinanderlaufen. */
   static #instance = null;
   static open() {
+    if (!mayUseConsole(game.user)) {
+      ui.notifications?.warn("ABOREA: Das Kampfpult ist dem Spielleiter vorbehalten.");
+      return null;
+    }
     this.#instance ??= new this();
     this.#instance.render(true);
     return this.#instance;
   }
 
   async _prepareContext() {
+    if (!mayUseConsole(game.user)) return { hasCombat: false, rows: [], alive: [], defeated: [] };
     const combat = game.combat;
     const round  = combat?.round ?? null;
     const entries = (combat?.turns ?? []).map(c => ({
