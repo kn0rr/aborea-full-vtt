@@ -4,6 +4,8 @@ import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helper
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
 import { roundSplit, buildDeclaration, splitLabel, canRedeclare, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan } from "./targeting.mjs";
+import { SETTINGS, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
+         shouldResetSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -185,7 +187,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext() {
     const actor         = this.options.attackerActor;
     const weapons       = actor.items.filter(i => i.type === "weapon" && i.system.equipped);
-    const globalSituMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+    const globalSituMod = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
     const isCreatureOrNpc = ["npc", "creature"].includes(actor.type);
     // Vorbelegung aus der Rundenerklärung, sonst aus der Aufteilung am Bogen
     const storedOffBonus  = _split(actor).offensive;
@@ -582,27 +584,52 @@ function _buildSpellDamageSection(dmg) {
  * damageTotal übersteuert den reinen MP-Schaden — dort sind Überschuss und
  * Krit aus der Trefferprobe schon eingerechnet (siehe _spellDamage).
  */
+/** Ist der Schaden dieser Handlung automatisch anzuwenden? */
+function _autoApplyDamage() {
+  return shouldAutoApplyDamage(
+    game.settings.get("aborea-v7", SETTINGS.damageApply),
+    { isGM: game.user.isGM });
+}
+
+/**
+ * Wendet HP-Effekt und Active Effects eines Zaubers auf ein Ziel an.
+ *
+ * Gibt neben dem Kartentext zurück, was sich geändert hat — daraus entsteht
+ * der Rückgängig-Eintrag. Schaden folgt der Weltoption; Heilung und Effekte
+ * wirken immer sofort, sie sind nicht der strittige Teil.
+ */
 async function _applySpellEffectsToTarget(spell, mpCost, targetActor, damageTotal = null) {
   let html = "";
+  const undo = { actorId: targetActor.id, name: targetActor.name };
   const hp      = inferDirectHp(spell, mpCost);
   const effects = inferEffects(spell, mpCost).map(e => ({ ...e, origin: spell.uuid }));
+
   if (hp?.type === "heal") {
     const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
     const max = Number(targetActor.system.resources?.hp?.max ?? cur);
+    undo.hp = cur;
     await targetActor.update({ "system.resources.hp.value": Math.min(max, cur + hp.amount) });
     html += `<div class="ac-effect-row">✨ <strong>${targetActor.name}</strong>: +${hp.amount} HP</div>`;
   }
   if (hp?.type === "damage") {
     const amount = damageTotal ?? hp.amount;
     const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
-    await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - amount) });
-    html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${amount} HP</div>`;
+    if (_autoApplyDamage()) {
+      undo.hp = cur;
+      await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - amount) });
+      html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${amount} HP</div>`;
+    } else {
+      html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: ${amount} Schaden
+        <button type="button" class="apply-damage-btn btn-sm"
+                data-target-id="${targetActor.id}" data-damage="${amount}">💢 anwenden</button></div>`;
+    }
   }
   if (effects.length) {
-    await applyEffectsToActor(targetActor, effects);
+    const created = await applyEffectsToActor(targetActor, effects);
+    if (created?.length) undo.effectIds = created.map(e => e.id);
     html += `<div class="ac-effect-row">🔮 <strong>${targetActor.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`;
   }
-  return html;
+  return { html, undo };
 }
 
 async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpPerTarget = 0, targetCount = 1, multiTargetActors = null, spellBonus, situMod, targetActor, targetDefense, attackerImg, targetImg }) {
@@ -629,11 +656,13 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
   const currentMp = _getCurrentMp(attackerActor);
   if (currentMp < mpCost) { ui.notifications.warn(game.i18n.localize("ABOREA.NotEnoughMP")); return; }
   await attackerActor.update({ "system.resources.mp.value": Math.max(0, currentMp - mpCost) });
+  const casterUndo = { actorId: attackerActor.id, name: attackerActor.name, mp: currentMp };
   const castSplit = await declareRound(attackerActor, { mode: "spell", lock: true });
   const undeclaredSpell = castSplit && castSplit.mode !== "spell";
 
   // Pro Ziel: eigener Treffer-Wurf
   const rolls = [];
+  const undoEntries = [];
   let effectHtml = "";
   let cardRows   = "";
 
@@ -674,7 +703,9 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
       ${_buildSpellDamageSection(dmg)}`;
 
     if (hit && currentTarget) {
-      effectHtml += await _applySpellEffectsToTarget(spell, spellMpCost, currentTarget, dmg?.total ?? null);
+      const applied = await _applySpellEffectsToTarget(spell, spellMpCost, currentTarget, dmg?.total ?? null);
+      effectHtml += applied.html;
+      undoEntries.push(applied.undo);
     }
   }
 
@@ -693,13 +724,17 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
     </div>
     ${cardRows}
     ${effectSection}
+    <button type="button" class="undo-damage-btn btn-sm">↩ Rückgängig</button>
   </div>`;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
     rolls,
     content: cardContent,
-    flags:   { "aborea-v7": { spellAttackResult: { itemId: spell.id, mpCost, targetCount: targets.length } } }
+    flags:   { "aborea-v7": {
+      spellAttackResult: { itemId: spell.id, mpCost, targetCount: targets.length },
+      undo: buildUndoRecord([casterUndo, ...undoEntries]),
+    } }
   });
 }
 
@@ -737,6 +772,16 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
   const critBonus = (hit && roll.critical) ? Math.max(0, weaponDmg) : 0;
   const damage = hit ? Math.max(1, (attackValue - targetDefense) + weaponDmg + critBonus) : 0;
 
+  // Schaden folgt der Weltoption — dieselbe Regel wie bei Zaubern. Vorher
+  // brauchten Waffen immer einen Knopfdruck und Zauber nie einen.
+  const autoApplied = hit && damage > 0 && !!targetActor && _autoApplyDamage();
+  let undo = null;
+  if (autoApplied) {
+    const before = Number(targetActor.system.resources?.hp?.value ?? 0);
+    await targetActor.update({ "system.resources.hp.value": Math.max(0, before - damage) });
+    undo = buildUndoRecord([{ actorId: targetActor.id, name: targetActor.name, hp: before }]);
+  }
+
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: attackerActor }),
     rolls: roll.rolls,
@@ -749,9 +794,12 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
       offBonus, minStrengthMod, maneuverMod, situMod,
       attackValue, defenseValue: targetDefense,
       hit, damage, patzer: false, critical: roll.critical,
-      weaponDamage: weaponDmg, bonusDamage: bonusDmg, critBonus,
+      weaponDamage: weaponDmg, bonusDamage: bonusDmg, critBonus, autoApplied,
     }),
-    flags: { "aborea-v7": { attackResult: { hit, damage, targetActorId: targetActor?.id ?? null } } }
+    flags: { "aborea-v7": {
+      attackResult: { hit, damage, targetActorId: targetActor?.id ?? null },
+      ...(undo ? { undo } : {}),
+    } }
   });
 }
 
@@ -856,7 +904,7 @@ function _buildAttackCard({
   target,   targetImg = "",   targetActorId,
   weapon, rollFormula, rollTotal, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod,
   attackValue, defenseValue, hit, damage, patzer, critical,
-  weaponDamage = 0, bonusDamage = 0, critBonus = 0
+  weaponDamage = 0, bonusDamage = 0, critBonus = 0, autoApplied = false
 }) {
   const resultClass = patzer ? "patzer" : (hit ? "hit" : "miss");
   const resultLabel = patzer
@@ -891,10 +939,14 @@ function _buildAttackCard({
         <span><strong>Schaden</strong></span>
         <span><strong>${damage}</strong></span>
       </div>
-      ${targetActorId
+      ${targetActorId && !autoApplied
         ? `<button type="button" class="apply-damage-btn" data-target-id="${targetActorId}" data-damage="${damage}">
              💢 Schaden anwenden (${damage})
            </button>`
+        : ""}
+      ${autoApplied
+        ? `<div class="ac-note">✓ Schaden automatisch angewendet</div>
+           <button type="button" class="undo-damage-btn btn-sm">↩ Rückgängig</button>`
         : ""}
     </div>` : "";
 
@@ -938,7 +990,7 @@ export async function applyDamage(targetActorId, damage) {
 
   await ChatMessage.create({
     speaker: { alias: "System" },
-    flags: { "aborea-v7": { undo: { actorId: targetActorId, previousHp } } },
+    flags: { "aborea-v7": { undo: buildUndoRecord([{ actorId: targetActorId, name: actor.name, hp: previousHp }]) } },
     content: `<div class="aborea-chat-card aborea-damage-card">
       <div class="ac-damage-header">
         ${portrait}
@@ -1065,13 +1117,33 @@ function _buildCombatantState(actor, round) {
 }
 
 export function registerCombatHooks() {
-  game.settings.register("aborea-v7", "globalSituMod", {
+  game.settings.register("aborea-v7", SETTINGS.situMod, {
     name: "Globaler Situationsmodifikator",
     hint: "Wird im Angriffsdialog als Voreinstellung verwendet. Negativer Wert = Erschwernis.",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 0
+    scope: "world", config: false, type: Number, default: 0
+  });
+
+  game.settings.register("aborea-v7", SETTINGS.situModReset, {
+    name: "Situationsmodifikator je Runde zurücksetzen",
+    hint: "Setzt den globalen Modifikator bei jedem Rundenwechsel auf 0. Verhindert, dass eine vergessene Erschwernis die halbe Sitzung verfälscht.",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+
+  game.settings.register("aborea-v7", SETTINGS.damageApply, {
+    name: "Schaden automatisch anwenden",
+    hint: "Gilt für Waffen und Zauber gleichermaßen.",
+    scope: "world", config: true, type: String, default: "gm",
+    choices: {
+      off:  "Nie — immer über den Knopf auf der Karte",
+      gm:   "Bei Würfen des Spielleiters",
+      auto: "Immer",
+    },
+  });
+
+  game.settings.register("aborea-v7", SETTINGS.autoInitiative, {
+    name: "Initiative beim Kampfstart für alle würfeln",
+    hint: "Spart es, jeden Kombattanten einzeln anzuklicken.",
+    scope: "world", config: true, type: Boolean, default: true
   });
 
   Hooks.on("renderChatMessageHTML", (message, html) => {
@@ -1088,19 +1160,42 @@ export function registerCombatHooks() {
       });
     });
 
-    // Schaden rückgängig machen (GM only, einmalig)
+    // Rückgängig (GM only, einmalig) — HP, MP und angelegte Effekte
     html.querySelectorAll(".undo-damage-btn").forEach(btn => {
       if (!game.user.isGM) { btn.style.display = "none"; return; }
+      const flag = message.getFlag("aborea-v7", "undo");
+      if (!flag) { btn.disabled = true; return; }
+
+      // Altbestand: frühere Karten trugen nur { actorId, previousHp }
+      const record = flag.entries
+        ? flag
+        : buildUndoRecord([{ actorId: flag.actorId, hp: flag.previousHp }]);
+      const summary = describeUndo(record);
+      if (summary) btn.title = `Macht rückgängig: ${summary}`;
+
       btn.addEventListener("click", async () => {
-        const flag = message.getFlag("aborea-v7", "undo");
-        if (!flag) { ui.notifications.warn("Rückgängig bereits verwendet."); return; }
-        const actor = game.actors.get(flag.actorId);
-        if (!actor) { ui.notifications.warn("Ziel-Aktor nicht gefunden."); return; }
-        await actor.update({ "system.resources.hp.value": flag.previousHp });
+        if (!message.getFlag("aborea-v7", "undo")) {
+          ui.notifications.warn("Rückgängig bereits verwendet.");
+          return;
+        }
+        let restored = 0;
+        for (const entry of record.entries ?? []) {
+          const actor = game.actors.get(entry.actorId);
+          if (!actor) continue;
+          const update = {};
+          if ("hp" in entry) update["system.resources.hp.value"] = entry.hp;
+          if ("mp" in entry) update["system.resources.mp.value"] = entry.mp;
+          if (Object.keys(update).length) await actor.update(update);
+          if (entry.effectIds?.length) {
+            const present = entry.effectIds.filter(id => actor.effects.get(id));
+            if (present.length) await actor.deleteEmbeddedDocuments("ActiveEffect", present);
+          }
+          restored++;
+        }
         await message.unsetFlag("aborea-v7", "undo");
         btn.disabled = true;
-        btn.textContent = `✓ ${flag.previousHp} HP wiederhergestellt`;
-        ui.notifications.info(`${actor.name}: HP auf ${flag.previousHp} zurückgesetzt.`);
+        btn.textContent = `✓ zurückgesetzt (${summary || restored})`;
+        ui.notifications.info(`ABOREA: ${restored} Aktor(en) zurückgesetzt.`);
       });
     });
   });
@@ -1128,7 +1223,7 @@ export function registerCombatHooks() {
     if (game.user.isGM) {
       root.querySelectorAll(".aborea-situ-mod-bar").forEach(el => el.remove());
 
-      const currentMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+      const currentMod = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
       const modBar = document.createElement("div");
       modBar.className = "aborea-situ-mod-bar";
       modBar.innerHTML = `
@@ -1140,18 +1235,36 @@ export function registerCombatHooks() {
       `;
 
       const updateMod = async (val) => {
-        const clamped = Math.max(-10, Math.min(10, Number(val) || 0));
-        await game.settings.set("aborea-v7", "globalSituMod", clamped);
+        const clamped = clampSituMod(val);
+        await game.settings.set("aborea-v7", SETTINGS.situMod, clamped);
         modBar.querySelector(".situ-mod-input").value = clamped;
       };
       modBar.querySelector(".situ-mod-input").addEventListener("change", ev => updateMod(ev.target.value));
       modBar.querySelectorAll(".situ-mod-step").forEach(btn => {
         btn.addEventListener("click", () => {
-          const cur = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+          const cur = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
           updateMod(cur + Number(btn.dataset.delta));
         });
       });
       modBar.querySelector(".situ-mod-reset").addEventListener("click", () => updateMod(0));
+
+      // Wiederkehrende Erschwernisse als Knöpfe statt jedes Mal zu tippen.
+      const presets = document.createElement("div");
+      presets.className = "situ-mod-presets";
+      for (const p of SITU_PRESETS) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "situ-preset";
+        b.title = `${p.title} (${p.value >= 0 ? "+" : ""}${p.value})`;
+        b.textContent = `${p.label} ${p.value >= 0 ? "+" : ""}${p.value}`;
+        b.addEventListener("click", () => {
+          const cur = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
+          // Zweiter Klick auf dasselbe Preset nimmt es wieder heraus.
+          updateMod(cur === p.value ? 0 : p.value);
+        });
+        presets.appendChild(b);
+      }
+      modBar.appendChild(presets);
 
       const footer = root.querySelector("#combat-controls") ?? root.querySelector(".combat-controls") ?? null;
       if (footer) footer.before(modBar);
@@ -1210,6 +1323,28 @@ export function registerCombatHooks() {
   Hooks.on("renderCombatTrackerHTML", _onRenderTracker);
   // Fallback für den Fall dass der CombatTracker noch V1 ist
   Hooks.on("renderCombatTracker", _onRenderTracker);
+
+  // ── Rundenwechsel: Situationsmodifikator zurücksetzen ─────────────
+  // Ein vergessener −4 verfälscht sonst die halbe Sitzung. Nur bei einem
+  // echten Rundenwechsel — ein Zugwechsel darf ihn nicht wegräumen.
+  Hooks.on("updateCombat", async (combat, changes, options) => {
+    if (!game.user.isGM || changes.round === undefined) return;
+    const previousRound = Number(options?.aboreaPreviousRound ?? combat.previous?.round ?? 0);
+    const enabled = game.settings.get("aborea-v7", SETTINGS.situModReset);
+    if (!shouldResetSituMod(enabled, { previousRound, currentRound: changes.round })) return;
+    if (Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0) === 0) return;
+    await game.settings.set("aborea-v7", SETTINGS.situMod, 0);
+    ui.notifications.info("ABOREA: Situationsmodifikator für die neue Runde zurückgesetzt.");
+  });
+
+  // ── Kampfstart: Initiative für alle ───────────────────────────────
+  Hooks.on("combatStart", async combat => {
+    if (!game.user.isGM) return;
+    if (!game.settings.get("aborea-v7", SETTINGS.autoInitiative)) return;
+    const pending = combat.combatants.filter(c => c.initiative === null || c.initiative === undefined);
+    if (!pending.length) return;
+    await combat.rollInitiative(pending.map(c => c.id));
+  });
 
   // ── Angriff direkt vom Token ──────────────────────────────────────
   // Vorher war der Dialog nur über den Tracker (aktiver Kombattant) oder den
@@ -1283,6 +1418,6 @@ async function _startGroupAttack() {
     ui.notifications.warn("ABOREA: Das Ziel ist unter den Angreifern.");
     return;
   }
-  const situMod = Number(game.settings.get("aborea-v7", "globalSituMod") ?? 0);
+  const situMod = Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0);
   await executeGroupAttack(attackers, { targetToken, situMod });
 }

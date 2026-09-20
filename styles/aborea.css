@@ -1103,6 +1103,15 @@
 .aborea-attack-dialog-body .form-group select { width: 140px; }
 .aborea-attack-dialog-body .hint { font-size: .72rem; opacity: .65; font-weight: 400; display: block; }
 .aborea-attack-dialog-body .untrained-display { color: #b91c1c; font-weight: 700; font-size: .85rem; }
+/* Situationsmodifikator: Presets */
+.situ-mod-presets { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+.situ-mod-presets .situ-preset {
+  flex: 1 1 auto; padding: 1px 5px; font-size: .7rem; white-space: nowrap;
+  border: 1px solid var(--aborea-border-light); border-radius: 3px;
+  background: transparent; cursor: pointer;
+}
+.situ-mod-presets .situ-preset:hover { background: rgba(0,0,0,.1); }
+
 /* Gruppenangriff: eine Zeile je Angreifer */
 .aborea-group-attack .ac-group-rows { margin-top: 6px; }
 .aborea-group-attack .ac-group-row {

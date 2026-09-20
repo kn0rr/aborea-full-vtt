@@ -403,7 +403,9 @@ export async function applyEffectsToActor(actor, effects) {
     description: e.description || "",
     changes: e.changes || []
   }));
-  await actor.createEmbeddedDocuments("ActiveEffect", docs);
+  // Gibt die angelegten Effekte zurueck, damit ein Rueckgaengig-Schritt sie
+  // wieder entfernen kann.
+  return actor.createEmbeddedDocuments("ActiveEffect", docs);
 }
 
 export function buildPowerCard(actor, item, mpCost, targets, extra = "") {
