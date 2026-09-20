@@ -56,16 +56,19 @@ export function roundSplit(actor, round) {
 /**
  * In welchem Bereich darf der Offensivanteil liegen?
  *
- * Die einzige feste Regel ist `offensiv + defensiv = Kampfbonus`. Bei einem
- * positiven Bonus verteilt man ihn zwischen 0 und dem vollen Wert. Bei einem
- * **negativen** Bonus ist es ein Malus, den man verschieben kann: wer bei −1
- * die Offensive mit −2 belastet, bekommt dafür +1 auf die Defensive. Eine
- * Klemmung auf [0, Kampfbonus] hätte das unmöglich gemacht und jeden
- * negativen Bonus auf 0/−1 festgenagelt.
+ * Regelwerk S. 33: *„Ein negativer Kampfbonus wirkt sich nicht auf den DB aus,
+ * sondern ist vollständig dem OB zuzurechnen."*
+ *
+ * Ein negativer Bonus lässt sich also **nicht** verteilen — er geht ganz in
+ * die Offensive, die Defensive bleibt bei 0. Weder darf der Defensivbonus
+ * negativ werden, noch kann man einen Wert ins Minus drücken, um den anderen
+ * zu erhöhen. Nur ein positiver Bonus wird zwischen 0 und dem vollen Wert
+ * aufgeteilt.
  */
 export function splitRange(pool) {
   const p = Number(pool) || 0;
-  return { min: Math.min(0, p * 2), max: Math.max(0, p) };
+  if (p < 0) return { min: p, max: p };   // keine Wahl: vollständig offensiv
+  return { min: 0, max: p };
 }
 
 /** Hält den Offensivanteil im erlaubten Bereich — auch bei negativem Bonus. */
