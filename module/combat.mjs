@@ -5,7 +5,8 @@ import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, for
 import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
          defenseAgainst, defenseRemaining, spendDefense, fleeDefenseBonus, isFleeing,
          SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
-import { selectTargetTokens, attackPlan } from "./targeting.mjs";
+import { selectTargetTokens, attackPlan, resolveAttackerToken } from "./targeting.mjs";
+import { openOnce } from "./windows.mjs";
 import { SETTINGS, SITU_FLAG, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
          shouldResetSituMod, effectiveSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
 
@@ -80,8 +81,16 @@ function _split(actor) {
  * bekommt einen Hinweis. Der Spielleiter entscheidet, ob er das zulässt.
  */
 export async function declareRound(actor, { mode = "weapon", offensive = 0, lock = false } = {}) {
-  const round = game.combat?.round;
-  if (!round || !actor) return null;
+  if (!actor) return null;
+  // Die Erklärung gilt je Runde und braucht deshalb eine Rundennummer. Ein
+  // angelegter, aber nicht gestarteter Kampf steht auf Runde 0 — dort lief
+  // das Klicken bisher ins Leere, ohne dass jemand erfuhr warum.
+  const combat = game.combat;
+  const round  = combat?.round;
+  if (!combat?.started || !round) {
+    ui.notifications?.warn("ABOREA: Der Kampf läuft noch nicht — erst starten, dann erklären.");
+    return null;
+  }
   if (!canRedeclare(actor, round)) return roundSplit(actor, round);
 
   const pool = Number(actor.system.combat?.combatBonus ?? 0);
@@ -221,7 +230,8 @@ function _buildTargetCandidates(attackerTokenId, attackerActor = null) {
     ? new Set(game.combat.combatants.map(c => c.tokenId).filter(Boolean))
     : null;
   return selectTargetTokens(canvas?.tokens?.placeables ?? [], {
-    attackerTokenId, combatTokenIds, lang: game.i18n.lang,
+    attackerTokenId, attackerActorId: attackerActor?.id ?? "",
+    combatTokenIds, lang: game.i18n.lang,
   })
     .map(t => {
       const hp    = t.actor.system.resources?.hp ?? {};
@@ -279,7 +289,14 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const storedDef       = Number(actor.system.combat?.defensiveBonus ?? 0);
     const currentOffBonus = storedOffBonus;
     const combatBonus     = storedCB;
-    const attackerTokenId = canvas?.tokens?.placeables.find(t => t.actor?.id === actor.id)?.id;
+    // Nicht über den Actor suchen: unverknüpfte Tokens teilen sich dessen
+    // Kennung, und der erste Treffer ist bei drei Goblins der falsche.
+    const attackerTokenId = resolveAttackerToken({
+      tokenId:    this.options.attackerTokenId ?? "",
+      controlled: canvas?.tokens?.controlled ?? [],
+      tokens:     canvas?.tokens?.placeables ?? [],
+      actorId:    actor.id,
+    });
     const initialBonus    = weapons[0] ? weaponCombatBonus(actor, { weapon: weapons[0] }) : null;
     const initialPenalty  = initialBonus?.untrained ?? 0;
     const minStrengthMod  = minStrengthPenalty(actor);
@@ -628,9 +645,25 @@ export async function openAttackDialog(attackerActor, options = {}) {
     return;
   }
 
-  const params = await new Promise(resolve => {
-    new AboreaAttackDialog({ attackerActor, preselectedSpellId: options?.preselectedSpellId, resolve }).render(true);
+  // Ein zweiter Klick auf ⚔ soll den offenen Dialog nach vorn holen, nicht
+  // einen weiteren darüberlegen.
+  let settle;
+  const answered = new Promise(resolve => { settle = resolve; });
+  const { created } = await openOnce(`attack:${attackerActor.id}`, () => {
+    // render() liefert ein Versprechen, nicht das Fenster — die Registratur
+    // braucht aber das Fenster, um `rendered` lesen zu können.
+    const app = new AboreaAttackDialog({
+      attackerActor,
+      attackerTokenId:    options?.attackerTokenId ?? "",
+      preselectedSpellId: options?.preselectedSpellId,
+      resolve: settle,
+    });
+    app.render(true);
+    return app;
   });
+  if (!created) return;
+
+  const params = await answered;
   if (!params) return;
 
   if (params.mode === "spell") {
@@ -1185,9 +1218,11 @@ function _buildCombatantState(actor, round) {
   const split = roundSplit(actor, round);
   const rest  = defenseRemaining(split.defensive, split.defenseSpent);
 
-  const hint = split.declared
-    ? (split.locked ? "Erklärt und festgesetzt — es wurde bereits gehandelt" : "Für diese Runde erklärt")
-    : "Noch nicht erklärt — es gilt die Aufteilung vom Bogen";
+  const hint = !round
+    ? "Der Kampf läuft noch nicht — erklärt wird ab Runde 1"
+    : split.declared
+      ? (split.locked ? "Erklärt und festgesetzt — es wurde bereits gehandelt" : "Für diese Runde erklärt")
+      : "Noch nicht erklärt — es gilt die Aufteilung vom Bogen";
 
   wrap.innerHTML = `
     <div class="acs-bar"><div class="acs-bar-fill" style="width:${pct}%;background:${_hpColor(pct)}"></div></div>
@@ -1202,7 +1237,10 @@ function _buildCombatantState(actor, round) {
   // Auch ein negativer Kampfbonus laesst sich verschieben — nur bei genau 0
   // gibt es nichts zu verteilen.
   const range   = splitRange(split.pool);
-  const canEdit = (actor.isOwner || game.user.isGM) && range.min !== range.max && canRedeclare(actor, round);
+  // Ohne laufende Runde gibt es nichts zu erklären — die Knöpfe blieben sonst
+  // sichtbar und taten nichts.
+  const canEdit = Number(round) > 0 && (actor.isOwner || game.user.isGM)
+               && range.min !== range.max && canRedeclare(actor, round);
   if (!canEdit) return wrap;
 
   const controls = document.createElement("div");
@@ -1431,7 +1469,7 @@ export function registerCombatHooks() {
     btn.textContent = "⚔";
     btn.addEventListener("click", () => {
       const actor = activeCombatant.actor;
-      if (actor) openAttackDialog(actor);
+      if (actor) openAttackDialog(actor, { attackerTokenId: activeCombatant.tokenId ?? "" });
     });
     controls.prepend(btn);
   };
@@ -1488,7 +1526,9 @@ export function registerCombatHooks() {
     btn.addEventListener("click", ev => {
       ev.preventDefault();
       ev.stopPropagation();
-      openAttackDialog(actor);
+      // Das Token steht hier fest — ohne diese Angabe würde bei mehreren
+      // Exemplaren derselben Kreatur das falsche aus der Zielliste fallen.
+      openAttackDialog(actor, { attackerTokenId: hud?.object?.id ?? "" });
     });
     column.appendChild(btn);
   });

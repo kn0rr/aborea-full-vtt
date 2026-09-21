@@ -1,41 +1,62 @@
 <div class="cc-body">
 
-  {{#unless hasCombat}}
-  <p class="hint-text">Kein Kampf aktiv. Starte einen Kampf, um das Pult zu benutzen.</p>
+  {{#if (aboreaEq phase "none")}}
+    {{#if (aboreaEq noCombat "other-scene")}}
+    <p class="hint-text">
+      In dieser Szene läuft kein Kampf — es gibt aber einen in einer anderen.
+      Wechsle dorthin oder mache den Kampf im Kampfbericht zum aktiven.
+    </p>
+    {{else}}
+    <p class="hint-text">Kein Kampf aktiv. Lege im Kampfbericht einen Kampf an, um das Pult zu benutzen.</p>
+    {{/if}}
   {{else}}
 
   <div class="cc-toolbar">
-    <span class="cc-round">Runde {{round}}</span>
+    {{#if isRunning}}
+      <span class="cc-round">Runde {{round}}</span>
+    {{else}}
+      <span class="cc-round cc-notstarted">Noch nicht gestartet</span>
+      <button type="button" class="cc-start btn-sm" title="Initiative würfeln und Runde 1 beginnen">▶ Kampf starten</button>
+    {{/if}}
     <label>Situationsmod.
-      <input type="number" class="cc-situ" value="{{situMod}}" min="-10" max="10" />
+      <input type="number" class="cc-situ" value="{{situMod}}" min="-10" max="10"
+             title="Gilt für alle — Dunkelheit, Sturm, was die ganze Szene betrifft" />
     </label>
+    {{#if isRunning}}
     <span class="cc-turn">
       <button type="button" class="cc-prev btn-sm" title="Vorheriger Zug">◀</button>
       <span class="cc-active">{{#if activeName}}{{activeName}}{{else}}—{{/if}}</span>
       <button type="button" class="cc-next btn-sm" title="Nächster Zug">▶</button>
     </span>
+    {{/if}}
     <button type="button" class="cc-refresh btn-sm" title="Neu einlesen">↻</button>
   </div>
+
+  {{#if isPrepared}}
+  <p class="hint-text cc-phase-hint">
+    Der Kampf ist angelegt, läuft aber noch nicht. Erklärung und Angriff gibt es ab Runde 1.
+  </p>
+  {{/if}}
 
   <div class="cc-table">
     <div class="cc-head">
       <span>Kombattant</span>
       <span>Zustand</span>
       <span>Erklärung</span>
-      <span>Defensivvorrat</span>
-      <span title="Persoenlicher Situationsmodifikator, zusaetzlich zum globalen">Sit.</span>
+      <span title="Noch nicht eingesetzter Defensivbonus">Def.vorrat</span>
+      <span title="Persönlicher Situationsmodifikator, zusätzlich zum globalen">Sit.</span>
       <span>Angriff auf</span>
       <span></span>
     </div>
 
     {{#each rows}}
-    <div class="cc-row{{#if active}} active{{/if}}{{#if defeated}} defeated{{/if}}"
+    <div class="cc-row{{#if active}} active{{/if}}{{#if defeated}} defeated{{/if}}{{#if fleeing}} fleeing{{/if}}"
          data-combatant-id="{{id}}">
 
       <span class="cc-name">
         <img src="{{img}}" alt="{{name}}" />
         <span>{{name}}</span>
-        {{#if initiative}}<em class="cc-init">{{initiative}}</em>{{/if}}
+        {{#if initiative}}<em class="cc-init" title="Initiative">{{initiative}}</em>{{/if}}
       </span>
 
       <span class="cc-state">
@@ -46,19 +67,22 @@
       <span class="cc-decl">
         {{#if defeated}}
           <em>ausgeschieden</em>
-        {{else}}
+        {{else if canDeclare}}
           <button type="button" class="cc-mode{{#if (aboreaEq mode "weapon")}} active{{/if}}"
                   data-mode="weapon" title="Mit der Waffe kämpfen">⚔</button>
           <input type="number" class="cc-offensive" value="{{offensive}}"
                  min="{{splitMin}}" max="{{splitMax}}" {{#unless canSplit}}disabled{{/unless}}
                  title="Offensivanteil des Kampfbonus {{pool}}" />
-          <span class="cc-def">🛡{{defensive}}</span>
+          <span class="cc-def" title="Defensivanteil">🛡{{defensive}}</span>
           <button type="button" class="cc-mode{{#if (aboreaEq mode "spell")}} active{{/if}}"
                   data-mode="spell" title="Zaubern — kein Defensivbonus">✨</button>
           <button type="button" class="cc-mode{{#if fleeing}} active{{/if}}"
                   data-mode="flee" title="Fliehen — einzige Handlung; der Gegner schlägt noch einmal zu">🏃</button>
           {{#unless declared}}<em class="cc-open" title="Noch nicht erklärt">?</em>{{/unless}}
-          {{#if locked}}<em class="cc-locked" title="Hat bereits gehandelt">🔒</em>{{/if}}
+        {{else}}
+          <em class="cc-locked" title="Hat bereits gehandelt — die Erklärung steht">
+            {{#if locked}}🔒 {{/if}}⚔{{offensive}} / 🛡{{defensive}}
+          </em>
         {{/if}}
       </span>
 
@@ -77,22 +101,26 @@
       </span>
 
       <span class="cc-assign">
-        {{#unless defeated}}{{#unless fleeing}}
-        <select class="cc-target">
-          <option value="">— Ziel wählen —</option>
-          {{#each ../alive}}
-            {{#unless (aboreaEq id ../id)}}
-            <option value="{{id}}">{{name}}</option>
-            {{/unless}}
-          {{/each}}
-        </select>
-        {{/unless}}{{else}}<em class="cc-flee">flieht</em>{{/unless}}
+        {{#if defeated}}
+          <em>—</em>
+        {{else if fleeing}}
+          <em class="cc-flee" title="Flucht ist die einzige Handlung dieser Runde">🏃 flieht</em>
+        {{else if canAssign}}
+          <select class="cc-target">
+            <option value="">— Ziel wählen —</option>
+            {{#each targets}}
+            <option value="{{id}}"{{#if selected}} selected{{/if}}>{{name}}</option>
+            {{/each}}
+          </select>
+        {{else}}
+          <em>—</em>
+        {{/if}}
       </span>
 
       <span class="cc-actions">
-        {{#unless defeated}}{{#unless fleeing}}
+        {{#if canAttack}}
         <button type="button" class="cc-attack btn-sm" title="Angriff ausführen">⚔</button>
-        {{/unless}}{{/unless}}
+        {{/if}}
         <button type="button" class="cc-defeat btn-sm" title="Besiegt umschalten">💀</button>
       </span>
     </div>
@@ -103,5 +131,5 @@
   <p class="cc-footer">{{defeated.length}} ausgeschieden — sie stehen nicht mehr als Ziel zur Wahl.</p>
   {{/if}}
 
-  {{/unless}}
+  {{/if}}
 </div>

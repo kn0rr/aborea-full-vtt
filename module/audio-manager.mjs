@@ -1,4 +1,5 @@
-import { registerSceneControlGroup } from "./scene-controls.mjs";
+import { registerSceneControlTools } from "./scene-controls.mjs";
+import { openOnce } from "./windows.mjs";
 const ROOT = `systems/aborea-v7`;
 const PRESETS_PATH = `${ROOT}/data/audio-presets.json`;
 
@@ -249,12 +250,19 @@ export class AboreaSoundboard {
   // ── Dialog ──────────────────────────────────────────────────────────────────
 
   static async openDialog() {
+    // Höchstens ein Soundboard. Ein zweites brächte eine zweite
+    // Update-Schleife mit — und der Knopf in der Werkzeugleiste feuert
+    // gelegentlich mehrfach.
+    await openOnce("aborea-soundboard", () => this._buildDialog());
+  }
+
+  static async _buildDialog() {
     const groups   = await this.loadGroups();
     const presets  = await this.loadPresets();
     const activeId = this.state.presetId || presets[0]?.id || "";
     const html     = await renderTemplate(`${ROOT}/templates/audio/soundboard.html`, { groups, presets, activeId });
 
-    new Dialog({
+    const dialog = new Dialog({
       title: "ABOREA Audio",
       content: html,
       buttons: { close: { label: "Schließen" } },
@@ -300,7 +308,11 @@ export class AboreaSoundboard {
         // Interval beim Schließen des Dialogs stoppen
         this._stopUIUpdates();
       }
-    }).render(true);
+    });
+    dialog.render(true);
+    // Das Fenster zurückgeben, nicht render() — die Registratur liest daran
+    // ab, ob schon eins offen ist.
+    return dialog;
   }
 
   // ── Playlists ────────────────────────────────────────────────────────────────
@@ -362,15 +374,14 @@ export class AboreaSoundboard {
   // ── Scene Control ─────────────────────────────────────────────────────────────
 
   static registerSceneControl() {
-    registerSceneControlGroup({
-      name:  "aborea-audio",
-      title: "ABOREA Audio",
-      icon:  "fas fa-music",
-      layer: "sounds",
+    registerSceneControlTools({
+      group: "sounds",
       tools: [
-        { name: "open", title: "Soundboard öffnen", icon: "fas fa-sliders-h",
+        { name: "aborea-soundboard", title: "ABOREA: Soundboard öffnen",
+          icon: "fas fa-sliders-h", order: 90,
           onClick: () => AboreaSoundboard.openDialog() },
-        { name: "stop", title: "Alles stoppen", icon: "fas fa-stop",
+        { name: "aborea-sound-stop", title: "ABOREA: Alles stoppen",
+          icon: "fas fa-stop", order: 91,
           onClick: () => AboreaSoundboard.stopAll() },
       ],
     });

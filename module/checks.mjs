@@ -3,6 +3,7 @@
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { skillBonus, attributeValue, formatBreakdown } from "./bonuses.mjs";
+import { openOnce } from "./windows.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -207,7 +208,17 @@ export async function performGroupCheck({ checkType, checkKey, situMod = 0, diff
   });
 }
 
-export function openGroupCheckDialog() {
+export async function openGroupCheckDialog() {
+  // Nur eine Gruppenprobe gleichzeitig — der Knopf in der Werkzeugleiste
+  // feuert gelegentlich mehrfach.
+  let settle;
+  const answered = new Promise(resolve => { settle = resolve; });
+  const { created } = await openOnce("aborea-group-check", () => _buildGroupCheckDialog(settle));
+  if (!created) return null;
+  return answered;
+}
+
+function _buildGroupCheckDialog(resolve) {
   const attrs = Object.entries(ABOREA.attributes).map(([key, label]) =>
     `<option value="attr::${key}">${game.i18n.localize(label)}</option>`
   ).join("");
@@ -220,8 +231,7 @@ export function openGroupCheckDialog() {
     .map(([, val]) => `<option value="${val}">${val}</option>`)
     .join("");
 
-  return new Promise(resolve => {
-    new Dialog({
+  const dialog = new Dialog({
       title: "👥 Gruppenprobe",
       content: `
         <div style="display:flex;flex-direction:column;gap:8px;padding:4px 0">
@@ -261,19 +271,29 @@ export function openGroupCheckDialog() {
         },
         cancel: { label: "Abbrechen", callback: () => resolve(null) }
       },
-      default: "roll"
-    }).render(true);
+      default: "roll",
+      close: () => resolve(null)
   });
+  dialog.render(true);
+  // Das Fenster zurückgeben, nicht render() — daran liest die Registratur ab,
+  // ob schon eins offen ist.
+  return dialog;
 }
 
 // ══════════════════════════════════════════════════════════════════
 //  Public API
 // ══════════════════════════════════════════════════════════════════
 
-export function openCheckDialog(actor) {
-  return new Promise(resolve => {
-    new AboreaCheckDialog({ actor, resolve }).render(true);
+export async function openCheckDialog(actor) {
+  let settle;
+  const answered = new Promise(resolve => { settle = resolve; });
+  const { created } = await openOnce(`check:${actor?.id ?? "?"}`, () => {
+    const app = new AboreaCheckDialog({ actor, resolve: settle });
+    app.render(true);
+    return app;
   });
+  if (!created) return null;
+  return answered;
 }
 
 export function registerCheckHooks() {

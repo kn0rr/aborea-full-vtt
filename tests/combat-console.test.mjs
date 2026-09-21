@@ -6,7 +6,8 @@
 import "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildConsoleRows, assignableTargets, isDefeated, mayUseConsole } from "../module/combat-console.mjs";
+import { buildConsoleRows, assignableTargets, isDefeated, mayUseConsole,
+         combatPhase, combatantTarget, noCombatReason } from "../module/combat-console.mjs";
 
 const eintrag = (id, over = {}) => ({
   id, actorId: `a-${id}`, name: over.name ?? id,
@@ -115,6 +116,168 @@ test("assignableTargets", async t => {
     assert.deepEqual(assignableTargets(rows, "c1").map(r => r.name), ["Goblin"]));
   await t.test("leere Eingabe", () =>
     assert.deepEqual(assignableTargets(null, "c1"), []));
+});
+
+test("combatPhase", async t => {
+  // "teilweise kommt kein kampf aktiv": ein angelegter Kampf steht auf Runde
+  // 0. Er ist da, aber erklären lässt sich nichts — das Pult zeigte Knöpfe,
+  // die stumm nichts taten.
+  await t.test("kein Kampf", () =>
+    assert.equal(combatPhase({ hasCombat: false, started: false, round: 0 }), "none"));
+  await t.test("angelegt, nicht gestartet", () =>
+    assert.equal(combatPhase({ hasCombat: true, started: false, round: 0 }), "prepared"));
+  await t.test("gestartet", () =>
+    assert.equal(combatPhase({ hasCombat: true, started: true, round: 1 }), "running"));
+  await t.test("started gesetzt, Runde aber noch 0", () =>
+    assert.equal(combatPhase({ hasCombat: true, started: true, round: 0 }), "prepared"));
+  await t.test("Runde gesetzt, started aber nicht", () =>
+    assert.equal(combatPhase({ hasCombat: true, started: false, round: 3 }), "prepared"));
+  await t.test("spaetere Runden bleiben laufend", () => {
+    for (const r of [1, 2, 7, 99]) {
+      assert.equal(combatPhase({ hasCombat: true, started: true, round: r }), "running", `Runde ${r}`);
+    }
+  });
+  await t.test("leere Eingabe", () => {
+    assert.equal(combatPhase({}), "none");
+    assert.equal(combatPhase(), "none");
+  });
+});
+
+test("noCombatReason", async t => {
+  // game.combat ist der Kampf der betrachteten Szene. Steht der Spielleiter
+  // woanders, ist er leer, obwohl im Kampfbericht ein Kampf steht.
+  await t.test("Kampf in dieser Szene: kein Grund", () =>
+    assert.equal(noCombatReason({ viewed: true, total: 1 }), ""));
+  await t.test("gar kein Kampf", () =>
+    assert.equal(noCombatReason({ viewed: false, total: 0 }), "none"));
+  await t.test("Kampf, aber in einer anderen Szene", () =>
+    assert.equal(noCombatReason({ viewed: false, total: 1 }), "other-scene"));
+  await t.test("mehrere anderswo", () =>
+    assert.equal(noCombatReason({ viewed: false, total: 4 }), "other-scene"));
+  await t.test("leere Eingabe", () => {
+    assert.equal(noCombatReason({}), "none");
+    assert.equal(noCombatReason(), "none");
+  });
+});
+
+test("Zielzuweisung überlebt das Neuzeichnen", async t => {
+  // Das Auswahlfeld war reiner DOM-Zustand. Jede Änderung zeichnet das Pult
+  // neu — auch das Setzen eines Situationsmodifikators — und setzte die
+  // Zuweisung damit auf "— Ziel wählen —" zurück.
+  const rows = (over = {}) => buildConsoleRows([
+    { ...eintrag("c1", { name: "Ascario" }), targetId: over.c1 ?? "" },
+    { ...eintrag("c2", { name: "Goblin" }),  targetId: over.c2 ?? "" },
+    { ...eintrag("c3", { name: "Grik" }),    targetId: over.c3 ?? "" },
+  ]).rows;
+
+  await t.test("das zugewiesene Ziel ist vorgewaehlt", () => {
+    const r = rows({ c1: "c3" });
+    assert.equal(r[0].target, "c3");
+    assert.deepEqual(r[0].targets.filter(x => x.selected).map(x => x.name), ["Grik"]);
+  });
+
+  await t.test("ohne Zuweisung ist nichts vorgewaehlt", () => {
+    const r = rows();
+    assert.equal(r[0].target, "");
+    assert.equal(r[0].targets.some(x => x.selected), false);
+  });
+
+  await t.test("sich selbst steht nicht zur Wahl", () => {
+    for (const r of rows()) {
+      assert.equal(r.targets.some(x => x.id === r.id), false, `${r.name} kann sich selbst waehlen`);
+    }
+  });
+
+  await t.test("eine Zuweisung auf sich selbst wird verworfen", () =>
+    assert.equal(rows({ c1: "c1" })[0].target, ""));
+
+  await t.test("ein ausgeschiedenes Ziel wird verworfen", () => {
+    const r = buildConsoleRows([
+      { ...eintrag("c1"), targetId: "c2" },
+      eintrag("c2", { hp: { value: 0, max: 6 } }),
+    ]).rows;
+    assert.equal(r[0].target, "");
+    assert.equal(r[0].targets.length, 0);
+  });
+
+  await t.test("ein unbekanntes Ziel wird verworfen", () =>
+    assert.equal(rows({ c1: "gibtsnicht" })[0].target, ""));
+
+  await t.test("jede Zeile behaelt ihre eigene Zuweisung", () => {
+    const r = rows({ c1: "c2", c2: "c3", c3: "c1" });
+    assert.deepEqual(r.map(x => x.target), ["c2", "c3", "c1"]);
+  });
+});
+
+test("combatantTarget: das Ziel steht am Kombattanten, nicht im DOM", async t => {
+  await t.test("gesetztes Flag", () =>
+    assert.equal(combatantTarget({ flags: { "aborea-v7": { target: "c2" } } }), "c2"));
+  await t.test("ohne Flag leer", () =>
+    assert.equal(combatantTarget({ flags: {} }), ""));
+  await t.test("ohne Kombattant leer", () => {
+    assert.equal(combatantTarget(null), "");
+    assert.equal(combatantTarget(undefined), "");
+  });
+  await t.test("fremde Flags stoeren nicht", () =>
+    assert.equal(combatantTarget({ flags: { andere: { target: "x" } } }), ""));
+});
+
+test("canDeclare und canAttack: was in welcher Phase geht", async t => {
+  const rowOf = (phase, over = {}) => buildConsoleRows([eintrag("c1", over)], { phase }).rows[0];
+
+  await t.test("im laufenden Kampf beides", () => {
+    const r = rowOf("running");
+    assert.equal(r.canDeclare, true);
+    assert.equal(r.canAttack, true);
+  });
+
+  await t.test("vor dem Start weder erklaeren noch angreifen", () => {
+    // Genau hier lief das Klicken bisher ins Leere: declareRound braucht eine
+    // Rundennummer, und die ist in Runde 0 keine.
+    const r = rowOf("prepared");
+    assert.equal(r.canDeclare, false);
+    assert.equal(r.canAttack, false);
+  });
+
+  await t.test("Ziele zuweisen geht schon vor dem Start", () => {
+    // Die Angriffsreihenfolge festzulegen ist die Vorbereitung — dafür muss
+    // der Kampf nicht laufen.
+    assert.equal(rowOf("prepared").canAssign, true);
+    assert.equal(rowOf("running").canAssign, true);
+  });
+
+  await t.test("Ausgeschiedene und Fliehende bekommen kein Ziel", () => {
+    assert.equal(rowOf("running", { defeated: true }).canAssign, false);
+    assert.equal(rowOf("running", {
+      split: { pool: 5, offensive: 0, defensive: 5, mode: "flee", declared: true, locked: false, defenseSpent: null },
+    }).canAssign, false);
+  });
+
+  await t.test("ausgeschieden erklaert und greift nicht mehr an", () => {
+    const r = rowOf("running", { defeated: true });
+    assert.equal(r.canDeclare, false);
+    assert.equal(r.canAttack, false);
+  });
+
+  await t.test("wer gehandelt hat, erklaert nicht neu — greift aber an", () => {
+    const r = rowOf("running", {
+      split: { pool: 5, offensive: 3, defensive: 2, mode: "weapon", declared: true, locked: true, defenseSpent: null },
+    });
+    assert.equal(r.canDeclare, false);
+    assert.equal(r.canAttack, true);
+  });
+
+  await t.test("wer flieht, greift nicht an — Flucht ist die einzige Handlung", () => {
+    const r = rowOf("running", {
+      split: { pool: 5, offensive: 0, defensive: 5, mode: "flee", declared: true, locked: false, defenseSpent: null },
+    });
+    assert.equal(r.fleeing, true);
+    assert.equal(r.canAttack, false);
+    assert.equal(r.canDeclare, true);   // umentscheiden darf er noch
+  });
+
+  await t.test("ohne Angabe wird der laufende Kampf angenommen", () =>
+    assert.equal(buildConsoleRows([eintrag("c1")]).rows[0].canAttack, true));
 });
 
 test("mayUseConsole: das Pult ist dem Spielleiter vorbehalten", async t => {

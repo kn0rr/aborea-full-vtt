@@ -1,8 +1,26 @@
 // module/quick-npc.mjs — GM-Tools: Schnell-NSC + Gruppenprobe
 import { openGroupCheckDialog } from "./checks.mjs";
-import { registerSceneControlGroup } from "./scene-controls.mjs";
+import { registerSceneControlTools } from "./scene-controls.mjs";
+import { openOnce } from "./windows.mjs";
 
 async function _pickCreature() {
+  // Höchstens eine Auswahl gleichzeitig. Der Knopf in der Werkzeugleiste
+  // feuert gelegentlich mehrfach, und das Laden des Index dauert lange genug,
+  // dass ein zweiter Klick dazwischenkommt — die Reservierung geschieht
+  // deshalb vor dem Laden, nicht erst beim Anlegen des Fensters.
+  let settle;
+  const picked = new Promise(resolve => { settle = resolve; });
+
+  const { created } = await openOnce("aborea-creature-picker", async () => {
+    const dialog = await _buildCreatureDialog(settle);
+    if (!dialog) settle(null);
+    return dialog;
+  });
+  if (!created) return null;
+  return picked;
+}
+
+async function _buildCreatureDialog(resolve) {
   const pack = game.packs.find(p =>
     p.metadata.packageName === "aborea-v7" && p.metadata.name === "creatures"
   );
@@ -16,35 +34,37 @@ async function _pickCreature() {
     return `<option value="${e._id}">${e.name} (Bedrohung ${threat})</option>`;
   }).join("");
 
-  return new Promise(resolve => {
-    new Dialog({
-      title: "Kreatur auf Szene platzieren",
-      content: `
-        <div style="margin-bottom:8px">
-          <label style="display:block;margin-bottom:4px;font-weight:600">Kreatur auswählen</label>
-          <select id="quick-npc-sel" style="width:100%">${options}</select>
-        </div>
-        <div>
-          <label style="display:block;margin-bottom:4px;font-weight:600">Anzahl</label>
-          <input id="quick-npc-count" type="number" value="1" min="1" max="20" style="width:60px" />
-        </div>
-      `,
-      buttons: {
-        place: {
-          label: "Platzieren",
-          icon: '<i class="fas fa-map-marker-alt"></i>',
-          callback: html => {
-            const id    = html[0].querySelector("#quick-npc-sel").value;
-            const count = Number(html[0].querySelector("#quick-npc-count").value) || 1;
-            resolve({ id, count, pack });
-          }
-        },
-        cancel: { label: "Abbrechen", callback: () => resolve(null) }
+  const dialog = new Dialog({
+    title: "Kreatur auf Szene platzieren",
+    content: `
+      <div style="margin-bottom:8px">
+        <label style="display:block;margin-bottom:4px;font-weight:600">Kreatur auswählen</label>
+        <select id="quick-npc-sel" style="width:100%">${options}</select>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:4px;font-weight:600">Anzahl</label>
+        <input id="quick-npc-count" type="number" value="1" min="1" max="20" style="width:60px" />
+      </div>
+    `,
+    buttons: {
+      place: {
+        label: "Platzieren",
+        icon: '<i class="fas fa-map-marker-alt"></i>',
+        callback: html => {
+          const id    = html[0].querySelector("#quick-npc-sel").value;
+          const count = Number(html[0].querySelector("#quick-npc-count").value) || 1;
+          resolve({ id, count, pack });
+        }
       },
-      default: "place",
-      close: () => resolve(null)
-    }).render(true);
+      cancel: { label: "Abbrechen", callback: () => resolve(null) }
+    },
+    default: "place",
+    close: () => resolve(null)
   });
+  dialog.render(true);
+  // Das Fenster zurückgeben, nicht render() — daran liest die Registratur ab,
+  // ob schon eins offen ist.
+  return dialog;
 }
 
 export async function spawnCreatureOnScene() {
@@ -85,16 +105,13 @@ export async function spawnCreatureOnScene() {
 }
 
 export function registerQuickNpcSceneControl() {
-  registerSceneControlGroup({
-    name:  "aborea-creatures",
-    title: "ABOREA Kreaturen",
-    icon:  "fas fa-dragon",
-    layer: "tokens",
+  registerSceneControlTools({
+    group: "tokens",
     tools: [
-      { name: "quick-spawn", title: "Kreatur schnell auf Szene platzieren",
-        icon: "fas fa-plus-circle", onClick: () => spawnCreatureOnScene() },
-      { name: "group-check", title: "Gruppenprobe würfeln",
-        icon: "fas fa-users", onClick: () => openGroupCheckDialog() },
+      { name: "aborea-quick-spawn", title: "ABOREA: Kreatur schnell auf Szene platzieren",
+        icon: "fas fa-dragon", order: 92, onClick: () => spawnCreatureOnScene() },
+      { name: "aborea-group-check", title: "ABOREA: Gruppenprobe würfeln",
+        icon: "fas fa-users", order: 93, onClick: () => openGroupCheckDialog() },
     ],
   });
 }

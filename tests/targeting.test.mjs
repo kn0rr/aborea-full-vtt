@@ -7,7 +7,7 @@
 import "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { selectTargetTokens, defaultWeapon, attackPlan } from "../module/targeting.mjs";
+import { selectTargetTokens, defaultWeapon, attackPlan, resolveAttackerToken } from "../module/targeting.mjs";
 
 const token = (id, name, type = "npc") => ({ id, name, actor: { id: `a-${id}`, type } });
 
@@ -47,6 +47,83 @@ test("selectTargetTokens", async t => {
     assert.deepEqual(selectTargetTokens([], {}), []);
     assert.deepEqual(selectTargetTokens(null, {}), []);
   });
+});
+
+test("selectTargetTokens: niemand greift sich selbst an", async t => {
+  // Drei Goblins aus derselben Kreatur: unverknüpfte Tokens teilen sich die
+  // Actor-Kennung. Wird nur nach dem Actor gesucht, fällt immer das erste
+  // Token heraus — greift Goblin 2 an, blieb er selbst in der Liste stehen.
+  const goblin = id => ({ id, name: `Goblin ${id}`, actor: { id: "a-goblin", type: "creature" } });
+  const drei   = [goblin("t1"), goblin("t2"), goblin("t3")];
+
+  await t.test("mit bekanntem Token faellt genau dieses heraus", () =>
+    assert.deepEqual(selectTargetTokens(drei, { attackerTokenId: "t2", attackerActorId: "a-goblin" })
+      .map(x => x.id), ["t1", "t3"]));
+
+  await t.test("jedes Exemplar wird richtig ausgelassen", () => {
+    for (const id of ["t1", "t2", "t3"]) {
+      const r = selectTargetTokens(drei, { attackerTokenId: id, attackerActorId: "a-goblin" });
+      assert.equal(r.some(x => x.id === id), false, `${id} steht in seiner eigenen Liste`);
+      assert.equal(r.length, 2);
+    }
+  });
+
+  await t.test("ohne bekanntes Token faellt der ganze Actor heraus", () =>
+    // Lieber ein Ziel zu wenig als sich selbst in der Auswahl.
+    assert.deepEqual(selectTargetTokens(drei, { attackerActorId: "a-goblin" }), []));
+
+  await t.test("fremde Tokens bleiben dabei stehen", () => {
+    const gemischt = [...drei, { id: "t9", name: "Ascario", actor: { id: "a-asc", type: "character" } }];
+    assert.deepEqual(selectTargetTokens(gemischt, { attackerActorId: "a-goblin" }).map(x => x.id), ["t9"]);
+  });
+
+  await t.test("ohne jede Angabe faellt niemand heraus", () =>
+    assert.equal(selectTargetTokens(drei, {}).length, 3));
+});
+
+test("resolveAttackerToken", async t => {
+  const tok = (id, actorId) => ({ id, actor: { id: actorId } });
+
+  await t.test("ausdrueckliche Angabe gewinnt", () =>
+    assert.equal(resolveAttackerToken({
+      tokenId: "t7", controlled: [tok("t1", "a1")], tokens: [tok("t1", "a1")], actorId: "a1",
+    }), "t7"));
+
+  await t.test("das ausgewaehlte Token", () =>
+    assert.equal(resolveAttackerToken({
+      controlled: [tok("t2", "a1")],
+      tokens: [tok("t1", "a1"), tok("t2", "a1")],
+      actorId: "a1",
+    }), "t2"));
+
+  await t.test("das einzige Token des Actors", () =>
+    assert.equal(resolveAttackerToken({ tokens: [tok("t1", "a1"), tok("t2", "a2")], actorId: "a1" }), "t1"));
+
+  await t.test("mehrdeutig: lieber nichts als das falsche", () =>
+    // Genau hier lag der Fehler — ein find() nahm einfach das erste.
+    assert.equal(resolveAttackerToken({
+      tokens: [tok("t1", "a1"), tok("t2", "a1"), tok("t3", "a1")], actorId: "a1",
+    }), ""));
+
+  await t.test("mehrere ausgewaehlte sind ebenso mehrdeutig", () =>
+    assert.equal(resolveAttackerToken({
+      controlled: [tok("t1", "a1"), tok("t2", "a1")],
+      tokens: [tok("t1", "a1"), tok("t2", "a1")],
+      actorId: "a1",
+    }), ""));
+
+  await t.test("Actor ohne Token auf der Szene", () =>
+    assert.equal(resolveAttackerToken({ tokens: [tok("t1", "a2")], actorId: "a1" }), ""));
+
+  await t.test("leere Eingabe", () => {
+    assert.equal(resolveAttackerToken({}), "");
+    assert.equal(resolveAttackerToken(), "");
+  });
+
+  await t.test("Tokens ohne Actor stoeren nicht", () =>
+    assert.equal(resolveAttackerToken({
+      tokens: [{ id: "x" }, tok("t1", "a1")], actorId: "a1",
+    }), "t1"));
 });
 
 test("defaultWeapon: die ausgerüstete mit dem höchsten Schaden", async t => {

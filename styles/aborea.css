@@ -1113,15 +1113,33 @@
 .aborea-combat-console .cc-round { font-weight: 700; }
 .aborea-combat-console .cc-turn { display: flex; align-items: center; gap: 5px; margin-left: auto; }
 .aborea-combat-console .cc-active { min-width: 7em; text-align: center; font-weight: 700; }
-.aborea-combat-console .cc-row-situ { width: 3.2em; }
+.aborea-combat-console .cc-notstarted { font-weight: 700; color: #c08a00; }
+.aborea-combat-console .cc-phase-hint { margin: 0 0 6px; }
 .aborea-combat-console .cc-situ-cell { text-align: center; }
 .aborea-combat-console .cc-toolbar input[type=number] { width: 4em; }
+/* Die Spalten mussten schrumpfen koennen. Vorher wuchs die Erklaerungsspalte
+   mit ihrem Inhalt, das Raster lief ueber die Fensterbreite hinaus, und die
+   rechten Spalten — darunter der persoenliche Situationsmodifikator —
+   standen ausserhalb des sichtbaren Bereichs. */
+.aborea-combat-console .cc-table { overflow-x: auto; }
 .aborea-combat-console .cc-head,
 .aborea-combat-console .cc-row {
-  display: grid; align-items: center; gap: 8px;
-  grid-template-columns: minmax(8em, 1.3fr) 6.5em minmax(11em, auto) 5.5em 3.5em minmax(7em, 1fr) auto;
+  display: grid; align-items: center; gap: 6px;
+  grid-template-columns:
+    minmax(6.5em, 1.2fr)   /* Kombattant   */
+    5.5em                  /* Zustand      */
+    minmax(9em, 1.4fr)     /* Erklaerung   */
+    4.6em                  /* Def.vorrat   */
+    4.2em                  /* Sit.         */
+    minmax(6.5em, 1fr)     /* Angriff auf  */
+    4.6em;                 /* Aktionen     */
   padding: 3px 2px;
+  min-width: 44em;
 }
+.aborea-combat-console .cc-head > span,
+.aborea-combat-console .cc-row  > span { min-width: 0; }
+.aborea-combat-console .cc-row-situ,
+.aborea-combat-console .cc-target { width: 100%; min-width: 0; }
 .aborea-combat-console .cc-head { font-weight: 700; opacity: .7; font-size: .74rem; }
 .aborea-combat-console .cc-row { border-top: 1px solid var(--aborea-border-light); }
 .aborea-combat-console .cc-row.active { background: rgba(0,0,0,.06); }
@@ -1132,8 +1150,9 @@
 .aborea-combat-console .cc-hp { font-variant-numeric: tabular-nums; font-size: .76rem; }
 .aborea-combat-console .cc-hpbar { display: block; height: 3px; background: rgba(0,0,0,.18); border-radius: 2px; }
 .aborea-combat-console .cc-hpbar span { display: block; height: 100%; background: #2d8a3e; }
+.aborea-combat-console .cc-row.fleeing { background: rgba(192,138,0,.10); }
 .aborea-combat-console .cc-decl { display: flex; align-items: center; gap: 3px; }
-.aborea-combat-console .cc-offensive { width: 3.2em; }
+.aborea-combat-console .cc-offensive { width: 3.2em; min-width: 0; flex: 0 0 auto; }
 .aborea-combat-console .cc-mode {
   padding: 0 4px; border: 1px solid var(--aborea-border-light);
   border-radius: 3px; background: transparent; cursor: pointer;
