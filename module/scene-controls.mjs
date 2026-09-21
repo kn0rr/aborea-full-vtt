@@ -107,10 +107,10 @@ export function addControlTools(controls, groupName, toolSpecs = [], opts = {}) 
  * Registriert Werkzeuge in einer vorhandenen Gruppe der Szenenleiste.
  * Nur für Spielleiter.
  *
- * Beide Hooknamen zu belegen ist harmlos: v13.351 kennt nur
- * `getSceneControlButtons` — der Name blieb, die Struktur wurde zum Objekt.
- * Ein `getSceneControlButtonsV2` gibt es dort nicht, es würde also nie
- * feuern; käme es je, wäre es schon bedient.
+ * Es gibt nur einen Hook: v13.351 ruft `getSceneControlButtons` — der Name
+ * blieb, die Struktur wurde zum Objekt. Ein `getSceneControlButtonsV2`
+ * existiert dort nicht; darauf zu registrieren war eine Annahme und hat nie
+ * gefeuert. Das System setzt ohnehin v13 voraus.
  *
  * @param {object} spec  {group, tools:[…]}
  */
@@ -129,6 +129,5 @@ export function registerSceneControlTools({ group, tools }) {
         + `${tools.map(t => t.name).join(", ")} erscheinen nicht.`);
     }
   };
-  Hooks.on("getSceneControlButtons",   add);
-  Hooks.on("getSceneControlButtonsV2", add);
+  Hooks.on("getSceneControlButtons", add);
 }

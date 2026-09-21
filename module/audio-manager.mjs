@@ -260,7 +260,10 @@ export class AboreaSoundboard {
     const groups   = await this.loadGroups();
     const presets  = await this.loadPresets();
     const activeId = this.state.presetId || presets[0]?.id || "";
-    const html     = await renderTemplate(`${ROOT}/templates/audio/soundboard.html`, { groups, presets, activeId });
+    // Nicht das globale renderTemplate: das ist seit v13 veraltet und
+    // verschwindet in v15.
+    const html     = await foundry.applications.handlebars
+      .renderTemplate(`${ROOT}/templates/audio/soundboard.html`, { groups, presets, activeId });
 
     const dialog = new Dialog({
       title: "ABOREA Audio",

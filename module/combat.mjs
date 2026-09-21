@@ -1474,8 +1474,12 @@ export function registerCombatHooks() {
     controls.prepend(btn);
   };
 
-  Hooks.on("renderCombatTrackerHTML", _onRenderTracker);
-  // Fallback für den Fall dass der CombatTracker noch V1 ist
+  // Der Tracker ist unter v13 eine ApplicationV2. Die feuert
+  // render<Klassenname> für jede Klasse ihrer Ableitungskette — hier also
+  // "renderCombatTracker". Ein "renderCombatTrackerHTML" gibt es nicht; die
+  // Registrierung darauf lief ins Leere, und der Kommentar daneben behauptete
+  // das Gegenteil. (Geprüft an client/applications/api/application.mjs und
+  // client/applications/sidebar/tabs/combat-tracker.mjs, v13.351.)
   Hooks.on("renderCombatTracker", _onRenderTracker);
 
   // ── Rundenwechsel: Situationsmodifikator zurücksetzen ─────────────
