@@ -1,35 +1,67 @@
-// module/scene-controls.mjs — eigene Werkzeuge in der Szenenleiste
+// module/scene-controls.mjs — eigene Werkzeuggruppen in der Szenenleiste
 //
-// Zwei Anläufe, zwei Fehler. Der erste: die Registrierungen prüften nur auf
-// ein Array und erschienen unter v13 gar nicht, weil Foundry dort ein Objekt
-// übergibt. Der zweite: die Fenster gingen mehrfach auf.
+// Alles hier steht so, weil es in client/applications/ui/scene-controls.mjs
+// der v13.351 nachgelesen ist. Drei Anläufe, drei Lehren:
 //
-// Die Ursachen des zweiten stehen in client/applications/ui/scene-controls.mjs
-// der v13.351 und sind dort nachgelesen, nicht vermutet:
+//  1. Form. v12 übergab Arrays, v13 übergibt ein Objekt nach Gruppennamen.
+//     Die Registrierungen prüften nur auf Array und erschienen unter v13 gar
+//     nicht.
 //
-//   1. #onChange() ruft erst onChange und danach — mit
-//      Abwärtskompatibilitätswarnung — auch onClick. Wer beide setzt, wird
-//      bei jedem Anlass zweimal gerufen. Wir setzen genau eins.
-//   2. #postActivate() ruft beim Aktivieren einer Gruppe deren activeTool
-//      auf, #preActivate() beim Verlassen das bisherige mit active = false.
-//      Eine eigene Gruppe aus lauter Knöpfen muss also einen davon zum
-//      activeTool machen — und der feuert dann beim blossen Umschalten mit.
-//      Genau das war "ich klicke das eine an und beide gehen auf".
-//   3. #onChangeTool() steigt bei `tool === this.tool` vorher aus. Der Knopf,
-//      den man zum activeTool gemacht hat, ist damit gleichzeitig tot.
+//  2. Mehrfaches Feuern. #onChange() ruft erst onChange und danach — mit
+//     Abwärtskompatibilitätswarnung — auch onClick; wer beide setzt, wird
+//     doppelt gerufen. #postActivate() ruft beim Aktivieren einer Gruppe
+//     deren activeTool auf, #preActivate() beim Verlassen das bisherige mit
+//     active = false. Ein Handler, der das Argument ignoriert, öffnet sein
+//     Fenster also auch beim Weggehen: "ich klicke das eine an und beide
+//     gehen auf".
 //
-// Aus 2 und 3 folgt: eigene Gruppen sind für reine Knöpfe der falsche Ort.
-// Die Werkzeuge gehören in die vorhandenen Gruppen ("tokens", "sounds"),
-// deren activeTool Foundrys eigenes "select" bleibt. Dann feuert nichts beim
-// Umschalten, und jeder Knopf reagiert auf seinen eigenen Klick.
+//  3. Sichtbarkeit. _prepareContext() rendert `this.tools`, und das ist
+//     `this.control?.tools` — nur die Werkzeuge der *aktiven* Gruppe. Der
+//     Versuch, unsere Knöpfe in Foundrys Token-Gruppe zu hängen, machte sie
+//     damit unsichtbar, sobald man den Reiter wechselt.
+//
+// Eine eigene Gruppe braucht deshalb dreierlei:
+//
+//   • mindestens ein Werkzeug — eine leere Gruppe wird gelöscht
+//     (isEmpty(control.tools) → delete),
+//   • ein activeTool, das auf ein *vorhandenes* Werkzeug zeigt: beim
+//     Verlassen liest Foundry `this.tool` und reicht das Ergebnis ungeprüft
+//     an #onChange() weiter — bei undefined gäbe es dort einen Fehler,
+//   • und dass dieses activeTool kein Knopf mit Wirkung ist: #onChangeTool()
+//     steigt bei `tool === this.tool` vorher aus, der Knopf wäre also tot,
+//     und beim Aktivieren der Gruppe würde er ungefragt feuern.
+//
+// Daher das Ankerwerkzeug: ein Auswählen-Werkzeug ohne Rückmeldung, wie
+// Foundrys eigenes "select". Es ist der Ruhezustand der Gruppe, und die
+// Gruppe aktiviert beim Öffnen die zugehörige Canvas-Ebene.
+
+/** Wird jeder Gruppe als Ruhezustand vorangestellt. */
+export const ANCHOR_SUFFIX = "-select";
+
+/**
+ * Das Ankerwerkzeug einer Gruppe.
+ *
+ * Bewusst ohne Rückmeldung: es soll nichts tun. Foundry braucht es nur als
+ * Ziel für activeTool, und sichtbar ist es als das, was es ist — der
+ * gewöhnliche Zeiger, solange dieser Reiter offen steht.
+ */
+export function buildAnchorTool(groupName) {
+  return {
+    name:   `${groupName}${ANCHOR_SUFFIX}`,
+    title:  "Auswählen",
+    icon:   "fa-solid fa-expand",
+    button: false,
+    order:  0,
+  };
+}
 
 /**
  * Soll dieser Aufruf den Knopf wirklich auslösen?
  *
  * Nur ein Klick auf den Knopf selbst zählt. Foundry gibt dabei das
  * Klickereignis weiter, dessen Ziel `data-tool` trägt — dieselbe Angabe, an
- * der Foundry das Werkzeug selbst erkennt. Beim Aktivieren einer Gruppe
- * käme stattdessen das Ereignis vom Gruppensymbol mit `data-control`.
+ * der Foundry das Werkzeug selbst erkennt. Beim Aktivieren einer Gruppe käme
+ * stattdessen das Ereignis vom Gruppensymbol mit `data-control`.
  *
  * Ohne Ereignis — Foundry legt bei programmatischer Aktivierung ein leeres
  * an — wird ausgeführt: lieber einmal zu viel als ein toter Knopf.
@@ -44,7 +76,9 @@ export function isToolInvocation(toolName, event, active) {
 /**
  * Bringt ein Werkzeug in die Form, die Foundry erwartet.
  *
- * @param {object} spec  {name, title, icon, onClick|onChange, order}
+ * Ein Werkzeug ohne Rückmeldung bekommt auch keine — das ist der Anker.
+ *
+ * @param {object} spec  {name, title, icon, onClick|onChange, order, button}
  * @param {object} [opts]
  * @param {number} [opts.generation]  game.release.generation
  */
@@ -57,77 +91,78 @@ export function normalizeTool(spec, { generation = 13 } = {}) {
     button: spec.button ?? true,
     order:  spec.order ?? 90,
   };
+  if (!run) return tool;
+
   // Genau eine Rückmeldung setzen — beide heisst unter v13: jeder Anlass
   // ruft den Knopf zweimal.
   if (Number(generation) < 13) {
-    tool.onClick = active => { if (isToolInvocation(spec.name, null, active)) run?.(active); };
+    tool.onClick = active => { if (isToolInvocation(spec.name, null, active)) run(active); };
   } else {
-    tool.onChange = (event, active) => { if (isToolInvocation(spec.name, event, active)) run?.(event, active); };
+    tool.onChange = (event, active) => { if (isToolInvocation(spec.name, event, active)) run(event, active); };
   }
   return tool;
 }
 
-/** Findet eine Werkzeuggruppe — in beiden Formen, die Foundry kennt. */
-export function findControlGroup(controls, groupName) {
-  if (Array.isArray(controls)) return controls.find(c => c?.name === groupName) ?? null;
-  if (!controls || typeof controls !== "object") return null;
-  return controls[groupName] ?? null;
-}
-
 /**
- * Hängt Werkzeuge in eine vorhandene Gruppe.
+ * Bringt eine Gruppenbeschreibung in die Form, die Foundry erwartet.
  *
- * Gibt die Namen der ergänzten Werkzeuge zurück; bereits vorhandene bleiben
- * unangetastet, damit ein doppelt feuernder Hook nichts verdoppelt. Fehlt die
- * Gruppe, wird nichts ergänzt — und der Aufrufer erfährt es an der leeren
- * Liste, statt dass die Werkzeuge stillschweigend verschwinden.
+ * @param {object} spec  {name, title, icon, order, activate, tools:[…]}
+ * @param {"array"|"record"} shape
+ * @param {object} [opts]
+ * @param {number} [opts.generation]
  */
-export function addControlTools(controls, groupName, toolSpecs = [], opts = {}) {
-  const group = findControlGroup(controls, groupName);
-  if (!group) return [];
+export function normalizeControlGroup(spec, shape = "record", opts = {}) {
+  const anchor = buildAnchorTool(spec.name);
+  const tools  = [anchor, ...(spec.tools ?? [])]
+    .filter(t => t?.name)
+    .map((t, i) => normalizeTool({ ...t, order: t.order ?? i }, opts));
 
-  const added = [];
-  for (const spec of toolSpecs) {
-    if (!spec?.name) continue;
-    const tool = normalizeTool(spec, opts);
-    if (Array.isArray(group.tools)) {
-      if (group.tools.some(t => t?.name === spec.name)) continue;
-      group.tools.push(tool);
-    } else {
-      group.tools ??= {};
-      if (group.tools[spec.name]) continue;
-      group.tools[spec.name] = tool;
-    }
-    added.push(spec.name);
-  }
-  return added;
+  const group = {
+    name:       spec.name,
+    title:      spec.title,
+    icon:       spec.icon,
+    order:      spec.order ?? 80,
+    activeTool: anchor.name,
+    // Eine Gruppe ohne onChange lässt die Leinwand auf der zuletzt aktiven
+    // Ebene stehen. `layer` liest v13 nicht mehr — das war in den früheren
+    // Fassungen wirkungslos.
+    onChange: (event, active) => { if (active) spec.activate?.(); },
+  };
+
+  return shape === "array"
+    ? { ...group, tools }
+    : { ...group, tools: Object.fromEntries(tools.map(t => [t.name, t])) };
 }
 
 /**
- * Registriert Werkzeuge in einer vorhandenen Gruppe der Szenenleiste.
- * Nur für Spielleiter.
+ * Hängt eine Gruppe in die übergebene Steuerungsstruktur — in beiden Formen,
+ * die Foundry kennt. Gibt zurück, ob sie ergänzt wurde; eine bereits
+ * vorhandene bleibt unangetastet, damit ein doppelt feuernder Hook nichts
+ * verdoppelt.
+ */
+export function addControlGroup(controls, spec, opts = {}) {
+  if (!spec?.name) return false;
+  if (Array.isArray(controls)) {
+    if (controls.some(c => c?.name === spec.name)) return false;
+    controls.push(normalizeControlGroup(spec, "array", opts));
+    return true;
+  }
+  if (!controls || typeof controls !== "object") return false;
+  if (controls[spec.name]) return false;
+  controls[spec.name] = normalizeControlGroup(spec, "record", opts);
+  return true;
+}
+
+/**
+ * Registriert eine Werkzeuggruppe. Nur für Spielleiter.
  *
  * Es gibt nur einen Hook: v13.351 ruft `getSceneControlButtons` — der Name
  * blieb, die Struktur wurde zum Objekt. Ein `getSceneControlButtonsV2`
- * existiert dort nicht; darauf zu registrieren war eine Annahme und hat nie
- * gefeuert. Das System setzt ohnehin v13 voraus.
- *
- * @param {object} spec  {group, tools:[…]}
+ * existiert dort nicht.
  */
-export function registerSceneControlTools({ group, tools }) {
-  let gemeldet = false;
-  const add = controls => {
+export function registerSceneControlGroup(spec) {
+  Hooks.on("getSceneControlButtons", controls => {
     if (!game.user?.isGM) return;
-    const added = addControlTools(controls, group, tools,
-      { generation: game.release?.generation ?? 13 });
-    // Nichts ergänzt und die Gruppe gibt es gar nicht: das ist der Fall, der
-    // beim ersten Anlauf unbemerkt blieb — die Werkzeuge erschienen einfach
-    // nicht. Einmal melden reicht.
-    if (!added.length && !findControlGroup(controls, group) && !gemeldet) {
-      gemeldet = true;
-      console.warn(`ABOREA | Werkzeuggruppe "${group}" nicht gefunden — `
-        + `${tools.map(t => t.name).join(", ")} erscheinen nicht.`);
-    }
-  };
-  Hooks.on("getSceneControlButtons", add);
+    addControlGroup(controls, spec, { generation: game.release?.generation ?? 13 });
+  });
 }

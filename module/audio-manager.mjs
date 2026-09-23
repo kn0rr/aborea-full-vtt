@@ -1,4 +1,4 @@
-import { registerSceneControlTools } from "./scene-controls.mjs";
+import { registerSceneControlGroup } from "./scene-controls.mjs";
 import { openOnce } from "./windows.mjs";
 const ROOT = `systems/aborea-v7`;
 const PRESETS_PATH = `${ROOT}/data/audio-presets.json`;
@@ -377,14 +377,18 @@ export class AboreaSoundboard {
   // ── Scene Control ─────────────────────────────────────────────────────────────
 
   static registerSceneControl() {
-    registerSceneControlTools({
-      group: "sounds",
+    registerSceneControlGroup({
+      name:  "aborea-audio",
+      title: "ABOREA Audio",
+      icon:  "fa-solid fa-music",
+      order: 82,
+      activate: () => canvas?.sounds?.activate(),
       tools: [
-        { name: "aborea-soundboard", title: "ABOREA: Soundboard öffnen",
-          icon: "fas fa-sliders-h", order: 90,
+        { name: "aborea-soundboard", title: "Soundboard öffnen",
+          icon: "fa-solid fa-sliders-h",
           onClick: () => AboreaSoundboard.openDialog() },
-        { name: "aborea-sound-stop", title: "ABOREA: Alles stoppen",
-          icon: "fas fa-stop", order: 91,
+        { name: "aborea-sound-stop", title: "Alles stoppen",
+          icon: "fa-solid fa-stop",
           onClick: () => AboreaSoundboard.stopAll() },
       ],
     });

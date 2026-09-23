@@ -1,40 +1,38 @@
-// tests/scene-controls.test.mjs — eigene Werkzeuge in der Szenenleiste
+// tests/scene-controls.test.mjs — eigene Werkzeuggruppen in der Szenenleiste
 //
-// Zwei Fehlerklassen hängen hier zusammen:
+// Drei Anläufe, drei Fehlerklassen — alle drei halten hier Tests fest:
 //
-//   1. Foundry v12 und v13 erwarten unterschiedliche Formen. Die
-//      Registrierungen prüften nur auf Array und erschienen unter v13 gar
-//      nicht.
-//   2. Danach gingen die Fenster mehrfach auf. Foundry ruft die Rückmeldung
-//      eines Werkzeugs in mehreren Lagen auf, und nur eine ist ein Klick
-//      darauf.
+//   1. Form. v12 übergab Arrays, v13 ein Objekt nach Gruppennamen. Die
+//      Registrierungen prüften nur auf Array und erschienen unter v13 nicht.
+//   2. Mehrfaches Feuern. Foundry ruft die Rückmeldung eines Werkzeugs in
+//      mehreren Lagen auf, und nur eine ist ein Klick darauf.
+//   3. Sichtbarkeit. Gerendert werden nur die Werkzeuge der *aktiven* Gruppe.
+//      Der Versuch, die Knöpfe in Foundrys Token-Gruppe zu hängen, liess sie
+//      beim Reiterwechsel verschwinden.
 //
 // Die Aufruflagen stammen aus client/applications/ui/scene-controls.mjs der
 // v13.351 und sind hier als Attrappe nachgebaut — nicht um Foundry
-// nachzubilden, sondern um die Regel festzuhalten: ein Klick, ein Fenster.
+// nachzubilden, sondern um die Regeln festzuhalten: ein Klick, ein Fenster,
+// und kein Werkzeug, das sich selbst auslöst.
 
 import "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeTool, addControlTools, findControlGroup, isToolInvocation }
-  from "../module/scene-controls.mjs";
+import { normalizeControlGroup, addControlGroup, normalizeTool, buildAnchorTool,
+         isToolInvocation, ANCHOR_SUFFIX } from "../module/scene-controls.mjs";
 
-const werkzeuge = (aufrufe = null) => [
-  { name: "aborea-pult", title: "Pult", icon: "fas fa-a", order: 90,
-    onClick: () => { aufrufe?.push("pult"); return "pult"; } },
-  { name: "aborea-gruppe", title: "Gruppe", icon: "fas fa-b", order: 91,
-    onClick: () => { aufrufe?.push("gruppe"); return "gruppe"; } },
-];
-
-/** So sieht die Token-Gruppe unter v13 aus: Werkzeuge als Objekt. */
-const v13Controls = () => ({
-  tokens: { name: "tokens", activeTool: "select", tools: { select: { name: "select" } } },
-  sounds: { name: "sounds", activeTool: "sound",  tools: { sound:  { name: "sound"  } } },
+const spec = (aufrufe = null) => ({
+  name: "aborea-combat", title: "ABOREA Kampf", icon: "fa-solid fa-chess-board", order: 80,
+  activate: () => aufrufe?.push("ebene"),
+  tools: [
+    { name: "pult", title: "Pult", icon: "fa-solid fa-a",
+      onClick: () => { aufrufe?.push("pult"); return "pult"; } },
+    { name: "gruppe", title: "Gruppe", icon: "fa-solid fa-b",
+      onClick: () => { aufrufe?.push("gruppe"); return "gruppe"; } },
+  ],
 });
-/** Und unter v12: alles als Array. */
-const v12Controls = () => ([
-  { name: "tokens", activeTool: "select", tools: [{ name: "select" }] },
-]);
+
+const ANKER = `aborea-combat${ANCHOR_SUFFIX}`;
 
 /** Klickereignis auf einen Werkzeugknopf, so wie Foundry es weiterreicht. */
 const toolClick    = name => ({ target: { dataset: { tool: name, action: "tool" } } });
@@ -43,187 +41,218 @@ const controlClick = name => ({ target: { dataset: { control: name, action: "con
 
 test("isToolInvocation: nur der Klick auf den Knopf zaehlt", async t => {
   await t.test("Klick auf den Knopf", () =>
-    assert.equal(isToolInvocation("aborea-pult", toolClick("aborea-pult"), true), true));
+    assert.equal(isToolInvocation("pult", toolClick("pult"), true), true));
 
   await t.test("Klick auf das Gruppensymbol nicht", () =>
     // #postActivate ruft beim Aktivieren einer Gruppe deren activeTool auf.
-    assert.equal(isToolInvocation("aborea-pult", controlClick("tokens"), true), false));
+    assert.equal(isToolInvocation("pult", controlClick("aborea-combat"), true), false));
 
   await t.test("Klick auf ein anderes Werkzeug nicht", () =>
-    assert.equal(isToolInvocation("aborea-pult", toolClick("aborea-gruppe"), true), false));
+    assert.equal(isToolInvocation("pult", toolClick("gruppe"), true), false));
 
   await t.test("active = false nie", () => {
     // #preActivate ruft beim Verlassen einer Gruppe deren bisheriges Werkzeug
     // mit false auf. Das war der Fall "ich klicke das eine an und beide
     // gehen auf".
-    assert.equal(isToolInvocation("aborea-pult", toolClick("aborea-pult"), false), false);
-    assert.equal(isToolInvocation("aborea-pult", controlClick("x"), false), false);
-    assert.equal(isToolInvocation("aborea-pult", null, false), false);
+    assert.equal(isToolInvocation("pult", toolClick("pult"), false), false);
+    assert.equal(isToolInvocation("pult", controlClick("x"), false), false);
+    assert.equal(isToolInvocation("pult", null, false), false);
   });
 
   await t.test("ohne Ereignis wird ausgefuehrt", () => {
     // Foundry legt bei programmatischer Aktivierung ein leeres Ereignis an.
     // Lieber einmal zu viel als ein toter Knopf.
-    assert.equal(isToolInvocation("aborea-pult", null, true), true);
-    assert.equal(isToolInvocation("aborea-pult", undefined, true), true);
-    assert.equal(isToolInvocation("aborea-pult", { target: null }, true), true);
-    assert.equal(isToolInvocation("aborea-pult", {}, undefined), true);
+    assert.equal(isToolInvocation("pult", null, true), true);
+    assert.equal(isToolInvocation("pult", undefined, true), true);
+    assert.equal(isToolInvocation("pult", { target: null }, true), true);
+    assert.equal(isToolInvocation("pult", {}, undefined), true);
   });
+});
+
+test("buildAnchorTool: der Ruhezustand einer Gruppe", async t => {
+  const anker = buildAnchorTool("aborea-combat");
+
+  await t.test("traegt keine Rueckmeldung", () => {
+    // Genau darin liegt sein Sinn. Das activeTool wird beim Betreten und
+    // Verlassen der Gruppe aufgerufen — ein Werkzeug mit Wirkung wuerde dort
+    // ungefragt feuern.
+    assert.equal(normalizeTool(anker).onChange, undefined);
+    assert.equal(normalizeTool(anker).onClick, undefined);
+  });
+
+  await t.test("ist kein Knopf", () =>
+    assert.equal(anker.button, false));
+
+  await t.test("steht an erster Stelle", () =>
+    assert.equal(anker.order, 0));
+
+  await t.test("sein Name leitet sich von der Gruppe ab", () =>
+    assert.equal(buildAnchorTool("xyz").name, `xyz${ANCHOR_SUFFIX}`));
 });
 
 test("normalizeTool", async t => {
   await t.test("v13 setzt nur onChange, v12 nur onClick", () => {
     // Beide zu setzen war der Fehler: #onChange() ruft erst onChange und
     // danach auch onClick — jeder Anlass zaehlte doppelt.
-    const neu = normalizeTool(werkzeuge()[0], { generation: 13 });
+    const neu = normalizeTool(spec().tools[0], { generation: 13 });
     assert.equal(typeof neu.onChange, "function");
     assert.equal(neu.onClick, undefined);
 
-    const alt = normalizeTool(werkzeuge()[0], { generation: 12 });
+    const alt = normalizeTool(spec().tools[0], { generation: 12 });
     assert.equal(typeof alt.onClick, "function");
     assert.equal(alt.onChange, undefined);
   });
 
   await t.test("ein Klick fuehrt genau einmal aus", () => {
     const aufrufe = [];
-    const t0 = normalizeTool(werkzeuge(aufrufe)[0]);
-    t0.onChange(toolClick("aborea-pult"), true);
+    normalizeTool(spec(aufrufe).tools[0]).onChange(toolClick("pult"), true);
     assert.deepEqual(aufrufe, ["pult"]);
   });
 
-  await t.test("das Aktivieren der Gruppe fuehrt nichts aus", () => {
+  await t.test("v12: ein Klick fuehrt einmal aus, das Verlassen nicht", () => {
     const aufrufe = [];
-    normalizeTool(werkzeuge(aufrufe)[0]).onChange(controlClick("tokens"), true);
-    assert.deepEqual(aufrufe, []);
+    const tool = normalizeTool(spec(aufrufe).tools[0], { generation: 12 });
+    tool.onClick(true);
+    tool.onClick(false);
+    assert.deepEqual(aufrufe, ["pult"]);
   });
 
-  await t.test("das Verlassen der Gruppe fuehrt nichts aus", () => {
+  await t.test("button ist voreingestellt an", () =>
+    assert.equal(normalizeTool({ name: "t", onClick: () => {} }).button, true));
+
+  await t.test("button: false bleibt erhalten", () =>
+    assert.equal(normalizeTool({ name: "t", button: false, onClick: () => {} }).button, false));
+});
+
+test("normalizeControlGroup", async t => {
+  await t.test("v13: Werkzeuge als Objekt nach Namen", () => {
+    const g = normalizeControlGroup(spec(), "record");
+    assert.ok(!Array.isArray(g.tools));
+    assert.deepEqual(Object.keys(g.tools), [ANKER, "pult", "gruppe"]);
+  });
+
+  await t.test("v12: Werkzeuge als Array", () => {
+    const g = normalizeControlGroup(spec(), "array", { generation: 12 });
+    assert.ok(Array.isArray(g.tools));
+    assert.deepEqual(g.tools.map(t => t.name), [ANKER, "pult", "gruppe"]);
+  });
+
+  await t.test("die Gruppe ist nie leer", () =>
+    // isEmpty(control.tools) → Foundry loescht die Gruppe. Der Anker sorgt
+    // dafuer, dass das nicht passiert.
+    assert.equal(Object.keys(normalizeControlGroup({ name: "leer" }, "record").tools).length, 1));
+
+  await t.test("activeTool zeigt auf den Anker", () => {
+    // Es muss auf ein *vorhandenes* Werkzeug zeigen: beim Verlassen liest
+    // Foundry this.tool und reicht das Ergebnis ungeprueft weiter.
+    const g = normalizeControlGroup(spec(), "record");
+    assert.equal(g.activeTool, ANKER);
+    assert.ok(g.tools[g.activeTool], "activeTool zeigt ins Leere");
+  });
+
+  await t.test("kein Knopf ist das activeTool", () => {
+    // #onChangeTool steigt bei tool === this.tool aus — ein Knopf als
+    // activeTool waere tot und wuerde beim Aktivieren der Gruppe feuern.
+    const g = normalizeControlGroup(spec(), "record");
+    assert.equal(g.tools[g.activeTool].button, false);
+    for (const [name, tool] of Object.entries(g.tools)) {
+      if (tool.button) assert.notEqual(name, g.activeTool);
+    }
+  });
+
+  await t.test("das Aktivieren der Gruppe loest kein Werkzeug aus", () => {
     const aufrufe = [];
-    normalizeTool(werkzeuge(aufrufe)[0]).onChange(controlClick("tokens"), false);
+    const g = normalizeControlGroup(spec(aufrufe), "record");
+    const ev = controlClick("aborea-combat");
+    g.onChange(ev, true);                                   // #postActivate: die Gruppe
+    for (const tool of Object.values(g.tools)) tool.onChange?.(ev, true);  // und ihr activeTool
+    assert.deepEqual(aufrufe, ["ebene"]);
+  });
+
+  await t.test("das Verlassen der Gruppe loest nichts aus", () => {
+    const aufrufe = [];
+    const g = normalizeControlGroup(spec(aufrufe), "record");
+    const ev = controlClick("tokens");
+    g.onChange(ev, false);
+    for (const tool of Object.values(g.tools)) tool.onChange?.(ev, false);
     assert.deepEqual(aufrufe, []);
   });
 
   await t.test("ein Klick loest nicht die Nachbarn aus", () => {
     const aufrufe = [];
-    const tools = werkzeuge(aufrufe).map(w => normalizeTool(w));
-    const ev = toolClick("aborea-gruppe");
-    for (const tool of tools) tool.onChange(ev, true);
+    const g = normalizeControlGroup(spec(aufrufe), "record");
+    const ev = toolClick("gruppe");
+    for (const tool of Object.values(g.tools)) tool.onChange?.(ev, true);
     assert.deepEqual(aufrufe, ["gruppe"]);
   });
 
-  await t.test("v12: ein Klick fuehrt einmal aus", () => {
+  await t.test("die Gruppe aktiviert ihre Leinwandebene", () => {
     const aufrufe = [];
-    normalizeTool(werkzeuge(aufrufe)[0], { generation: 12 }).onClick(true);
-    assert.deepEqual(aufrufe, ["pult"]);
+    normalizeControlGroup(spec(aufrufe), "record").onChange(controlClick("x"), true);
+    assert.deepEqual(aufrufe, ["ebene"]);
   });
 
-  await t.test("v12: das Verlassen fuehrt nichts aus", () => {
-    const aufrufe = [];
-    normalizeTool(werkzeuge(aufrufe)[0], { generation: 12 }).onClick(false);
-    assert.deepEqual(aufrufe, []);
+  await t.test("ohne activate kein Absturz", () => {
+    const g = normalizeControlGroup({ name: "x", tools: [] }, "record");
+    assert.doesNotThrow(() => g.onChange(controlClick("x"), true));
   });
 
-  await t.test("ein Werkzeug, das nur onChange mitbringt", () => {
-    let gelaufen = 0;
-    const tool = normalizeTool({ name: "t", onChange: () => { gelaufen++; } });
-    tool.onChange(toolClick("t"), true);
-    assert.equal(gelaufen, 1);
+  await t.test("Reihenfolge wird vergeben", () => {
+    const g = normalizeControlGroup(spec(), "array");
+    assert.deepEqual(g.tools.map(t => t.order), [0, 1, 2]);
   });
 
-  await t.test("ein Werkzeug ganz ohne Rueckmeldung stuerzt nicht ab", () => {
-    const tool = normalizeTool({ name: "t" });
-    assert.doesNotThrow(() => tool.onChange(toolClick("t"), true));
-  });
+  await t.test("die Gruppe bekommt eine Ordnung hinter Foundrys eigenen", () =>
+    assert.ok(normalizeControlGroup({ name: "x" }, "record").order >= 10));
 
-  await t.test("button ist voreingestellt an", () =>
-    assert.equal(normalizeTool({ name: "t" }).button, true));
-
-  await t.test("Reihenfolge steht hinter Foundrys eigenen", () =>
-    // Foundrys Werkzeuge nummerieren ab 1; unsere sollen darunter stehen.
-    assert.ok(normalizeTool({ name: "t" }).order >= 10));
-});
-
-test("findControlGroup", async t => {
-  await t.test("v13: Objekt nach Namen", () =>
-    assert.equal(findControlGroup(v13Controls(), "tokens").name, "tokens"));
-  await t.test("v12: Array", () =>
-    assert.equal(findControlGroup(v12Controls(), "tokens").name, "tokens"));
-  await t.test("unbekannte Gruppe", () => {
-    assert.equal(findControlGroup(v13Controls(), "gibtsnicht"), null);
-    assert.equal(findControlGroup(v12Controls(), "gibtsnicht"), null);
-  });
-  await t.test("unbrauchbare Eingabe", () => {
-    assert.equal(findControlGroup(null, "tokens"), null);
-    assert.equal(findControlGroup("quatsch", "tokens"), null);
-    assert.equal(findControlGroup(undefined, "tokens"), null);
+  await t.test("Werkzeuge ohne Namen fallen raus", () => {
+    const g = normalizeControlGroup({ name: "x", tools: [{ title: "namenlos" }, null] }, "record");
+    assert.deepEqual(Object.keys(g.tools), [`x${ANCHOR_SUFFIX}`]);
   });
 });
 
-test("addControlTools", async t => {
-  await t.test("v13: haengt sich in die vorhandene Gruppe", () => {
-    const controls = v13Controls();
-    assert.deepEqual(addControlTools(controls, "tokens", werkzeuge()),
-      ["aborea-pult", "aborea-gruppe"]);
-    assert.deepEqual(Object.keys(controls.tokens.tools),
-      ["select", "aborea-pult", "aborea-gruppe"]);
-  });
-
-  await t.test("Foundrys activeTool bleibt unangetastet", () => {
-    // Der springende Punkt: eine eigene Gruppe muesste eins unserer
-    // Werkzeuge zum activeTool machen — und das feuert beim Umschalten mit
-    // und ist als Knopf zugleich tot.
-    const controls = v13Controls();
-    addControlTools(controls, "tokens", werkzeuge());
-    assert.equal(controls.tokens.activeTool, "select");
+test("addControlGroup", async t => {
+  await t.test("v13: haengt sich in das Objekt", () => {
+    const controls = { tokens: { name: "tokens", tools: {} } };
+    assert.equal(addControlGroup(controls, spec()), true);
+    assert.ok(controls["aborea-combat"]);
+    assert.ok(!Array.isArray(controls["aborea-combat"].tools));
   });
 
   await t.test("v12: haengt sich an das Array", () => {
-    const controls = v12Controls();
-    addControlTools(controls, "tokens", werkzeuge(), { generation: 12 });
-    assert.deepEqual(controls[0].tools.map(t => t.name),
-      ["select", "aborea-pult", "aborea-gruppe"]);
-    assert.equal(typeof controls[0].tools[1].onClick, "function");
+    const controls = [{ name: "tokens", tools: [] }];
+    assert.equal(addControlGroup(controls, spec(), { generation: 12 }), true);
+    assert.equal(controls.length, 2);
+    assert.ok(Array.isArray(controls[1].tools));
+  });
+
+  await t.test("fremde Gruppen bleiben unberuehrt", () => {
+    // Der vorige Versuch hat Foundrys Token-Gruppe veraendert — und damit die
+    // Knoepfe an deren Reiter gebunden.
+    const controls = { tokens: { name: "tokens", activeTool: "select", tools: { select: {} } } };
+    addControlGroup(controls, spec());
+    assert.deepEqual(Object.keys(controls.tokens.tools), ["select"]);
+    assert.equal(controls.tokens.activeTool, "select");
   });
 
   await t.test("zweimal feuern verdoppelt nicht (Objekt)", () => {
-    const controls = v13Controls();
-    addControlTools(controls, "tokens", werkzeuge());
-    assert.deepEqual(addControlTools(controls, "tokens", werkzeuge()), []);
-    assert.equal(Object.keys(controls.tokens.tools).length, 3);
+    const controls = {};
+    addControlGroup(controls, spec());
+    assert.equal(addControlGroup(controls, spec()), false);
+    assert.equal(Object.keys(controls).length, 1);
   });
 
   await t.test("zweimal feuern verdoppelt nicht (Array)", () => {
-    const controls = v12Controls();
-    addControlTools(controls, "tokens", werkzeuge(), { generation: 12 });
-    assert.deepEqual(addControlTools(controls, "tokens", werkzeuge(), { generation: 12 }), []);
-    assert.equal(controls[0].tools.length, 3);
-  });
-
-  await t.test("fehlende Gruppe ergaenzt nichts", () =>
-    assert.deepEqual(addControlTools(v13Controls(), "gibtsnicht", werkzeuge()), []));
-
-  await t.test("andere Gruppen bleiben unberuehrt", () => {
-    const controls = v13Controls();
-    addControlTools(controls, "tokens", werkzeuge());
-    assert.deepEqual(Object.keys(controls.sounds.tools), ["sound"]);
-  });
-
-  await t.test("Gruppe ohne tools bekommt welche", () => {
-    const controls = { tokens: { name: "tokens" } };
-    addControlTools(controls, "tokens", werkzeuge());
-    assert.deepEqual(Object.keys(controls.tokens.tools), ["aborea-pult", "aborea-gruppe"]);
-  });
-
-  await t.test("Werkzeuge ohne Namen fallen raus", () => {
-    const controls = v13Controls();
-    assert.deepEqual(addControlTools(controls, "tokens", [{ title: "namenlos" }, null]), []);
-    assert.deepEqual(Object.keys(controls.tokens.tools), ["select"]);
+    const controls = [];
+    addControlGroup(controls, spec());
+    assert.equal(addControlGroup(controls, spec()), false);
+    assert.equal(controls.length, 1);
   });
 
   await t.test("unbrauchbare Eingabe wird abgewiesen", () => {
-    assert.deepEqual(addControlTools(null, "tokens", werkzeuge()), []);
-    assert.deepEqual(addControlTools(undefined, "tokens", werkzeuge()), []);
-    assert.deepEqual(addControlTools("quatsch", "tokens", werkzeuge()), []);
-    assert.deepEqual(addControlTools(v13Controls(), "tokens"), []);
+    assert.equal(addControlGroup(null, spec()), false);
+    assert.equal(addControlGroup(undefined, spec()), false);
+    assert.equal(addControlGroup("quatsch", spec()), false);
+    assert.equal(addControlGroup({}, { title: "ohne Namen" }), false);
   });
 });

@@ -1,6 +1,6 @@
 // module/quick-npc.mjs — GM-Tools: Schnell-NSC + Gruppenprobe
 import { openGroupCheckDialog } from "./checks.mjs";
-import { registerSceneControlTools } from "./scene-controls.mjs";
+import { registerSceneControlGroup } from "./scene-controls.mjs";
 import { openOnce } from "./windows.mjs";
 
 async function _pickCreature() {
@@ -105,13 +105,17 @@ export async function spawnCreatureOnScene() {
 }
 
 export function registerQuickNpcSceneControl() {
-  registerSceneControlTools({
-    group: "tokens",
+  registerSceneControlGroup({
+    name:  "aborea-creatures",
+    title: "ABOREA Kreaturen",
+    icon:  "fa-solid fa-dragon",
+    order: 81,
+    activate: () => canvas?.tokens?.activate(),
     tools: [
-      { name: "aborea-quick-spawn", title: "ABOREA: Kreatur schnell auf Szene platzieren",
-        icon: "fas fa-dragon", order: 92, onClick: () => spawnCreatureOnScene() },
-      { name: "aborea-group-check", title: "ABOREA: Gruppenprobe würfeln",
-        icon: "fas fa-users", order: 93, onClick: () => openGroupCheckDialog() },
+      { name: "aborea-quick-spawn", title: "Kreatur schnell auf Szene platzieren",
+        icon: "fa-solid fa-plus-circle", onClick: () => spawnCreatureOnScene() },
+      { name: "aborea-group-check", title: "Gruppenprobe würfeln",
+        icon: "fa-solid fa-users", onClick: () => openGroupCheckDialog() },
     ],
   });
 }

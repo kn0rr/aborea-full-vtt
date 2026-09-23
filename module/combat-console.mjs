@@ -8,7 +8,7 @@
 // deshalb ohne Foundry prüfbar; die Klasse darunter macht nur Oberfläche.
 
 import { roundSplit, splitRange, defenseRemaining, defenseSpentTotal } from "./declaration.mjs";
-import { registerSceneControlTools } from "./scene-controls.mjs";
+import { registerSceneControlGroup } from "./scene-controls.mjs";
 import { clampSituMod, SETTINGS } from "./settings.mjs";
 import { declareRound, executeGroupAttack, openAttackDialog,
          setCombatantSituMod, combatantSituMod } from "./combat.mjs";
@@ -354,18 +354,21 @@ export function registerCombatConsole() {
     Hooks.on(hook, rerender);
   }
 
-  // In die Token-Gruppe statt in eine eigene: eine eigene Gruppe müsste eins
-  // ihrer Werkzeuge zum activeTool machen, und das feuert dann beim blossen
-  // Umschalten mit — siehe scene-controls.mjs.
-  registerSceneControlTools({
-    group: "tokens",
+  // Eine eigene Gruppe, damit die Knöpfe in jedem Reiter erreichbar bleiben:
+  // gerendert werden immer nur die Werkzeuge der aktiven Gruppe.
+  registerSceneControlGroup({
+    name:  "aborea-combat",
+    title: "ABOREA Kampf",
+    icon:  "fa-solid fa-chess-board",
+    order: 80,
+    activate: () => canvas?.tokens?.activate(),
     tools: [
-      { name: "aborea-combat-console", title: "ABOREA: Kampfpult öffnen",
-        icon: "fas fa-chess-board", order: 90,
+      { name: "aborea-combat-console", title: "Kampfpult öffnen",
+        icon: "fa-solid fa-chess-board",
         onClick: () => AboreaCombatConsole.open() },
-      { name: "aborea-group-attack", order: 91,
-        title: "ABOREA: Gruppenangriff — ausgewählte Tokens greifen das markierte Ziel an",
-        icon: "fas fa-users-rectangle",
+      { name: "aborea-group-attack",
+        title: "Gruppenangriff — ausgewählte Tokens greifen das markierte Ziel an",
+        icon: "fa-solid fa-users-rectangle",
         onClick: async () => (await import("./combat.mjs")).startGroupAttack() },
     ],
   });
