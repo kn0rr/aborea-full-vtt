@@ -1,7 +1,7 @@
 // module/scene-controls.mjs — eigene Werkzeuggruppen in der Szenenleiste
 //
-// Alles hier steht so, weil es in client/applications/ui/scene-controls.mjs
-// der v13.351 nachgelesen ist. Drei Anläufe, drei Lehren:
+// Alles hier steht so, weil es in Foundrys Quelltext der v13.351 nachgelesen
+// ist. Vier Anläufe, vier Lehren:
 //
 //  1. Form. v12 übergab Arrays, v13 übergibt ein Objekt nach Gruppennamen.
 //     Die Registrierungen prüften nur auf Array und erschienen unter v13 gar
@@ -19,6 +19,12 @@
 //     `this.control?.tools` — nur die Werkzeuge der *aktiven* Gruppe. Der
 //     Versuch, unsere Knöpfe in Foundrys Token-Gruppe zu hängen, machte sie
 //     damit unsichtbar, sobald man den Reiter wechselt.
+//
+//  4. Keine Ebenenaktivierung. InteractionLayer#activate() schaltet die
+//     Leiste auf die Gruppe zurück, die so heisst wie die Ebene. Eine eigene
+//     Gruppe, die beim Öffnen canvas.tokens.activate() ruft, wirft sich damit
+//     selbst hinaus — der Reiter sprang sofort zurück und der Klick sah
+//     folgenlos aus.
 //
 // Eine eigene Gruppe braucht deshalb dreierlei:
 //
@@ -106,7 +112,7 @@ export function normalizeTool(spec, { generation = 13 } = {}) {
 /**
  * Bringt eine Gruppenbeschreibung in die Form, die Foundry erwartet.
  *
- * @param {object} spec  {name, title, icon, order, activate, tools:[…]}
+ * @param {object} spec  {name, title, icon, order, tools:[…]}
  * @param {"array"|"record"} shape
  * @param {object} [opts]
  * @param {number} [opts.generation]
@@ -117,16 +123,26 @@ export function normalizeControlGroup(spec, shape = "record", opts = {}) {
     .filter(t => t?.name)
     .map((t, i) => normalizeTool({ ...t, order: t.order ?? i }, opts));
 
+  // Bewusst ohne onChange, und ohne die Möglichkeit, eins zu setzen. Der
+  // naheliegende Gedanke — beim Öffnen der Gruppe die zugehörige
+  // Canvas-Ebene aktivieren, so wie Foundrys eigene Gruppen es tun — macht
+  // die Gruppe unbenutzbar. InteractionLayer#activate() endet mit:
+  //
+  //     const control = this.constructor.layerOptions.name;
+  //     if ( control !== ui.controls.control.name ) ui.controls.activate({control});
+  //
+  // Die Ebene heisst "tokens", unsere Gruppe nicht — Foundry schaltet die
+  // Leiste also augenblicklich auf den Token-Reiter zurück. Der Klick auf
+  // unseren Reiter sah damit aus, als geschehe gar nichts. Sicher geht das
+  // nur für eine Gruppe, die genauso heisst wie ihre Ebene; unsere sind
+  // reine Knopfleisten und brauchen gar keine. Die Leinwand bleibt auf der
+  // zuletzt aktiven Ebene stehen, so wie vor v1.7.12 auch.
   const group = {
     name:       spec.name,
     title:      spec.title,
     icon:       spec.icon,
     order:      spec.order ?? 80,
     activeTool: anchor.name,
-    // Eine Gruppe ohne onChange lässt die Leinwand auf der zuletzt aktiven
-    // Ebene stehen. `layer` liest v13 nicht mehr — das war in den früheren
-    // Fassungen wirkungslos.
-    onChange: (event, active) => { if (active) spec.activate?.(); },
   };
 
   return shape === "array"

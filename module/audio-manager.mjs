@@ -382,7 +382,6 @@ export class AboreaSoundboard {
       title: "ABOREA Audio",
       icon:  "fa-solid fa-music",
       order: 82,
-      activate: () => canvas?.sounds?.activate(),
       tools: [
         { name: "aborea-soundboard", title: "Soundboard öffnen",
           icon: "fa-solid fa-sliders-h",

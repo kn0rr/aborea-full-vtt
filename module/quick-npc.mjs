@@ -110,7 +110,6 @@ export function registerQuickNpcSceneControl() {
     title: "ABOREA Kreaturen",
     icon:  "fa-solid fa-dragon",
     order: 81,
-    activate: () => canvas?.tokens?.activate(),
     tools: [
       { name: "aborea-quick-spawn", title: "Kreatur schnell auf Szene platzieren",
         icon: "fa-solid fa-plus-circle", onClick: () => spawnCreatureOnScene() },

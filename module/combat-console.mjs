@@ -361,7 +361,6 @@ export function registerCombatConsole() {
     title: "ABOREA Kampf",
     icon:  "fa-solid fa-chess-board",
     order: 80,
-    activate: () => canvas?.tokens?.activate(),
     tools: [
       { name: "aborea-combat-console", title: "Kampfpult öffnen",
         icon: "fa-solid fa-chess-board",

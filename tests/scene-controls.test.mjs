@@ -1,6 +1,6 @@
 // tests/scene-controls.test.mjs — eigene Werkzeuggruppen in der Szenenleiste
 //
-// Drei Anläufe, drei Fehlerklassen — alle drei halten hier Tests fest:
+// Vier Anläufe, vier Fehlerklassen — alle vier halten hier Tests fest:
 //
 //   1. Form. v12 übergab Arrays, v13 ein Objekt nach Gruppennamen. Die
 //      Registrierungen prüften nur auf Array und erschienen unter v13 nicht.
@@ -9,6 +9,9 @@
 //   3. Sichtbarkeit. Gerendert werden nur die Werkzeuge der *aktiven* Gruppe.
 //      Der Versuch, die Knöpfe in Foundrys Token-Gruppe zu hängen, liess sie
 //      beim Reiterwechsel verschwinden.
+//   4. Keine Ebenenaktivierung. Eine eigene Gruppe, die beim Öffnen
+//      canvas.tokens.activate() ruft, wirft sich selbst hinaus — Foundry
+//      schaltet zurück auf die Gruppe, die so heisst wie die Ebene.
 //
 // Die Aufruflagen stammen aus client/applications/ui/scene-controls.mjs der
 // v13.351 und sind hier als Attrappe nachgebaut — nicht um Foundry
@@ -23,7 +26,6 @@ import { normalizeControlGroup, addControlGroup, normalizeTool, buildAnchorTool,
 
 const spec = (aufrufe = null) => ({
   name: "aborea-combat", title: "ABOREA Kampf", icon: "fa-solid fa-chess-board", order: 80,
-  activate: () => aufrufe?.push("ebene"),
   tools: [
     { name: "pult", title: "Pult", icon: "fa-solid fa-a",
       onClick: () => { aufrufe?.push("pult"); return "pult"; } },
@@ -160,20 +162,29 @@ test("normalizeControlGroup", async t => {
     }
   });
 
+  await t.test("die Gruppe aktiviert keine Leinwandebene", () => {
+    // InteractionLayer#activate() endet mit
+    //   if ( control !== ui.controls.control.name ) ui.controls.activate({control});
+    // Die Ebene heisst "tokens", unsere Gruppe nicht — Foundry schaltet also
+    // augenblicklich auf den Token-Reiter zurueck. Eine eigene Gruppe, die
+    // beim Oeffnen eine Ebene aktiviert, wirft sich selbst hinaus: der Klick
+    // auf ihren Reiter sah folgenlos aus.
+    assert.equal(normalizeControlGroup(spec(), "record").onChange, undefined);
+    assert.equal(normalizeControlGroup(spec(), "array").onChange, undefined);
+  });
+
   await t.test("das Aktivieren der Gruppe loest kein Werkzeug aus", () => {
     const aufrufe = [];
     const g = normalizeControlGroup(spec(aufrufe), "record");
     const ev = controlClick("aborea-combat");
-    g.onChange(ev, true);                                   // #postActivate: die Gruppe
-    for (const tool of Object.values(g.tools)) tool.onChange?.(ev, true);  // und ihr activeTool
-    assert.deepEqual(aufrufe, ["ebene"]);
+    for (const tool of Object.values(g.tools)) tool.onChange?.(ev, true);
+    assert.deepEqual(aufrufe, []);
   });
 
   await t.test("das Verlassen der Gruppe loest nichts aus", () => {
     const aufrufe = [];
     const g = normalizeControlGroup(spec(aufrufe), "record");
     const ev = controlClick("tokens");
-    g.onChange(ev, false);
     for (const tool of Object.values(g.tools)) tool.onChange?.(ev, false);
     assert.deepEqual(aufrufe, []);
   });
@@ -184,17 +195,6 @@ test("normalizeControlGroup", async t => {
     const ev = toolClick("gruppe");
     for (const tool of Object.values(g.tools)) tool.onChange?.(ev, true);
     assert.deepEqual(aufrufe, ["gruppe"]);
-  });
-
-  await t.test("die Gruppe aktiviert ihre Leinwandebene", () => {
-    const aufrufe = [];
-    normalizeControlGroup(spec(aufrufe), "record").onChange(controlClick("x"), true);
-    assert.deepEqual(aufrufe, ["ebene"]);
-  });
-
-  await t.test("ohne activate kein Absturz", () => {
-    const g = normalizeControlGroup({ name: "x", tools: [] }, "record");
-    assert.doesNotThrow(() => g.onChange(controlClick("x"), true));
   });
 
   await t.test("Reihenfolge wird vergeben", () => {
