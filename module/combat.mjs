@@ -67,9 +67,58 @@ export class AboreaCombat extends Combat {
 //  Shared helpers
 // ══════════════════════════════════════════════════════════════════
 
+/**
+ * Welcher Kampf läuft gerade?
+ *
+ * `game.combat` ist nicht "der laufende Kampf", sondern der, den der
+ * Kampfbericht *anzeigt*: `game.combats.viewed` liest `ui.combat?.viewed`,
+ * und dieser Wert wird ausschliesslich beim Rendern des Berichts gesetzt
+ * (`CombatTracker#_configureRenderOptions`).
+ *
+ * Genau da liegt die Falle. Ein Seitenleisten-Reiter, den man einmal
+ * verlassen hat, steht in ApplicationV2 auf CLOSED — und:
+ *
+ *     options.isFirstRender = this.#state <= states.NONE;   // CLOSED ist -1
+ *     if ( options.isFirstRender && !options.force ) return this;
+ *
+ * Ein `render()` ohne `force` steigt dort also aus, *bevor* `viewed` gesetzt
+ * wird. Wer den Kampfbericht einmal weggeklickt hat, hatte danach
+ * `game.combat === null`, obwohl der Kampf lief: im Kampfpult blieb nur die
+ * Auswahlliste, und declareRound() lehnte jede Erklärung ab — auch die
+ * Flucht.
+ *
+ * Deshalb dieselbe Herleitung wie in CombatTracker##inferCombat(): erst der
+ * angezeigte, sonst ein aktivierter, sonst einer der betrachteten Szene.
+ *
+ * @param {object} [state]
+ * @param {string} [state.viewedId]  was der Kampfbericht zeigt
+ * @param {Array}  [state.combats]   [{id, sceneId, active}]
+ * @param {string} [state.sceneId]   betrachtete Szene
+ * @returns {string} Kennung des Kampfes, oder ""
+ */
+export function pickCombatId({ viewedId = "", combats = [], sceneId = "" } = {}) {
+  if (viewedId) return viewedId;
+  const list = (combats ?? []).filter(c => c?.id);
+  const hier = c => !c.sceneId || c.sceneId === sceneId;
+  return (list.find(c => c.active && hier(c)) ?? list.find(hier))?.id ?? "";
+}
+
+/** Das dazugehörige Dokument. */
+export function currentCombat() {
+  const viewed = game.combat;
+  if (viewed) return viewed;
+  const id = pickCombatId({
+    combats: [...(game.combats ?? [])].map(c => ({
+      id: c.id, sceneId: c.scene?.id ?? "", active: c.active,
+    })),
+    sceneId: game.scenes?.viewed?.id ?? "",
+  });
+  return id ? game.combats?.get(id) ?? null : null;
+}
+
 /** Aufteilung des Kampfbonus für die laufende Runde. */
 function _split(actor) {
-  return roundSplit(actor, game.combat?.round);
+  return roundSplit(actor, currentCombat()?.round);
 }
 
 /**
@@ -85,7 +134,7 @@ export async function declareRound(actor, { mode = "weapon", offensive = 0, lock
   // Die Erklärung gilt je Runde und braucht deshalb eine Rundennummer. Ein
   // angelegter, aber nicht gestarteter Kampf steht auf Runde 0 — dort lief
   // das Klicken bisher ins Leere, ohne dass jemand erfuhr warum.
-  const combat = game.combat;
+  const combat = currentCombat();
   const round  = combat?.round;
   if (!combat?.started || !round) {
     ui.notifications?.warn("ABOREA: Der Kampf läuft noch nicht — erst starten, dann erklären.");
@@ -120,8 +169,9 @@ function _situModFor(actor) {
 
 /** Initiative eines Actors im laufenden Kampf. */
 function _initiativeOf(actor) {
-  const c = (game.combat?.combatants ?? []).find?.(x => x.actor?.id === actor?.id)
-         ?? [...(game.combat?.combatants ?? [])].find(x => x.actor?.id === actor?.id);
+  const combatants = currentCombat()?.combatants ?? [];
+  const c = combatants.find?.(x => x.actor?.id === actor?.id)
+         ?? [...combatants].find(x => x.actor?.id === actor?.id);
   return Number(c?.initiative ?? 0) || 0;
 }
 
@@ -131,7 +181,7 @@ function _initiativeOf(actor) {
  * die Initiative-Differenz gutgeschrieben.
  */
 function _fleeBonus(defender, attackerActor) {
-  if (!attackerActor || !isFleeing(defender, game.combat?.round)) return 0;
+  if (!attackerActor || !isFleeing(defender, currentCombat()?.round)) return 0;
   return fleeDefenseBonus(_initiativeOf(defender), _initiativeOf(attackerActor));
 }
 
@@ -173,7 +223,7 @@ function _defensiveFor(actor, attackerActor = null) {
  * Angriffs aufgerufen, nicht beim blossen Anzeigen.
  */
 async function _consumeDefense(defender, attackerActor, wanted = null) {
-  const round = game.combat?.round;
+  const round = currentCombat()?.round;
   const split = _split(defender);
   if (!round || !attackerActor || split.defensive <= 0) return split.defensive;
 
@@ -226,8 +276,9 @@ function _buildTargetCandidates(attackerTokenId, attackerActor = null) {
   // Mit laufendem Kampf nur die Kombattanten, sonst alles Bespielbare auf der
   // Szene — ein Hinterhalt außerhalb der Initiative soll nicht an einer leeren
   // Auswahl scheitern.
-  const combatTokenIds = game.combat?.combatants.size
-    ? new Set(game.combat.combatants.map(c => c.tokenId).filter(Boolean))
+  const laufend = currentCombat();
+  const combatTokenIds = laufend?.combatants.size
+    ? new Set(laufend.combatants.map(c => c.tokenId).filter(Boolean))
     : null;
   return selectTargetTokens(canvas?.tokens?.placeables ?? [], {
     attackerTokenId, attackerActorId: attackerActor?.id ?? "",
@@ -632,7 +683,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 export async function openAttackDialog(attackerActor, options = {}) {
   // Flucht ist die einzige Handlung der Runde — wer sie erklärt hat, greift
   // nicht mehr an.
-  if (isFleeing(attackerActor, game.combat?.round)) {
+  if (isFleeing(attackerActor, currentCombat()?.round)) {
     ui.notifications.warn(`ABOREA: ${attackerActor.name} flieht in dieser Runde und kann nicht angreifen.`);
     return;
   }
@@ -672,7 +723,8 @@ export async function openAttackDialog(attackerActor, options = {}) {
     if (!params.weapon) return;
     await _executeAttack(attackerActor, params);
   }
-  if (game.combat?.started) await game.combat.nextTurn();
+  const laufend = currentCombat();
+  if (laufend?.started) await laufend.nextTurn();
 }
 
 /**
@@ -949,7 +1001,7 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = nul
   const targetActor = targetToken?.actor ?? null;
   if (!attackers?.length || !targetActor) return;
 
-  const round = game.combat?.round;
+  const round = currentCombat()?.round;
   const rolls = [];
   let rows = "";
   let anyHit = false;
@@ -1359,7 +1411,7 @@ export function registerCombatHooks() {
     const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
     if (!root?.querySelector) return;
 
-    const combat = game.combat;
+    const combat = currentCombat();
 
     // ── Rundenzeit-Anzeige ─────────────────────────────────
     root.querySelectorAll(".aborea-round-timer").forEach(el => el.remove());

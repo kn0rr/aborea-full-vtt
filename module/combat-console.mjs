@@ -11,7 +11,7 @@ import { roundSplit, splitRange, defenseRemaining, defenseSpentTotal } from "./d
 import { registerSceneControlGroup } from "./scene-controls.mjs";
 import { clampSituMod, SETTINGS } from "./settings.mjs";
 import { declareRound, executeGroupAttack, openAttackDialog,
-         setCombatantSituMod, combatantSituMod } from "./combat.mjs";
+         setCombatantSituMod, combatantSituMod, currentCombat } from "./combat.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -247,7 +247,7 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
 
   async _prepareContext() {
     if (!mayUseConsole(game.user)) return { phase: "none", rows: [], alive: [], defeated: [] };
-    const combat = game.combat;
+    const combat = currentCombat();
     const round  = combat?.round ?? null;
     const phase  = combatPhase({ hasCombat: !!combat, started: !!combat?.started, round });
 
@@ -293,7 +293,7 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
     const html = this.element;
     if (!html) return;
 
-    const combat  = game.combat;
+    const combat  = currentCombat();
     const actorOf = id => combat?.combatants.get(id)?.actor ?? null;
 
     // Alles aus dem DOM wird VOR dem ersten await gelesen: nach einem await
@@ -376,7 +376,11 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
       ev.preventDefault();
       const chosen = game.combats?.get(el.dataset.combatId);
       if (!chosen) return;
-      await ui.combat?.render({ combat: chosen });
+      // force: true ist hier nicht optional. Ein Kampfbericht, den der
+      // Spielleiter einmal verlassen hat, steht auf CLOSED — und ein
+      // render() ohne force steigt aus, bevor viewed gesetzt wird. Ohne das
+      // blieb der Klick in dieser Liste folgenlos.
+      await ui.combat?.render({ force: true, combat: chosen });
       this.render();
     }));
   }

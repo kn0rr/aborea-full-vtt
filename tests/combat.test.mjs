@@ -6,7 +6,8 @@
 import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor, roundSplitOf } from "../module/combat.mjs";
+import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor, roundSplitOf,
+         pickCombatId } from "../module/combat.mjs";
 import { ABOREA } from "../module/config.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
 
@@ -192,4 +193,56 @@ test("Verteidigungswert folgt der Rundenerklaerung", async t => {
   });
 
   inRunde(null);
+});
+
+test("pickCombatId: welcher Kampf gilt", async t => {
+  // game.combat ist nicht "der laufende Kampf", sondern der, den der
+  // Kampfbericht anzeigt. Und der wird nur beim *Rendern* gesetzt: ein
+  // Seitenleisten-Reiter, den der Spielleiter einmal verlassen hat, steht in
+  // ApplicationV2 auf CLOSED, und dort steigt render() ohne force aus, bevor
+  // viewed gesetzt wird —
+  //
+  //     options.isFirstRender = this.#state <= states.NONE;
+  //     if ( options.isFirstRender && !options.force ) return this;
+  //
+  // Danach war game.combat null, obwohl der Kampf lief: das Kampfpult zeigte
+  // nur noch die Auswahlliste, und declareRound() lehnte jede Erklaerung ab,
+  // auch die Flucht. Deshalb dieselbe Herleitung wie im Kampfbericht.
+  const k = (id, over = {}) => ({ id, sceneId: over.sceneId ?? "s1", active: over.active ?? false });
+
+  await t.test("was der Bericht zeigt, gilt", () =>
+    assert.equal(pickCombatId({ viewedId: "k9", combats: [k("k1")], sceneId: "s1" }), "k9"));
+
+  await t.test("zeigt er nichts, gilt der aktivierte", () =>
+    assert.equal(pickCombatId({
+      combats: [k("k1"), k("k2", { active: true })], sceneId: "s1" }), "k2"));
+
+  await t.test("sonst einer der betrachteten Szene", () =>
+    assert.equal(pickCombatId({
+      combats: [k("k1", { sceneId: "s2" }), k("k2", { sceneId: "s1" })], sceneId: "s1" }), "k2"));
+
+  await t.test("ein aktivierter auf fremder Szene zaehlt nicht", () =>
+    // Combat#isActive prueft scene.isView — ein aktivierter Kampf woanders
+    // ist hier nicht der laufende.
+    assert.equal(pickCombatId({
+      combats: [k("k1", { sceneId: "s2", active: true }), k("k2", { sceneId: "s1" })],
+      sceneId: "s1" }), "k2"));
+
+  await t.test("ein Kampf ohne Szene zaehlt ueberall", () =>
+    assert.equal(pickCombatId({ combats: [k("k1", { sceneId: "" })], sceneId: "s9" }), "k1"));
+
+  await t.test("nur Kaempfe fremder Szenen: keiner", () =>
+    assert.equal(pickCombatId({ combats: [k("k1", { sceneId: "s2" })], sceneId: "s1" }), ""));
+
+  await t.test("der erste passende gewinnt", () =>
+    assert.equal(pickCombatId({ combats: [k("k1"), k("k2")], sceneId: "s1" }), "k1"));
+
+  await t.test("Kaempfe ohne Kennung fallen raus", () =>
+    assert.equal(pickCombatId({ combats: [{ sceneId: "s1" }, null, k("k1")], sceneId: "s1" }), "k1"));
+
+  await t.test("leere Eingabe", () => {
+    assert.equal(pickCombatId({ combats: [], sceneId: "s1" }), "");
+    assert.equal(pickCombatId({}), "");
+    assert.equal(pickCombatId(), "");
+  });
 });
