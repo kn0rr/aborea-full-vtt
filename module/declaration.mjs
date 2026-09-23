@@ -206,6 +206,34 @@ export function fleeDefenseBonus(fleeingInitiative, attackerInitiative) {
   return Math.max(0, diff);
 }
 
+/**
+ * Wer darf dem Fliehenden noch nachschlagen — und wie schwer trifft er?
+ *
+ * Der letzte Angriff kommt (fast) immer; nur die Initiative entscheidet, wie
+ * schwer er zu treffen ist. Bisher rechnete das System den Bonus zwar
+ * richtig, sagte aber niemandem, dass überhaupt noch jemand am Zug ist: wer
+ * Flucht erklärte, sah nichts geschehen.
+ *
+ * Freund und Feind unterscheidet ABOREA nicht — es steht alles hier, was
+ * noch steht und nicht der Fliehende selbst ist. Wer davon wirklich
+ * zuschlägt, entscheidet der Spielleiter.
+ *
+ * @param {object} fleeing        {id, initiative}
+ * @param {Array}  combatants     [{id, name, initiative, defeated}]
+ * @returns {Array} [{id, name, bonus}] in Initiative-Reihenfolge
+ */
+export function fleeOpponents(fleeing, combatants = []) {
+  const eigene = Number(fleeing?.initiative ?? 0) || 0;
+  return (combatants ?? [])
+    .filter(c => c?.id && c.id !== fleeing?.id && !c.defeated)
+    .map(c => ({
+      id: c.id,
+      name: c.name ?? "",
+      bonus: fleeDefenseBonus(eigene, c.initiative),
+    }))
+    .sort((a, b) => a.bonus - b.bonus || String(a.name).localeCompare(String(b.name), "de"));
+}
+
 /** Flieht dieser Actor in der angegebenen Runde? */
 export function isFleeing(actor, round) {
   return declarationFor(actor, round)?.mode === "flee";

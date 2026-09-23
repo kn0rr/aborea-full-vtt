@@ -10,7 +10,7 @@ import {
   declarationFor, roundSplit, buildDeclaration, splitLabel, canRedeclare,
   splitRange, clampOffensive, carrySplit,
   defenseSpentTotal, defenseRemaining, spendDefense, defenseAgainst,
-  fleeDefenseBonus, isFleeing,
+  fleeDefenseBonus, isFleeing, fleeOpponents,
 } from "../module/declaration.mjs";
 
 /** Actor mit Kampfbonus-Pool und optionaler Erklärung. */
@@ -395,4 +395,44 @@ test("Fluchtmodus in der Erklaerung", async t => {
 
   await t.test("Kennzeichnung im Tracker", () =>
     assert.ok(splitLabel(roundSplit(fliehend(5), 3)).startsWith("\u{1F3C3} Flucht")));
+});
+
+test("fleeOpponents: wer noch nachschlagen darf", async t => {
+  // Der Gegner bekommt (fast) immer einen letzten Angriff; nur die
+  // Initiative entscheidet, wie schwer er zu treffen ist. Gerechnet wurde das
+  // schon richtig — angekuendigt nicht, und wer floh, sah nichts geschehen.
+  const c = (id, name, initiative, defeated = false) => ({ id, name, initiative, defeated });
+  const alle = [c("f", "Ascario", 2), c("g1", "Goblin", -1), c("g2", "Ork", 4)];
+
+  await t.test("der Fliehende selbst faellt raus", () =>
+    assert.equal(fleeOpponents({ id: "f", initiative: 2 }, alle).some(x => x.id === "f"), false));
+
+  await t.test("langsamerer Gegner: Initiative-Differenz als Bonus", () =>
+    // Beispiel aus dem Buch: Fliehender +2, Gegner -1 → +3 auf den DB.
+    assert.equal(fleeOpponents({ id: "f", initiative: 2 }, alle).find(x => x.id === "g1").bonus, 3));
+
+  await t.test("schnellerer Gegner: kein Bonus", () =>
+    assert.equal(fleeOpponents({ id: "f", initiative: 2 }, alle).find(x => x.id === "g2").bonus, 0));
+
+  await t.test("aber angreifen darf er trotzdem", () =>
+    // Genau das ist die Regel: der letzte Angriff kommt immer.
+    assert.equal(fleeOpponents({ id: "f", initiative: 2 }, alle).some(x => x.id === "g2"), true));
+
+  await t.test("Ausgeschiedene schlagen nicht mehr nach", () =>
+    assert.equal(fleeOpponents({ id: "f", initiative: 2 },
+      [c("f", "Ascario", 2), c("g1", "Goblin", -1, true)]).length, 0));
+
+  await t.test("die harmlosesten zuerst", () =>
+    assert.deepEqual(fleeOpponents({ id: "f", initiative: 2 }, alle).map(x => x.name),
+      ["Ork", "Goblin"]));
+
+  await t.test("fehlende Initiative zaehlt als 0", () =>
+    assert.equal(fleeOpponents({ id: "f", initiative: 3 },
+      [c("g1", "Goblin", null)])[0].bonus, 3));
+
+  await t.test("leere Eingabe", () => {
+    assert.deepEqual(fleeOpponents({ id: "f", initiative: 1 }, []), []);
+    assert.deepEqual(fleeOpponents({ id: "f", initiative: 1 }), []);
+    assert.deepEqual(fleeOpponents(), []);
+  });
 });

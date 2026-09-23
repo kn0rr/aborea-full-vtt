@@ -4,7 +4,7 @@ import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helper
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
 import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
          defenseAgainst, defenseRemaining, spendDefense, fleeDefenseBonus, isFleeing,
-         SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
+         fleeOpponents, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan, resolveAttackerToken } from "./targeting.mjs";
 import { openOnce } from "./windows.mjs";
 import { SETTINGS, SITU_FLAG, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
@@ -103,6 +103,34 @@ export function pickCombatId({ viewedId = "", combats = [], sceneId = "" } = {})
   return (list.find(c => c.active && hier(c)) ?? list.find(hier))?.id ?? "";
 }
 
+/**
+ * Trägt den laufenden Kampf im Kampfbericht nach, falls dort keiner steht.
+ *
+ * Das ist nicht Kosmetik. Foundrys eigener Code liest `game.combat` weiter,
+ * und zwar an Stellen, die ohne ihn Schaden anrichten —
+ * `TokenDocument.createCombatants()`:
+ *
+ *     combat ??= game.combats.viewed;
+ *     if ( !combat ) combat = await cls.create({active: true});   // neuer Kampf!
+ *     ...
+ *     if ( token.inCombat ) return arr;        // inCombat liest game.combat
+ *
+ * Ohne gesetzten Wert legt also jeder Klick auf "in den Kampf" einen
+ * *weiteren* Kampf an, und die Doppelungssperre greift nie: derselbe Token
+ * liess sich beliebig oft hinzufügen.
+ *
+ * Zuweisen statt rendern — das ist der von Foundry selbst genannte Weg
+ * ("The currently viewed combat can be changed by assigning to
+ * ui.combat.viewed directly") und funktioniert auch bei geschlossenem
+ * Reiter, wo ein render() ohne force vorher aussteigt.
+ */
+export function ensureViewedCombat() {
+  if (game.combat || !ui.combat) return game.combat ?? null;
+  const c = currentCombat();
+  if (c) ui.combat.viewed = c;
+  return c;
+}
+
 /** Das dazugehörige Dokument. */
 export function currentCombat() {
   const viewed = game.combat;
@@ -144,8 +172,45 @@ export async function declareRound(actor, { mode = "weapon", offensive = 0, lock
 
   const pool = Number(actor.system.combat?.combatBonus ?? 0);
   const decl = buildDeclaration(round, { mode, offensive, pool, locked: lock });
+  const vorher = declarationFor(actor, round)?.mode;
   await actor.setFlag(SYSTEM_FLAG, DECLARATION, decl);
+  if (mode === "flee" && vorher !== "flee") await _announceFlight(actor, combat);
   return roundSplit(actor, round);
+}
+
+/**
+ * Sagt an, wer dem Fliehenden noch nachschlagen darf.
+ *
+ * Die Regel gibt dem Gegner (fast) immer einen letzten Angriff. Das System
+ * rechnete den Fluchtbonus zwar richtig, kündigte den Angriff aber nicht an —
+ * wer Flucht erklärte, sah nichts geschehen und hielt es für einen Fehler.
+ * Ausgeführt wird er weiterhin von Hand: wer wirklich zuschlägt, entscheidet
+ * der Spielleiter.
+ */
+async function _announceFlight(actor, combat) {
+  const eigene = [...(combat?.combatants ?? [])].find(c => c.actor?.id === actor.id);
+  const gegner = fleeOpponents(
+    { id: eigene?.id, initiative: eigene?.initiative },
+    [...(combat?.combatants ?? [])].map(c => ({
+      id: c.id, name: c.name, initiative: c.initiative, defeated: c.isDefeated,
+    })));
+
+  const zeilen = gegner.length
+    ? gegner.map(g => `<li>${g.name}${g.bonus > 0
+        ? ` — ${actor.name} erhält <strong>+${g.bonus}</strong> auf den Defensivbonus`
+        : ""}</li>`).join("")
+    : "<li><em>niemand mehr</em></li>";
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="aborea-chat-card">
+      <p>🏃 <strong>${actor.name}</strong> flieht — das ist die einzige Handlung dieser Runde.</p>
+      <p>Wer noch einen letzten Angriff hat:</p>
+      <ul>${zeilen}</ul>
+      <p class="hint-text">Der Bonus entspricht der Initiative-Differenz und gilt nur
+      gegen diesen letzten Angriff (S. 33).</p>
+    </div>`,
+  });
 }
 
 /** Persönlicher Situationsmodifikator eines Kombattanten. */
@@ -1552,6 +1617,15 @@ export function registerCombatHooks() {
     }
     ui.notifications.info("ABOREA: Situationsmodifikatoren für die neue Runde zurückgesetzt.");
   });
+
+  // ── game.combat in Ordnung halten ─────────────────────────────────
+  // Foundrys eigener Code haengt daran (siehe ensureViewedCombat). Der Wert
+  // wird nur beim Rendern des Kampfberichts gesetzt, und ein geschlossener
+  // Reiter rendert nicht mehr — deshalb hier bei jeder Gelegenheit nachziehen,
+  // bei der sich etwas am Kampfbestand geaendert haben kann.
+  for (const hook of ["ready", "canvasReady", "createCombat", "deleteCombat", "createCombatant"]) {
+    Hooks.on(hook, () => ensureViewedCombat());
+  }
 
   // ── Kampfstart: Initiative für alle ───────────────────────────────
   Hooks.on("combatStart", async combat => {

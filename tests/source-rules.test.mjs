@@ -16,20 +16,48 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { moduleFiles, stripCommentsAndStrings, findIdentifier, findPattern } from "./helpers/source.mjs";
 
-test("game.combat wird nur an einer Stelle gelesen", async t => {
+/** In welcher Funktion steht diese Zeile? Die nächste Deklaration darüber. */
+function enclosingFunction(quelle, zeile) {
+  const zeilen = quelle.split("\n").slice(0, zeile);
+  for (let i = zeilen.length - 1; i >= 0; i--) {
+    const m = zeilen[i].match(/^(?:export\s+)?(?:async\s+)?function\s+([\w$]+)/);
+    if (m) return m[1];
+  }
+  return "";
+}
+
+test("game.combat wird nur dort gelesen, wo es gekapselt ist", async t => {
   // `game.combat` ist der Kampf des Kampfberichts. Steht dessen Reiter auf
-  // CLOSED, ist er null, obwohl der Kampf läuft. Wer direkt danach greift,
-  // baut den Fehler wieder ein — deshalb geht alles über currentCombat(),
-  // und das darf als einziges hineinschauen.
-  const treffer = moduleFiles().flatMap(({ name, quelle }) =>
-    findIdentifier(stripCommentsAndStrings(quelle), "game\\.combat")
-      .map(zeile => `${name}:${zeile}`));
+  // CLOSED, ist er null, obwohl der Kampf läuft — und Foundrys eigener Code
+  // legt dann bei jedem "in den Kampf" einen neuen Kampf an, weil seine
+  // Doppelungssperre denselben Wert liest.
+  //
+  // Zwei Funktionen dürfen hineinschauen: currentCombat() leitet den Kampf
+  // her, ensureViewedCombat() trägt ihn nach. Alles andere geht über sie.
+  const ERLAUBT = ["currentCombat", "ensureViewedCombat"];
 
-  await t.test("genau ein Zugriff im ganzen System", () =>
-    assert.equal(treffer.length, 1, `gefunden: ${treffer.join(", ")}`));
+  const treffer = moduleFiles().flatMap(({ name, quelle }) => {
+    const rein = stripCommentsAndStrings(quelle);
+    return findIdentifier(rein, "game\\.combat").map(zeile => ({
+      ort: `${name}:${zeile}`, name, fn: enclosingFunction(rein, zeile),
+    }));
+  });
 
-  await t.test("und der steht in combat.mjs", () =>
-    assert.match(treffer[0] ?? "", /^combat\.mjs:/));
+  await t.test("kein Zugriff ausserhalb von combat.mjs", () => {
+    const fremd = treffer.filter(t => t.name !== "combat.mjs").map(t => t.ort);
+    assert.deepEqual(fremd, [], `gefunden: ${fremd.join(", ")}`);
+  });
+
+  await t.test("und dort nur in den kapselnden Funktionen", () => {
+    const daneben = treffer.filter(t => !ERLAUBT.includes(t.fn))
+      .map(t => `${t.ort} (in ${t.fn || "—"})`);
+    assert.deepEqual(daneben, [], `gefunden: ${daneben.join(", ")}`);
+  });
+
+  await t.test("es gibt sie ueberhaupt", () =>
+    // Ein Waechter, der nichts findet, weil sein Muster nicht passt, ist
+    // keiner.
+    assert.ok(treffer.length > 0, "kein einziger Zugriff gefunden — Muster kaputt?"));
 });
 
 test("ui.combat.render muss force mitgeben, wenn es den Kampf setzt", async t => {
