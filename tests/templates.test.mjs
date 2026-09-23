@@ -124,3 +124,64 @@ test("alle Vorlagen sind sauber verschachtelt", async t => {
     });
   }
 });
+
+// ── "../" ohne Kontextwechsel ─────────────────────────────────────────────
+//
+// In Handlebars 4 zählt "../" nur Blöcke, die den Kontext wechseln — #each
+// und #with. #if und #unless zählen nicht. Ein "../canTake" direkt unter
+// {{#if isGM}} greift deshalb über die Wurzel hinaus und ist immer leer:
+// der "Nehmen"-Knopf fürs Geld im Beute-Container ist so nie erschienen,
+// weder für Spieler noch für den Spielleiter. Kein Fehler, keine Warnung.
+
+const CONTEXT_BLOCKS = new Set(["each", "with"]);
+
+/** Findet "../", das über die Wurzel hinausreicht; leere Liste heisst: in Ordnung. */
+export function parentPathErrors(source) {
+  const ohneKommentare = source.replace(/\{\{!--[\s\S]*?--\}\}/g, "").replace(/\{\{![^}]*\}\}/g, "");
+  const stack = [];
+  const fehler = [];
+  const re = /\{\{([#/^])?\s*([\w-]+)?([^}]*)\}\}/g;
+  let m;
+  while ((m = re.exec(ohneKommentare)) !== null) {
+    const [raw, sigil, name = ""] = m;
+    const zeile = ohneKommentare.slice(0, m.index).split("\n").length;
+    // Der öffnende Ausdruck selbst wird noch im äusseren Kontext ausgewertet.
+    const tiefe = stack.filter(n => CONTEXT_BLOCKS.has(n)).length;
+    for (const p of raw.match(/(?:\.\.\/)+/g) ?? []) {
+      const hoch = p.length / 3;
+      if (hoch > tiefe) fehler.push(`Zeile ${zeile}: ${raw} steigt ${hoch}× auf, liegt aber nur in ${tiefe} Kontextblöcken`);
+    }
+    if (sigil === "#") stack.push(name);
+    else if (sigil === "/") stack.pop();
+  }
+  return fehler;
+}
+
+test("parentPathErrors folgt der Zählweise von Handlebars 4", async t => {
+  await t.test("unter #if auf oberster Ebene: leer", () =>
+    assert.equal(parentPathErrors("{{#if a}}{{#if ../b}}x{{/if}}{{/if}}").length, 1));
+  await t.test("direkt nach einem geschlossenen #each: leer", () =>
+    assert.equal(parentPathErrors("{{#each l as |c|}}{{c}}{{/each}}{{#if ../b}}x{{/if}}").length, 1));
+  await t.test("innerhalb #each: in Ordnung", () =>
+    assert.deepEqual(parentPathErrors("{{#each l as |c|}}{{#if ../b}}x{{/if}}{{/each}}"), []));
+  await t.test("#if innerhalb #each zählt nicht mit", () =>
+    assert.deepEqual(parentPathErrors("{{#each l}}{{#if x}}{{../b}}{{/if}}{{/each}}"), []));
+  await t.test("zwei Stufen brauchen zwei Kontextblöcke", () => {
+    assert.equal(parentPathErrors("{{#each l}}{{../../b}}{{/each}}").length, 1);
+    assert.deepEqual(parentPathErrors("{{#each l}}{{#with m}}{{../../b}}{{/with}}{{/each}}"), []);
+  });
+  await t.test("der Kopf eines #each liegt noch aussen", () =>
+    assert.equal(parentPathErrors("{{#each ../l}}x{{/each}}").length, 1));
+  await t.test("ohne ../ nichts zu melden", () =>
+    assert.deepEqual(parentPathErrors("{{#if a}}{{b}}{{/if}}"), []));
+});
+
+test("keine Vorlage greift mit ../ über die Wurzel hinaus", async t => {
+  for (const datei of allTemplates(TEMPLATE_DIR)) {
+    const kurz = datei.split(/[\\/]templates[\\/]/).pop();
+    await t.test(kurz, () => {
+      const fehler = parentPathErrors(readFileSync(datei, "utf8"));
+      assert.deepEqual(fehler, [], `${kurz}:\n  ${fehler.join("\n  ")}`);
+    });
+  }
+});

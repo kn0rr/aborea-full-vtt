@@ -9,6 +9,7 @@ import { rollSkill, rollAttribute } from "./dice.mjs";
 import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
 import { splitRange, carrySplit } from "./declaration.mjs";
 import { openAttackDialog, declareRound, currentCombat } from "./combat.mjs";
+import { isLootable, lootableItems, hasCoins, lootRecipient, requestLootAction } from "./loot.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
   makeHistoryEntry, logListPush,
@@ -948,11 +949,14 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   async _spawnLootActor() {
     const src = this.actor;
-    const hasItems = src.items.size > 0;
+    // Nur, was ein Container auch zeigt — Fertigkeiten, Zauber, Volk und
+    // Beruf des Gegners sind keine Beute.
+    const loot = lootableItems(src.items);
+    const hasItems = loot.length > 0;
     const srcW = src.system.wallet ?? {};
-    const hasCoins = ["gf","tt","kl","mu"].some(k => Number(srcW[k] ?? 0) > 0);
+    const srcHasCoins = hasCoins(srcW);
 
-    if (!hasItems && !hasCoins) {
+    if (!hasItems && !srcHasCoins) {
       ui.notifications.info("ABOREA: Dieser Aktor hat weder Items noch Geld — kein Beute-Container erstellt.");
       return;
     }
@@ -969,6 +973,10 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       name: `Beute: ${src.name}`,
       type: "loot",
       img:  src.img,
+      // Verknüpft: Token und Actor sind derselbe Container. Ein
+      // unverknüpftes Token hätte einen eigenen Actor, und Spieler und
+      // Spielleiter hätten womöglich in verschiedenen Containern gesucht.
+      prototypeToken: { actorLink: true },
       system: {
         wallet: { gf: Number(srcW.gf ?? 0), tt: Number(srcW.tt ?? 0), kl: Number(srcW.kl ?? 0), mu: Number(srcW.mu ?? 0) }
       }
@@ -977,7 +985,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
     // Items kopieren
     if (hasItems) {
-      const objs = src.items.map(i => { const o = i.toObject(); delete o._id; return o; });
+      const objs = loot.map(i => { const o = i.toObject(); delete o._id; return o; });
       await lootActor.createEmbeddedDocuments("Item", objs);
     }
 
@@ -988,6 +996,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
         name:   lootActor.name,
         actorId: lootActor.id,
         img:    src.img,
+        actorLink: true,
         x: tx + grid,   // leicht versetzt damit er nicht exakt überlappt
         y: ty + grid,
         width:  1,
@@ -1894,13 +1903,22 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
       { key: "kl", label: "KL", name: "Kupferlinge",       amount: Number(w.kl ?? 0) },
       { key: "mu", label: "MU", name: "Muena",  amount: Number(w.mu ?? 0) },
     ];
-    context.hasCoins = context.wallet.some(c => c.amount > 0);
-    context.hasItems = actor.items.size > 0;
+    context.hasCoins = hasCoins(w);
+    context.hasItems = lootableItems(actor.items).length > 0;
     context.hasContent = context.hasItems || context.hasCoins;
     // Inhalt nur sichtbar wenn: GM, ODER Container ist offen
     context.canViewContent = game.user.isGM || !actor.system.locked;
-    context.canTake  = !!game.user.character && !actor.system.locked;
+    const recipient = this._lootRecipient();
+    context.canTake  = !!recipient && !actor.system.locked;
+    context.noRecipient = !recipient && !game.user.isGM && !actor.system.locked;
     return context;
+  }
+
+  /** Charakter, der die Beute bekommt — siehe lootRecipient(). */
+  _lootRecipient() {
+    const owned = game.actors?.filter(a => a.type === "character" && a.isOwner) ?? [];
+    // Der Spielleiter besitzt jeden Charakter: für ihn zählt nur der zugewiesene.
+    return lootRecipient(game.user.character, game.user.isGM ? [] : owned);
   }
 
   _onRender(context, options) {
@@ -1980,135 +1998,54 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
     if (!this.isEditable) return;
     const item = await Item.implementation.fromDropData(data);
     if (!item) return;
+    if (!isLootable(item)) {
+      ui.notifications.warn("ABOREA: In einen Beute-Container gehören nur Waffen, Rüstungen, Ausrüstung und Magisches.");
+      return;
+    }
     const obj = item.toObject();
     delete obj._id;
     await this.actor.createEmbeddedDocuments("Item", [obj]);
   }
 
-  async _takeItem(itemId) {
-    const character = game.user.character;
+  /** Gemeinsame Vorprüfung aller Nehmen-Knöpfe; liefert den Empfänger. */
+  _takeCheck() {
+    const character = this._lootRecipient();
     if (!character) {
       ui.notifications.warn("ABOREA: Kein Charakter zugewiesen (Nutzereinstellungen → Charakter).");
-      return;
+      return null;
     }
     if (this.actor.system.locked) {
       ui.notifications.warn("ABOREA: Der Container ist verschlossen.");
-      return;
+      return null;
     }
-    if (this.actor.isOwner) {
-      // Direktzugriff (GM oder Besitzer)
-      const item = this.actor.items.get(itemId);
-      if (!item) return;
-      const obj = item.toObject(); delete obj._id;
-      await character.createEmbeddedDocuments("Item", [obj]);
-      await this.actor.deleteEmbeddedDocuments("Item", [itemId]);
-      await this._logLootEntry(character, item.name, item.type, this.actor.name);
-    } else {
-      // Socket-Delegation an GM
-      game.socket.emit("system.aborea-v7", {
-        type: "lootRequest", action: "takeItem",
-        lootActorId: this.actor.id, itemId, characterId: character.id,
-      });
-    }
+    return character;
+  }
+
+  async _takeItem(itemId) {
+    const character = this._takeCheck();
+    if (!character) return;
+    await requestLootAction(this.actor, character, "takeItem", itemId);
   }
 
   async _takeAll() {
-    const character = game.user.character;
-    if (!character) {
-      ui.notifications.warn("ABOREA: Kein Charakter zugewiesen.");
-      return;
-    }
-    if (this.actor.system.locked) {
-      ui.notifications.warn("ABOREA: Der Container ist verschlossen.");
-      return;
-    }
-    const w = this.actor.system.wallet ?? {};
-    const hasCoins = ["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0);
-    if (!this.actor.items.size && !hasCoins) {
+    const character = this._takeCheck();
+    if (!character) return;
+    if (!lootableItems(this.actor.items).length && !hasCoins(this.actor.system.wallet)) {
       ui.notifications.info("ABOREA: Container ist leer.");
       return;
     }
-
-    if (this.actor.isOwner) {
-      // Direktzugriff (GM oder Besitzer)
-      if (this.actor.items.size) {
-        const items = this.actor.items.map(i => i);
-        const objs  = items.map(i => { const o = i.toObject(); delete o._id; return o; });
-        await character.createEmbeddedDocuments("Item", objs);
-        await this.actor.deleteEmbeddedDocuments("Item", items.map(i => i.id));
-        const current = Array.isArray(character.system.inventoryHistory)
-          ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
-        const scene = game.scenes?.active?.name ?? "";
-        const entries = items.map(i =>
-          makeHistoryEntry("inventory", "item-add", itemHistoryLabel(i), {
-            itemType: i.type, note: `aus ${this.actor.name}`, scene
-          })
-        );
-        const updated = entries.reduce((list, e) => logListPush(list, e), current);
-        await character.update({ "system.inventoryHistory": updated });
-      }
-      if (hasCoins) await this._transferCoins(character);
+    if (await requestLootAction(this.actor, character, "takeAll"))
       ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
-    } else {
-      // Socket-Delegation an GM
-      game.socket.emit("system.aborea-v7", {
-        type: "lootRequest", action: "takeAll",
-        lootActorId: this.actor.id, characterId: character.id,
-      });
-      ui.notifications.info(`${character.name} nimmt alles aus ${this.actor.name}.`);
-    }
   }
 
   async _takeMoney() {
-    const character = game.user.character;
-    if (!character) { ui.notifications.warn("ABOREA: Kein Charakter zugewiesen."); return; }
-    if (this.actor.system.locked) { ui.notifications.warn("ABOREA: Der Container ist verschlossen."); return; }
-    const w = this.actor.system.wallet ?? {};
-    if (!["gf","tt","kl","mu"].some(k => Number(w[k] ?? 0) > 0)) {
+    const character = this._takeCheck();
+    if (!character) return;
+    if (!hasCoins(this.actor.system.wallet)) {
       ui.notifications.info("ABOREA: Kein Geld im Container."); return;
     }
-    if (this.actor.isOwner) {
-      await this._transferCoins(character);
+    if (await requestLootAction(this.actor, character, "takeMoney"))
       ui.notifications.info(`${character.name} nimmt das Geld aus ${this.actor.name}.`);
-    } else {
-      game.socket.emit("system.aborea-v7", {
-        type: "lootRequest", action: "takeMoney",
-        lootActorId: this.actor.id, characterId: character.id,
-      });
-      ui.notifications.info(`${character.name} nimmt das Geld aus ${this.actor.name}.`);
-    }
-  }
-
-  async _transferCoins(character) {
-    const lootW   = this.actor.system.wallet ?? {};
-    const charWallet = normalizeWallet(character.system.wallet);
-    const scene   = game.scenes?.active?.name ?? "";
-    const source  = this.actor.name;
-
-    for (const key of ["gf","tt","kl","mu"]) {
-      const amount = Number(lootW[key] ?? 0);
-      if (!amount) continue;
-      const cur = charWallet.currencies.find(c => c.key === key);
-      if (!cur) continue;
-      cur.amount = (Number(cur.amount) || 0) + amount;
-      charWallet.history = logListPush(
-        charWallet.history,
-        makeHistoryEntry("wallet", "add", cur.label, { amount, currency: cur.label, note: `aus ${source}`, scene })
-      );
-    }
-    await character.update({ "system.wallet": charWallet });
-    await this.actor.update({ "system.wallet": { gf: 0, tt: 0, kl: 0, mu: 0 } });
-  }
-
-  async _logLootEntry(character, itemName, itemType, containerName) {
-    if (character.type !== "character") return;
-    const current = Array.isArray(character.system.inventoryHistory)
-      ? foundry.utils.deepClone(character.system.inventoryHistory) : [];
-    const scene = game.scenes?.active?.name ?? "";
-    const entry = makeHistoryEntry("inventory", "item-add", itemName, {
-      itemType, note: `aus ${containerName}`, scene
-    });
-    await character.update({ "system.inventoryHistory": logListPush(current, entry) });
   }
 }
 

@@ -12,6 +12,7 @@
       "name": "OpenAI"
     }
   ],
+  "socket": true,
   "esmodules": [
     "module/aborea.mjs"
   ],

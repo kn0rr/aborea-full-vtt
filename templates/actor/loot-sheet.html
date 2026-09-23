@@ -55,6 +55,13 @@
 
     {{#if canViewContent}}
 
+    {{#if noRecipient}}
+    <div class="loot-empty">
+      <p>Dir ist kein Charakter zugewiesen, der die Beute nehmen könnte
+      (Nutzereinstellungen → Charakter).</p>
+    </div>
+    {{/if}}
+
     {{#unless hasContent}}
     <div class="loot-empty">
       <p>Dieser Container ist leer.</p>
@@ -72,7 +79,7 @@
           <input type="number" name="system.wallet.{{cur.key}}" value="{{cur.amount}}" min="0" class="loot-coin-input" />
         </div>
         {{/each}}
-        {{#if ../canTake}}
+        {{#if canTake}}
         <button type="button" class="loot-take-money btn-sm btn-primary">Nehmen</button>
         {{/if}}
       </div>
@@ -90,7 +97,7 @@
           </div>
           {{/if}}
           {{/each}}
-          {{#if ../canTake}}
+          {{#if canTake}}
           <button type="button" class="loot-take-money btn-sm btn-primary">Nehmen</button>
           {{/if}}
         </div>
