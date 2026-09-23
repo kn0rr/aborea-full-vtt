@@ -15,10 +15,7 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
-
-const MODULE_DIR = new URL("../module/", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+import { moduleFiles, stripCommentsAndStrings, findIdentifier } from "./helpers/source.mjs";
 
 /** Veralteter Name → wodurch er zu ersetzen ist. */
 const ERSETZT = {
@@ -67,31 +64,6 @@ const HOOKS = {
                              warum: "gibt es in v13 nicht, feuert also nie" },
 };
 
-/**
- * Entfernt Kommentare und Zeichenketten, lässt die Zeilenzählung aber heil —
- * sonst zeigt der Fehler auf die falsche Stelle.
- */
-export function stripCommentsAndStrings(source) {
-  const keepNewlines = m => "\n".repeat((m.match(/\n/g) ?? []).length);
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, keepNewlines)
-    .replace(/\/\/[^\n]*/g, "")
-    .replace(/`(?:[^`\\]|\\[\s\S])*`/g, keepNewlines)
-    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""')
-    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''");
-}
-
-/** Findet einen Namen als eigenständigen Bezeichner, nicht als .eigenschaft. */
-export function findIdentifier(source, name) {
-  const re = new RegExp(`(?<![.\\w$])${name}(?![\\w$])`, "g");
-  const treffer = [];
-  let m;
-  while ((m = re.exec(source)) !== null) {
-    treffer.push(source.slice(0, m.index).split("\n").length);
-  }
-  return treffer;
-}
-
 test("stripCommentsAndStrings", async t => {
   await t.test("Zeilenkommentar faellt weg", () =>
     assert.equal(findIdentifier(stripCommentsAndStrings("// renderTemplate\nx"), "renderTemplate").length, 0));
@@ -122,12 +94,12 @@ test("stripCommentsAndStrings", async t => {
 });
 
 test("kein veraltetes Foundry-Global im Systemcode", async t => {
-  const dateien = readdirSync(MODULE_DIR).filter(f => f.endsWith(".mjs"));
+  const dateien = moduleFiles();
   assert.ok(dateien.length > 0, "keine Module gefunden");
 
-  for (const datei of dateien) {
+  for (const { name: datei, quelle: roh } of dateien) {
     await t.test(datei, () => {
-      const quelle = stripCommentsAndStrings(readFileSync(join(MODULE_DIR, datei), "utf8"));
+      const quelle = stripCommentsAndStrings(roh);
       const fehler = [];
       for (const [alt, neu] of Object.entries(ERSETZT)) {
         for (const zeile of findIdentifier(quelle, alt)) {
@@ -140,11 +112,8 @@ test("kein veraltetes Foundry-Global im Systemcode", async t => {
 });
 
 test("kein toter oder veralteter Hook im Systemcode", async t => {
-  const dateien = readdirSync(MODULE_DIR).filter(f => f.endsWith(".mjs"));
-
-  for (const datei of dateien) {
+  for (const { name: datei, quelle } of moduleFiles()) {
     await t.test(datei, () => {
-      const quelle = readFileSync(join(MODULE_DIR, datei), "utf8");
       const fehler = [];
       for (const [alt, { statt, warum }] of Object.entries(HOOKS)) {
         // Hooknamen stehen in Zeichenketten — hier wird bewusst nicht

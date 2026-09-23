@@ -8,7 +8,7 @@ import { openCheckDialog } from "./checks.mjs";
 import { rollSkill, rollAttribute } from "./dice.mjs";
 import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
 import { splitRange, carrySplit } from "./declaration.mjs";
-import { openAttackDialog, declareRound } from "./combat.mjs";
+import { openAttackDialog, declareRound, currentCombat } from "./combat.mjs";
 import {
   currentDayStamp, nowStamp, formatExpiry,
   makeHistoryEntry, logListPush,
@@ -1651,7 +1651,11 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     if (hp?.type==="buffDamage") { effects.push({name:item.name,origin:item.uuid,description:item.system?.description,duration:parseSimpleDuration(item,mpCost),changes:[{key:"flags.aborea.extraWeaponDamage",mode:CONST.ACTIVE_EFFECT_MODES.ADD,value:hp.amount}]}); await applyEffectsToActor(this.actor,effects.slice(-1)); extra+=`<p><strong>${this.actor.name}</strong>: +${hp.amount} Waffenschaden</p>`; }
     const summon = await this._automateSummon(item,mpCost); if (summon?.extra) extra+=summon.extra;
     await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content:buildPowerCard(this.actor,item,mpCost,targets,extra)});
-    if (game.combat?.started) await game.combat.nextTurn();
+    // Nicht game.combat: das ist der Kampf, den der Kampfbericht anzeigt,
+    // und der ist bei geschlossenem Reiter leer — der Zug waere dann nie
+    // weitergegangen.
+    const laufend = currentCombat();
+    if (laufend?.started) await laufend.nextTurn();
   }
 
   async _onItemCreate(event) {

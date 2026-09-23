@@ -11,6 +11,34 @@ globalThis.game ??= {
   i18n: { localize: key => String(key).replace(/^ABOREA\./, "") },
 };
 
+/**
+ * Setzt den Kampfzustand, den `game` meldet.
+ *
+ * Absichtlich getrennt: `game.combat` ist der Kampf, den der *Kampfbericht
+ * anzeigt* — und der ist leer, sobald dessen Reiter geschlossen ist. Die
+ * Kämpfe selbst stehen davon unberührt in `game.combats`. Genau diese
+ * Trennung hat lange einen Fehler versteckt, deshalb muss der Stub sie
+ * abbilden können.
+ *
+ * @param {object} [state]
+ * @param {object|null} [state.viewed]    was der Kampfbericht zeigt
+ * @param {Array}  [state.combats]        [{id, scene:{id}, active}]
+ * @param {string} [state.viewedSceneId]  betrachtete Szene
+ */
+export function setCombatState({ viewed = null, combats = [], viewedSceneId = "" } = {}) {
+  const liste = [...combats];
+  game.combat  = viewed;
+  game.combats = Object.assign(liste, { get: id => liste.find(c => c.id === id) ?? null });
+  game.scenes  = { viewed: viewedSceneId ? { id: viewedSceneId } : null };
+  return game;
+}
+
+/** Bauhelfer für einen Kampf im Stub. */
+export function combatDoc(id, { sceneId = "s1", active = false, round = 1, started = true } = {}) {
+  return { id, scene: sceneId ? { id: sceneId, name: `Szene ${sceneId}` } : null,
+           active, round, started, combatants: new Map() };
+}
+
 globalThis.Combat ??= class Combat {};
 
 globalThis.CONST ??= {
