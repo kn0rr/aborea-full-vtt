@@ -1113,6 +1113,18 @@
 .aborea-combat-console .cc-round { font-weight: 700; }
 .aborea-combat-console .cc-turn { display: flex; align-items: center; gap: 5px; margin-left: auto; }
 .aborea-combat-console .cc-active { min-width: 7em; text-align: center; font-weight: 700; }
+.aborea-combat-console .cc-choices { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.aborea-combat-console .cc-pick {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  text-align: left; padding: 5px 8px; font-size: .82rem;
+}
+.aborea-combat-console .cc-pick-label { flex: 1; }
+.aborea-combat-console .cc-pick-here,
+.aborea-combat-console .cc-pick-active {
+  font-size: .7rem; font-style: normal; padding: 1px 5px; border-radius: 3px;
+  background: rgba(0,0,0,.12); opacity: .8;
+}
+.aborea-combat-console .cc-pick-active { background: rgba(45,138,62,.22); }
 .aborea-combat-console .cc-notstarted { font-weight: 700; color: #c08a00; }
 .aborea-combat-console .cc-phase-hint { margin: 0 0 6px; }
 .aborea-combat-console .cc-situ-cell { text-align: center; }

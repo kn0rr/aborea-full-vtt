@@ -7,7 +7,7 @@ import "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { buildConsoleRows, assignableTargets, isDefeated, mayUseConsole,
-         combatPhase, combatantTarget, noCombatReason } from "../module/combat-console.mjs";
+         combatPhase, combatantTarget, buildCombatChoices } from "../module/combat-console.mjs";
 
 const eintrag = (id, over = {}) => ({
   id, actorId: `a-${id}`, name: over.name ?? id,
@@ -143,20 +143,68 @@ test("combatPhase", async t => {
   });
 });
 
-test("noCombatReason", async t => {
-  // game.combat ist der Kampf der betrachteten Szene. Steht der Spielleiter
-  // woanders, ist er leer, obwohl im Kampfbericht ein Kampf steht.
-  await t.test("Kampf in dieser Szene: kein Grund", () =>
-    assert.equal(noCombatReason({ viewed: true, total: 1 }), ""));
-  await t.test("gar kein Kampf", () =>
-    assert.equal(noCombatReason({ viewed: false, total: 0 }), "none"));
-  await t.test("Kampf, aber in einer anderen Szene", () =>
-    assert.equal(noCombatReason({ viewed: false, total: 1 }), "other-scene"));
-  await t.test("mehrere anderswo", () =>
-    assert.equal(noCombatReason({ viewed: false, total: 4 }), "other-scene"));
+test("buildCombatChoices", async t => {
+  // game.combat ist nicht "der laufende Kampf", sondern der, den der Tracker
+  // zeigt — und der findet nur Kaempfe der *betrachteten* Szene. Wer woanders
+  // steht, bekam "kein Kampf" zu sehen, obwohl einer lief. Aus dieser Liste
+  // laesst sich einer auswaehlen.
+  const kampf = (id, over = {}) => ({
+    id, sceneId: over.sceneId ?? "s1", sceneName: over.sceneName ?? "Hoehle",
+    active: over.active ?? false, started: over.started ?? true,
+    round: over.round ?? 1, size: over.size ?? 3,
+  });
+
+  await t.test("hiesige Szene zuerst", () => {
+    const r = buildCombatChoices(
+      [kampf("k1", { sceneId: "s2" }), kampf("k2", { sceneId: "s1" })],
+      { viewedSceneId: "s1" });
+    assert.deepEqual(r.map(x => x.id), ["k2", "k1"]);
+    assert.deepEqual(r.map(x => x.here), [true, false]);
+  });
+
+  await t.test("danach die aktivierten", () => {
+    const r = buildCombatChoices(
+      [kampf("k1", { sceneId: "s2" }), kampf("k2", { sceneId: "s2", active: true })],
+      { viewedSceneId: "s1" });
+    assert.deepEqual(r.map(x => x.id), ["k2", "k1"]);
+  });
+
+  await t.test("danach die weiteste Runde", () => {
+    const r = buildCombatChoices(
+      [kampf("k1", { sceneId: "s2", round: 2 }), kampf("k2", { sceneId: "s2", round: 7 })],
+      { viewedSceneId: "s1" });
+    assert.deepEqual(r.map(x => x.id), ["k2", "k1"]);
+  });
+
+  await t.test("die Reihenfolge ist bei Gleichstand stabil", () => {
+    const zwei = [kampf("kb", { sceneId: "s2" }), kampf("ka", { sceneId: "s2" })];
+    assert.deepEqual(buildCombatChoices(zwei, {}).map(x => x.id), ["ka", "kb"]);
+  });
+
+  await t.test("ein Kampf ohne Szene gilt als hiesig", () =>
+    // #inferCombat() nimmt ihn genauso: !c.scene zaehlt als passend.
+    assert.equal(buildCombatChoices([kampf("k1", { sceneId: "" })], { viewedSceneId: "s9" })[0].here, true));
+
+  await t.test("die Beschriftung nennt Runde, Anzahl und Szene", () =>
+    assert.equal(buildCombatChoices([kampf("k1", { round: 4, size: 5 })], {})[0].label,
+      "Runde 4 · 5 Kombattanten · Szene: Hoehle"));
+
+  await t.test("noch nicht gestartet statt Runde 0", () =>
+    assert.match(buildCombatChoices([kampf("k1", { round: 0 })], {})[0].label, /^noch nicht gestartet/));
+
+  await t.test("ein Kombattant im Singular", () =>
+    assert.match(buildCombatChoices([kampf("k1", { size: 1 })], {})[0].label, /1 Kombattant ·/));
+
+  await t.test("ohne Szene sagt es das", () =>
+    assert.match(buildCombatChoices([kampf("k1", { sceneName: "" })], {})[0].label, /ohne Szene$/));
+
+  await t.test("Kaempfe ohne Kennung fallen raus", () =>
+    assert.deepEqual(buildCombatChoices([{ round: 1 }, null], {}), []));
+
   await t.test("leere Eingabe", () => {
-    assert.equal(noCombatReason({}), "none");
-    assert.equal(noCombatReason(), "none");
+    assert.deepEqual(buildCombatChoices([], {}), []);
+    assert.deepEqual(buildCombatChoices(null, {}), []);
+    assert.deepEqual(buildCombatChoices(), []);
   });
 });
 

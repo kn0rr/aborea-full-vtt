@@ -1,13 +1,22 @@
 <div class="cc-body">
 
   {{#if (aboreaEq phase "none")}}
-    {{#if (aboreaEq noCombat "other-scene")}}
+    {{#if choices.length}}
     <p class="hint-text">
-      In dieser Szene läuft kein Kampf — es gibt aber einen in einer anderen.
-      Wechsle dorthin oder mache den Kampf im Kampfbericht zum aktiven.
+      Der Kampfbericht zeigt gerade keinen Kampf — er findet nur die der Szene,
+      die du ansiehst. Hier sind alle:
     </p>
+    <div class="cc-choices">
+      {{#each choices}}
+      <button type="button" class="cc-pick" data-combat-id="{{id}}">
+        <span class="cc-pick-label">{{label}}</span>
+        {{#if here}}<em class="cc-pick-here" title="Kampf dieser Szene">hier</em>{{/if}}
+        {{#if active}}<em class="cc-pick-active" title="Als aktiver Kampf markiert">aktiv</em>{{/if}}
+      </button>
+      {{/each}}
+    </div>
     {{else}}
-    <p class="hint-text">Kein Kampf aktiv. Lege im Kampfbericht einen Kampf an, um das Pult zu benutzen.</p>
+    <p class="hint-text">Kein Kampf angelegt. Lege im Kampfbericht einen an, um das Pult zu benutzen.</p>
     {{/if}}
   {{else}}
 

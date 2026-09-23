@@ -44,16 +44,46 @@ export function combatPhase({ hasCombat = false, started = false, round = 0 } = 
 }
 
 /**
- * Warum sieht das Pult keinen Kampf?
+ * Die Kämpfe, die das Pult zur Auswahl stellt, wenn der Tracker keinen zeigt.
  *
- * game.combat ist der Kampf der *betrachteten* Szene, nicht irgendeiner.
- * Steht der Spielleiter auf einer anderen Szene, ist er leer, obwohl im
- * Kampfbericht ein Kampf steht — "Kein Kampf aktiv" war da eine irreführende
- * Auskunft.
+ * `game.combat` ist nicht "der laufende Kampf", sondern der, den der Tracker
+ * gerade anzeigt — `game.combats.viewed` gibt `ui.combat?.viewed` zurück. Und
+ * der Tracker findet nur Kämpfe der *betrachteten* Szene: `Combat#isActive`
+ * prüft `scene.isView`, und `#inferCombat()` vergleicht sonst mit
+ * `game.scenes.current`. Wer auf einer anderen Szene steht, bekommt deshalb
+ * "kein Kampf" zu sehen, obwohl einer läuft.
+ *
+ * Das nur zu melden war eine Sackgasse. Aus dieser Liste lässt sich einer
+ * auswählen; das Pult setzt ihn dann im Tracker, und damit stimmt auch
+ * `game.combat` wieder.
+ *
+ * Reihenfolge: hiesige Szene zuerst, dann aktivierte, dann die weiteste
+ * Runde — was am ehesten gemeint ist, steht oben.
+ *
+ * @param {Array} combats  [{id, sceneId, sceneName, active, started, round, size}]
  */
-export function noCombatReason({ viewed = false, total = 0 } = {}) {
-  if (viewed) return "";
-  return Number(total) > 0 ? "other-scene" : "none";
+export function buildCombatChoices(combats = [], { viewedSceneId = "" } = {}) {
+  return (combats ?? []).filter(c => c?.id).map(c => {
+    const sceneId = c.sceneId ?? "";
+    const round   = Number(c.round ?? 0) || 0;
+    const size    = Number(c.size ?? 0) || 0;
+    const teile   = [
+      round > 0 ? `Runde ${round}` : "noch nicht gestartet",
+      `${size} Kombattant${size === 1 ? "" : "en"}`,
+      c.sceneName ? `Szene: ${c.sceneName}` : "ohne Szene",
+    ];
+    return {
+      id: c.id,
+      sceneName: c.sceneName ?? "",
+      here:    !sceneId || sceneId === viewedSceneId,
+      active:  !!c.active,
+      started: !!c.started,
+      round, size,
+      label: teile.join(" · "),
+    };
+  }).sort((a, b) =>
+    (b.here - a.here) || (b.active - a.active) || (b.round - a.round)
+    || String(a.id).localeCompare(String(b.id)));
 }
 
 /**
@@ -246,7 +276,12 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
       phase,
       isRunning:  phase === "running",
       isPrepared: phase === "prepared",
-      noCombat:   noCombatReason({ viewed: !!combat, total: game.combats?.size ?? 0 }),
+      // Ohne Kampf im Tracker: die anderen zur Auswahl stellen, statt in der
+      // Sackgasse "kein Kampf" stehen zu bleiben.
+      choices: combat ? [] : buildCombatChoices([...(game.combats ?? [])].map(c => ({
+        id: c.id, sceneId: c.scene?.id ?? "", sceneName: c.scene?.name ?? "",
+        active: c.active, started: c.started, round: c.round, size: c.combatants?.size ?? 0,
+      })), { viewedSceneId: game.scenes?.viewed?.id ?? "" }),
       round,
       rows, alive, defeated,
       situMod: Number(game.settings.get("aborea-v7", SETTINGS.situMod) ?? 0),
@@ -334,6 +369,16 @@ export class AboreaCombatConsole extends HandlebarsApplicationMixin(ApplicationV
     });
 
     html.querySelector(".cc-refresh")?.addEventListener("click", () => this.render());
+
+    // Einen Kampf in den Tracker holen. Nicht das Pult merkt ihn sich — der
+    // Tracker ist die Quelle, und game.combat liest aus ihm.
+    html.querySelectorAll(".cc-pick").forEach(el => el.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const chosen = game.combats?.get(el.dataset.combatId);
+      if (!chosen) return;
+      await ui.combat?.render({ combat: chosen });
+      this.render();
+    }));
   }
 }
 
