@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   findPath, squareNeighbors, squareStepCost, squareHeuristic, lineCells,
-  extendTrail, followSlots, nearbyCells, planFollow, wouldCycle, cellKey,
+  extendTrail, followSlots, nearbyCells, planFollow, wouldCycle, cellKey, followChanges,
 } from "../module/follow.mjs";
 
 /**
@@ -328,4 +328,72 @@ test("wouldCycle: Ketten ja, Kreise nein", async t => {
   await t.test("fremder Kreis hängt nicht", () =>
     assert.equal(wouldCycle(new Map([["x", "y"], ["y", "x"]]), "a", "x"), false));
   await t.test("als einfaches Objekt", () => assert.equal(wouldCycle({ b: "a" }, "a", "b"), true));
+});
+
+test("followChanges: was der Folgen-Dialog bewirkt", async t => {
+  const szene = (...tokens) => tokens.map(([id, leader, order]) => ({ id, leader, order }));
+  const ids = l => l.map(x => x.id ?? x);
+
+  await t.test("neue Folgende kommen in der Reihenfolge der Szene", () => {
+    const r = followChanges({ tokens: szene(["L"], ["a"], ["b"]), leaderId: "L", chosenIds: ["b", "a"] });
+    assert.deepEqual(r.set, [{ id: "a", order: 0 }, { id: "b", order: 1 }]);
+    assert.deepEqual(r.unset, []);
+  });
+
+  await t.test("hinten angehaengt, wer schon folgt bleibt unveraendert", () => {
+    const r = followChanges({ tokens: szene(["L"], ["a", "L", 0], ["b", "L", 3], ["c"]),
+                              leaderId: "L", chosenIds: ["a", "b", "c"] });
+    assert.deepEqual(r.set, [{ id: "c", order: 4 }]);
+    assert.deepEqual(r.unset, []);
+  });
+
+  await t.test("abgehakt heisst: folgt niemandem mehr", () => {
+    const r = followChanges({ tokens: szene(["L"], ["a", "L", 0], ["b", "L", 1]), leaderId: "L", chosenIds: ["b"] });
+    assert.deepEqual(r.unset, ["a"]);
+    assert.deepEqual(r.set, []);
+  });
+
+  await t.test("nichts angehakt: alle los", () =>
+    assert.deepEqual(followChanges({ tokens: szene(["L"], ["a", "L", 0]), leaderId: "L", chosenIds: [] }).unset, ["a"]));
+
+  await t.test("wer einem anderen folgte, wechselt", () => {
+    const r = followChanges({ tokens: szene(["L"], ["M"], ["a", "M", 0]), leaderId: "L", chosenIds: ["a"] });
+    assert.deepEqual(ids(r.set), ["a"]);
+  });
+
+  await t.test("die Folgenden eines anderen Anfuehrers werden nicht angefasst", () => {
+    const r = followChanges({ tokens: szene(["L"], ["M"], ["a", "M", 0]), leaderId: "L", chosenIds: [] });
+    assert.deepEqual(r.unset, []);
+  });
+
+  await t.test("der Anfuehrer selbst ist nie dabei", () =>
+    assert.deepEqual(followChanges({ tokens: szene(["L"], ["a"]), leaderId: "L", chosenIds: ["L", "a"] }).set,
+      [{ id: "a", order: 0 }]));
+
+  await t.test("Kreis wird abgelehnt: L folgt a, a soll L folgen", () => {
+    const r = followChanges({ tokens: szene(["L", "a", 0], ["a"]), leaderId: "L", chosenIds: ["a"] });
+    assert.deepEqual(r.refused, ["a"]);
+    assert.deepEqual(r.set, []);
+  });
+
+  await t.test("Kette ist erlaubt: a folgt L, b folgt a", () => {
+    const r = followChanges({ tokens: szene(["L"], ["a", "L", 0], ["b"]), leaderId: "a", chosenIds: ["b"] });
+    assert.deepEqual(ids(r.set), ["b"]);
+    assert.deepEqual(r.refused, []);
+  });
+
+  await t.test("Invariante: nach dem Anwenden folgen genau die Angehakten", () => {
+    const tokens = szene(["L"], ["a", "L", 0], ["b", "M", 0], ["c"], ["M"], ["d", "L", 1]);
+    for (const chosen of [[], ["a"], ["b", "c"], ["a", "b", "c", "d", "M"], ["d"]]) {
+      const r = followChanges({ tokens, leaderId: "L", chosenIds: chosen });
+      const nachher = new Map(tokens.filter(x => x.leader).map(x => [x.id, x.leader]));
+      for (const id of r.unset) nachher.delete(id);
+      for (const { id } of r.set) nachher.set(id, "L");
+      const folgen = [...nachher].filter(([, l]) => l === "L").map(([id]) => id).sort();
+      assert.deepEqual(folgen, chosen.filter(id => !r.refused.includes(id)).sort(), String(chosen));
+    }
+  });
+
+  await t.test("leere Eingaben", () =>
+    assert.deepEqual(followChanges({ leaderId: "L" }), { set: [], unset: [], refused: [] }));
 });

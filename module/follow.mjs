@@ -1,7 +1,7 @@
 // module/follow.mjs — Tokens folgen einem anderen Token
 //
-// Der Spielleiter wählt die Folgenden aus und markiert den Anführer (T).
-// Bewegt sich der Anführer, ziehen die anderen im Gänsemarsch hinterher: jeder
+// Rechtsklick auf den Anführer, im Token-Menü "Folgen", und in der Liste die
+// Folgenden anhaken (openFollowDialog). Bewegt sich der Anführer, ziehen die anderen im Gänsemarsch hinterher: jeder
 // auf ein Feld der Spur, die der Anführer gerade gegangen ist — der erste
 // direkt hinter ihn, der zweite eins dahinter, und so fort.
 //
@@ -306,6 +306,45 @@ export function wouldCycle(follows, followerId, leaderId) {
   return false;
 }
 
+/**
+ * Was sich ändert, wenn im Folgen-Dialog eines Anführers diese Tokens
+ * angehakt sind.
+ *
+ * Angehakte, die ihm noch nicht folgen, kommen hinten an die Reihe — auch
+ * wer bisher jemand anderem folgte, wechselt. Wer ihm folgte und nicht mehr
+ * angehakt ist, folgt niemandem mehr. Wer einen Kreis schliessen würde, wird
+ * abgelehnt; der Anführer selbst kann nicht angehakt werden.
+ *
+ * @param {object} p
+ * @param {Array<{id, leader?, order?}>} p.tokens  alle Tokens der Szene mit ihrer Folgen-Angabe
+ * @param {string} p.leaderId
+ * @param {Iterable<string>} p.chosenIds          angehakte Tokens
+ * @returns {{set: Array<{id, order}>, unset: string[], refused: string[]}}
+ */
+export function followChanges({ tokens = [], leaderId, chosenIds = [] }) {
+  const chosen  = new Set(chosenIds);
+  chosen.delete(leaderId);
+  const follows = new Map(tokens.filter(t => t.leader).map(t => [t.id, t.leader]));
+  const mine    = tokens.filter(t => t.leader === leaderId);
+  let next = mine.reduce((m, t) => Math.max(m, Number(t.order) || 0), -1) + 1;
+
+  const set = [], refused = [];
+  for (const t of tokens) {
+    if (!chosen.has(t.id) || t.leader === leaderId) continue;
+    // Wer wechselt, hängt nicht mehr an seinem alten Anführer.
+    follows.delete(t.id);
+    if (wouldCycle(follows, t.id, leaderId)) {
+      if (t.leader) follows.set(t.id, t.leader);
+      refused.push(t.id);
+      continue;
+    }
+    follows.set(t.id, leaderId);
+    set.push({ id: t.id, order: next++ });
+  }
+  const unset = mine.filter(t => !chosen.has(t.id)).map(t => t.id);
+  return { set, unset, refused };
+}
+
 // ══════════════════════════════════════════════════════════════════
 //  Foundry-Anbindung
 // ══════════════════════════════════════════════════════════════════
@@ -435,43 +474,130 @@ async function moveFollowers(leaderDoc, movement) {
   if (stuck.length) ui.notifications.warn(`ABOREA: Kein Weg für ${stuck.join(", ")} — bleibt stehen.`);
 }
 
-/** Folgen einrichten: ausgewählte Tokens folgen dem markierten. */
-export async function startFollowing() {
-  const targets = [...(game.user.targets ?? [])];
-  if (targets.length !== 1) {
-    ui.notifications.warn("ABOREA: Genau einen Anführer markieren (T), die Folgenden auswählen.");
-    return;
-  }
-  const leader = targets[0].document;
-  const chosen = canvas.tokens.controlled.map(t => t.document).filter(d => d.id !== leader.id);
-  if (!chosen.length) {
-    ui.notifications.warn("ABOREA: Keine Folgenden ausgewählt.");
+/** HTML-sicher für Namen im Dialog. */
+const esc = s => foundry.utils.escapeHTML?.(String(s ?? "")) ?? String(s ?? "");
+
+/**
+ * Folgen-Dialog eines Anführers: alle anderen Tokens der Szene zum Anhaken.
+ *
+ * Vorher musste man die Folgenden auswählen und den Anführer mit T markieren.
+ * Das scheiterte schon am Auswählen: im eigenen Reiter bleibt die Leinwand auf
+ * der Ebene stehen, die zuletzt aktiv war (siehe scene-controls.mjs, Lehre 4),
+ * und war das nicht die Token-Ebene, liess sich gar nichts anklicken. Eine
+ * Liste zum Anhaken braucht keine Auswahl.
+ *
+ * Vorab angehakt: wer schon folgt, und wer gerade ausgewählt ist.
+ */
+export async function openFollowDialog(leaderDoc) {
+  if (!game.user.isGM || !leaderDoc) return;
+  const scene    = leaderDoc.parent;
+  const selected = new Set((canvas.tokens?.controlled ?? []).map(t => t.id));
+  const others   = [...scene.tokens].filter(t => t.id !== leaderDoc.id && t.actor?.type !== "loot")
+    .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  if (!others.length) {
+    ui.notifications.warn("ABOREA: Auf dieser Szene gibt es keine anderen Tokens.");
     return;
   }
 
-  const follows = new Map(leader.parent.tokens
-    .filter(t => followOf(t)?.leader).map(t => [t.id, followOf(t).leader]));
-  const already = followersOf(leader).length;
-  const ok = [], refused = [];
-  for (const [n, doc] of chosen.entries()) {
-    if (wouldCycle(follows, doc.id, leader.id)) { refused.push(doc.name); continue; }
-    await doc.setFlag(SYSTEM_ID, FOLLOW_FLAG, { leader: leader.id, order: already + n });
-    follows.set(doc.id, leader.id);
-    ok.push(doc.name);
-  }
-  TRAILS.set(leader.id, [cellOfPosition(leader, leader, gridAdapter())]);
-  if (ok.length) ui.notifications.info(`ABOREA: ${ok.join(", ")} folgt ${leader.name}.`);
-  if (refused.length) ui.notifications.warn(`ABOREA: ${refused.join(", ")} kann ${leader.name} nicht folgen — das ergäbe einen Kreis.`);
+  const rows = others.map(t => {
+    const f = followOf(t);
+    const checked = f?.leader === leaderDoc.id || (!f && selected.has(t.id));
+    const note = f?.leader && f.leader !== leaderDoc.id
+      ? ` <em class="hint">(folgt ${esc(scene.tokens.get(f.leader)?.name ?? "?")})</em>` : "";
+    return `<label class="aborea-follow-row" style="display:flex;align-items:center;gap:8px;margin:2px 0">
+      <input type="checkbox" name="${t.id}" ${checked ? "checked" : ""} />
+      <img src="${esc(t.texture?.src ?? "icons/svg/mystery-man.svg")}" width="28" height="28" style="border:none" />
+      <span>${esc(t.name)}${note}</span>
+    </label>`;
+  }).join("");
+
+  const data = await foundry.applications.api.DialogV2.input({
+    window:  { title: `Wer folgt ${leaderDoc.name}?` },
+    content: `<p class="hint">Angehakte Tokens laufen ${esc(leaderDoc.name)} hinterher, im Gänsemarsch und um Wände herum.</p>
+      <div style="max-height:360px;overflow-y:auto">${rows}</div>`,
+    ok: { label: "Übernehmen", icon: "fa-solid fa-person-walking-arrow-right" },
+    rejectClose: false,
+  });
+  if (!data) return;
+
+  const chosenIds = Object.entries(data).filter(([, v]) => v === true).map(([k]) => k);
+  await applyFollow(leaderDoc, chosenIds);
+}
+
+/** Setzt die Folgen-Angaben für einen Anführer und meldet das Ergebnis. */
+async function applyFollow(leaderDoc, chosenIds) {
+  const scene = leaderDoc.parent;
+  const { set, unset, refused } = followChanges({
+    tokens: [...scene.tokens].map(t => ({ id: t.id, ...(followOf(t) ?? {}) })),
+    leaderId: leaderDoc.id, chosenIds,
+  });
+  for (const { id, order } of set) await scene.tokens.get(id)?.setFlag(SYSTEM_ID, FOLLOW_FLAG, { leader: leaderDoc.id, order });
+  for (const id of unset) await scene.tokens.get(id)?.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
+  if (!TRAILS.has(leaderDoc.id)) TRAILS.set(leaderDoc.id, [cellOfPosition(leaderDoc, leaderDoc, gridAdapter())]);
+
+  const name = id => scene.tokens.get(id)?.name ?? "?";
+  const now  = followersOf(leaderDoc).map(t => t.name);
+  ui.notifications.info(now.length
+    ? `ABOREA: ${now.join(", ")} folgt ${leaderDoc.name}.`
+    : `ABOREA: Niemand folgt ${leaderDoc.name}.`);
+  if (refused.length) ui.notifications.warn(
+    `ABOREA: ${refused.map(name).join(", ")} kann ${leaderDoc.name} nicht folgen — das ergäbe einen Kreis.`);
+}
+
+/**
+ * Der Anführer für den Knopf in der Werkzeugleiste: der eine markierte
+ * Token, sonst der eine ausgewählte.
+ */
+function leaderFromCanvas() {
+  const targets = [...(game.user.targets ?? [])];
+  if (targets.length === 1) return targets[0].document;
+  const controlled = canvas.tokens?.controlled ?? [];
+  if (controlled.length === 1) return controlled[0].document;
+  return null;
 }
 
 /** Folgen beenden — für die ausgewählten Tokens, ohne Auswahl für alle der Szene. */
 export async function stopFollowing() {
-  const chosen = canvas.tokens.controlled.map(t => t.document);
+  const chosen = (canvas.tokens?.controlled ?? []).map(t => t.document);
   const docs = (chosen.length ? chosen : [...canvas.scene.tokens]).filter(d => followOf(d));
   for (const doc of docs) await doc.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
   ui.notifications.info(docs.length
     ? `ABOREA: ${docs.map(d => d.name).join(", ")} folgt niemandem mehr.`
     : "ABOREA: Niemand folgte.");
+}
+
+/** Knöpfe im Rechtsklick-Menü eines Tokens (nur Spielleiter). */
+function addHudButtons(hud, html) {
+  if (!game.user.isGM) return;
+  const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+  const doc  = hud?.object?.document;
+  if (!root?.querySelector || !doc || doc.actor?.type === "loot") return;
+  const column = root.querySelector(".col.left") ?? root.querySelector(".left");
+  if (!column) return;
+
+  const button = (icon, title, onClick) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "control-icon aborea-hud-follow";
+    btn.title = title;
+    btn.innerHTML = `<i class="${icon}"></i>`;
+    btn.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); onClick(); });
+    column.appendChild(btn);
+  };
+
+  const count = followersOf(doc).length;
+  button("fa-solid fa-person-walking-arrow-right",
+    count ? `Folgen: ${count} folgen diesem Token — ändern` : "Folgen: wer soll diesem Token folgen?",
+    () => openFollowDialog(doc));
+
+  const f = followOf(doc);
+  if (f?.leader) button("fa-solid fa-link-slash",
+    `Folgt ${doc.parent.tokens.get(f.leader)?.name ?? "?"} — nicht mehr folgen`,
+    async () => {
+      await doc.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
+      ui.notifications.info(`ABOREA: ${doc.name} folgt niemandem mehr.`);
+      hud.render?.();
+    });
 }
 
 export function registerFollow() {
@@ -491,6 +617,8 @@ export function registerFollow() {
     for (const f of followersOf(doc)) await f.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
   });
 
+  Hooks.on("renderTokenHUD", addHudButtons);
+
   registerSceneControlGroup({
     name:  "aborea-follow",
     title: "ABOREA Folgen",
@@ -498,9 +626,13 @@ export function registerFollow() {
     order: 81,
     tools: [
       { name: "aborea-follow-start",
-        title: "Folgen — ausgewählte Tokens folgen dem markierten (T)",
+        title: "Folgen — wer folgt dem ausgewählten Token? (einfacher: Rechtsklick auf den Anführer)",
         icon: "fa-solid fa-person-walking-arrow-right",
-        onClick: () => startFollowing() },
+        onClick: () => {
+          const leader = leaderFromCanvas();
+          if (leader) return openFollowDialog(leader);
+          ui.notifications.warn("ABOREA: Erst den Anführer anklicken — oder Rechtsklick auf ihn und dort „Folgen“.");
+        } },
       { name: "aborea-follow-stop",
         title: "Folgen beenden — ausgewählte, ohne Auswahl alle der Szene",
         icon: "fa-solid fa-link-slash",
