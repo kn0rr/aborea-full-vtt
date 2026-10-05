@@ -1,9 +1,9 @@
 // module/follow.mjs — Tokens folgen einem anderen Token
 //
 // Rechtsklick auf den Anführer, im Token-Menü "Folgen", und in der Liste die
-// Folgenden anhaken (openFollowDialog). Bewegt sich der Anführer, ziehen die anderen im Gänsemarsch hinterher: jeder
-// auf ein Feld der Spur, die der Anführer gerade gegangen ist — der erste
-// direkt hinter ihn, der zweite eins dahinter, und so fort.
+// Folgenden anhaken (openFollowDialog). Bewegt sich der Anführer, ziehen die
+// anderen als Schlange hinterher: jeder hält Anschluss an die Gruppe, bevorzugt
+// auf den Feldern, über die der Anführer gerade gegangen ist (planFollow).
 //
 // Wege können versperrt sein. Foundry hilft dabei nicht: Token#findMovementPath
 // der v13.351 sucht keinen Weg, sondern beschneidet den geraden nur an der
@@ -186,105 +186,119 @@ export function extendTrail(trail = [], cells = [], max = TRAIL_LENGTH) {
 }
 
 /**
- * Plätze in der Spur, vom Anführer rückwärts: Platz 0 ist das letzte Feld
- * vor ihm, Platz 1 das davor. Jedes Feld nur einmal, das Feld des Anführers
- * nie. Ist die Spur kürzer, gibt es weniger Plätze.
- */
-export function followSlots(trail = [], leaderCell, count) {
-  const slots = [];
-  const seen  = new Set(leaderCell ? [cellKey(leaderCell)] : []);
-  for (let n = (trail?.length ?? 0) - 1; n >= 0 && slots.length < count; n--) {
-    const k = cellKey(trail[n]);
-    if (seen.has(k)) continue;
-    seen.add(k);
-    slots.push({ i: trail[n].i, j: trail[n].j });
-  }
-  return slots;
-}
-
-/**
- * Freie, erreichbare Felder rund um ein Feld, nächstgelegene zuerst
- * (Breitensuche). Ersatz, wenn die Spur nicht genug Plätze hergibt.
- */
-export function nearbyCells(center, count, { neighbors, blocked = () => false, exclude = new Set(), maxNodes = MAX_SEARCH_NODES } = {}) {
-  const out  = [];
-  const seen = new Set([cellKey(center)]);
-  const queue = [center];
-  while (queue.length && out.length < count && seen.size <= maxNodes) {
-    const here = queue.shift();
-    for (const next of neighbors(here) ?? []) {
-      const k = cellKey(next);
-      if (seen.has(k) || blocked(here, next)) continue;
-      seen.add(k);
-      queue.push(next);
-      if (!exclude.has(k)) out.push({ i: next.i, j: next.j });
-      if (out.length >= count) break;
-    }
-  }
-  return out;
-}
-
-/**
- * Plant die Bewegung aller Folgenden.
+ * Plant die Bewegung aller Folgenden — als Schlange.
  *
- * Reihenfolge ist die Reihenfolge von `followers`. Jeder bekommt einen
- * eigenen Zielplatz — kein Feld doppelt, das des Anführers nie. Ist sein
- * Platz unerreichbar, geht er auf dem Weg zum Anführer so weit, wie es geht,
- * ohne auf einem belegten Feld zu enden. Ist auch das unmöglich, bleibt er.
+ * Jeder hält Anschluss an die Gruppe. Wer über eine Kette von Nachbarn (ohne
+ * Wand dazwischen) mit dem Anführer verbunden ist, bleibt stehen. Daraus
+ * folgt: ein zweiter Plan direkt nach dem ersten bewegt niemanden mehr.
+ *
+ * Vorher bekam jeder bei jeder Bewegung einen festen Platz in der Spur, in
+ * der Reihenfolge, in der er angehakt war. Das hatte zwei Folgen: wer hinten
+ * stand, aber zuerst kam, lief durch den Vordermann hindurch nach vorn, und
+ * die beiden tauschten bei jedem Schritt die Rollen; und wer schon richtig
+ * stand, zog trotzdem um, sobald sich die Spur verschob.
+ *
+ * Wer umziehen muss, kommt nach seiner Nähe zum Anführer dran, jedes Mal neu,
+ * und wählt ein freies Feld neben der Gruppe — bevorzugt eins, über das
+ * der Anführer zuletzt gegangen ist, damit die Schlange in Gängen seiner
+ * Spur folgt, sonst das ihm nächste. Ist keins erreichbar, geht er auf das
+ * nächste Gruppenmitglied zu, so weit es geht; ist auch das unmöglich,
+ * bleibt er.
+ *
+ * Kein Feld wird doppelt belegt, das des Anführers nie.
  *
  * @param {object} p
  * @param {{i,j}} p.leaderCell
  * @param {Array<{i,j}>} p.trail
  * @param {Array<{id, cell}>} p.followers
  * @param {(id) => object} p.searchFor  liefert je Folgendem {neighbors, blocked, cost, heuristic}
- * @returns {Array<{id, path, stuck}>}  path beginnt beim aktuellen Feld; leer = bleibt stehen
+ * @returns {Array<{id, path, stuck}>}  in der Reihenfolge von `followers`;
+ *          path beginnt beim aktuellen Feld, leer heisst: bleibt stehen
  */
-export function planFollow({ leaderCell, trail, followers = [], searchFor }) {
-  const taken = new Set([cellKey(leaderCell)]);
-  // Wo noch nicht eingeplante Folgende stehen, darf niemand hin — vielleicht
-  // bleiben sie stehen. Gezählt, weil zwei auf einem Feld beginnen können.
-  const waiting = new Map();
-  for (const f of followers) waiting.set(cellKey(f.cell), (waiting.get(cellKey(f.cell)) ?? 0) + 1);
-  const occupied = k => taken.has(k) || (waiting.get(k) ?? 0) > 0;
+export function planFollow({ leaderCell, trail = [], followers = [], searchFor }) {
+  const result  = new Array(followers.length);
+  const taken   = new Set([cellKey(leaderCell)]);
+  const placed  = [leaderCell];   // Anführer und alle, deren Feld feststeht
+  const search  = followers.map(f => searchFor(f.id) ?? {});
+  const nextTo  = (s, anchor, c) =>
+    (s.neighbors?.(anchor) ?? []).some(x => sameCell(x, c)) && !(s.blocked?.(anchor, c) ?? false);
 
-  // Mehr Plätze als Folgende: einige fallen weg, weil dort jemand wartet.
-  const want  = followers.length * 2;
-  const slots = followSlots(trail, leaderCell, want);
-  if (followers.length && slots.length < want) {
-    const s = searchFor(followers[0].id) ?? {};
-    slots.push(...nearbyCells(leaderCell, want - slots.length, {
-      ...s, exclude: new Set([...taken, ...slots.map(cellKey)]),
-    }));
+  // 1. Wer über eine Kette von Nachbarn mit dem Anführer verbunden ist, hat
+  //    Anschluss und bleibt stehen. Das hängt nicht davon ab, in welcher
+  //    Reihenfolge man prüft — sonst wäre ein zweiter Plan nicht leer.
+  const stays = new Set();
+  const queue = [leaderCell];
+  while (queue.length) {
+    const here = queue.shift();
+    for (const [n, f] of followers.entries()) {
+      if (stays.has(n) || taken.has(cellKey(f.cell))) continue;   // zwei auf einem Feld: nur einer bleibt
+      if (!nextTo(search[n], here, f.cell)) continue;
+      stays.add(n);
+      taken.add(cellKey(f.cell));
+      placed.push(f.cell);
+      queue.push(f.cell);
+      result[n] = { id: f.id, path: [], stuck: false };
+    }
   }
 
-  const plans = [];
-  for (const f of followers) {
+  // 2. Die übrigen ziehen nach, der Nächste am Anführer zuerst. Wo sie jetzt
+  //    stehen, darf bis dahin niemand hin — vielleicht bleiben sie stecken.
+  const waiting = new Map();
+  const movers  = followers.map((f, n) => ({ f, n })).filter(({ n }) => !stays.has(n));
+  for (const { f } of movers) waiting.set(cellKey(f.cell), (waiting.get(cellKey(f.cell)) ?? 0) + 1);
+  const occupied = k => taken.has(k) || (waiting.get(k) ?? 0) > 0;
+
+  // Wie frisch ein Feld in der Spur ist: höher = zuletzt betreten.
+  const recency = new Map();
+  (trail ?? []).forEach((c, n) => recency.set(cellKey(c), n + 1));
+
+  const h = n => search[n].heuristic ?? squareHeuristic;
+  movers.sort((a, b) => (h(a.n)(a.f.cell, leaderCell) - h(b.n)(b.f.cell, leaderCell)) || (a.n - b.n));
+
+  for (const { f, n } of movers) {
     const own = cellKey(f.cell);
     waiting.set(own, waiting.get(own) - 1);
-    const search = searchFor(f.id) ?? {};
+    const s = search[n];
+    const dist = h(n);
 
-    // Der vorderste noch freie Platz. Steht er schon darauf, ist der Weg
-    // nur sein eigenes Feld, und er bleibt.
-    const wanted = slots.find(s => !occupied(cellKey(s)));
-    let path = wanted ? findPath(f.cell, wanted, search) : null;
+    // Ein freies Feld neben der Gruppe: zuerst die frischesten der Spur, dann
+    // die ihm nächsten.
+    const seen = new Set();
+    const candidates = placed
+      .flatMap(p => (s.neighbors?.(p) ?? []).filter(c => !(s.blocked?.(p, c) ?? false)))
+      .filter(c => {
+        const k = cellKey(c);
+        if (seen.has(k) || occupied(k)) return false;
+        seen.add(k);
+        return true;
+      })
+      .sort((a, b) => ((recency.get(cellKey(b)) ?? 0) - (recency.get(cellKey(a)) ?? 0))
+                   || (dist(f.cell, a) - dist(f.cell, b)));
+
+    let path = null;
+    for (const c of candidates) {
+      path = findPath(f.cell, c, s);
+      if (path) break;
+    }
 
     if (!path) {
-      // Sein Platz ist unerreichbar: Richtung Anführer, bis vor das erste
-      // belegte Feld am Ende des Weges.
-      const toLeader = findPath(f.cell, leaderCell, search);
-      if (toLeader) {
-        path = toLeader;
+      // Kein Platz neben der Gruppe erreichbar: auf das nächste Mitglied zu,
+      // so weit es geht, ohne auf einem belegten Feld zu enden.
+      const anchor = [...placed].sort((a, b) => dist(f.cell, a) - dist(f.cell, b))[0];
+      const toward = findPath(f.cell, anchor, s);
+      if (toward) {
+        path = toward;
         while (path.length > 1 && occupied(cellKey(path.at(-1)))) path = path.slice(0, -1);
+        if (occupied(cellKey(path.at(-1)))) path = null;
       }
     }
 
-    const end = path?.at(-1) ?? f.cell;
-    if (path && occupied(cellKey(end))) path = null;   // nur noch auf belegtem Feld möglich
     const finalCell = path?.at(-1) ?? f.cell;
     taken.add(cellKey(finalCell));
-    plans.push({ id: f.id, path: path && path.length > 1 ? path : [], stuck: !path });
+    placed.push(finalCell);
+    result[n] = { id: f.id, path: path && path.length > 1 ? path : [], stuck: !path };
   }
-  return plans;
+  return result;
 }
 
 /**
