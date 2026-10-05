@@ -2,7 +2,7 @@
 
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
-import { skillBonus, attributeValue, formatBreakdown } from "./bonuses.mjs";
+import { skillBonus, attributeCheckBonus, formatBreakdown } from "./bonuses.mjs";
 import { openOnce } from "./windows.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -112,14 +112,10 @@ function _maneuverLabel(key, val) {
 /**
  * Bonus einer Probe — Attributprobe oder Fertigkeitsprobe.
  * Fertigkeiten laufen über skillBonus(), dieselbe Quelle wie Bogen und Kampf.
+ * Beide enthalten den Manöverbonus — eine Probe ist ein Manöver.
  */
 function _resolveBonus(actor, checkType, checkKey) {
-  if (checkType === "attr") {
-    const bonus = ABOREA.attributeBonus(attributeValue(actor, checkKey));
-    const label = game.i18n.localize(ABOREA.attributes[checkKey] ?? checkKey);
-    return { bonus, label, breakdown: [`${label}: ${bonus >= 0 ? "+" : ""}${bonus}`] };
-  }
-  const b = skillBonus(actor, checkKey);
+  const b = checkType === "attr" ? attributeCheckBonus(actor, checkKey) : skillBonus(actor, checkKey);
   return { bonus: b.total, label: game.i18n.localize(b.label), breakdown: formatBreakdown(b.breakdown) };
 }
 

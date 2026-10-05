@@ -6,9 +6,10 @@
 import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { actorDefenseValue, spellDamage, maneuverBonus, bonusWeaponDamage, hpColor, roundSplitOf,
+import { actorDefenseValue, spellDamage, bonusWeaponDamage, hpColor, roundSplitOf,
          pickCombatId } from "../module/combat.mjs";
 import { ABOREA } from "../module/config.mjs";
+import { defenseValue } from "../module/bonuses.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
 
 test("Verteidigungswert", async t => {
@@ -24,27 +25,47 @@ test("Verteidigungswert", async t => {
     assert.equal(dv({ combat: { armorValue: 5 }, traits: { racialArmorBonus: 2 } }), 7));
   await t.test("Klassen-Rüstungsbonus", () =>
     assert.equal(dv({ combat: { armorValue: 5 }, classFeatures: { armorBonus: 1 } }), 6));
-  await t.test("Manöverbonus aus Zaubereffekten", () =>
-    assert.equal(dv({ combat: { armorValue: 5 }, traits: { maneuverBonus: 2 } }), 7));
+  // Beistand, Segnung, Fluch: Kampf ist kein Manöver. Vorher hob ein
+  // Manöverbonus den RW im Kampf, auf dem Charakterbogen aber nicht.
+  await t.test("Manöverbonus zählt nicht", () =>
+    assert.equal(dv({ combat: { armorValue: 5 }, traits: { maneuverBonus: 2 } }), 5));
+  await t.test("Manövermalus zählt nicht", () =>
+    assert.equal(dv({ combat: { armorValue: 5 }, traits: { maneuverBonus: -3 } }), 5));
 
   await t.test("alles zusammen", () =>
     assert.equal(dv({
       combat: { armorValue: 5, defensiveBonus: 3 },
       traits: { racialArmorBonus: 2, maneuverBonus: 1 },
       classFeatures: { armorBonus: 1 },
-    }, [armor({ armor: 4 })]), 5 + 2 + 1 + 4 + 3 + 1));
+    }, [armor({ armor: 4 })]), 5 + 2 + 1 + 4 + 3));
 
   await t.test("nicht getragene Rüstung zählt nicht", () =>
     assert.equal(dv({ combat: { armorValue: 5 } }, [{ type: "armor", system: { equipped: false, armor: 9 } }]), 5));
 
   await t.test("ohne Actor Fallback 5", () => assert.equal(actorDefenseValue(null), 5));
+
+  // Der Bogen ruft defenseValue() aus bonuses.mjs, der Kampf actorDefenseValue().
+  // Ausserhalb eines Kampfs muessen beide denselben Wert liefern - vorher
+  // rechnete jede Stelle selbst und jede anders.
+  await t.test("Bogen und Kampf stimmen ueberein", () => {
+    globalThis.game.combat = undefined;
+    for (const make of [character, creature]) {
+      for (const def of [-2, 0, 3]) {
+        for (const man of [-2, 0, 3]) {
+          const a = make({
+            combat: { armorValue: 4, defensiveBonus: def },
+            traits: { racialArmorBonus: 1, maneuverBonus: man },
+            items: [armor({ armor: 2 })],
+          });
+          a.system.classFeatures = { armorBonus: 1 };
+          assert.equal(actorDefenseValue(a), defenseValue(a), `${a.type} def ${def} man ${man}`);
+        }
+      }
+    }
+  });
 });
 
 test("Active-Effect-Werte werden im Kampf gelesen", async t => {
-  await t.test("Manöverbonus", () =>
-    assert.equal(maneuverBonus(character({ traits: { maneuverBonus: 3 } })), 3));
-  await t.test("Manöverbonus fehlt -> 0", () =>
-    assert.equal(maneuverBonus(character()), 0));
   // Flammenschwert setzte diesen Flag, gelesen hat ihn vorher niemand.
   await t.test("Waffenschaden aus Zauber", () =>
     assert.equal(bonusWeaponDamage(character({ flags: { aborea: { extraWeaponDamage: 4 } } })), 4));
@@ -179,9 +200,9 @@ test("Verteidigungswert folgt der Rundenerklaerung", async t => {
     assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" })), 5 + 2);
   });
 
-  await t.test("Ruestung und Manoeverbonus bleiben unberuehrt", () => {
+  await t.test("Ruestung bleibt, Manoeverbonus zaehlt nicht", () => {
     inRunde(3);
-    assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" }, { traits: { maneuverBonus: 2 } })), 5 + 2);
+    assert.equal(actorDefenseValue(held({ round: 3, mode: "spell" }, { traits: { maneuverBonus: 2 } })), 5);
   });
 
   await t.test("roundSplitOf liefert die Aufteilung der laufenden Runde", () => {

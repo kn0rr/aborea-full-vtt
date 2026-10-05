@@ -81,10 +81,6 @@
             <input class="combat-balance" type="number" name="system.combat.offensiveBonus" value="{{system.combat.offensiveBonus}}" />
           </div>
 
-          {{#if system.combat.maneuverBonus}}
-          <label class="trait-modified" title="{{localize "ABOREA.TraitModifierHint"}}">{{localize "ABOREA.EffectiveOffensiveBonus"}} <input type="number" value="{{system.combat.effectiveOffensiveBonus}}" disabled /></label>
-          {{/if}}
-
           <div class="field-with-hint">
             <label title="Defensivbonus = Teil des Kampfbonus, der zum Verteidigungswert addiert wird. Verteidigungswert = Rüstungswert + Defensivbonus.">
               {{localize "ABOREA.DefensiveBonus"}}

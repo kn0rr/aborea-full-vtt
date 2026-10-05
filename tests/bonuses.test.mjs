@@ -8,7 +8,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   skillBonus, weaponCombatBonus, untrainedPenalty, minStrengthPenalty,
-  attributeValue, getSkillDef,
+  attributeValue, getSkillDef, maneuverBonus, attributeCheckBonus,
+  armorValue, defenseValue,
 } from "../module/bonuses.mjs";
 
 test("Attributwert kommt aus system.attributes, nicht finalAttributes", async t => {
@@ -178,5 +179,87 @@ test("weaponCombatBonus", async t => {
   await t.test("ohne ausgebildete Fertigkeit null", () => {
     const npc = creature({ weaponSkills: {} });
     assert.equal(weaponCombatBonus(npc, { skillKeys: ["aexte"], trainedOnly: true }), null);
+  });
+});
+
+test("Manöverbonus gilt für Proben, nicht für den Kampf", async t => {
+  // Beistand, Segnung, Fluch, Trübung setzen system.traits.maneuverBonus.
+  // Ein Manöver ist eine Probe; Angriff und Verteidigung sind keine.
+  const mit = v => character({
+    traits: { maneuverBonus: v },
+    skills: { athletik: { rank: 2 }, stichwaffe: { rank: 1, attribute: "ge" } },
+  });
+
+  await t.test("Wert aus den Traits", () => assert.equal(maneuverBonus(mit(3)), 3));
+  await t.test("fehlt -> 0",          () => assert.equal(maneuverBonus(character()), 0));
+  await t.test("kein Actor -> 0",     () => assert.equal(maneuverBonus(null), 0));
+  await t.test("Unsinn -> 0, nicht NaN", () => assert.equal(maneuverBonus(mit("x")), 0));
+
+  for (const v of [-3, -1, 0, 1, 3]) {
+    await t.test(`Fertigkeitsprobe verschiebt sich um genau ${v}`, () => {
+      assert.equal(skillBonus(mit(v), "athletik").total - skillBonus(mit(0), "athletik").total, v);
+      assert.equal(skillBonus(mit(v), "athletik").maneuver, v);
+    });
+    await t.test(`Attributprobe verschiebt sich um genau ${v}`, () =>
+      assert.equal(attributeCheckBonus(mit(v), "st").total - attributeCheckBonus(mit(0), "st").total, v));
+    await t.test(`Kampfbonus bleibt bei ${v} unverändert`, () =>
+      assert.equal(weaponCombatBonus(mit(v), { skillKeys: ["stichwaffe"] }).total,
+                   weaponCombatBonus(mit(0), { skillKeys: ["stichwaffe"] }).total));
+    await t.test(`abschaltbar für Kampfwürfe (${v})`, () =>
+      assert.equal(skillBonus(mit(v), "athletik", { maneuver: false }).total,
+                   skillBonus(mit(0), "athletik").total));
+  }
+
+  await t.test("Aufschlüsselung enthält ihn und summiert zum Total", () => {
+    const b = skillBonus(mit(2), "athletik");
+    assert.ok(b.breakdown.some(p => p.value === 2 && /Man/.test(p.label)));
+    assert.equal(b.breakdown.reduce((s, p) => s + p.value, 0), b.total);
+    const a = attributeCheckBonus(mit(-2), "st");
+    assert.equal(a.breakdown.reduce((s, p) => s + p.value, 0), a.total);
+  });
+
+  await t.test("ohne Manöverbonus keine leere Zeile", () =>
+    assert.equal(attributeCheckBonus(character(), "st").breakdown.length, 1));
+
+  await t.test("Attributprobe nimmt system.attributes, nicht finalAttributes", () =>
+    assert.equal(attributeCheckBonus(creature(), "st").attrBonus, 1)); // ST 7
+});
+
+test("Rüstungs- und Verteidigungswert: eine Rechnung für alle Actor-Typen", async t => {
+  const voll = make => {
+    const a = make({
+      combat: { armorValue: 3, defensiveBonus: 2 },
+      traits: { racialArmorBonus: 1, maneuverBonus: 4 },
+      items: [armor({ armor: 4 }), item("armor", { equipped: false, armor: 9 })],
+    });
+    a.system.classFeatures = { armorBonus: 2 };  // die Kreatur-Attrappe kennt das Feld nicht
+    return a;
+  };
+
+  for (const [name, make] of [["Charakter", character], ["Kreatur", creature]]) {
+    // Der NSC-Bogen liess Rassen- und Klassenbonus fallen.
+    await t.test(`${name}: Grundwert + Rasse + Klasse + getragene Rüstung`, () =>
+      assert.equal(armorValue(voll(make)), 3 + 1 + 2 + 4));
+    await t.test(`${name}: RW = Rüstung + gespeicherter Defensivbonus, ohne Manöverbonus`, () =>
+      assert.equal(defenseValue(voll(make)), 3 + 1 + 2 + 4 + 2));
+  }
+
+  await t.test("übergebener Defensivbonus ersetzt den gespeicherten", () => {
+    assert.equal(defenseValue(voll(character), 0), 10);
+    assert.equal(defenseValue(voll(character), 5), 15);
+  });
+
+  await t.test("Invariante: RW − Rüstung = Defensivbonus, auch negativ", () => {
+    for (const def of [-4, -1, 0, 1, 6]) {
+      const a = character({ combat: { armorValue: 5, defensiveBonus: def } });
+      assert.equal(defenseValue(a) - armorValue(a), def);
+    }
+  });
+
+  await t.test("leere Eingaben: endliche Zahlen", () => {
+    assert.equal(armorValue(null), 0);
+    assert.equal(armorValue({ system: {}, items: [] }), 0);
+    assert.equal(defenseValue({ system: {} }), 0);
+    assert.ok(Number.isFinite(armorValue({ system: { combat: { armorValue: "x" } } })));
   });
 });

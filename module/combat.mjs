@@ -1,7 +1,8 @@
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
 import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
-import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown } from "./bonuses.mjs";
+import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown,
+         defenseValue } from "./bonuses.mjs";
 import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
          defenseAgainst, defenseRemaining, spendDefense, fleeDefenseBonus, isFleeing,
          fleeOpponents, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
@@ -250,25 +251,11 @@ function _fleeBonus(defender, attackerActor) {
   return fleeDefenseBonus(_initiativeOf(defender), _initiativeOf(attackerActor));
 }
 
-/** Manöverbonus aus Active Effects (Beistand, Fluch, Trübung …). */
-function _maneuverBonus(actor) {
-  return Number(actor?.system?.traits?.maneuverBonus ?? 0);
-}
-
 /** Zusätzlicher Waffenschaden aus Active Effects (Flammenschwert …). */
 function _bonusWeaponDamage(actor) {
   return Number(actor?.flags?.aborea?.extraWeaponDamage ?? 0);
 }
 
-/**
- * Verteidigungswert: Rüstung (Grundwert + Rassen-/Klassenbonus + getragene
- * Rüstungen) plus Defensivbonus und Manöverbonus.
- *
- * Früher las der Charakterzweig system.combat.totalArmorValue — das wird aber
- * nur auf dem Sheet-Klon gesetzt und nie persistiert, der Zweig lief also nie.
- * Der Rest liess Rassen- und Klassenbonus fallen, sodass der RW im Kampf nicht
- * zum RW auf dem Bogen passte.
- */
 /**
  * Der Anteil des Defensivbonus, der gegen einen bestimmten Angreifer zählt.
  *
@@ -305,27 +292,18 @@ async function _consumeDefense(defender, attackerActor, wanted = null) {
 async function _dvConsuming(defender, attackerActor, wanted = null) {
   if (!defender) return 5;
   const applied = await _consumeDefense(defender, attackerActor, wanted);
-  const baseArmor = Number(defender.system.combat?.armorValue ?? 0)
-                  + Number(defender.system.traits?.racialArmorBonus ?? 0)
-                  + Number(defender.system.classFeatures?.armorBonus ?? 0);
-  const armorFromItems = defender.items
-    .filter(i => i.type === "armor" && i.system.equipped)
-    .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-  return ABOREA.defenseValue(baseArmor + armorFromItems,
-    applied + _maneuverBonus(defender) + _fleeBonus(defender, attackerActor));
+  return defenseValue(defender, applied + _fleeBonus(defender, attackerActor));
 }
 
+/**
+ * Verteidigungswert im Kampf: Rüstungswert (bonuses.mjs, dieselbe Rechnung
+ * wie auf dem Bogen) plus der Defensivbonus, der gegen diesen Angreifer
+ * zählt, plus Fluchtbonus. Ein Manöverbonus gehört nicht dazu — Kampf ist
+ * kein Manöver.
+ */
 function _dv(actor, attackerActor = null) {
   if (!actor) return 5;
-  const baseArmor = Number(actor.system.combat?.armorValue ?? 0)
-                  + Number(actor.system.traits?.racialArmorBonus ?? 0)
-                  + Number(actor.system.classFeatures?.armorBonus ?? 0);
-  const armorFromItems = actor.items
-    .filter(i => i.type === "armor" && i.system.equipped)
-    .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-  return ABOREA.defenseValue(
-    baseArmor + armorFromItems,
-    _defensiveFor(actor, attackerActor) + _maneuverBonus(actor) + _fleeBonus(actor, attackerActor));
+  return defenseValue(actor, _defensiveFor(actor, attackerActor) + _fleeBonus(actor, attackerActor));
 }
 
 function _sign(n) { return n >= 0 ? `+${n}` : `${n}`; }
@@ -416,7 +394,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const initialBonus    = weapons[0] ? weaponCombatBonus(actor, { weapon: weapons[0] }) : null;
     const initialPenalty  = initialBonus?.untrained ?? 0;
     const minStrengthMod  = minStrengthPenalty(actor);
-    const maneuverMod     = _maneuverBonus(actor);
 
     // Gezielte Zauber & Wunder
     const targetedSpells = actor.items.filter(i =>
@@ -426,7 +403,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     // skillBonus kennt das magicAttribute der Klasse, holt NPC- und
     // Kreaturenränge aus magicSkills und vergibt bei Magie keinen
     // Ungelernt-Malus.
-    const spellB = skillBonus(actor, "gezielteSprueche");
+    const spellB = skillBonus(actor, "gezielteSprueche", { maneuver: false });
     const spellAttackBonus = spellB.total;
     const currentMp    = _getCurrentMp(actor);
     const currentMpMax = Number(actor.system.resources?.mp?.max ?? currentMp);
@@ -479,7 +456,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       globalSituMod,
       initialPenalty,
       minStrengthMod,
-      maneuverMod,
     };
   }
 
@@ -723,7 +699,6 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         // Der Ungelernt-Malus steckt bereits im Kampfbonus und damit im Deckel
         // des Offensivbonus — hier würde er ein zweites Mal ziehen.
         minStrengthMod:   minStrengthPenalty(actor),
-        maneuverMod:      _maneuverBonus(actor),
         situMod:          Number(data.situMod || 0),
         targetActor,
         targetDefense:    targetActor ? _dv(targetActor, actor) : Number(data.manualDefense || 5),
@@ -988,13 +963,13 @@ async function _executeSpellAttack(attackerActor, { spell, mpCost, baseCost, mpP
 
 // ── Internal: roll + chat ────────────────────────────────────────
 
-async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
+async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod = 0, situMod, targetActor, targetDefense, attackerImg = "", targetImg = "" }) {
   // Der Angriff ist zugleich die Erklärung, falls noch keine vorliegt.
   await declareRound(attackerActor, { mode: "weapon", offensive: offBonus, lock: true });
   // Der Verteidiger verbraucht jetzt seinen Defensivbonus gegen diesen Angreifer.
   if (targetActor) targetDefense = await _dvConsuming(targetActor, attackerActor);
   // Der Ungelernt-Malus steckt schon im Kampfbonus und damit im Offensivbonus.
-  const effectiveOffBonus = offBonus + maneuverMod + minStrengthMod;
+  const effectiveOffBonus = offBonus + minStrengthMod;
   const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
 
   if (roll.naturalOne) {
@@ -1006,7 +981,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
         target: targetActor?.name, targetImg,
         weapon: weapon.name,
         rollFormula: roll.formula, rollTotal: 0,
-        offBonus, minStrengthMod, maneuverMod, situMod,
+        offBonus, minStrengthMod, situMod,
         attackValue: 0, defenseValue: targetDefense,
         hit: false, damage: 0, patzer: true, critical: false,
       })
@@ -1041,7 +1016,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
       targetActorId: targetActor?.id,
       weapon: weapon.name,
       rollFormula: roll.formula, rollTotal: roll.total,
-      offBonus, minStrengthMod, maneuverMod, situMod,
+      offBonus, minStrengthMod, situMod,
       attackValue, defenseValue: targetDefense,
       hit, damage, patzer: false, critical: roll.critical,
       weaponDamage: weaponDmg, bonusDamage: bonusDmg, critBonus, autoApplied,
@@ -1085,13 +1060,12 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = nul
     await declareRound(actor, { mode: "weapon", offensive: plan.offBonus, lock: true });
 
     const minStrengthMod = minStrengthPenalty(actor);
-    const maneuverMod    = _maneuverBonus(actor);
     const roll = await rollOpenD10({ label: game.i18n.localize("ABOREA.Attack"), skipVisual: true });
     rolls.push(...roll.rolls);
 
     const attackValue = roll.naturalOne
       ? 0
-      : roll.total + plan.offBonus + maneuverMod + minStrengthMod + plan.situMod;
+      : roll.total + plan.offBonus + minStrengthMod + plan.situMod;
     const hit = !roll.naturalOne && attackValue > targetDefense;
     if (hit) anyHit = true;
 
@@ -1108,7 +1082,7 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = nul
       <div class="ac-group-row ${resultClass}">
         <span class="acg-name">${actor.name}</span>
         <span class="acg-weapon">${plan.weapon?.name ?? "Angriff"}</span>
-        <span class="acg-roll">${roll.formula}${_sign(plan.offBonus + maneuverMod + minStrengthMod + plan.situMod)}</span>
+        <span class="acg-roll">${roll.formula}${_sign(plan.offBonus + minStrengthMod + plan.situMod)}</span>
         <span class="acg-value">${roll.naturalOne ? "—" : attackValue}</span>
         <span class="acg-dv" title="Verteidigungswert gegen diesen Angreifer">RW ${targetDefense}</span>
         <span class="acg-result">${resultLabel}</span>
@@ -1162,7 +1136,7 @@ function _buildCardHeader(attacker, attackerImg, target, targetImg) {
 function _buildAttackCard({
   attacker, attackerImg = "",
   target,   targetImg = "",   targetActorId,
-  weapon, rollFormula, rollTotal, offBonus, minStrengthMod = 0, maneuverMod = 0, situMod,
+  weapon, rollFormula, rollTotal, offBonus, minStrengthMod = 0, situMod,
   attackValue, defenseValue, hit, damage, patzer, critical,
   weaponDamage = 0, bonusDamage = 0, critBonus = 0, autoApplied = false
 }) {
@@ -1173,9 +1147,6 @@ function _buildAttackCard({
 
   const minStrengthRow = minStrengthMod
     ? `<div class="ac-row ac-penalty"><span>Mindeststärke</span><span>${_sign(minStrengthMod)}</span></div>`
-    : "";
-  const maneuverRow = maneuverMod
-    ? `<div class="ac-row"><span>Manöverbonus</span><span>${_sign(maneuverMod)}</span></div>`
     : "";
   const modRow = situMod !== 0
     ? `<div class="ac-row"><span>Situationsmod.</span><span>${_sign(situMod)}</span></div>`
@@ -1216,7 +1187,6 @@ function _buildAttackCard({
       <div class="ac-row"><span>Waffe</span><span>${weapon}</span></div>
       <div class="ac-row"><span>Würfelwurf</span><span>${rollFormula}${patzer ? " (Patzer!)" : ""}</span></div>
       <div class="ac-row"><span>Offensivbonus</span><span>${_sign(offBonus)}</span></div>
-      ${maneuverRow}
       ${minStrengthRow}
       ${modRow}
       <div class="ac-row ac-total"><span>Angriffswert</span><span><strong>${patzer ? "—" : attackValue}</strong></span></div>
@@ -1307,7 +1277,6 @@ async function _resolveTiebreak(combat) {
 export {
   _dv                as actorDefenseValue,
   _spellDamage       as spellDamage,
-  _maneuverBonus     as maneuverBonus,
   _bonusWeaponDamage as bonusWeaponDamage,
   _hpColor           as hpColor,
   _split             as roundSplitOf,

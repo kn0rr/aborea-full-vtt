@@ -136,6 +136,60 @@ export function minStrengthPenalty(actor, attributes = null) {
 }
 
 /**
+ * Manöverbonus aus Active Effects (Beistand, Segnung, Fluch, Trübung …).
+ *
+ * Er gilt für Manöver — Fertigkeits- und Attributproben —, nicht im Kampf:
+ * weder auf den Angriff noch auf den Verteidigungswert. Früher rechnete der
+ * Kampf ihn in beide ein, der Charakterbogen dagegen in keins.
+ */
+export function maneuverBonus(actor) {
+  return Number(actor?.system?.traits?.maneuverBonus ?? 0) || 0;
+}
+
+/**
+ * Bonus einer Attributprobe: Attributbonus plus Manöverbonus.
+ * @returns {{attrKey, attrBonus, maneuver, total, label, breakdown}}
+ */
+export function attributeCheckBonus(actor, attrKey) {
+  const attrBonus = ABOREA.attributeBonus(attributeValue(actor, attrKey));
+  const maneuver  = maneuverBonus(actor);
+  const label     = game.i18n.localize(ABOREA.attributes[attrKey] ?? attrKey);
+  const breakdown = [{ label, value: attrBonus }];
+  if (maneuver) breakdown.push({ label: game.i18n.localize("ABOREA.TraitManeuverBonus"), value: maneuver });
+  return { attrKey, attrBonus, maneuver, total: attrBonus + maneuver, label, breakdown };
+}
+
+/**
+ * Rüstungswert: Grundwert + Rassen- und Klassenbonus + getragene Rüstungen.
+ *
+ * Gilt für alle Actor-Typen gleich. Vorher stand diese Summe viermal im Code
+ * — zweimal auf dem Bogen, zweimal im Kampf —, und der NSC-Bogen liess
+ * Rassen- und Klassenbonus fallen.
+ */
+export function armorValue(actor) {
+  const s = actor?.system ?? {};
+  const base = Number(s.combat?.armorValue ?? 0)
+             + Number(s.traits?.racialArmorBonus ?? 0)
+             + Number(s.classFeatures?.armorBonus ?? 0);
+  const fromItems = (actor?.items ?? [])
+    .filter(i => i.type === "armor" && i.system?.equipped)
+    .reduce((sum, i) => sum + Number(i.system.armor ?? 0), 0);
+  return (base + fromItems) || 0;
+}
+
+/**
+ * Verteidigungswert = Rüstungswert + Defensivbonus.
+ *
+ * Der Defensivbonus wird übergeben, weil er im Kampf von der Rundenerklärung
+ * und dem bereits verbrauchten Vorrat abhängt (combat.mjs), auf dem Bogen
+ * dagegen der gespeicherte Wert ist. Ohne Angabe gilt der gespeicherte.
+ */
+export function defenseValue(actor, defensive = null) {
+  const def = defensive ?? Number(actor?.system?.combat?.defensiveBonus ?? 0);
+  return ABOREA.defenseValue(armorValue(actor), Number(def) || 0);
+}
+
+/**
  * Vollständiger Fertigkeitsbonus eines Actors.
  *
  * @param {Actor}  actor
@@ -143,13 +197,15 @@ export function minStrengthPenalty(actor, attributes = null) {
  * @param {object} [opts]
  * @param {string} [opts.attrKey]      Attribut übersteuern (Waffen mit attrChoices).
  * @param {boolean|"auto"} [opts.minStrength="auto"]  "auto" = nur bei ST/GE.
+ * @param {boolean} [opts.maneuver=true]  Manöverbonus einrechnen — für Proben
+ *        ja, für Kampfwürfe und die Anzeige auf dem Bogen nein.
  * @param {object} [opts.attributes]  Attributblock übersteuern — für den Recalc,
  *        der mit frisch berechneten, noch nicht persistierten Werten arbeitet.
  * @returns {{attrKey, attrBonus, rank, classBonus, raceBonus, untrained,
- *            minStrength, total, label, breakdown}}
+ *            minStrength, maneuver, total, label, breakdown}}
  *          `breakdown` ist eine Liste aus {label, value} für Karten und Dialoge.
  */
-export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStrength = "auto", attributes = null } = {}) {
+export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStrength = "auto", maneuver: withManeuver = true, attributes = null } = {}) {
   const def       = getSkillDef(actor, skillKey);
   const attrKey   = resolveAttributeKey(actor, skillKey, def, attrOverride);
   const attrBonus = ABOREA.attributeBonus(attributeValue(actor, attrKey, attributes));
@@ -160,6 +216,7 @@ export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStr
 
   const applyMinSt = minStrength === "auto" ? ["st", "ge"].includes(attrKey) : !!minStrength;
   const minSt      = applyMinSt ? minStrengthPenalty(actor, attributes) : 0;
+  const maneuver   = withManeuver ? maneuverBonus(actor) : 0;
 
   const breakdown = [{ label: game.i18n.localize(ABOREA.attributes[attrKey] ?? attrKey), value: attrBonus }];
   if (rank)       breakdown.push({ label: game.i18n.localize("ABOREA.Rank"),      value: rank });
@@ -167,11 +224,12 @@ export function skillBonus(actor, skillKey, { attrKey: attrOverride = "", minStr
   if (raceBonus)  breakdown.push({ label: game.i18n.localize("ABOREA.RacialBonus"), value: raceBonus });
   if (untrained)  breakdown.push({ label: "Ungelernt",     value: untrained });
   if (minSt)      breakdown.push({ label: "Mindeststärke", value: minSt });
+  if (maneuver)   breakdown.push({ label: game.i18n.localize("ABOREA.TraitManeuverBonus"), value: maneuver });
 
   return {
     attrKey, attrBonus, rank, classBonus, raceBonus,
-    untrained, minStrength: minSt,
-    total: attrBonus + rank + classBonus + raceBonus + untrained + minSt,
+    untrained, minStrength: minSt, maneuver,
+    total: attrBonus + rank + classBonus + raceBonus + untrained + minSt + maneuver,
     label: def.label ?? def.name ?? game.i18n.localize(ABOREA.skills?.[skillKey]?.label ?? skillKey),
     breakdown,
   };
@@ -190,7 +248,8 @@ export function weaponSkillKeys(weapon) {
  *
  * Der Mindeststärke-Malus steckt bewusst NICHT drin: er wirkt laut Regel auf
  * den Angriff, nicht auf den Kampfbonus — sonst würde er auch die defensive
- * Hälfte der Aufteilung drücken.
+ * Hälfte der Aufteilung drücken. Der Manöverbonus ebenfalls nicht: Kampf ist
+ * kein Manöver.
  *
  * @param {object}  [opts]
  * @param {Item}    [opts.weapon]        Waffe — liefert Fertigkeiten und Attribut.
@@ -204,7 +263,7 @@ export function weaponCombatBonus(actor, { weapon = null, skillKeys = null, trai
   let best = null;
   for (const key of candidates) {
     if (trainedOnly && Number(getSkillDef(actor, key).rank ?? 0) <= 0) continue;
-    const b = skillBonus(actor, key, { attrKey: weapon?.system?.attr || "", minStrength: false, attributes });
+    const b = skillBonus(actor, key, { attrKey: weapon?.system?.attr || "", minStrength: false, maneuver: false, attributes });
     if (!best || b.total > best.total) best = { ...b, skillKey: key };
   }
   return best;

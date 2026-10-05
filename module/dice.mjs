@@ -1,5 +1,5 @@
 import { ABOREA } from "./config.mjs";
-import { skillBonus, formatBreakdown } from "./bonuses.mjs";
+import { skillBonus, attributeCheckBonus, formatBreakdown } from "./bonuses.mjs";
 
 function ensureDiceOverlay() {
   let overlay = document.getElementById("aborea-dice-overlay");
@@ -103,20 +103,18 @@ export async function rollOpenD10({ label = "ABOREA.RollOpenD10", skipVisual = f
 }
 
 export async function rollAttribute(actor, attrKey) {
-  const attrValue = actor.system.finalAttributes?.[attrKey]?.value
-                 ?? actor.system.attributes?.[attrKey]?.value ?? 5;
-  const bonus  = ABOREA.attributeBonus(attrValue);
-  const label  = ABOREA.attributes[attrKey] ?? attrKey;
-  const roll   = await rollOpenD10({ label });
-  const total  = roll.total + bonus;
+  // Dieselbe Quelle wie die Probe im Dialog — inklusive Manöverbonus.
+  const b      = attributeCheckBonus(actor, attrKey);
+  const roll   = await rollOpenD10({ label: b.label });
+  const total  = roll.total + b.total;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
     content: `
       <div class="aborea-chat-card">
-        <h3>${game.i18n.localize(label)}</h3>
+        <h3>${b.label}</h3>
         <p>${game.i18n.localize("ABOREA.Roll")}: ${roll.formula}</p>
-        <p>${game.i18n.localize("ABOREA.Bonus")}: ${bonus >= 0 ? "+" : ""}${bonus}</p>
+        ${formatBreakdown(b.breakdown).map(l => `<p>${l}</p>`).join("")}
         <p><strong>${game.i18n.localize("ABOREA.Total")}: ${total}</strong></p>
       </div>
     `

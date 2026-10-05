@@ -6,7 +6,7 @@ import { ABOREA } from "./config.mjs";
 import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
 import { rollSkill, rollAttribute } from "./dice.mjs";
-import { skillBonus, weaponCombatBonus, getSkillDef } from "./bonuses.mjs";
+import { skillBonus, weaponCombatBonus, getSkillDef, armorValue, defenseValue } from "./bonuses.mjs";
 import { splitRange, carrySplit } from "./declaration.mjs";
 import { openAttackDialog, declareRound, currentCombat } from "./combat.mjs";
 import { isLootable, lootableItems, hasCoins, lootRecipient, requestLootAction } from "./loot.mjs";
@@ -184,11 +184,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       system.skills[key] = c;
     }
     system.customSkills = normalizeCustomSkills(system.customSkills);
-    const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-    const armorFromItems = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-    const baseArmor = Number(system.combat?.armorValue ?? 0) + Number(system.traits?.racialArmorBonus ?? 0) + Number(system.classFeatures?.armorBonus ?? 0);
-    system.combat.totalArmorValue = baseArmor + armorFromItems;
-    system.combat.defenseValue = ABOREA.defenseValue(system.combat.totalArmorValue, system.combat?.defensiveBonus ?? 0);
+    // Dieselbe Rechnung wie im Kampf (bonuses.mjs)
+    system.combat.totalArmorValue = armorValue({ system, items: actor.items });
+    system.combat.defenseValue    = defenseValue({ system, items: actor.items });
     system.combat.initiative = ABOREA.initiativeBonus(actor);
     // Grenzen der Offensiv/Defensiv-Aufteilung — ein negativer Kampfbonus
     // laesst sich verschieben, darf also nicht auf [0, Bonus] geklemmt werden.
@@ -424,29 +422,20 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
 
   _prepareNpcData(actor, system) {
     for (const [key, data] of Object.entries(system.attributes ?? {})) { data.bonus = ABOREA.attributeBonus(data.value); data.label = ABOREA.attributes[key]; }
-    const armorItems = actor.items.filter(i => i.type === "armor" && i.system.equipped);
-    const armorFromItems = armorItems.reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
-    const baseArmorValue = Number(system.combat?.armorValue ?? 0);
-    system.combat.totalArmorValue = baseArmorValue + armorFromItems;
-    system.combat.armorFromItems  = armorFromItems;
-
-    // Trait-Boni aus Active Effects (z.B. Beistand, Fluch, Trübung)
-    const maneuverBonus = Number(system.traits?.maneuverBonus ?? 0);
-    system.combat.maneuverBonus          = maneuverBonus;
-    system.combat.effectiveOffensiveBonus = Number(system.combat?.offensiveBonus ?? 0) + maneuverBonus;
-
-    // Verteidigungswert inklusive Manöverbonus
-    system.combat.defenseValue = ABOREA.defenseValue(
-      system.combat.totalArmorValue,
-      Number(system.combat?.defensiveBonus ?? 0) + maneuverBonus
-    );
+    // Dieselbe Rechnung wie Charakterbogen und Kampf (bonuses.mjs). Der
+    // Manöverbonus gehört nicht hinein — er gilt nur für Proben.
+    system.combat.totalArmorValue = armorValue({ system, items: actor.items });
+    system.combat.armorFromItems  = actor.items
+      .filter(i => i.type === "armor" && i.system.equipped)
+      .reduce((s, i) => s + Number(i.system.armor ?? 0), 0);
+    system.combat.defenseValue    = defenseValue({ system, items: actor.items });
     system.combat.initiative = ABOREA.initiativeBonus(actor);
 
     // Waffenfähigkeiten aufbereiten + besten Kampfbonus berechnen
     const sign = n => n >= 0 ? `+${n}` : `${n}`;
     let bestCB = null; let bestCBLabel = ""; let bestCBDetail = "";
     system.weaponSkillRows = ABOREA.weaponSkillKeys.map(key => {
-      const b         = skillBonus(actor, key, { minStrength: false });
+      const b         = skillBonus(actor, key, { minStrength: false, maneuver: false });
       const rank      = b.rank;
       const attrKey   = b.attrKey;
       const attrBonus = b.attrBonus;
