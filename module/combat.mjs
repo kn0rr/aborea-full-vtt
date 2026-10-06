@@ -314,6 +314,70 @@ function _hpColor(pct) {
   return "#b91c1c";
 }
 
+/** Flag-Schlüssel für das zugewiesene Ziel. */
+export const TARGET_FLAG = "target";
+
+/**
+ * Das zugewiesene Ziel eines Kombattanten.
+ *
+ * Es steht am Kombattanten, nicht im DOM. Vorher war es reine
+ * Auswahlfeld-Zustand: jedes Neuzeichnen des Pults — und das geschieht nach
+ * jeder Änderung, auch nach dem Setzen eines Situationsmodifikators — hat die
+ * Zuweisung wieder auf "— Ziel wählen —" zurückgesetzt.
+ */
+export function combatantTarget(combatant) {
+  return combatant?.flags?.["aborea-v7"]?.[TARGET_FLAG] ?? "";
+}
+
+/** Setzt es; ein leerer Wert entfernt das Flag wieder. */
+export async function setCombatantTarget(combatant, targetId) {
+  if (!combatant) return "";
+  const id = String(targetId ?? "");
+  if (id) await combatant.setFlag("aborea-v7", TARGET_FLAG, id);
+  else if (combatantTarget(combatant)) await combatant.unsetFlag("aborea-v7", TARGET_FLAG);
+  return id;
+}
+
+/**
+ * Welches Ziel ist im Angriffsdialog vorausgewählt?
+ *
+ * Zuerst das im Kampfpult zugewiesene — es gilt, bis jemand es ändert.
+ * Vorher las der Dialog nur die eigene Markierung (T) des Benutzers: wer aus
+ * dem Kampfbericht angriff, fand das Ziel aus dem Pult nicht wieder.
+ * Danach die Markierung, sonst keins. Was nicht in der Liste steht, zählt
+ * nicht — ein besiegtes Ziel etwa.
+ */
+export function pickPreselectedTarget({ assignedTokenId = "", userTargetId = "", candidateIds = [] } = {}) {
+  const ids = new Set(candidateIds);
+  if (assignedTokenId && ids.has(assignedTokenId)) return assignedTokenId;
+  if (userTargetId && ids.has(userTargetId)) return userTargetId;
+  return "";
+}
+
+/** Der Kombattant des Angreifers im laufenden Kampf — über den Token, nicht den Actor. */
+function _attackerCombatant(attackerTokenId, attackerActor = null) {
+  const combat = currentCombat();
+  if (!combat) return null;
+  if (attackerTokenId) return combat.combatants.find(c => c.tokenId === attackerTokenId) ?? null;
+  const mine = combat.combatants.filter(c => c.actorId === attackerActor?.id);
+  return mine.length === 1 ? mine[0] : null;   // drei Goblins: nicht raten
+}
+
+/** Token des zugewiesenen Ziels, oder "". */
+function _assignedTargetTokenId(attackerTokenId, attackerActor = null) {
+  const own = _attackerCombatant(attackerTokenId, attackerActor);
+  const id  = combatantTarget(own);
+  return id ? currentCombat()?.combatants.get(id)?.tokenId ?? "" : "";
+}
+
+/** Hält das gewählte Ziel am Kombattanten fest, falls es ein Kombattant ist. */
+function _rememberTarget(attackerTokenId, attackerActor, targetTokenId) {
+  const own    = _attackerCombatant(attackerTokenId, attackerActor);
+  const target = currentCombat()?.combatants.find(c => c.tokenId === targetTokenId);
+  if (!own?.isOwner || !target || combatantTarget(own) === target.id) return;
+  setCombatantTarget(own, target.id).catch(err => console.warn("ABOREA | Ziel merken", err));
+}
+
 /** Zielliste für den Angriffsdialog, ohne den Angreifer selbst. */
 function _buildTargetCandidates(attackerTokenId, attackerActor = null) {
   // Mit laufendem Kampf nur die Kombattanten, sonst alles Bespielbare auf der
@@ -323,10 +387,16 @@ function _buildTargetCandidates(attackerTokenId, attackerActor = null) {
   const combatTokenIds = laufend?.combatants.size
     ? new Set(laufend.combatants.map(c => c.tokenId).filter(Boolean))
     : null;
-  return selectTargetTokens(canvas?.tokens?.placeables ?? [], {
+  const tokens = selectTargetTokens(canvas?.tokens?.placeables ?? [], {
     attackerTokenId, attackerActorId: attackerActor?.id ?? "",
     combatTokenIds, lang: game.i18n.lang,
-  })
+  });
+  const preselected = pickPreselectedTarget({
+    assignedTokenId: _assignedTargetTokenId(attackerTokenId, attackerActor),
+    userTargetId:    game.user.targets.first()?.id ?? "",
+    candidateIds:    tokens.map(t => t.id),
+  });
+  return tokens
     .map(t => {
       const hp    = t.actor.system.resources?.hp ?? {};
       const hpVal = Number(hp.value ?? 0);
@@ -341,7 +411,7 @@ function _buildTargetCandidates(attackerTokenId, attackerActor = null) {
         hpPct:       pct,
         hpColor:     _hpColor(pct),
         img:         t.actor.img ?? "icons/svg/mystery-man.svg",
-        preselected: t.id === (game.user.targets.first()?.id ?? ""),
+        preselected: t.id === preselected,
       };
     });
 }
@@ -391,6 +461,7 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       tokens:     canvas?.tokens?.placeables ?? [],
       actorId:    actor.id,
     });
+    this._attackerTokenId = attackerTokenId;
     const initialBonus    = weapons[0] ? weaponCombatBonus(actor, { weapon: weapons[0] }) : null;
     const initialPenalty  = initialBonus?.untrained ?? 0;
     const minStrengthMod  = minStrengthPenalty(actor);
@@ -666,6 +737,9 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const resolve = this._resolve;
     this._resolve = null;
+
+    // Ein im Dialog geändertes Ziel gilt weiter — wie eine Zuweisung im Pult.
+    if (tokenId && !multiTokenIds.length) _rememberTarget(this._attackerTokenId, actor, tokenId);
 
     if (mode === "spell") {
       const spell        = actor.items.get(data.spellId);

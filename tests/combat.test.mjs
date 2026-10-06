@@ -7,7 +7,7 @@ import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { actorDefenseValue, spellDamage, bonusWeaponDamage, hpColor, roundSplitOf,
-         pickCombatId } from "../module/combat.mjs";
+         pickCombatId, pickPreselectedTarget } from "../module/combat.mjs";
 import { ABOREA } from "../module/config.mjs";
 import { defenseValue } from "../module/bonuses.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
@@ -265,5 +265,32 @@ test("pickCombatId: welcher Kampf gilt", async t => {
     assert.equal(pickCombatId({ combats: [], sceneId: "s1" }), "");
     assert.equal(pickCombatId({}), "");
     assert.equal(pickCombatId(), "");
+  });
+});
+
+test("pickPreselectedTarget: das Ziel aus dem Kampfpult gilt im Angriffsdialog", async t => {
+  // Vorher las der Dialog nur die eigene Markierung (T). Wer aus dem
+  // Kampfbericht angriff, fand das im Pult zugewiesene Ziel nicht wieder.
+  const liste = ["t1", "t2", "t3"];
+
+  await t.test("zugewiesenes Ziel vor der Markierung", () =>
+    assert.equal(pickPreselectedTarget({ assignedTokenId: "t2", userTargetId: "t3", candidateIds: liste }), "t2"));
+  await t.test("ohne Zuweisung die Markierung", () =>
+    assert.equal(pickPreselectedTarget({ userTargetId: "t3", candidateIds: liste }), "t3"));
+  await t.test("zugewiesenes Ziel nicht mehr in der Liste (besiegt): Markierung", () =>
+    assert.equal(pickPreselectedTarget({ assignedTokenId: "weg", userTargetId: "t1", candidateIds: liste }), "t1"));
+  await t.test("Markierung nicht in der Liste: keins", () =>
+    assert.equal(pickPreselectedTarget({ userTargetId: "fremd", candidateIds: liste }), ""));
+  await t.test("nichts gesetzt: keins", () =>
+    assert.equal(pickPreselectedTarget({ candidateIds: liste }), ""));
+  await t.test("leere Eingaben", () => {
+    assert.equal(pickPreselectedTarget(), "");
+    assert.equal(pickPreselectedTarget({ assignedTokenId: "t1" }), "");
+  });
+  await t.test("das Ergebnis steht immer in der Liste oder ist leer", () => {
+    for (const a of ["", "t1", "x"]) for (const u of ["", "t2", "y"]) {
+      const r = pickPreselectedTarget({ assignedTokenId: a, userTargetId: u, candidateIds: liste });
+      assert.ok(r === "" || liste.includes(r), `${a}/${u}`);
+    }
   });
 });

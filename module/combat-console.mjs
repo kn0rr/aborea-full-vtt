@@ -10,7 +10,7 @@
 import { roundSplit, splitRange, defenseRemaining, defenseSpentTotal } from "./declaration.mjs";
 import { registerSceneControlGroup } from "./scene-controls.mjs";
 import { clampSituMod, SETTINGS } from "./settings.mjs";
-import { declareRound, executeGroupAttack, openAttackDialog,
+import { declareRound, executeGroupAttack, openAttackDialog, combatantTarget,
          setCombatantSituMod, combatantSituMod, currentCombat } from "./combat.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -177,29 +177,8 @@ export function assignableTargets(rows, attackerId) {
   return (rows ?? []).filter(r => !r.defeated && r.id !== attackerId);
 }
 
-/** Flag-Schlüssel für das zugewiesene Ziel. */
-export const TARGET_FLAG = "target";
-
-/**
- * Das zugewiesene Ziel eines Kombattanten.
- *
- * Es steht am Kombattanten, nicht im DOM. Vorher war es reine
- * Auswahlfeld-Zustand: jedes Neuzeichnen des Pults — und das geschieht nach
- * jeder Änderung, auch nach dem Setzen eines Situationsmodifikators — hat die
- * Zuweisung wieder auf "— Ziel wählen —" zurückgesetzt.
- */
-export function combatantTarget(combatant) {
-  return combatant?.flags?.["aborea-v7"]?.[TARGET_FLAG] ?? "";
-}
-
-/** Setzt es; ein leerer Wert entfernt das Flag wieder. */
-export async function setCombatantTarget(combatant, targetId) {
-  if (!combatant) return "";
-  const id = String(targetId ?? "");
-  if (id) await combatant.setFlag("aborea-v7", TARGET_FLAG, id);
-  else if (combatantTarget(combatant)) await combatant.unsetFlag("aborea-v7", TARGET_FLAG);
-  return id;
-}
+// Das zugewiesene Ziel liegt in combat.mjs: auch der Angriffsdialog liest es.
+export { TARGET_FLAG, combatantTarget, setCombatantTarget } from "./combat.mjs";
 
 // ══════════════════════════════════════════════════════════════════
 //  AboreaCombatConsole — ApplicationV2

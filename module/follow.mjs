@@ -1,9 +1,13 @@
 // module/follow.mjs — Tokens folgen einem anderen Token
 //
 // Rechtsklick auf den Anführer, im Token-Menü "Folgen", und in der Liste die
-// Folgenden anhaken (openFollowDialog). Bewegt sich der Anführer, ziehen die
-// anderen als Schlange hinterher: jeder hält Anschluss an die Gruppe, bevorzugt
-// auf den Feldern, über die der Anführer gerade gegangen ist (planFollow).
+// Folgenden anhaken (openFollowDialog). Bewegt sich der Anführer, gehen die
+// anderen im Gänsemarsch seinen Weg nach, Feld für Feld (planFollow).
+//
+// Szenenwechsel: Läuft der Anführer in eine Teleport-Region, springen die
+// Folgenden mit — in derselben Szene wie in eine andere. Wird ein verknüpfter
+// Anführer in eine andere Szene gezogen, fragt das System, ob die Gruppe
+// mitkommt; beim Aktivieren einer Szene bietet es an, Gruppen herzuholen.
 //
 // Wege können versperrt sein. Foundry hilft dabei nicht: Token#findMovementPath
 // der v13.351 sucht keinen Weg, sondern beschneidet den geraden nur an der
@@ -22,7 +26,7 @@ export const FOLLOW_FLAG = "follow";
 const SYSTEM_ID = "aborea-v7";
 
 /** Wie viele Felder sich die Spur merkt. Mehr Folgende als das ergibt keinen Sinn. */
-export const TRAIL_LENGTH = 60;
+export const TRAIL_LENGTH = 200;
 
 /** Obergrenze der Wegsuche — ein eingeschlossener Token soll nicht die Sitzung einfrieren. */
 export const MAX_SEARCH_NODES = 6000;
@@ -186,119 +190,283 @@ export function extendTrail(trail = [], cells = [], max = TRAIL_LENGTH) {
 }
 
 /**
- * Plant die Bewegung aller Folgenden — als Schlange.
- *
- * Jeder hält Anschluss an die Gruppe. Wer über eine Kette von Nachbarn (ohne
- * Wand dazwischen) mit dem Anführer verbunden ist, bleibt stehen. Daraus
- * folgt: ein zweiter Plan direkt nach dem ersten bewegt niemanden mehr.
- *
- * Vorher bekam jeder bei jeder Bewegung einen festen Platz in der Spur, in
- * der Reihenfolge, in der er angehakt war. Das hatte zwei Folgen: wer hinten
- * stand, aber zuerst kam, lief durch den Vordermann hindurch nach vorn, und
- * die beiden tauschten bei jedem Schritt die Rollen; und wer schon richtig
- * stand, zog trotzdem um, sobald sich die Spur verschob.
- *
- * Wer umziehen muss, kommt nach seiner Nähe zum Anführer dran, jedes Mal neu,
- * und wählt ein freies Feld neben der Gruppe — bevorzugt eins, über das
- * der Anführer zuletzt gegangen ist, damit die Schlange in Gängen seiner
- * Spur folgt, sonst das ihm nächste. Ist keins erreichbar, geht er auf das
- * nächste Gruppenmitglied zu, so weit es geht; ist auch das unmöglich,
- * bleibt er.
- *
- * Kein Feld wird doppelt belegt, das des Anführers nie.
- *
- * @param {object} p
- * @param {{i,j}} p.leaderCell
- * @param {Array<{i,j}>} p.trail
- * @param {Array<{id, cell}>} p.followers
- * @param {(id) => object} p.searchFor  liefert je Folgendem {neighbors, blocked, cost, heuristic}
- * @returns {Array<{id, path, stuck}>}  in der Reihenfolge von `followers`;
- *          path beginnt beim aktuellen Feld, leer heisst: bleibt stehen
+ * Ein Weg ohne Schleifen: kommt ein Feld noch einmal vor, fällt alles
+ * dazwischen weg. Der Anführer darf Kreise gehen; die Folgenden gehen sie
+ * nicht nach.
  */
-export function planFollow({ leaderCell, trail = [], followers = [], searchFor }) {
-  const result  = new Array(followers.length);
-  const taken   = new Set([cellKey(leaderCell)]);
-  const placed  = [leaderCell];   // Anführer und alle, deren Feld feststeht
-  const search  = followers.map(f => searchFor(f.id) ?? {});
-  const nextTo  = (s, anchor, c) =>
-    (s.neighbors?.(anchor) ?? []).some(x => sameCell(x, c)) && !(s.blocked?.(anchor, c) ?? false);
+export function withoutLoops(cells = []) {
+  const out = [];
+  const at  = new Map();
+  for (const c of cells ?? []) {
+    const k = cellKey(c);
+    if (at.has(k)) {
+      out.length = at.get(k) + 1;
+      for (const [key, n] of at) if (n >= out.length) at.delete(key);
+      continue;
+    }
+    at.set(k, out.length);
+    out.push({ i: c.i, j: c.j });
+  }
+  return out;
+}
 
-  // 1. Wer über eine Kette von Nachbarn mit dem Anführer verbunden ist, hat
-  //    Anschluss und bleibt stehen. Das hängt nicht davon ab, in welcher
-  //    Reihenfolge man prüft — sonst wäre ein zweiter Plan nicht leer.
-  const stays = new Set();
+/**
+ * Freie, erreichbare Felder rund um ein Feld, nächstgelegene zuerst
+ * (Breitensuche). Für Plätze, die die Spur nicht hergibt, und für das
+ * Aufstellen nach einem Szenenwechsel.
+ */
+export function placeAround(center, count, { neighbors, blocked = () => false, exclude = new Set(), maxNodes = MAX_SEARCH_NODES } = {}) {
+  const out = [];
+  if (!center || typeof neighbors !== "function" || count <= 0) return out;
+  const seen  = new Set([cellKey(center)]);
+  const queue = [center];
+  while (queue.length && out.length < count && seen.size <= maxNodes) {
+    const here = queue.shift();
+    for (const next of neighbors(here) ?? []) {
+      const k = cellKey(next);
+      if (seen.has(k) || blocked(here, next)) continue;
+      seen.add(k);
+      queue.push(next);
+      if (!exclude.has(k)) out.push({ i: next.i, j: next.j });
+      if (out.length >= count) break;
+    }
+  }
+  return out;
+}
+
+/**
+ * Hängen alle Folgenden über eine Kette von Nachbarn (ohne Wand dazwischen)
+ * am Anführer? Zwei auf einem Feld oder einer auf dem Anführer: nein.
+ */
+export function allConnected(leaderCell, followers = [], search = []) {
+  const keys = followers.map(f => cellKey(f.cell));
+  if (new Set([cellKey(leaderCell), ...keys]).size !== keys.length + 1) return false;
+  const reached = new Set();
   const queue = [leaderCell];
   while (queue.length) {
     const here = queue.shift();
     for (const [n, f] of followers.entries()) {
-      if (stays.has(n) || taken.has(cellKey(f.cell))) continue;   // zwei auf einem Feld: nur einer bleibt
-      if (!nextTo(search[n], here, f.cell)) continue;
-      stays.add(n);
-      taken.add(cellKey(f.cell));
-      placed.push(f.cell);
+      if (reached.has(n)) continue;
+      const s = search[n] ?? {};
+      const next = (s.neighbors?.(here) ?? []).some(x => sameCell(x, f.cell));
+      if (!next || (s.blocked?.(here, f.cell) ?? false)) continue;
+      reached.add(n);
       queue.push(f.cell);
-      result[n] = { id: f.id, path: [], stuck: false };
     }
   }
+  return reached.size === followers.length;
+}
 
-  // 2. Die übrigen ziehen nach, der Nächste am Anführer zuerst. Wo sie jetzt
-  //    stehen, darf bis dahin niemand hin — vielleicht bleiben sie stecken.
-  const waiting = new Map();
-  const movers  = followers.map((f, n) => ({ f, n })).filter(({ n }) => !stays.has(n));
-  for (const { f } of movers) waiting.set(cellKey(f.cell), (waiting.get(cellKey(f.cell)) ?? 0) + 1);
-  const occupied = k => taken.has(k) || (waiting.get(k) ?? 0) > 0;
+/**
+ * Plant die Bewegung aller Folgenden — auf dem Weg des Anführers.
+ *
+ * Die Spur ist die Folge der Felder, über die der Anführer gegangen ist. Die
+ * Plätze liegen rückwärts darauf: Platz 0 das letzte Feld vor ihm, Platz 1
+ * das davor. Wer auf der Spur steht, geht auf ihr nach vorn bis zu seinem
+ * Platz — genau den Weg, den der Anführer gegangen ist, ohne Abkürzung. Wer
+ * neben der Spur steht, sucht sich den Weg dorthin (A*, um Wände herum).
+ *
+ * Solange jeder über Nachbarn am Anführer hängt (allConnected), bewegt sich
+ * niemand — ein kleiner Schritt oder einer zurück reisst die Schlange nicht.
+ * Erst wenn einer den Anschluss verliert, rückt sie nach.
+ *
+ * Die Reihenfolge ergibt sich aus der Lage, nicht aus dem Dialog: wer auf der
+ * Spur weiter vorn steht, bekommt den vorderen Platz — der i-te den i-ten.
+ * Jeder Platz gehört genau einem; so endet niemand auf dem Feld eines
+ * anderen, und niemand überholt. Abseits der Spur behält einen Platz neben
+ * dem Anführer, wer schon darauf steht.
+ *
+ * Vorgeschichte: Zuerst bekam jeder einen festen Platz in der Reihenfolge,
+ * in der er angehakt war — wer hinten stand, aber zuerst kam, lief durch den
+ * Vordermann hindurch. Danach hielt jeder nur Anschluss an die Gruppe — dann
+ * blieb hängen, wer über andere noch verbunden war, und wer nachrückte, nahm
+ * die kürzeste Linie statt des Wegs des Anführers.
+ *
+ * @param {object} p
+ * @param {{i,j}} p.leaderCell
+ * @param {Array<{i,j}>} p.trail      ältestes Feld zuerst
+ * @param {Array<{id, cell}>} p.followers
+ * @param {(id) => object} p.searchFor  je Folgendem {neighbors, blocked?, cost, heuristic}.
+ *        Ohne `blocked` sind die Wände unbekannt (Szene nicht auf der Leinwand):
+ *        dann geht nur, was auf der Spur liegt.
+ * @returns {Array<{id, path, stuck}>}  in der Reihenfolge von `followers`;
+ *          path beginnt beim aktuellen Feld, leer heisst: bleibt stehen
+ */
+export function planFollow({ leaderCell, trail = [], followers = [], searchFor }) {
+  const result = new Array(followers.length);
+  if (!followers.length) return [];
+  const leaderKey = cellKey(leaderCell);
+  const search = followers.map(f => searchFor(f.id) ?? {});
 
-  // Wie frisch ein Feld in der Spur ist: höher = zuletzt betreten.
-  const recency = new Map();
-  (trail ?? []).forEach((c, n) => recency.set(cellKey(c), n + 1));
+  // Hat noch jeder Anschluss, bewegt sich niemand. Ein kleiner Schritt oder
+  // ein Schritt zurück reisst die Schlange nicht auseinander — vorher rückte
+  // sie dann hin und her.
+  if (allConnected(leaderCell, followers, search)) {
+    return followers.map(f => ({ id: f.id, path: [], stuck: false }));
+  }
 
-  const h = n => search[n].heuristic ?? squareHeuristic;
-  movers.sort((a, b) => (h(a.n)(a.f.cell, leaderCell) - h(b.n)(b.f.cell, leaderCell)) || (a.n - b.n));
+  // Die Spur endet beim Anführer, und gilt nur, soweit sie zusammenhängt:
+  // nach einem Sprung (Teleport, Verschieben durch den Spielleiter) liegt
+  // davor ein anderer Weg, dem niemand nachgehen kann.
+  const full = extendTrail(trail, [leaderCell], Infinity);
+  let from = full.length - 1;
+  while (from > 0 && (search[0].neighbors?.(full[from]) ?? []).some(x => sameCell(x, full[from - 1]))) from--;
+  const spur = full.slice(from);
+  const L    = spur.length - 1;
+  const lastIdx = new Map();
+  spur.forEach((c, n) => lastIdx.set(cellKey(c), n));
 
-  for (const { f, n } of movers) {
-    const own = cellKey(f.cell);
-    waiting.set(own, waiting.get(own) - 1);
+  // Plätze rückwärts auf der Spur, jedes Feld nur einmal, nie das des Anführers.
+  const slots = [];
+  const inSlots = new Set([leaderKey]);
+  for (let n = L - 1; n >= 0; n--) {
+    const k = cellKey(spur[n]);
+    if (inSlots.has(k)) continue;
+    inSlots.add(k);
+    slots.push({ cell: spur[n], idx: n });
+  }
+  // Plätze neben der Spur, rund um den Anführer — für eine zu kurze Spur
+  // (frisch eingerichtet, nach dem Neuladen) und für wer abseits steht. Wer
+  // schon auf einem davon steht, bleibt dort.
+  const around = placeAround(leaderCell, followers.length * 2, {
+    neighbors: search[0].neighbors, blocked: search[0].blocked ?? (() => false), exclude: inSlots,
+  });
+  for (const c of around) slots.push({ cell: c, idx: -1 });
+
+  // Wer steht wo auf der Spur? Auf dem Anführer zählt als ganz vorn.
+  const posOf = f => cellKey(f.cell) === leaderKey ? L : (lastIdx.get(cellKey(f.cell)) ?? -1);
+  const ranked = followers.map((f, n) => ({ f, n, p: posOf(f) }));
+  const onTrail  = ranked.filter(r => r.p >= 0).sort((a, b) => (b.p - a.p) || (a.n - b.n));
+  const offTrail = ranked.filter(r => r.p < 0).sort((a, b) => {
+    const h = search[a.n].heuristic ?? squareHeuristic;
+    return (h(a.f.cell, leaderCell) - h(b.f.cell, leaderCell)) || (a.n - b.n);
+  });
+
+  // Zuordnung: der i-te auf der Spur bekommt den i-ten Platz. Jeder Platz
+  // gehört genau einem — so kann niemand auf dem Feld eines anderen enden,
+  // und niemand überholt, weil Plätze und Folgende dieselbe Reihenfolge haben.
+  const target = new Array(followers.length);
+  const used = new Set();
+  let k = 0;
+  const nextFree = () => { while (k < slots.length && used.has(k)) k++; return k < slots.length ? k : -1; };
+  for (const r of onTrail) {
+    const j = nextFree();
+    if (j < 0) break;
+    used.add(j);
+    target[r.n] = slots[j];
+  }
+  // Abseits der Spur: wer schon auf einem freien Platz steht, behält ihn.
+  const slotAt = new Map(slots.map((s, j) => [cellKey(s.cell), j]));
+  const rest = [];
+  for (const r of offTrail) {
+    const j = slotAt.get(cellKey(r.f.cell));
+    if (j !== undefined && !used.has(j)) { used.add(j); target[r.n] = slots[j]; }
+    else rest.push(r);
+  }
+  for (const r of rest) {
+    const j = nextFree();
+    if (j < 0) break;
+    used.add(j);
+    target[r.n] = slots[j];
+  }
+
+  // Wege. Belegt ist, was ein anderer als Ziel hat, und wo schon jemand endet.
+  const reserved = new Set([leaderKey, ...target.filter(Boolean).map(s => cellKey(s.cell))]);
+  const ends = new Set();
+  const isStep = (s, a, b) => (s.neighbors?.(a) ?? []).some(x => sameCell(x, b));
+  const walk = (s, cells) => {
+    const w = withoutLoops(cells);
+    for (let n = 1; n < w.length; n++) if (!isStep(s, w[n - 1], w[n])) return null;
+    return w;
+  };
+
+  for (const { f, n, p } of [...onTrail, ...offTrail]) {
     const s = search[n];
-    const dist = h(n);
-
-    // Ein freies Feld neben der Gruppe: zuerst die frischesten der Spur, dann
-    // die ihm nächsten.
-    const seen = new Set();
-    const candidates = placed
-      .flatMap(p => (s.neighbors?.(p) ?? []).filter(c => !(s.blocked?.(p, c) ?? false)))
-      .filter(c => {
-        const k = cellKey(c);
-        if (seen.has(k) || occupied(k)) return false;
-        seen.add(k);
-        return true;
-      })
-      .sort((a, b) => ((recency.get(cellKey(b)) ?? 0) - (recency.get(cellKey(a)) ?? 0))
-                   || (dist(f.cell, a) - dist(f.cell, b)));
+    const knowsWalls = typeof s.blocked === "function";
+    const slot = target[n];
+    const mine = slot ? cellKey(slot.cell) : "";
 
     let path = null;
-    for (const c of candidates) {
-      path = findPath(f.cell, c, s);
-      if (path) break;
+    let unknown = false;
+    if (slot && cellKey(f.cell) === mine) {
+      path = [{ i: f.cell.i, j: f.cell.j }];                      // steht schon richtig
+    } else if (slot) {
+      if (p >= 0 && slot.idx > p) path = walk(s, spur.slice(p, slot.idx + 1));          // vorwärts auf der Spur
+      if (!path && knowsWalls) path = findPath(f.cell, slot.cell, s);
+      if (!path && p >= 0 && slot.idx >= 0 && slot.idx < p) {
+        path = walk(s, spur.slice(slot.idx, p + 1).reverse());                         // zurück auf der Spur
+      }
+      if (!path && !knowsWalls) unknown = true;
+    } else if (!knowsWalls) {
+      unknown = true;
     }
 
-    if (!path) {
-      // Kein Platz neben der Gruppe erreichbar: auf das nächste Mitglied zu,
-      // so weit es geht, ohne auf einem belegten Feld zu enden.
-      const anchor = [...placed].sort((a, b) => dist(f.cell, a) - dist(f.cell, b))[0];
-      const toward = findPath(f.cell, anchor, s);
+    if (!path && knowsWalls && slot) {
+      // Platz unerreichbar: auf den Anführer zu, so weit es geht, ohne auf
+      // einem fremden Platz zu enden.
+      const toward = findPath(f.cell, leaderCell, s);
       if (toward) {
         path = toward;
-        while (path.length > 1 && occupied(cellKey(path.at(-1)))) path = path.slice(0, -1);
-        if (occupied(cellKey(path.at(-1)))) path = null;
+        const blockedEnd = c => { const k = cellKey(c); return (reserved.has(k) && k !== mine) || ends.has(k); };
+        while (path.length > 1 && blockedEnd(path.at(-1))) path = path.slice(0, -1);
+        if (path.length === 1 && cellKey(path[0]) === leaderKey) path = null;
       }
     }
 
     const finalCell = path?.at(-1) ?? f.cell;
-    taken.add(cellKey(finalCell));
-    placed.push(finalCell);
-    result[n] = { id: f.id, path: path && path.length > 1 ? path : [], stuck: !path };
+    ends.add(cellKey(finalCell));
+    result[n] = { id: f.id, path: path && path.length > 1 ? path : [], stuck: !path && !unknown };
   }
   return result;
+}
+
+/**
+ * Alle, die einem Anführer folgen — auch über Ketten (A folgt B folgt ihm).
+ * Für den Szenenwechsel: wer mitgeht, nimmt seine eigenen Folgenden mit.
+ *
+ * @param {Map<string,string>|object} follows  folgender → Anführer
+ * @returns {string[]}  in Breitenreihenfolge, ohne den Anführer
+ */
+export function groupMembers(follows, leaderId) {
+  const entries = follows instanceof Map ? [...follows] : Object.entries(follows ?? {});
+  const out  = [];
+  const seen = new Set([leaderId]);
+  const queue = [leaderId];
+  while (queue.length) {
+    const cur = queue.shift();
+    for (const [id, leader] of entries) {
+      if (leader !== cur || seen.has(id)) continue;
+      seen.add(id);
+      out.push(id);
+      queue.push(id);
+    }
+  }
+  return out;
+}
+
+/**
+ * Was bedeutet ein neuer Token in einer Szene für die Gruppe?
+ *
+ *  - "teleport": Foundrys Teleport-Region legt den Token mit derselben
+ *    Kennung neu an und löscht danach den alten (RegionDocument#teleportToken,
+ *    v13.351). Darum kümmert sich das Löschen — hier nichts tun.
+ *  - "dragIn":   ein verknüpfter Akteur wurde in eine andere Szene gezogen,
+ *    und sein Token dort drüben führt eine Gruppe. Dann fragen, ob sie mitkommt.
+ *  - null:       hat mit keiner Gruppe zu tun.
+ *
+ * Unverknüpfte Akteure bleiben aussen vor: drei Goblins teilen sich einen
+ * Akteur, welcher davon gemeint ist, lässt sich nicht sagen.
+ *
+ * @param {object} p
+ * @param {{id, actorId, actorLink, sceneId}} p.token
+ * @param {Array<{id, actorId, sceneId, hasFollowers}>} p.others  Tokens anderer Szenen
+ */
+export function classifyNewToken({ token, others = [] }) {
+  if (!token) return null;
+  if (others.some(o => o.id === token.id && o.sceneId !== token.sceneId)) return "teleport";
+  if (!token.actorLink || !token.actorId) return null;
+  const leader = others.find(o => o.actorId === token.actorId && o.sceneId !== token.sceneId && o.hasFollowers);
+  return leader ? "dragIn" : null;
 }
 
 /**
@@ -372,9 +540,14 @@ function followOf(doc) {
   return doc?.getFlag?.(SYSTEM_ID, FOLLOW_FLAG) ?? null;
 }
 
-/** Raster der aktuellen Szene; ohne Raster ein gedachtes Quadratraster. */
-function gridAdapter() {
-  const grid = canvas.grid;
+/**
+ * Raster einer Szene; ohne Raster ein gedachtes Quadratraster.
+ *
+ * Über scene.grid, nicht canvas.grid: die Szene des Anführers muss nicht die
+ * sein, die der Spielleiter gerade ansieht (Scene#grid, v13.351).
+ */
+function gridAdapter(scene) {
+  const grid = scene.grid;
   if (!grid.isGridless) {
     return {
       offset:    p => grid.getOffset(p),
@@ -382,6 +555,7 @@ function gridAdapter() {
       neighbors: c => grid.getAdjacentOffsets(c),
       line:      (a, b) => grid.getDirectPath([a, b]),
       cost:      grid.isSquare ? squareStepCost : () => 1,
+      square:    grid.isSquare,
       size:      grid.size,
     };
   }
@@ -392,6 +566,7 @@ function gridAdapter() {
     neighbors: c => squareNeighbors(c),
     line:      lineCells,
     cost:      squareStepCost,
+    square:    true,
     size:      s,
   };
 }
@@ -411,16 +586,50 @@ function positionForCell(doc, cell, g) {
   return { x: Math.round(c.x - pivot.x), y: Math.round(c.y - pivot.y) };
 }
 
+/** Liegt der Punkt innerhalb der Szene? */
+function inScene(scene, p) {
+  const r = scene.dimensions.sceneRect;
+  return p.x >= r.x && p.y >= r.y && p.x <= r.x + r.width && p.y <= r.y + r.height;
+}
+
+/**
+ * Wandprüfung für einen Schritt a → b, oder null, wenn die Wände unbekannt
+ * sind: geprüft werden kann nur auf der Leinwand, und die zeigt nur die
+ * Szene, die der Spielleiter gerade ansieht.
+ *
+ * Diagonal geht es auf dem Quadratraster nur, wenn auch beide Ecken frei
+ * sind. Sonst schlüpfte die Wegsuche zwischen zwei Wandenden hindurch, die
+ * Foundrys eigene Bewegungsprüfung danach doch abfängt — der Token blieb
+ * mitten im Weg stehen, womöglich auf dem Feld eines anderen.
+ */
+function wallTest(scene, g, centerOf, test) {
+  if (canvas.scene?.id !== scene.id) return null;
+  const cache = new Map();
+  const step = (a, b) => {
+    const k = `${cellKey(a)}>${cellKey(b)}`;
+    if (cache.has(k)) return cache.get(k);
+    const to = centerOf(b);
+    const out = !inScene(scene, to) || !!test(centerOf(a), to);
+    cache.set(k, out);
+    return out;
+  };
+  return (a, b) => {
+    if (step(a, b)) return true;
+    if (!g.square || a.i === b.i || a.j === b.j) return false;
+    return step(a, { i: a.i, j: b.j }) || step(a, { i: b.i, j: a.j });
+  };
+}
+
 /** Wegsuche für einen Folgenden: Wände über seine eigene Kollisionsprüfung. */
 function searchOptions(doc, g) {
-  const token = doc.object;
-  const { width, height } = canvas.dimensions.sceneRect;
-  const { x: sx, y: sy } = canvas.dimensions.sceneRect;
-  const cache = new Map();
   const centerFor = cell => {
     const p = positionForCell(doc, cell, g);
     return doc.getCenterPoint({ ...p, elevation: doc.elevation, width: doc.width, height: doc.height, shape: doc.shape });
   };
+  const token = doc.object;
+  const blocked = token
+    ? wallTest(doc.parent, g, centerFor, (from, to) => token.checkCollision(to, { origin: from, type: "move", mode: "any" }))
+    : null;
   return {
     neighbors: g.neighbors,
     cost: g.cost,
@@ -428,15 +637,7 @@ function searchOptions(doc, g) {
       const pa = g.center(a), pb = g.center(b);
       return Math.hypot(pa.x - pb.x, pa.y - pb.y) / g.size;
     },
-    blocked: (a, b) => {
-      const k = `${cellKey(a)}>${cellKey(b)}`;
-      if (cache.has(k)) return cache.get(k);
-      const to = centerFor(b);
-      const out = to.x < sx || to.y < sy || to.x > sx + width || to.y > sy + height
-        || !!token?.checkCollision(to, { origin: centerFor(a), type: "move", mode: "any" });
-      cache.set(k, out);
-      return out;
-    },
+    ...(blocked ? { blocked } : {}),
   };
 }
 
@@ -452,20 +653,59 @@ function movementCells(doc, movement, g) {
   return out;
 }
 
-/** Die Folgenden eines Anführers in ihrer Reihenfolge. */
+/** Die Folgenden eines Anführers. */
 function followersOf(leaderDoc) {
   return leaderDoc.parent.tokens
     .filter(t => followOf(t)?.leader === leaderDoc.id)
     .sort((a, b) => (followOf(a).order ?? 0) - (followOf(b).order ?? 0));
 }
 
+/** Felder, auf denen in dieser Szene schon jemand steht. */
+function occupiedCells(scene, g, except = new Set()) {
+  return new Set([...scene.tokens].filter(t => !except.has(t.id)).map(t => cellKey(cellOfPosition(t, t, g))));
+}
+
+/**
+ * Stellt die Folgenden rund um den Anführer auf — nach einem Teleport, bei
+ * dem es keinen Weg gibt, dem sie folgen könnten. Liefert je Folgendem das
+ * Zielfeld, in der Reihenfolge von `docs`.
+ */
+function cellsAround(leaderDoc, docs, g) {
+  const center = cellOfPosition(leaderDoc, leaderDoc, g);
+  const centerOf = c => g.center(c);
+  const backend = CONFIG.Canvas.polygonBackends?.move;
+  const blocked = backend
+    ? wallTest(leaderDoc.parent, g, centerOf, (a, b) => backend.testCollision(a, b, { type: "move", mode: "any" }))
+    : null;
+  const exclude = occupiedCells(leaderDoc.parent, g, new Set([leaderDoc.id, ...docs.map(d => d.id)]));
+  return placeAround(center, docs.length, {
+    neighbors: g.neighbors,
+    blocked: blocked ?? ((a, b) => !inScene(leaderDoc.parent, g.center(b))),
+    exclude,
+  });
+}
+
 async function moveFollowers(leaderDoc, movement) {
   const followers = followersOf(leaderDoc);
   if (!followers.length) return;
-  if (canvas.scene?.id !== leaderDoc.parent.id) return;   // Wände nur auf der eigenen Leinwand prüfbar
-
-  const g = gridAdapter();
+  const g = gridAdapter(leaderDoc.parent);
   const leaderCell = cellOfPosition(leaderDoc, leaderDoc, g);
+
+  // Teleport innerhalb der Szene (Region, Spielleiter verschiebt mit
+  // gedrückter Taste): es gibt keinen Weg, dem jemand folgen könnte. Die
+  // Folgenden springen mit und stellen sich um den Anführer.
+  const jumped = (movement.passed?.waypoints ?? []).some(w => w.action === "displace");
+  if (jumped) {
+    TRAILS.set(leaderDoc.id, [leaderCell]);
+    const cells = cellsAround(leaderDoc, followers, g);
+    await Promise.all(followers.map(async (doc, n) => {
+      if (!cells[n]) return;
+      await doc.move({ ...positionForCell(doc, cells[n], g), action: "displace" },
+        { method: "api", autoRotate: false, showRuler: false });
+    }));
+    return;
+  }
+
   const trail = extendTrail(TRAILS.get(leaderDoc.id) ?? [], movementCells(leaderDoc, movement, g));
   TRAILS.set(leaderDoc.id, trail);
 
@@ -486,6 +726,154 @@ async function moveFollowers(leaderDoc, movement) {
     await doc.move(waypoints, { method: "api", autoRotate: true, showRuler: false });
   }));
   if (stuck.length) ui.notifications.warn(`ABOREA: Kein Weg für ${stuck.join(", ")} — bleibt stehen.`);
+}
+
+// ── Szenenwechsel ──────────────────────────────────────────────────────
+
+/** Markiert eigene Anlege- und Löschvorgänge, damit die Hooks sie übergehen. */
+const TRANSFER = "aboreaFollowTransfer";
+
+/** Folgen-Beziehungen einer Szene: folgender → Anführer. */
+function followsIn(scene) {
+  return new Map([...scene.tokens].filter(t => followOf(t)?.leader).map(t => [t.id, followOf(t).leader]));
+}
+
+/**
+ * Bringt die Gruppe eines Anführers in die Szene seines neuen Tokens: legt
+ * dort Kopien an (mit derselben Kennung, wenn sie frei ist — wie Foundrys
+ * Teleport), stellt sie um ihn auf und löscht die alten.
+ *
+ * Wer selbst Folgende hat, nimmt sie mit; die Beziehungen zeigen danach auf
+ * die neuen Tokens.
+ */
+async function transferGroup(oldLeader, newLeader) {
+  const origin = oldLeader.parent;
+  const dest   = newLeader.parent;
+  if (!origin || !dest || origin.id === dest.id) return;
+  const members = groupMembers(followsIn(origin), oldLeader.id).map(id => origin.tokens.get(id)).filter(Boolean);
+  if (!members.length) return;
+
+  const ids = new Map([[oldLeader.id, newLeader.id]]);
+  for (const m of members) ids.set(m.id, dest.tokens.has(m.id) ? foundry.utils.randomID() : m.id);
+
+  // Aufstellen mit dem Raster der Zielszene; Platzhalter-Dokumente, damit
+  // Grösse und Form der Tokens dort richtig gerechnet werden.
+  const TokenDoc = foundry.documents.TokenDocument.implementation;
+  const shadows = members.map(m => TokenDoc.fromSource({ ...m.toObject(), _id: ids.get(m.id) }, { parent: dest }));
+  const g = gridAdapter(dest);
+  const cells = cellsAround(newLeader, shadows, g);
+
+  const data = members.map((m, n) => {
+    const d = m.toObject();
+    d._id = ids.get(m.id);
+    const cell = cells[n];
+    if (cell) Object.assign(d, positionForCell(shadows[n], cell, g));
+    else Object.assign(d, { x: newLeader.x, y: newLeader.y });
+    const f = followOf(m);
+    foundry.utils.setProperty(d, `flags.${SYSTEM_ID}.${FOLLOW_FLAG}`, { ...f, leader: ids.get(f.leader) ?? f.leader });
+    return d;
+  });
+
+  const created = await dest.createEmbeddedDocuments("Token", data, { keepId: true, [TRANSFER]: true });
+  const replacements = Object.fromEntries(created.map(c => [[...ids].find(([, v]) => v === c.id)?.[0], c.uuid]));
+  await origin.deleteEmbeddedDocuments("Token", members.map(m => m.id), { replacements, [TRANSFER]: true });
+  TRAILS.set(newLeader.id, [cellOfPosition(newLeader, newLeader, g)]);
+  ui.notifications.info(`ABOREA: ${members.map(m => m.name).join(", ")} folgt ${newLeader.name} nach „${dest.name}“.`);
+}
+
+/** Alle Tokens anderer Szenen, die eine Gruppe führen. */
+function leadersElsewhere(scene) {
+  const out = [];
+  for (const s of game.scenes) {
+    if (s.id === scene.id) continue;
+    const follows = followsIn(s);
+    const leaders = new Set(follows.values());
+    for (const t of s.tokens) if (leaders.has(t.id) && !follows.has(t.id)) out.push(t);
+  }
+  return out;
+}
+
+/** Holt eine Gruppe samt Anführer in die angezeigte Szene. */
+async function fetchGroup(oldLeader, scene, cell) {
+  const g = gridAdapter(scene);
+  const TokenDoc = foundry.documents.TokenDocument.implementation;
+  const shadow = TokenDoc.fromSource(oldLeader.toObject(), { parent: scene });
+  const d = oldLeader.toObject();
+  d._id = scene.tokens.has(oldLeader.id) ? foundry.utils.randomID() : oldLeader.id;
+  Object.assign(d, positionForCell(shadow, cell, g));
+  const [leader] = await scene.createEmbeddedDocuments("Token", [d], { keepId: true, [TRANSFER]: true });
+  if (!leader) return;
+  await transferGroup(oldLeader, leader);
+  await oldLeader.parent.deleteEmbeddedDocuments("Token", [oldLeader.id],
+    { replacements: { [oldLeader.id]: leader.uuid }, [TRANSFER]: true });
+}
+
+/**
+ * Angebot, Gruppen aus anderen Szenen hierher zu holen — für den Knopf und
+ * wenn eine Szene aktiviert wird.
+ */
+export async function offerFetchGroups({ scene = canvas.scene, quiet = false } = {}) {
+  if (!game.user.isGM || !scene) return;
+  const leaders = leadersElsewhere(scene);
+  if (!leaders.length) {
+    if (!quiet) ui.notifications.info("ABOREA: In anderen Szenen führt niemand eine Gruppe.");
+    return;
+  }
+  const rows = leaders.map(t => {
+    const n = groupMembers(followsIn(t.parent), t.id).length;
+    return `<label style="display:flex;align-items:center;gap:8px;margin:2px 0">
+      <input type="checkbox" name="${t.parent.id}.${t.id}" ${quiet ? "" : "checked"} />
+      <img src="${esc(t.texture?.src ?? "icons/svg/mystery-man.svg")}" width="28" height="28" style="border:none" />
+      <span>${esc(t.name)} mit ${n} Folgenden <em class="hint">(aus „${esc(t.parent.name)}“)</em></span>
+    </label>`;
+  }).join("");
+  const data = await foundry.applications.api.DialogV2.input({
+    window:  { title: `Gruppen nach „${scene.name}“ holen?` },
+    content: `<p class="hint">Angehakte Gruppen kommen samt Anführer in die Mitte des sichtbaren Ausschnitts.</p>${rows}`,
+    ok: { label: "Hierher holen", icon: "fa-solid fa-people-arrows" },
+    rejectClose: false,
+  });
+  if (!data) return;
+  const chosen = Object.entries(foundry.utils.flattenObject(data)).filter(([, v]) => v === true).map(([k]) => k);
+  if (!chosen.length) return;
+
+  const g = gridAdapter(scene);
+  const view = canvas.scene?.id === scene.id ? canvas.stage.pivot : { x: scene.dimensions.width / 2, y: scene.dimensions.height / 2 };
+  let cell = g.offset(view);
+  for (const key of chosen) {
+    const [sceneId, tokenId] = key.split(".");
+    const oldLeader = game.scenes.get(sceneId)?.tokens.get(tokenId);
+    if (!oldLeader) continue;
+    await fetchGroup(oldLeader, scene, cell);
+    cell = { i: cell.i + 3, j: cell.j };   // die nächste Gruppe etwas daneben
+  }
+}
+
+/** Ein verknüpfter Anführer wurde in eine andere Szene gezogen: Gruppe mitnehmen? */
+async function onLeaderDraggedIn(newLeader) {
+  const others = leadersElsewhere(newLeader.parent);
+  const kind = classifyNewToken({
+    token: { id: newLeader.id, actorId: newLeader.actorId, actorLink: newLeader.actorLink, sceneId: newLeader.parent.id },
+    others: [
+      ...others.map(t => ({ id: t.id, actorId: t.actorId, sceneId: t.parent.id, hasFollowers: true })),
+      ...[...game.scenes].filter(s => s.id !== newLeader.parent.id && s.tokens.has(newLeader.id))
+        .map(s => ({ id: newLeader.id, actorId: newLeader.actorId, sceneId: s.id, hasFollowers: false })),
+    ],
+  });
+  if (kind !== "dragIn") return;
+  const oldLeader = others.find(t => t.actorId === newLeader.actorId);
+  const n = groupMembers(followsIn(oldLeader.parent), oldLeader.id).length;
+  const ok = await foundry.applications.api.DialogV2.confirm({
+    window:  { title: "Gruppe mitnehmen?" },
+    content: `<p>${esc(newLeader.name)} führt in „${esc(oldLeader.parent.name)}“ eine Gruppe mit ${n} Folgenden.
+      Sollen sie mitkommen? Der alte Token von ${esc(newLeader.name)} dort wird dann entfernt.</p>`,
+    rejectClose: false,
+  });
+  // Während der Frage kann die Gruppe schon anders umgezogen sein.
+  if (!ok || !oldLeader.parent?.tokens.has(oldLeader.id) || !newLeader.parent?.tokens.has(newLeader.id)) return;
+  await transferGroup(oldLeader, newLeader);
+  await oldLeader.parent.deleteEmbeddedDocuments("Token", [oldLeader.id],
+    { replacements: { [oldLeader.id]: newLeader.uuid }, [TRANSFER]: true });
 }
 
 /** HTML-sicher für Namen im Dialog. */
@@ -547,7 +935,7 @@ async function applyFollow(leaderDoc, chosenIds) {
   });
   for (const { id, order } of set) await scene.tokens.get(id)?.setFlag(SYSTEM_ID, FOLLOW_FLAG, { leader: leaderDoc.id, order });
   for (const id of unset) await scene.tokens.get(id)?.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
-  if (!TRAILS.has(leaderDoc.id)) TRAILS.set(leaderDoc.id, [cellOfPosition(leaderDoc, leaderDoc, gridAdapter())]);
+  if (!TRAILS.has(leaderDoc.id)) TRAILS.set(leaderDoc.id, [cellOfPosition(leaderDoc, leaderDoc, gridAdapter(leaderDoc.parent))]);
 
   const name = id => scene.tokens.get(id)?.name ?? "?";
   const now  = followersOf(leaderDoc).map(t => t.name);
@@ -624,11 +1012,33 @@ export function registerFollow() {
     QUEUES.set(doc.id, next);
   });
 
-  // Ein gelöschter Anführer nimmt seine Folgenden nicht mit ins Nirgendwo.
-  Hooks.on("deleteToken", async doc => {
+  // Gelöschter Anführer. Mit `replacements` ist er nicht weg, sondern
+  // umgezogen: so meldet Foundrys Teleport-Region den Wechsel in eine andere
+  // Szene (RegionDocument#teleportToken, v13.351) — die Gruppe geht mit.
+  // Ohne folgen die Folgenden niemandem mehr.
+  Hooks.on("deleteToken", async (doc, options) => {
     TRAILS.delete(doc.id);
-    if (!game.users.activeGM?.isSelf) return;
-    for (const f of followersOf(doc)) await f.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
+    if (!game.users.activeGM?.isSelf || options?.[TRANSFER]) return;
+    try {
+      const uuid = options?.replacements?.[doc.id];
+      const moved = uuid ? await fromUuid(uuid) : null;
+      if (moved && moved.parent?.id !== doc.parent?.id) return await transferGroup(doc, moved);
+      for (const f of followersOf(doc)) await f.unsetFlag(SYSTEM_ID, FOLLOW_FLAG);
+    } catch (err) { console.error("ABOREA | Folgen beim Löschen", err); }
+  });
+
+  // Ein verknüpfter Anführer wurde in eine andere Szene gezogen.
+  // Foundrys Teleport legt mit keepId an und meldet sich gleich danach
+  // beim Löschen — das übernimmt der Hook oben.
+  Hooks.on("createToken", (doc, options) => {
+    if (!game.users.activeGM?.isSelf || options?.[TRANSFER] || options?.keepId) return;
+    onLeaderDraggedIn(doc).catch(err => console.error("ABOREA | Folgen beim Anlegen", err));
+  });
+
+  // Eine andere Szene wird aktiviert: Gruppen von anderswo herholen?
+  Hooks.on("updateScene", (scene, changes) => {
+    if (!changes?.active || !game.users.activeGM?.isSelf) return;
+    offerFetchGroups({ scene, quiet: true }).catch(err => console.error("ABOREA | Gruppen holen", err));
   });
 
   Hooks.on("renderTokenHUD", addHudButtons);
@@ -647,6 +1057,10 @@ export function registerFollow() {
           if (leader) return openFollowDialog(leader);
           ui.notifications.warn("ABOREA: Erst den Anführer anklicken — oder Rechtsklick auf ihn und dort „Folgen“.");
         } },
+      { name: "aborea-follow-fetch",
+        title: "Gruppe hierher holen — Anführer samt Folgenden aus einer anderen Szene",
+        icon: "fa-solid fa-people-arrows",
+        onClick: () => offerFetchGroups() },
       { name: "aborea-follow-stop",
         title: "Folgen beenden — ausgewählte, ohne Auswahl alle der Szene",
         icon: "fa-solid fa-link-slash",

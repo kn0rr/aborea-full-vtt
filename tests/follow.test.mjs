@@ -10,6 +10,7 @@ import assert from "node:assert/strict";
 import {
   findPath, squareNeighbors, squareStepCost, squareHeuristic, lineCells,
   extendTrail, planFollow, wouldCycle, cellKey, followChanges,
+  withoutLoops, placeAround, allConnected, groupMembers, classifyNewToken,
 } from "../module/follow.mjs";
 
 /**
@@ -171,7 +172,7 @@ test("Spur des Anführers", async t => {
   await t.test("leere Eingabe", () => assert.deepEqual(extendTrail(undefined, undefined), []));
 });
 
-test("planFollow: Schlange um Hindernisse", async t => {
+test("planFollow: Gruppe um Hindernisse", async t => {
   const offen = karte(...Array.from({ length: 7 }, () => "............"));
   const anwenden = (folgende, plaene) =>
     folgende.map((f, n) => ({ ...f, cell: plaene[n].path.at(-1) ?? f.cell }));
@@ -423,4 +424,182 @@ test("followChanges: was der Folgen-Dialog bewirkt", async t => {
 
   await t.test("leere Eingaben", () =>
     assert.deepEqual(followChanges({ leaderId: "L" }), { set: [], unset: [], refused: [] }));
+});
+
+test("planFollow: auf dem Weg des Anführers", async t => {
+  const offen = karte(...Array.from({ length: 9 }, () => "............"));
+  const anwenden = (folgende, plaene) =>
+    folgende.map((f, n) => ({ ...f, cell: plaene[n].path.at(-1) ?? f.cell }));
+
+  // Der gemeldete Fehler: die Folgenden nahmen die kürzeste Linie statt den
+  // Weg, den der Anführer gegangen ist.
+  await t.test("im Bogen: jeder Schritt liegt auf der Spur", () => {
+    let spur = extendTrail([], [{ i: 0, j: 0 }, { i: 0, j: 1 }, { i: 0, j: 2 }]);
+    let folgende = [{ id: "a", cell: { i: 0, j: 1 } }, { id: "b", cell: { i: 0, j: 0 } }];
+    const bogen = [{ i: 1, j: 3 }, { i: 2, j: 3 }, { i: 3, j: 2 }, { i: 3, j: 1 }, { i: 3, j: 0 }, { i: 4, j: 0 }];
+    for (const anfuehrer of bogen) {
+      spur = extendTrail(spur, [anfuehrer]);
+      const auf = new Set(spur.map(cellKey));
+      const plaene = planFollow({ leaderCell: anfuehrer, trail: spur, followers: folgende, searchFor: () => offen });
+      for (const p of plaene) assert.ok(p.path.every(c => auf.has(cellKey(c))), `${p.id} verlässt die Spur bei ${cellKey(anfuehrer)}`);
+      folgende = anwenden(folgende, plaene);
+    }
+    // Der letzte Schritt nach 4,0 lässt a diagonal daneben stehen: alle haben
+    // noch Anschluss, also rührt sich niemand.
+    assert.deepEqual(folgende.map(f => f.cell), [{ i: 3, j: 1 }, { i: 3, j: 2 }]);
+  });
+
+  await t.test("ein langer Zug auf einmal: alle rücken die ganze Strecke nach", () => {
+    let spur = extendTrail([], [0, 1, 2].map(j => ({ i: 0, j })));
+    const folgende = [{ id: "a", cell: { i: 0, j: 1 } }, { id: "b", cell: { i: 0, j: 0 } }];
+    spur = extendTrail(spur, [3, 4, 5, 6, 7].map(j => ({ i: 0, j })));
+    const plaene = planFollow({ leaderCell: { i: 0, j: 7 }, trail: spur, followers: folgende, searchFor: () => offen });
+    assert.deepEqual(plaene.map(p => p.path.at(-1)), [{ i: 0, j: 6 }, { i: 0, j: 5 }]);
+    assert.deepEqual(plaene[0].path.map(c => c.j), [1, 2, 3, 4, 5, 6], "Feld für Feld, ohne Sprung");
+  });
+
+  await t.test("zurück durch die Gruppe: die Reihenfolge bleibt", () => {
+    // Anführer stand bei 3,0, Gruppe dahinter; er läuft nach rechts durch
+    // beide hindurch.
+    let spur = extendTrail([], [{ i: 3, j: 2 }, { i: 3, j: 1 }, { i: 3, j: 0 }]);
+    const folgende = [{ id: "a", cell: { i: 3, j: 1 } }, { id: "b", cell: { i: 3, j: 2 } }];
+    spur = extendTrail(spur, [1, 2, 3, 4].map(j => ({ i: 3, j })));
+    const plaene = planFollow({ leaderCell: { i: 3, j: 4 }, trail: spur, followers: folgende, searchFor: () => offen });
+    const enden = Object.fromEntries(plaene.map(p => [p.id, p.path.at(-1) ?? folgende.find(f => f.id === p.id).cell]));
+    assert.deepEqual(enden.b, { i: 3, j: 3 }, "wer vorn war, bleibt vorn");
+    assert.deepEqual(enden.a, { i: 3, j: 2 });
+  });
+
+  await t.test("Sprung in der Spur (Teleport): davor zählt nicht", () => {
+    const spur = [{ i: 0, j: 0 }, { i: 0, j: 1 }, { i: 7, j: 7 }, { i: 7, j: 8 }];
+    const [p] = planFollow({ leaderCell: { i: 7, j: 8 }, trail: spur,
+                             followers: [{ id: "a", cell: { i: 0, j: 2 } }], searchFor: () => offen });
+    assert.deepEqual(p.path.at(-1), { i: 7, j: 7 });
+  });
+
+  await t.test("Szene nicht auf der Leinwand: wer auf der Spur steht, geht trotzdem", () => {
+    const ohneWaende = { neighbors: c => squareNeighbors(c), cost: squareStepCost, heuristic: squareHeuristic };
+    const spur = extendTrail([], [0, 1, 2, 3, 4].map(j => ({ i: 0, j })));
+    const plaene = planFollow({ leaderCell: { i: 0, j: 4 }, trail: spur, searchFor: () => ohneWaende,
+      followers: [{ id: "auf", cell: { i: 0, j: 1 } }, { id: "abseits", cell: { i: 6, j: 6 } }] });
+    assert.deepEqual(plaene[0].path.at(-1), { i: 0, j: 3 });
+    assert.deepEqual(plaene[1].path, [], "ohne Wände keine Wegsuche");
+    assert.equal(plaene[1].stuck, false, "und keine Meldung, er steckt ja nicht");
+  });
+
+  await t.test("Zufallswege: Invarianten bei jedem Schritt, Schlange hält zusammen", () => {
+    let seed = 5;
+    const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    for (let runde = 0; runde < 30; runde++) {
+      const zeilen = Array.from({ length: 12 }, () =>
+        Array.from({ length: 12 }, () => rnd() < 0.15 ? "#" : ".").join(""));
+      const w = karte(...zeilen);
+      const frei = [];
+      for (let i = 0; i < 12; i++) for (let j = 0; j < 12; j++) if (!w.wand(i, j)) frei.push({ i, j });
+      let anfuehrer = frei[Math.floor(rnd() * frei.length)];
+      let spur = [anfuehrer];
+      // Folgende dicht beim Anführer aufstellen
+      let folgende = placeAround(anfuehrer, 4, w).map((cell, n) => ({ id: `f${n}`, cell }));
+      for (let zug = 0; zug < 12; zug++) {
+        const ziel = frei[Math.floor(rnd() * frei.length)];
+        const weg = findPath(anfuehrer, ziel, w);
+        if (!weg || weg.length < 2) continue;
+        // Der Anführer geht nur ein Stück, wie beim Ziehen
+        const stueck = weg.slice(1, 1 + 1 + Math.floor(rnd() * 4));
+        anfuehrer = stueck.at(-1);
+        spur = extendTrail(spur, stueck);
+        const plaene = planFollow({ leaderCell: anfuehrer, trail: spur, followers: folgende, searchFor: () => w });
+        const enden = plaene.map((p, n) => p.path.at(-1) ?? folgende[n].cell);
+        assert.equal(new Set(enden.map(cellKey)).size, enden.length, `Runde ${runde}/${zug}: doppelt`);
+        assert.ok(!enden.some(e => cellKey(e) === cellKey(anfuehrer)), `Runde ${runde}/${zug}: auf dem Anführer`);
+        for (const [n, p] of plaene.entries()) if (p.path.length) gueltig(p.path, w, folgende[n].cell);
+        folgende = folgende.map((f, n) => ({ ...f, cell: enden[n] }));
+        // Ohne Bewegung des Anführers ist danach Ruhe.
+        const ruhe = planFollow({ leaderCell: anfuehrer, trail: spur, followers: folgende, searchFor: () => w });
+        for (const [n, p] of ruhe.entries()) {
+          if (!plaene[n].stuck) assert.deepEqual(p.path, [], `Runde ${runde}/${zug}: ${p.id} zappelt`);
+        }
+      }
+    }
+  });
+});
+
+test("withoutLoops: Kreise des Anführers geht niemand nach", async t => {
+  const c = (...js) => js.map(j => ({ i: 0, j }));
+  await t.test("ohne Schleife unverändert", () => assert.deepEqual(withoutLoops(c(1, 2, 3)), c(1, 2, 3)));
+  await t.test("Schleife fällt weg", () => assert.deepEqual(withoutLoops(c(1, 2, 3, 2, 4)), c(1, 2, 4)));
+  await t.test("verschachtelt", () => assert.deepEqual(withoutLoops(c(1, 2, 3, 4, 3, 2, 5)), c(1, 2, 5)));
+  await t.test("zurück zum Start", () => assert.deepEqual(withoutLoops(c(1, 2, 1)), c(1)));
+  await t.test("kein Feld doppelt im Ergebnis", () => {
+    const r = withoutLoops(c(1, 2, 3, 1, 4, 2, 5, 4, 6));
+    assert.equal(new Set(r.map(cellKey)).size, r.length);
+  });
+  await t.test("leer", () => assert.deepEqual(withoutLoops(undefined), []));
+});
+
+test("placeAround: Aufstellen rund um ein Feld", async t => {
+  const w = karte(
+    ".....",
+    ".###.",
+    ".#.#.",
+    ".###.",
+  );
+  await t.test("nächste zuerst, nicht hinter die Wand", () => {
+    const c = placeAround({ i: 0, j: 2 }, 20, w);
+    assert.ok(!c.some(x => x.i === 2 && x.j === 2), "Innenraum ist unerreichbar");
+    assert.ok(!c.some(x => w.wand(x.i, x.j)));
+    assert.ok(nachbarn(c[0], { i: 0, j: 2 }));
+  });
+  await t.test("ausgeschlossene Felder fehlen, die Anzahl stimmt", () => {
+    const c = placeAround({ i: 0, j: 2 }, 3, { ...w, exclude: new Set(["0,1"]) });
+    assert.ok(!c.some(x => cellKey(x) === "0,1"));
+    assert.equal(c.length, 3);
+  });
+  await t.test("das Feld selbst nie", () =>
+    assert.ok(!placeAround({ i: 0, j: 2 }, 5, w).some(x => cellKey(x) === "0,2")));
+  await t.test("leere Eingaben", () => {
+    assert.deepEqual(placeAround(null, 3, w), []);
+    assert.deepEqual(placeAround({ i: 0, j: 0 }, 0, w), []);
+    assert.deepEqual(placeAround({ i: 0, j: 0 }, 3, {}), []);
+  });
+});
+
+test("allConnected: hängt jeder an der Gruppe?", async t => {
+  const w = karte(".....", ".....", "#####", ".....");
+  const s = n => Array.from({ length: n }, () => w);
+  await t.test("Kette über einen anderen", () =>
+    assert.equal(allConnected({ i: 0, j: 0 }, [{ cell: { i: 0, j: 2 } }, { cell: { i: 0, j: 1 } }], s(2)), true));
+  await t.test("Lücke", () =>
+    assert.equal(allConnected({ i: 0, j: 0 }, [{ cell: { i: 0, j: 3 } }], s(1)), false));
+  await t.test("Wand dazwischen", () =>
+    assert.equal(allConnected({ i: 1, j: 0 }, [{ cell: { i: 3, j: 0 } }], s(1)), false));
+  await t.test("auf dem Anführer", () =>
+    assert.equal(allConnected({ i: 0, j: 0 }, [{ cell: { i: 0, j: 0 } }], s(1)), false));
+  await t.test("zwei auf einem Feld", () =>
+    assert.equal(allConnected({ i: 0, j: 0 }, [{ cell: { i: 0, j: 1 } }, { cell: { i: 0, j: 1 } }], s(2)), false));
+  await t.test("niemand folgt", () => assert.equal(allConnected({ i: 0, j: 0 }, [], []), true));
+});
+
+test("groupMembers: wer beim Szenenwechsel mitgeht", async t => {
+  await t.test("direkte und über Ketten", () =>
+    assert.deepEqual(groupMembers(new Map([["a", "L"], ["b", "a"], ["c", "L"], ["x", "M"]]), "L"), ["a", "c", "b"]));
+  await t.test("als Objekt", () => assert.deepEqual(groupMembers({ a: "L" }, "L"), ["a"]));
+  await t.test("ein Kreis hängt nicht", () =>
+    assert.deepEqual(groupMembers(new Map([["a", "L"], ["L", "a"]]), "L"), ["a"]));
+  await t.test("niemand", () => assert.deepEqual(groupMembers(new Map(), "L"), []));
+});
+
+test("classifyNewToken: Teleport, Hineinziehen oder nichts", async t => {
+  const neu = (over = {}) => ({ id: "n1", actorId: "held", actorLink: true, sceneId: "B", ...over });
+  await t.test("gleiche Kennung in anderer Szene: Teleport", () =>
+    assert.equal(classifyNewToken({ token: neu({ id: "t1" }), others: [{ id: "t1", sceneId: "A", actorId: "held", hasFollowers: true }] }), "teleport"));
+  await t.test("verknüpfter Anführer in anderer Szene: Hineinziehen", () =>
+    assert.equal(classifyNewToken({ token: neu(), others: [{ id: "t1", sceneId: "A", actorId: "held", hasFollowers: true }] }), "dragIn"));
+  await t.test("ohne Folgende: nichts", () =>
+    assert.equal(classifyNewToken({ token: neu(), others: [{ id: "t1", sceneId: "A", actorId: "held", hasFollowers: false }] }), null));
+  await t.test("unverknüpft (Goblins): nichts", () =>
+    assert.equal(classifyNewToken({ token: neu({ actorLink: false }), others: [{ id: "t1", sceneId: "A", actorId: "held", hasFollowers: true }] }), null));
+  await t.test("gleiche Szene: nichts", () =>
+    assert.equal(classifyNewToken({ token: neu(), others: [{ id: "t1", sceneId: "B", actorId: "held", hasFollowers: true }] }), null));
+  await t.test("leer", () => assert.equal(classifyNewToken({}), null));
 });
