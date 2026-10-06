@@ -374,9 +374,17 @@ export function planFollow({ leaderCell, trail = [], followers = [], searchFor }
   const reserved = new Set([leaderKey, ...target.filter(Boolean).map(s => cellKey(s.cell))]);
   const ends = new Set();
   const isStep = (s, a, b) => (s.neighbors?.(a) ?? []).some(x => sameCell(x, b));
+  // Ein Weg auf der Spur. Auch der wird gegen Wände geprüft: der Anführer
+  // zieht eine gerade Linie, der Weg über die Feldmitten weicht davon bis zu
+  // einem halben Feld ab und kann eine Wandecke streifen, die die Linie nicht
+  // berührt hat. Foundry hielt den Folgenden dort an, bei jedem Zug an
+  // derselben Stelle — er blieb dauerhaft zurück. Dann lieber außen herum.
   const walk = (s, cells) => {
     const w = withoutLoops(cells);
-    for (let n = 1; n < w.length; n++) if (!isStep(s, w[n - 1], w[n])) return null;
+    for (let n = 1; n < w.length; n++) {
+      if (!isStep(s, w[n - 1], w[n])) return null;
+      if (s.blocked?.(w[n - 1], w[n])) return null;
+    }
     return w;
   };
 
@@ -709,22 +717,33 @@ async function moveFollowers(leaderDoc, movement) {
   const trail = extendTrail(TRAILS.get(leaderDoc.id) ?? [], movementCells(leaderDoc, movement, g));
   TRAILS.set(leaderDoc.id, trail);
 
-  const searches = new Map(followers.map(f => [f.id, searchOptions(f, g)]));
-  const plans = planFollow({
-    leaderCell, trail,
-    followers: followers.map(f => ({ id: f.id, cell: cellOfPosition(f, f, g) })),
-    searchFor: id => searches.get(id),
-  });
+  // Zwei Durchgänge: hält Foundry einen Folgenden früher an als geplant —
+  // seine Wandprüfung ist das letzte Wort, und eine Tür kann inzwischen zu
+  // sein —, wird von dort aus gleich noch einmal geplant, statt bis zum
+  // nächsten Zug des Anführers zurückzubleiben.
+  let stuck = [];
+  for (let pass = 0; pass < 2; pass++) {
+    const current = followersOf(leaderDoc);
+    const searches = new Map(current.map(f => [f.id, searchOptions(f, g)]));
+    const plans = planFollow({
+      leaderCell, trail,
+      followers: current.map(f => ({ id: f.id, cell: cellOfPosition(f, f, g) })),
+      searchFor: id => searches.get(id),
+    });
 
-  const stuck = [];
-  await Promise.all(plans.map(async plan => {
-    const doc = leaderDoc.parent.tokens.get(plan.id);
-    if (!doc) return;
-    if (plan.stuck) stuck.push(doc.name);
-    if (!plan.path.length) return;
-    const waypoints = plan.path.slice(1).map(c => ({ ...positionForCell(doc, c, g), snapped: true, explicit: false }));
-    await doc.move(waypoints, { method: "api", autoRotate: true, showRuler: false });
-  }));
+    stuck = [];
+    const short = [];
+    await Promise.all(plans.map(async plan => {
+      const doc = leaderDoc.parent.tokens.get(plan.id);
+      if (!doc) return;
+      if (plan.stuck) stuck.push(doc.name);
+      if (!plan.path.length) return;
+      const waypoints = plan.path.slice(1).map(c => ({ ...positionForCell(doc, c, g), snapped: true, explicit: false }));
+      await doc.move(waypoints, { method: "api", autoRotate: true, showRuler: false });
+      if (cellKey(cellOfPosition(doc, doc, g)) !== cellKey(plan.path.at(-1))) short.push(doc.id);
+    }));
+    if (!short.length) break;
+  }
   if (stuck.length) ui.notifications.warn(`ABOREA: Kein Weg für ${stuck.join(", ")} — bleibt stehen.`);
 }
 

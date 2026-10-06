@@ -470,6 +470,24 @@ test("planFollow: auf dem Weg des Anführers", async t => {
     assert.deepEqual(enden.a, { i: 3, j: 2 });
   });
 
+  // Der gemeldete Fehler: an Wandecken blieben Folgende dauerhaft zurück.
+  // Der Anführer zieht eine gerade Linie; der Weg über die Feldmitten weicht
+  // davon ab und kann eine Ecke streifen, die die Linie nicht berührt hat.
+  // Foundry hielt den Folgenden dort an — bei jedem Zug an derselben Stelle.
+  await t.test("Schritt der Spur durch eine Wandecke: drumherum statt hängen bleiben", () => {
+    const w = karte(
+      "..#..",
+      ".#...",
+      ".....",
+    );
+    // (0,1) → (1,2) ist diagonal zwischen zwei Wandenden hindurch.
+    const spur = [{ i: 0, j: 0 }, { i: 0, j: 1 }, { i: 1, j: 2 }, { i: 1, j: 3 }];
+    const [p] = planFollow({ leaderCell: { i: 1, j: 3 }, trail: spur,
+                             followers: [{ id: "a", cell: { i: 0, j: 0 } }], searchFor: () => w });
+    assert.equal(p.stuck, false);
+    gueltig(p.path, w, { i: 0, j: 0 }, { i: 1, j: 2 });
+  });
+
   await t.test("Sprung in der Spur (Teleport): davor zählt nicht", () => {
     const spur = [{ i: 0, j: 0 }, { i: 0, j: 1 }, { i: 7, j: 7 }, { i: 7, j: 8 }];
     const [p] = planFollow({ leaderCell: { i: 7, j: 8 }, trail: spur,
