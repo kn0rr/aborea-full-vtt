@@ -10,7 +10,7 @@
 import { roundSplit, splitRange, defenseRemaining, defenseSpentTotal } from "./declaration.mjs";
 import { registerSceneControlGroup } from "./scene-controls.mjs";
 import { clampSituMod, SETTINGS } from "./settings.mjs";
-import { declareRound, executeGroupAttack, openAttackDialog, combatantTarget,
+import { declareRound, executeGroupAttack, openAttackDialog, combatantTarget, setCombatantTarget,
          setCombatantSituMod, combatantSituMod, currentCombat } from "./combat.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;

@@ -93,3 +93,28 @@ test("ui.combat.render muss force mitgeben, wenn es den Kampf setzt", async t =>
     assert.equal(trifft(gut), false, "die Pruefung meldet den richtigen Fall");
   });
 });
+
+test("Weitergereichte Namen sind im Modul selbst nicht gebunden", async t => {
+  // `export { x } from "./y.mjs"` reicht x nur weiter — im Modul selbst gibt
+  // es danach keinen Namen x. Das Kampfpult reichte setCombatantTarget aus
+  // combat.mjs weiter und rief es zugleich selbst auf: ReferenceError, sobald
+  // jemand im Pult ein Ziel wählte. Ein Syntaxtest merkt das nicht, ein
+  // Laden des Moduls auch nicht — erst der Klick.
+  const verstoesse = [];
+  for (const { name, quelle } of moduleFiles()) {
+    const rein = stripCommentsAndStrings(quelle);
+    const reExports = [...quelle.matchAll(/export\s*\{([^}]*)\}\s*from\s*["'][^"']+["']/g)];
+    if (!reExports.length) continue;
+    const imported = new Set([...quelle.matchAll(/import\s*\{([^}]*)\}\s*from/g)]
+      .flatMap(m => m[1].split(",").map(s => s.trim().split(/\s+as\s+/).pop()).filter(Boolean)));
+    for (const m of reExports) {
+      const zeile = quelle.slice(0, m.index).split(/\r?\n/).length;
+      for (const teil of m[1].split(",").map(s => s.trim()).filter(Boolean)) {
+        const lokal = teil.split(/\s+as\s+/)[0];
+        const benutzt = findIdentifier(rein, lokal).filter(z => z !== zeile);
+        if (benutzt.length && !imported.has(lokal)) verstoesse.push(`${name}:${benutzt[0]} ${lokal}`);
+      }
+    }
+  }
+  assert.deepEqual(verstoesse, [], "benutzt, aber nur weitergereicht statt importiert");
+});
