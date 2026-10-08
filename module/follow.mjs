@@ -503,6 +503,20 @@ export function movementKind(movement) {
 }
 
 /**
+ * Wo der Anführer nach einem Zug steht (Position oben links).
+ *
+ * Aus den Bewegungsdaten, nicht vom Token: gemeldet war, dass die Gruppe
+ * immer zum Ziel des *vorigen* Zugs zieht — genau das Bild, wenn beim
+ * Auswerten noch die alte Position am Token steht. Zuerst der letzte
+ * gegangene Wegpunkt (dort steht er nach diesem Update, auch wenn Foundry
+ * den Rest an einer Regionsgrenze später fortsetzt), dann das Zugziel,
+ * zuletzt der Token selbst.
+ */
+export function leaderEndPosition(movement, doc = null) {
+  return movement?.passed?.waypoints?.at(-1) ?? movement?.destination ?? doc;
+}
+
+/**
  * Würde `followerId` → `leaderId` einen Kreis schliessen? Folgen-Beziehungen
  * dürfen Ketten bilden (A folgt B, B folgt C), aber keine Schleife — sonst
  * stösst jede Bewegung die nächste an, ohne Ende.
@@ -674,6 +688,15 @@ function searchOptions(doc, g) {
   };
 }
 
+/**
+ * Feld des Anführers nach diesem Zug: der letzte gegangene Wegpunkt — dort
+ * steht er nach diesem Update, auch wenn Foundry den Rest an einer
+ * Regionsgrenze erst später fortsetzt. Sonst das Zugziel, zuletzt der Token.
+ */
+function leaderCellAfter(doc, movement, g) {
+  return cellOfPosition(doc, leaderEndPosition(movement, doc), g);
+}
+
 /** Die Felder, die der Anführer in dieser Bewegung betreten hat. */
 function movementCells(doc, movement, g) {
   const points = [movement.origin, ...(movement.passed?.waypoints ?? [])].filter(Boolean);
@@ -703,8 +726,7 @@ function occupiedCells(scene, g, except = new Set()) {
  * dem es keinen Weg gibt, dem sie folgen könnten. Liefert je Folgendem das
  * Zielfeld, in der Reihenfolge von `docs`.
  */
-function cellsAround(leaderDoc, docs, g) {
-  const center = cellOfPosition(leaderDoc, leaderDoc, g);
+function cellsAround(leaderDoc, docs, g, center = cellOfPosition(leaderDoc, leaderDoc, g)) {
   const centerOf = c => g.center(c);
   const backend = CONFIG.Canvas.polygonBackends?.move;
   const blocked = backend
@@ -728,14 +750,22 @@ async function moveFollowers(leaderDoc, movement, together = new Set()) {
   if (draggedAlong.length) debug("mitgezogen, bleiben stehen:", draggedAlong.map(f => f.name).join(", "));
   if (!followers.length) return;
   const g = gridAdapter(leaderDoc.parent);
-  const leaderCell = cellOfPosition(leaderDoc, leaderDoc, g);
+  // Wo der Anführer nach diesem Zug steht — aus den Bewegungsdaten, nicht vom
+  // Token. Gemeldet war: die Gruppe zieht immer zum Ziel des *vorigen* Zugs.
+  // Genau das geschieht, wenn der Token beim Auswerten noch die alte Position
+  // trägt: beim Zug nach A sieht das Folgen ihn noch am Start (alle haben
+  // Anschluss, keiner rührt sich), beim Zug nach B sieht es ihn bei A.
+  const leaderCell = leaderCellAfter(leaderDoc, movement, g);
+  debug("Anführer-Position: Token", `${leaderDoc.x},${leaderDoc.y}`, "Zugziel",
+    movement?.destination ? `${movement.destination.x},${movement.destination.y}` : "—",
+    "→ Feld", cellKey(leaderCell));
 
   // Teleport innerhalb der Szene (Region, Spielleiter verschiebt mit
   // gedrückter Taste): es gibt keinen Weg, dem jemand folgen könnte. Die
   // Folgenden springen mit und stellen sich um den Anführer.
   if (movementKind(movement) === "jump") {
     TRAILS.set(leaderDoc.id, [leaderCell]);
-    const cells = cellsAround(leaderDoc, followers, g);
+    const cells = cellsAround(leaderDoc, followers, g, leaderCell);
     await Promise.all(followers.map(async (doc, n) => {
       if (!cells[n]) return;
       await doc.move({ ...positionForCell(doc, cells[n], g), action: "displace" },

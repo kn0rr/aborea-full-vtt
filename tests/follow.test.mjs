@@ -11,7 +11,7 @@ import {
   findPath, squareNeighbors, squareStepCost, squareHeuristic, lineCells,
   extendTrail, planFollow, wouldCycle, cellKey, followChanges,
   withoutLoops, placeAround, allConnected, groupMembers, classifyNewToken,
-  movementKind,
+  movementKind, leaderEndPosition,
 } from "../module/follow.mjs";
 
 /**
@@ -672,5 +672,26 @@ test("planFollow: mitgezogene Folgende bleiben, wo sie abgelegt wurden", async t
     const plaene = planFollow({ leaderCell: { i: 2, j: 6 }, trail: spur, searchFor: () => offen,
       followers: [{ id: "a", cell: { i: 2, j: 1 } }] });
     assert.equal(cellKey(plaene[0].path.at(-1)), "2,5");
+  });
+});
+
+test("leaderEndPosition: wo der Anführer nach dem Zug steht", async t => {
+  // Der gemeldete Fehler: die Gruppe zog immer zum Ziel des vorigen Zugs.
+  // So sieht es aus, wenn beim Auswerten die alte Position am Token gelesen
+  // wird. Maßgeblich ist deshalb, was die Bewegung selbst sagt.
+  const alt = { x: 0, y: 0 };
+  const zug = (waypoints, destination) => ({ passed: { waypoints }, destination });
+
+  await t.test("letzter gegangener Wegpunkt vor der Position am Token", () =>
+    assert.deepEqual(leaderEndPosition(zug([{ x: 100, y: 0 }, { x: 500, y: 300 }], { x: 900, y: 900 }), alt),
+      { x: 500, y: 300 }));
+  await t.test("ohne Wegpunkte das Zugziel", () =>
+    assert.deepEqual(leaderEndPosition(zug([], { x: 900, y: 900 }), alt), { x: 900, y: 900 }));
+  await t.test("ohne Bewegungsdaten der Token", () =>
+    assert.equal(leaderEndPosition(null, alt), alt));
+  await t.test("nie die alte Position, solange die Bewegung etwas sagt", () => {
+    for (const m of [zug([{ x: 7, y: 7 }]), zug([], { x: 7, y: 7 }), zug([{ x: 7, y: 7 }], { x: 9, y: 9 })]) {
+      assert.notEqual(leaderEndPosition(m, alt), alt);
+    }
   });
 });
