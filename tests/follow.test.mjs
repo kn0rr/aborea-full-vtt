@@ -11,6 +11,7 @@ import {
   findPath, squareNeighbors, squareStepCost, squareHeuristic, lineCells,
   extendTrail, planFollow, wouldCycle, cellKey, followChanges,
   withoutLoops, placeAround, allConnected, groupMembers, classifyNewToken,
+  movementKind,
 } from "../module/follow.mjs";
 
 /**
@@ -620,4 +621,56 @@ test("classifyNewToken: Teleport, Hineinziehen oder nichts", async t => {
   await t.test("gleiche Szene: nichts", () =>
     assert.equal(classifyNewToken({ token: neu(), others: [{ id: "t1", sceneId: "B", actorId: "held", hasFollowers: true }] }), null));
   await t.test("leer", () => assert.equal(classifyNewToken({}), null));
+});
+
+test("movementKind: was eine Bewegung des Anführers auslöst", async t => {
+  const wp = (over = {}) => ({ x: 100, y: 100, action: "walk", ...over });
+  await t.test("gezogen: gehen", () =>
+    assert.equal(movementKind({ method: "dragging", passed: { waypoints: [wp()] } }), "walk"));
+  await t.test("Pfeiltasten und Makro: gehen", () => {
+    assert.equal(movementKind({ method: "keyboard", passed: { waypoints: [wp()] } }), "walk");
+    assert.equal(movementKind({ method: "api", passed: { waypoints: [wp()] } }), "walk");
+  });
+  // Folgten die anderen einem Rückgängig, liefen sie den Weg rückwärts —
+  // und beim nächsten Zug wieder vor.
+  await t.test("Rückgängig (Strg+Z): nichts", () =>
+    assert.equal(movementKind({ method: "undo", passed: { waypoints: [wp()] } }), "ignore"));
+  await t.test("Teleport-Wegpunkt: springen", () =>
+    assert.equal(movementKind({ method: "api", passed: { waypoints: [wp(), wp({ action: "displace" })] } }), "jump"));
+  await t.test("Position im Token-Fenster geändert: springen", () =>
+    assert.equal(movementKind({ method: "config", passed: { waypoints: [wp()] } }), "jump"));
+  await t.test("ohne gegangene Wegpunkte: nichts", () => {
+    assert.equal(movementKind({ method: "dragging", passed: { waypoints: [] } }), "ignore");
+    assert.equal(movementKind({ method: "dragging" }), "ignore");
+    assert.equal(movementKind(null), "ignore");
+  });
+});
+
+test("planFollow: mitgezogene Folgende bleiben, wo sie abgelegt wurden", async t => {
+  // Der gemeldete Fehler: wer Anführer und Folgende zusammen auswählt und
+  // zieht, sah die Folgenden gleich danach auf ihre Plätze zurückfahren.
+  // Die Mitgezogenen werden nicht mehr mitgeplant; ihre Felder sind belegt.
+  const offen = karte(...Array.from({ length: 5 }, () => "............"));
+  const spur = extendTrail([], [0, 1, 2, 3, 4, 5, 6].map(j => ({ i: 2, j })));
+
+  await t.test("niemand endet auf dem Feld eines Mitgezogenen", () => {
+    const fest = [{ i: 2, j: 5 }];   // direkt hinter dem Anführer abgelegt
+    const plaene = planFollow({ leaderCell: { i: 2, j: 6 }, trail: spur, occupied: fest, searchFor: () => offen,
+      followers: [{ id: "a", cell: { i: 2, j: 1 } }, { id: "b", cell: { i: 2, j: 0 } }] });
+    const enden = plaene.map(p => cellKey(p.path.at(-1)));
+    assert.ok(!enden.includes("2,5"));
+    assert.deepEqual(enden, ["2,4", "2,3"], "sie stellen sich dahinter");
+  });
+
+  await t.test("wer auf einem Mitgezogenen steht, weicht", () => {
+    const plaene = planFollow({ leaderCell: { i: 2, j: 6 }, trail: spur, occupied: [{ i: 2, j: 5 }], searchFor: () => offen,
+      followers: [{ id: "a", cell: { i: 2, j: 5 } }] });
+    assert.notEqual(cellKey(plaene[0].path.at(-1) ?? { i: 2, j: 5 }), "2,5");
+  });
+
+  await t.test("ohne Mitgezogene wie bisher", () => {
+    const plaene = planFollow({ leaderCell: { i: 2, j: 6 }, trail: spur, searchFor: () => offen,
+      followers: [{ id: "a", cell: { i: 2, j: 1 } }] });
+    assert.equal(cellKey(plaene[0].path.at(-1)), "2,5");
+  });
 });

@@ -289,19 +289,23 @@ export function allConnected(leaderCell, followers = [], search = []) {
  * @param {(id) => object} p.searchFor  je Folgendem {neighbors, blocked?, cost, heuristic}.
  *        Ohne `blocked` sind die Wände unbekannt (Szene nicht auf der Leinwand):
  *        dann geht nur, was auf der Spur liegt.
+ * @param {Iterable<{i,j}>} [p.occupied]  Felder, auf denen schon jemand steht, der
+ *        nicht mitgeplant wird — etwa Folgende, die mit dem Anführer zusammen
+ *        gezogen wurden. Dort endet niemand.
  * @returns {Array<{id, path, stuck}>}  in der Reihenfolge von `followers`;
  *          path beginnt beim aktuellen Feld, leer heisst: bleibt stehen
  */
-export function planFollow({ leaderCell, trail = [], followers = [], searchFor }) {
+export function planFollow({ leaderCell, trail = [], followers = [], searchFor, occupied = [] }) {
   const result = new Array(followers.length);
   if (!followers.length) return [];
   const leaderKey = cellKey(leaderCell);
   const search = followers.map(f => searchFor(f.id) ?? {});
+  const fixed = new Set([...(occupied ?? [])].map(cellKey));
 
   // Hat noch jeder Anschluss, bewegt sich niemand. Ein kleiner Schritt oder
   // ein Schritt zurück reisst die Schlange nicht auseinander — vorher rückte
   // sie dann hin und her.
-  if (allConnected(leaderCell, followers, search)) {
+  if (!followers.some(f => fixed.has(cellKey(f.cell))) && allConnected(leaderCell, followers, search)) {
     return followers.map(f => ({ id: f.id, path: [], stuck: false }));
   }
 
@@ -318,7 +322,7 @@ export function planFollow({ leaderCell, trail = [], followers = [], searchFor }
 
   // Plätze rückwärts auf der Spur, jedes Feld nur einmal, nie das des Anführers.
   const slots = [];
-  const inSlots = new Set([leaderKey]);
+  const inSlots = new Set([leaderKey, ...fixed]);
   for (let n = L - 1; n >= 0; n--) {
     const k = cellKey(spur[n]);
     if (inSlots.has(k)) continue;
@@ -371,8 +375,8 @@ export function planFollow({ leaderCell, trail = [], followers = [], searchFor }
   }
 
   // Wege. Belegt ist, was ein anderer als Ziel hat, und wo schon jemand endet.
-  const reserved = new Set([leaderKey, ...target.filter(Boolean).map(s => cellKey(s.cell))]);
-  const ends = new Set();
+  const reserved = new Set([leaderKey, ...fixed, ...target.filter(Boolean).map(s => cellKey(s.cell))]);
+  const ends = new Set(fixed);
   const isStep = (s, a, b) => (s.neighbors?.(a) ?? []).some(x => sameCell(x, b));
   // Ein Weg auf der Spur. Auch der wird gegen Wände geprüft: der Anführer
   // zieht eine gerade Linie, der Weg über die Feldmitten weicht davon bis zu
@@ -475,6 +479,27 @@ export function classifyNewToken({ token, others = [] }) {
   if (!token.actorLink || !token.actorId) return null;
   const leader = others.find(o => o.actorId === token.actorId && o.sceneId !== token.sceneId && o.hasFollowers);
   return leader ? "dragIn" : null;
+}
+
+/**
+ * Was eine Bewegung des Anführers für die Folgenden bedeutet.
+ *
+ *  - "ignore": nichts tun. Ein Rückgängig (Strg+Z) nimmt einen Zug zurück;
+ *    folgten die anderen auch dem, liefen sie den Weg rückwärts nach — und
+ *    beim nächsten Zug wieder vor. Ohne gegangene Wegpunkte gibt es nichts
+ *    zu folgen.
+ *  - "jump":   der Anführer ist gesprungen (Teleport, Verschieben mit
+ *    gedrückter Taste, Position im Token-Fenster geändert). Es gibt keinen
+ *    Weg, dem jemand folgen könnte; die Gruppe springt mit.
+ *  - "walk":   gegangen — die Folgenden gehen seinen Weg nach.
+ *
+ * @param {object} movement  Foundrys Bewegungsdaten (TokenMovementOperation, v13.351)
+ */
+export function movementKind(movement) {
+  const passed = movement?.passed?.waypoints ?? [];
+  if (!passed.length || movement.method === "undo") return "ignore";
+  if (movement.method === "config" || passed.some(w => w?.action === "displace")) return "jump";
+  return "walk";
 }
 
 /**
@@ -693,8 +718,14 @@ function cellsAround(leaderDoc, docs, g) {
   });
 }
 
-async function moveFollowers(leaderDoc, movement) {
-  const followers = followersOf(leaderDoc);
+async function moveFollowers(leaderDoc, movement, together = new Set()) {
+  // Mit dem Anführer zusammen gezogen (mehrere ausgewählt): sie stehen, wo der
+  // Spielleiter sie hingelegt hat. Vorher setzte das Folgen sie gleich danach
+  // wieder auf ihre Plätze — vor und zurück.
+  const all = followersOf(leaderDoc);
+  const followers = all.filter(f => !together.has(f.id));
+  const draggedAlong = all.filter(f => together.has(f.id));
+  if (draggedAlong.length) debug("mitgezogen, bleiben stehen:", draggedAlong.map(f => f.name).join(", "));
   if (!followers.length) return;
   const g = gridAdapter(leaderDoc.parent);
   const leaderCell = cellOfPosition(leaderDoc, leaderDoc, g);
@@ -702,8 +733,7 @@ async function moveFollowers(leaderDoc, movement) {
   // Teleport innerhalb der Szene (Region, Spielleiter verschiebt mit
   // gedrückter Taste): es gibt keinen Weg, dem jemand folgen könnte. Die
   // Folgenden springen mit und stellen sich um den Anführer.
-  const jumped = (movement.passed?.waypoints ?? []).some(w => w.action === "displace");
-  if (jumped) {
+  if (movementKind(movement) === "jump") {
     TRAILS.set(leaderDoc.id, [leaderCell]);
     const cells = cellsAround(leaderDoc, followers, g);
     await Promise.all(followers.map(async (doc, n) => {
@@ -717,22 +747,30 @@ async function moveFollowers(leaderDoc, movement) {
   const trail = extendTrail(TRAILS.get(leaderDoc.id) ?? [], movementCells(leaderDoc, movement, g));
   TRAILS.set(leaderDoc.id, trail);
 
-  // Zwei Durchgänge: hält Foundry einen Folgenden früher an als geplant —
+  // Zwei Durchgänge: hat Foundry die Bewegung eines Folgenden abgebrochen —
   // seine Wandprüfung ist das letzte Wort, und eine Tür kann inzwischen zu
-  // sein —, wird von dort aus gleich noch einmal geplant, statt bis zum
-  // nächsten Zug des Anführers zurückzubleiben.
+  // sein —, wird von dort aus gleich noch einmal geplant.
+  //
+  // Nur bei einem Abbruch ("stopped"). In v1.7.23 genügte, dass der Token
+  // nicht am geplanten Feld stand. Foundry hält ihn aber auch absichtlich an
+  // — an Regionsgrenzen — und setzt den Rest danach selbst fort ("pending").
+  // Der zweite Plan zog dann gegen diese Fortsetzung: vor und zurück.
+  debug("Spur", trail.slice(-12).map(cellKey).join(" "), "Anführer", cellKey(leaderCell));
   let stuck = [];
   for (let pass = 0; pass < 2; pass++) {
-    const current = followersOf(leaderDoc);
+    const current = followersOf(leaderDoc).filter(f => !together.has(f.id));
     const searches = new Map(current.map(f => [f.id, searchOptions(f, g)]));
     const plans = planFollow({
       leaderCell, trail,
       followers: current.map(f => ({ id: f.id, cell: cellOfPosition(f, f, g) })),
       searchFor: id => searches.get(id),
+      occupied: draggedAlong.map(f => cellOfPosition(f, f, g)),
     });
+    debug(`Plan ${pass + 1}`, plans.map(pl => `${leaderDoc.parent.tokens.get(pl.id)?.name}: `
+      + (pl.path.length ? pl.path.map(cellKey).join(">") : (pl.stuck ? "steckt" : "bleibt"))).join(" | "));
 
     stuck = [];
-    const short = [];
+    const stopped = [];
     await Promise.all(plans.map(async plan => {
       const doc = leaderDoc.parent.tokens.get(plan.id);
       if (!doc) return;
@@ -740,14 +778,24 @@ async function moveFollowers(leaderDoc, movement) {
       if (!plan.path.length) return;
       const waypoints = plan.path.slice(1).map(c => ({ ...positionForCell(doc, c, g), snapped: true, explicit: false }));
       await doc.move(waypoints, { method: "api", autoRotate: true, showRuler: false });
-      if (cellKey(cellOfPosition(doc, doc, g)) !== cellKey(plan.path.at(-1))) short.push(doc.id);
+      const at = cellKey(cellOfPosition(doc, doc, g));
+      debug("  ", doc.name, "steht auf", at, "geplant", cellKey(plan.path.at(-1)), "Zustand", doc.movement?.state);
+      if (doc.movement?.state === "stopped" && at !== cellKey(plan.path.at(-1))) stopped.push(doc.id);
     }));
-    if (!short.length) break;
+    if (!stopped.length) break;
   }
   if (stuck.length) ui.notifications.warn(`ABOREA: Kein Weg für ${stuck.join(", ")} — bleibt stehen.`);
 }
 
 // ── Szenenwechsel ──────────────────────────────────────────────────────
+
+/** Diagnose: schreibt jede Folgen-Entscheidung in die Browser-Konsole (F12). */
+export const DEBUG_SETTING = "followDebug";
+function debug(...args) {
+  try {
+    if (game.settings.get(SYSTEM_ID, DEBUG_SETTING)) console.log("ABOREA Folgen |", ...args);
+  } catch { /* vor der Registrierung */ }
+}
 
 /** Markiert eigene Anlege- und Löschvorgänge, damit die Hooks sie übergehen. */
 const TRANSFER = "aboreaFollowTransfer";
@@ -1022,12 +1070,25 @@ function addHudButtons(hud, html) {
 }
 
 export function registerFollow() {
-  Hooks.on("moveToken", (doc, movement) => {
+  game.settings.register(SYSTEM_ID, DEBUG_SETTING, {
+    name: "Folgen: Diagnose in der Konsole",
+    hint: "Schreibt bei jeder Bewegung eines Anführers Weg, Plan und Ergebnis in die Browser-Konsole (F12). Nur zur Fehlersuche.",
+    scope: "client", config: true, type: Boolean, default: false,
+  });
+
+  Hooks.on("moveToken", (doc, movement, operation) => {
     // Nur ein Client führt aus — sonst zieht jeder Spielleiter die Folgenden.
     if (!game.users.activeGM?.isSelf) return;
-    if (!movement?.passed?.waypoints?.length) return;
+    const kind = movementKind(movement);
+    debug("Anführer bewegt", doc.name, kind, movement?.method,
+      (movement?.passed?.waypoints ?? []).map(w => `${w.x},${w.y}${w.action === "displace" ? "!" : ""}`).join(" "));
+    if (kind === "ignore") return;
+    // Wer im selben Vorgang mitbewegt wurde (Foundry schickt alle gezogenen
+    // Tokens in einem Update, Token#_onDragLeftDrop, v13.351).
+    const together = new Set(Object.keys(operation?._movement ?? operation?.movement ?? {}));
+    together.delete(doc.id);
     const prev = QUEUES.get(doc.id) ?? Promise.resolve();
-    const next = prev.then(() => moveFollowers(doc, movement)).catch(err => console.error("ABOREA | Folgen", err));
+    const next = prev.then(() => moveFollowers(doc, movement, together)).catch(err => console.error("ABOREA | Folgen", err));
     QUEUES.set(doc.id, next);
   });
 
