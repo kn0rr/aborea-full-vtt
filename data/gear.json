@@ -270,7 +270,7 @@
     "type": "gear",
     "img": "icons/consumables/food/bread-toast-tan.webp",
     "system": {
-      "description": "Für eine Woche Nahrung.",
+      "description": "Für 8 Tage Nahrung.",
       "quantity": 1,
       "weight": 5,
       "price": "3 KL",
@@ -1079,6 +1079,25 @@
     "flags": {
       "aborea-v7": {
         "sourceId": "gear-zelt"
+      }
+    }
+  },
+  {
+    "name": "Zirbenschnaps",
+    "type": "gear",
+    "img": "icons/consumables/drinks/alcohol-spirits-bottle-green.webp",
+    "system": {
+      "description": "0,1 l Zirbenschnaps.",
+      "quantity": 1,
+      "weight": 0.1,
+      "price": "3 MU",
+      "equipped": false,
+      "rarity": "häufig",
+      "category": "allgemein"
+    },
+    "flags": {
+      "aborea-v7": {
+        "sourceId": "gear-zirbenschnaps"
       }
     }
   },
