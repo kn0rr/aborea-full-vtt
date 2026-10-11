@@ -1,6 +1,6 @@
 import { ABOREA } from "./config.mjs";
 import { rollOpenD10 } from "./dice.mjs";
-import { inferDirectHp, inferEffects, applyEffectsToActor } from "./actor-helpers.mjs";
+import { inferDirectHp, inferEffects } from "./actor-helpers.mjs";
 import { weaponCombatBonus, weaponSkillKeys, minStrengthPenalty, skillBonus, formatBreakdown,
          defenseValue } from "./bonuses.mjs";
 import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare, splitRange, clampOffensive,
@@ -8,6 +8,7 @@ import { roundSplit, declarationFor, buildDeclaration, splitLabel, canRedeclare,
          fleeOpponents, SYSTEM_FLAG, DECLARATION } from "./declaration.mjs";
 import { selectTargetTokens, attackPlan, resolveAttackerToken } from "./targeting.mjs";
 import { openOnce } from "./windows.mjs";
+import { changeActor, tryChangeActor } from "./actor-change.mjs";
 import { SETTINGS, SITU_FLAG, SITU_PRESETS, clampSituMod, shouldAutoApplyDamage,
          shouldResetSituMod, effectiveSituMod, buildUndoRecord, describeUndo } from "./settings.mjs";
 
@@ -283,7 +284,10 @@ async function _consumeDefense(defender, attackerActor, wanted = null) {
   if (JSON.stringify(result.spent) !== JSON.stringify(split.defenseSpent ?? {})) {
     const decl = declarationFor(defender, round)
       ?? buildDeclaration(round, { mode: "weapon", offensive: split.offensive, pool: split.pool });
-    await defender.setFlag(SYSTEM_FLAG, DECLARATION, { ...decl, defenseSpent: result.spent });
+    // Der Verteidiger gehört dem Angreifer meist nicht — dann schreibt der
+    // Spielleiter (actor-change.mjs). Klappt das nicht, gilt der Anteil für
+    // diesen Wurf trotzdem; nur der Verbrauch bleibt ungespeichert.
+    await tryChangeActor(defender, { type: "flag", key: DECLARATION, value: { ...decl, defenseSpent: result.spent } });
   }
   return result.applied;
 }
@@ -899,30 +903,31 @@ async function _applySpellEffectsToTarget(spell, mpCost, targetActor, damageTota
   const hp      = inferDirectHp(spell, mpCost);
   const effects = inferEffects(spell, mpCost).map(e => ({ ...e, origin: spell.uuid }));
 
+  // Ziele gehören dem Wirkenden oft nicht — geschrieben wird dann über den
+  // Spielleiter (actor-change.mjs).
   if (hp?.type === "heal") {
-    const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
-    const max = Number(targetActor.system.resources?.hp?.max ?? cur);
-    undo.hp = cur;
-    await targetActor.update({ "system.resources.hp.value": Math.min(max, cur + hp.amount) });
-    html += `<div class="ac-effect-row">✨ <strong>${targetActor.name}</strong>: +${hp.amount} HP</div>`;
+    const r = await tryChangeActor(targetActor, { type: "hpDelta", delta: hp.amount });
+    if (r) {
+      undo.hp = r.before;
+      html += `<div class="ac-effect-row">✨ <strong>${targetActor.name}</strong>: +${hp.amount} HP</div>`;
+    }
   }
   if (hp?.type === "damage") {
     const amount = damageTotal ?? hp.amount;
-    const cur = Number(targetActor.system.resources?.hp?.value ?? 0);
-    if (_autoApplyDamage()) {
-      undo.hp = cur;
-      await targetActor.update({ "system.resources.hp.value": Math.max(0, cur - amount) });
+    const r = _autoApplyDamage() ? await tryChangeActor(targetActor, { type: "hpDelta", delta: -amount }) : null;
+    if (r) {
+      undo.hp = r.before;
       html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: −${amount} HP</div>`;
     } else {
       html += `<div class="ac-effect-row">💥 <strong>${targetActor.name}</strong>: ${amount} Schaden
         <button type="button" class="apply-damage-btn btn-sm"
-                data-target-id="${targetActor.id}" data-damage="${amount}">💢 anwenden</button></div>`;
+                data-target-id="${targetActor.uuid}" data-damage="${amount}">💢 anwenden</button></div>`;
     }
   }
   if (effects.length) {
-    const created = await applyEffectsToActor(targetActor, effects);
-    if (created?.length) undo.effectIds = created.map(e => e.id);
-    html += `<div class="ac-effect-row">🔮 <strong>${targetActor.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`;
+    const r = await tryChangeActor(targetActor, { type: "effects", effects });
+    if (r?.effectIds?.length) undo.effectIds = r.effectIds;
+    if (r) html += `<div class="ac-effect-row">🔮 <strong>${targetActor.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</div>`;
   }
   return { html, undo };
 }
@@ -1076,9 +1081,8 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
   const autoApplied = hit && damage > 0 && !!targetActor && _autoApplyDamage();
   let undo = null;
   if (autoApplied) {
-    const before = Number(targetActor.system.resources?.hp?.value ?? 0);
-    await targetActor.update({ "system.resources.hp.value": Math.max(0, before - damage) });
-    undo = buildUndoRecord([{ actorId: targetActor.id, name: targetActor.name, hp: before }]);
+    const r = await tryChangeActor(targetActor, { type: "hpDelta", delta: -damage });
+    if (r) undo = buildUndoRecord([{ actorId: targetActor.id, name: targetActor.name, hp: r.before }]);
   }
 
   await ChatMessage.create({
@@ -1087,7 +1091,7 @@ async function _executeAttack(attackerActor, { weapon, offBonus, minStrengthMod 
     content: _buildAttackCard({
       attacker: attackerActor.name, attackerImg,
       target: targetActor?.name, targetImg,
-      targetActorId: targetActor?.id,
+      targetActorId: targetActor?.uuid,
       weapon: weapon.name,
       rollFormula: roll.formula, rollTotal: roll.total,
       offBonus, minStrengthMod, situMod,
@@ -1162,7 +1166,7 @@ export async function executeGroupAttack(attackers, { targetToken, situMod = nul
         <span class="acg-result">${resultLabel}</span>
         ${damage && targetActor.id
           ? `<button type="button" class="apply-damage-btn btn-sm"
-                     data-target-id="${targetActor.id}" data-damage="${damage}">💢</button>`
+                     data-target-id="${targetActor.uuid}" data-damage="${damage}">💢</button>`
           : ""}
       </div>`;
   }
@@ -1276,17 +1280,27 @@ function _buildAttackCard({
 //  Damage Application
 // ══════════════════════════════════════════════════════════════════
 
-export async function applyDamage(targetActorId, damage) {
-  const actor = game.actors.get(targetActorId);
+/**
+ * Schaden aus dem Knopf einer Chatkarte.
+ *
+ * Die Karten tragen die UUID des Ziels: bei unverknüpften Tokens (drei
+ * Goblins, ein Akteur) traf die blosse Akteur-ID sonst den Vorlage-Akteur
+ * statt des Goblins auf der Karte. Ältere Karten tragen noch die ID.
+ * Geschrieben wird über actor-change.mjs — vertrauenswürdige Spieler dürfen
+ * den Knopf drücken, der Akteur gehört ihnen aber meist nicht.
+ */
+export async function applyDamage(target, damage) {
+  const ref   = String(target ?? "");
+  const actor = ref.includes(".") ? await fromUuid(ref) : game.actors.get(ref);
   if (!actor) { ui.notifications.warn("ABOREA: Ziel nicht gefunden."); return; }
-  const hp         = actor.system.resources?.hp ?? {};
-  const previousHp = Number(hp.value ?? 0);
-  const hpMax      = Number(hp.max ?? previousHp);
-  const newHp      = Math.max(0, previousHp - damage);
+  let r;
+  try { r = await changeActor(actor, { type: "hpDelta", delta: -damage }); }
+  catch (err) { ui.notifications.warn(err.message); return; }
+  const previousHp = r.before;
+  const newHp      = r.after;
+  const hpMax      = Number(actor.system.resources?.hp?.max ?? previousHp);
   const pct        = hpMax > 0 ? Math.round((newHp / hpMax) * 100) : 0;
   const color      = _hpColor(pct);
-
-  await actor.update({ "system.resources.hp.value": newHp });
 
   const portrait = actor.img
     ? `<img class="ac-portrait ac-portrait-lg" src="${actor.img}" alt="${actor.name}" />`
@@ -1294,7 +1308,7 @@ export async function applyDamage(targetActorId, damage) {
 
   await ChatMessage.create({
     speaker: { alias: "System" },
-    flags: { "aborea-v7": { undo: buildUndoRecord([{ actorId: targetActorId, name: actor.name, hp: previousHp }]) } },
+    flags: { "aborea-v7": { undo: buildUndoRecord([{ actorId: actor.id, name: actor.name, hp: previousHp }]) } },
     content: `<div class="aborea-chat-card aborea-damage-card">
       <div class="ac-damage-header">
         ${portrait}

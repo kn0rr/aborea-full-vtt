@@ -10,6 +10,7 @@ import { registerConditions, registerConditionHooks } from "./conditions.mjs";
 import { openCheckDialog, openGroupCheckDialog, registerCheckHooks } from "./checks.mjs";
 import { registerQuickNpcSceneControl, spawnCreatureOnScene } from "./quick-npc.mjs";
 import { registerFollow } from "./follow.mjs";
+import { registerActorChangeQuery } from "./actor-change.mjs";
 import { LOOT_SOCKET, handleLootSocket } from "./loot.mjs";
 import {
   CharacterDataModel, NpcDataModel, CreatureDataModel, LootDataModel,
@@ -100,6 +101,7 @@ Hooks.once("init", async function () {
   registerCheckHooks();
   registerQuickNpcSceneControl();
   registerFollow();
+  registerActorChangeQuery();
 
   foundry.documents.collections.Actors.unregisterSheet("core", foundry.appv1.sheets.ActorSheet);
   foundry.documents.collections.Actors.registerSheet("aborea-v7", AboreaCharacterSheet, { types: ["character"], makeDefault: true, label: "ABOREA.CharacterSheet" });

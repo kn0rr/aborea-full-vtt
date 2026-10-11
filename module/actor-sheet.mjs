@@ -5,6 +5,7 @@
 import { ABOREA } from "./config.mjs";
 import { ABOREA_CONDITIONS } from "./conditions.mjs";
 import { openCheckDialog } from "./checks.mjs";
+import { tryChangeActor } from "./actor-change.mjs";
 import { rollSkill, rollAttribute } from "./dice.mjs";
 import { skillBonus, weaponCombatBonus, getSkillDef, armorValue, defenseValue } from "./bonuses.mjs";
 import { splitRange, carrySplit } from "./declaration.mjs";
@@ -1641,10 +1642,12 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const hp = inferDirectHp(item,mpCost);
     const effects = inferEffects(item,mpCost).map(e=>({...e,origin:item.uuid}));
     let extra="";
+    // Ziele gehören dem Wirkenden oft nicht (Beistand auf einen Mitspieler,
+    // Fluch auf eine Kreatur) — dann schreibt der Spielleiter.
     for (const target of targets) {
-      if (hp?.type==="heal") { const cur=Number(target.system.resources?.hp?.value??0); const max=Number(target.system.resources?.hp?.max??cur); await target.update({"system.resources.hp.value":Math.min(max,cur+hp.amount)}); extra+=`<p><strong>${target.name}</strong>: +${hp.amount} HP</p>`; }
-      if (hp?.type==="damage") { const cur=Number(target.system.resources?.hp?.value??0); await target.update({"system.resources.hp.value":Math.max(0,cur-hp.amount)}); extra+=`<p><strong>${target.name}</strong>: -${hp.amount} HP</p>`; }
-      if (effects.length) { await applyEffectsToActor(target,effects); extra+=`<p><strong>${target.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</p>`; }
+      if (hp?.type==="heal" && await tryChangeActor(target, { type: "hpDelta", delta: hp.amount })) extra+=`<p><strong>${target.name}</strong>: +${hp.amount} HP</p>`;
+      if (hp?.type==="damage" && await tryChangeActor(target, { type: "hpDelta", delta: -hp.amount })) extra+=`<p><strong>${target.name}</strong>: -${hp.amount} HP</p>`;
+      if (effects.length && await tryChangeActor(target, { type: "effects", effects })) extra+=`<p><strong>${target.name}</strong>: ${game.i18n.localize("ABOREA.EffectApplied")}</p>`;
     }
     if (hp?.type==="buffDamage") { effects.push({name:item.name,origin:item.uuid,description:item.system?.description,duration:parseSimpleDuration(item,mpCost),changes:[{key:"flags.aborea.extraWeaponDamage",mode:CONST.ACTIVE_EFFECT_MODES.ADD,value:hp.amount}]}); await applyEffectsToActor(this.actor,effects.slice(-1)); extra+=`<p><strong>${this.actor.name}</strong>: +${hp.amount} Waffenschaden</p>`; }
     const summon = await this._automateSummon(item,mpCost); if (summon?.extra) extra+=summon.extra;
