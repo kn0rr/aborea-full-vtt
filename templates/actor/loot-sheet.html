@@ -75,6 +75,7 @@
       <div class="loot-money-row">
         {{#each wallet as |cur|}}
         <div class="loot-coin-field">
+          <img class="coin-icon" src="{{lookup @root.coinIcons cur.key}}" alt="{{cur.name}}" title="{{cur.name}}" />
           <label class="loot-coin-label" title="{{cur.name}}">{{cur.label}}</label>
           <input type="number" name="system.wallet.{{cur.key}}" value="{{cur.amount}}" min="0" class="loot-coin-input" />
         </div>
@@ -92,7 +93,8 @@
           {{#each wallet as |cur|}}
           {{#if cur.amount}}
           <div class="loot-coin-field">
-            <label class="loot-coin-label" title="{{cur.name}}">{{cur.label}}</label>
+            <img class="coin-icon" src="{{lookup @root.coinIcons cur.key}}" alt="{{cur.name}}" title="{{cur.name}}" />
+          <label class="loot-coin-label" title="{{cur.name}}">{{cur.label}}</label>
             <span class="loot-coin-amount">{{cur.amount}}</span>
           </div>
           {{/if}}

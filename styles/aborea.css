@@ -831,6 +831,17 @@
   flex-direction: column;
   gap: 6px;
 }
+/* Münzbilder neben den Kürzeln */
+.coin-icon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  object-fit: contain;
+  border: none;
+  vertical-align: middle;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .35));
+}
+.loot-coin-field .coin-icon { width: 20px; height: 20px; flex-basis: 20px; margin-right: 2px; }
 .wallet-card-header {
   display: flex;
   align-items: center;

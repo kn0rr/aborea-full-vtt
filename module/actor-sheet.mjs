@@ -65,6 +65,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const actor = this.actor;
     context.actor = actor;
     context.cssClass = this.isEditable ? "editable" : "locked";
+    context.coinIcons = ABOREA.coinIcons;
     const system = foundry.utils.deepClone(actor.system);
     // Während der Charaktererschaffung (nicht abgeschlossen, kein Levelaufstieg):
     // baseAttributes zeigen — finalAttributes enthält bereits Rassenmod und
@@ -1882,6 +1883,7 @@ export class AboreaLootSheet extends foundry.applications.api.HandlebarsApplicat
     context.system    = foundry.utils.deepClone(actor.system);
     context.isGM      = game.user.isGM;
     context.cssClass  = this.isEditable ? "editable" : "locked";
+    context.coinIcons = ABOREA.coinIcons;
     context.itemLists = {
       weapons: actor.items.filter(i => i.type === "weapon"),
       armors:  actor.items.filter(i => i.type === "armor"),

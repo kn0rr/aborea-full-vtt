@@ -1,4 +1,14 @@
 export const ABOREA = {
+  /**
+   * Münzbilder aus dem ABOREA-Spielleiterheft v8 (S. 35), freigestellt.
+   * ABOREA steht unter CC BY-NC 4.0 — Nachweis in assets/images/QUELLEN.md.
+   */
+  coinIcons: {
+    gf: "systems/aborea-v7/assets/images/muenzen/goldfalke.webp",
+    tt: "systems/aborea-v7/assets/images/muenzen/trionthaler.webp",
+    kl: "systems/aborea-v7/assets/images/muenzen/kupferling.webp",
+    mu: "systems/aborea-v7/assets/images/muenzen/muena.webp",
+  },
   id: "aborea-v7",
   attributeBudget: 35,
   baseTrainingPoints: 8,

@@ -10,6 +10,7 @@
     {{#each system.wallet.currencies as |currency idx|}}
     <div class="wallet-card">
       <div class="wallet-card-header">
+        <img class="coin-icon" src="{{lookup @root.coinIcons currency.key}}" alt="{{currency.name}}" title="{{currency.name}}" />
         <span class="wallet-label">{{currency.label}}</span>
         <span class="wallet-name">{{currency.name}}</span>
       </div>
