@@ -126,6 +126,120 @@ export const ABOREA = {
     if (rank <= 1) return parts[0];
     return parts[Math.min(rank - 1, parts.length - 1)] ?? parts[parts.length - 1];
   },
+  /**
+   * Lernschritte für einen Rang (Spielerheft S. 30): bis Rang 4 genügt ein
+   * Lernen, für Rang 5 bis 9 muss man "doppelt" lernen, ab Rang 10 vierfach.
+   * Wie oft man pro Stufe lernen darf, bleibt gleich (1 oder 2) — höhere
+   * Ränge brauchen deshalb mehrere Stufen.
+   */
+  learningsForRank(rank) {
+    const r = Number(rank) || 0;
+    if (r <= 0) return 0;
+    return r >= 10 ? 4 : r >= 5 ? 2 : 1;
+  },
+  /** Lernschritte insgesamt bis zu diesem Rang. */
+  learnedForRank(rank) {
+    let total = 0;
+    for (let r = 1; r <= Math.floor(Number(rank) || 0); r++) total += this.learningsForRank(r);
+    return total;
+  },
+  /** Rang nach so vielen Lernschritten — angefangene Ränge zählen noch nicht. */
+  rankForLearned(learned) {
+    const l = Math.max(0, Math.floor(Number(learned) || 0));
+    let rank = 0;
+    while (this.learnedForRank(rank + 1) <= l) rank++;
+    return rank;
+  },
+  /**
+   * Lernschritte einer Fertigkeit. Ohne Angabe — ältere Charaktere, oder ein
+   * Rang, der woanders von Hand geändert wurde — zählt der Rang.
+   */
+  skillLearned(entry = {}) {
+    const rank = Math.max(0, Math.floor(Number(entry?.rank) || 0));
+    const learned = Number(entry?.learned);
+    if (Number.isFinite(learned) && learned >= 0 && this.rankForLearned(learned) === rank) return Math.floor(learned);
+    return this.learnedForRank(rank);
+  },
+  /** "1/2", wenn ein Lernschritt von zweien zum nächsten Rang getan ist, sonst "". */
+  learningProgress(entry = {}) {
+    const learned = this.skillLearned(entry);
+    const rank = this.rankForLearned(learned);
+    const done = learned - this.learnedForRank(rank);
+    return done > 0 ? `${done}/${this.learningsForRank(rank + 1)}` : "";
+  },
+  /**
+   * AP für die Lernschritte innerhalb *einer* Stufe: das erste Lernen kostet
+   * Wert1, das zweite Wert2 (Spielerheft S. 30). Die Kosten hängen nicht vom
+   * Rang ab — höhere Ränge sind teurer, weil sie mehr Lernschritte brauchen.
+   *
+   * @param {string} costSpec     "2" oder "1/3"
+   * @param {number} fromLearned  Lernschritte zu Beginn der Stufe
+   * @param {number} toLearned    Lernschritte jetzt
+   */
+  levelLearningCost(costSpec, fromLearned = 0, toLearned = 0) {
+    const parts = String(costSpec ?? "0").split("/").map(p => Number(p.trim())).filter(n => Number.isFinite(n));
+    if (!parts.length) return 0;
+    const from = Math.max(0, Math.floor(Number(fromLearned) || 0));
+    const to   = Math.max(0, Math.floor(Number(toLearned) || 0));
+    let total = 0;
+    for (let n = 0; n < to - from; n++) total += parts[Math.min(n, parts.length - 1)];
+    return total;
+  },
+  /**
+   * Ausgegebene AP: was in abgeschlossenen Stufen ausgegeben wurde, plus die
+   * Lernschritte der laufenden Stufe.
+   *
+   * Vorher wurde über alle Ränge seit Spielbeginn gerechnet, mit dem Wert
+   * für den x-ten Rang insgesamt: wer auf Stufe 1 zweimal lernte, zahlte auf
+   * Stufe 2 fürs erste Lernen den teureren Wert2, und ab Rang 5 genügte ein
+   * Lernen pro Rang.
+   *
+   * @param {object} ledger  {spentBefore, learnedAtStart: {fertigkeit: Lernschritte}}
+   *        ohne Angaben: Erschaffung, alles in Stufe 1
+   */
+  trainingSpentByLevel(skills = {}, classSystem = {}, customSkills = [], ledger = {}) {
+    const costs = classSystem?.skillCosts ?? {};
+    const start = ledger?.learnedAtStart ?? {};
+    let total = Math.max(0, Number(ledger?.spentBefore) || 0);
+    for (const [key, cfg] of Object.entries(this.skills)) {
+      if (!cfg.creation) continue;
+      const costKey = cfg.costGroup ?? key;
+      total += this.levelLearningCost(costs[costKey] ?? costs[key], start[key] ?? 0, this.skillLearned(skills?.[key]));
+    }
+    const csArray = Array.isArray(customSkills) ? customSkills : Object.values(customSkills || {});
+    for (const cs of csArray) total += this.levelLearningCost(cs.cost ?? "1", start[cs.key] ?? 0, this.skillLearned(cs));
+    return total;
+  },
+  /** Lernschritte aller Fertigkeiten, auch der eigenen: {schlüssel: Schritte}. */
+  learnedSnapshot(skills = {}, customSkills = []) {
+    const out = {};
+    for (const [key, s] of Object.entries(skills ?? {})) out[key] = this.skillLearned(s);
+    for (const cs of (Array.isArray(customSkills) ? customSkills : Object.values(customSkills || {}))) out[cs.key] = this.skillLearned(cs);
+    return out;
+  },
+  /**
+   * Das Kassenbuch eines Charakters. Ältere Charaktere haben keins: dann gilt
+   * die alte Gesamtrechnung als bis zum Beginn der laufenden Stufe
+   * ausgegeben — mitten im Aufstieg ab dem gemerkten Rangstand, sonst ab
+   * jetzt.
+   */
+  trainingLedger(creation = {}, skills = {}, classSystem = {}, customSkills = [], level = 1) {
+    const l = creation?.trainingLedger;
+    if (l && typeof l === "object" && l.learnedAtStart) return l;
+    const csArray = Array.isArray(customSkills) ? customSkills : Object.values(customSkills || {});
+    if (creation?.status === "leveling" && creation?.levelingRankSnapshot) {
+      const snap = creation.levelingRankSnapshot;
+      const atStart = Object.fromEntries(Object.entries(snap).map(([k, r]) => [k, { rank: r }]));
+      const csAtStart = csArray.map(cs => ({ ...cs, rank: snap[cs.key] ?? 0, learned: undefined }));
+      return {
+        spentBefore: this.skillTrainingSpent(atStart, classSystem, csAtStart),
+        learnedAtStart: Object.fromEntries(Object.entries(snap).map(([k, r]) => [k, this.learnedForRank(r)])),
+      };
+    }
+    // Erschaffung auf Stufe 1: alles gehört zur ersten Stufe.
+    if (!creation?.completed && (Number(level) || 1) <= 1) return { spentBefore: 0, learnedAtStart: {} };
+    return { spentBefore: this.skillTrainingSpent(skills, classSystem, csArray), learnedAtStart: this.learnedSnapshot(skills, csArray) };
+  },
   skillTrainingSpent(skills = {}, classSystem = {}, customSkills = []) {
     const costs = classSystem?.skillCosts ?? {};
     let total = 0;

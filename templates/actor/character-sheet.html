@@ -199,7 +199,7 @@
             </div>
             <div class="skill-controls inline-controls">
               <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="-1">−</button>
-              <span class="skill-rank-display">{{skill.rank}}</span>
+              <span class="skill-rank-display">{{skill.rank}}{{#if skill.progress}}<small class="skill-progress" title="Lernschritte zum nächsten Rang (ab Rang 5 braucht ein Rang zwei, ab Rang 10 vier)"> +{{skill.progress}}</small>{{/if}}</span>
               <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="1">+</button>
             </div>
           </div>
@@ -219,7 +219,7 @@
             </div>
             <div class="skill-controls inline-controls">
               <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="-1">−</button>
-              <span class="skill-rank-display">{{skill.rank}}</span>
+              <span class="skill-rank-display">{{skill.rank}}{{#if skill.progress}}<small class="skill-progress" title="Lernschritte zum nächsten Rang (ab Rang 5 braucht ein Rang zwei, ab Rang 10 vier)"> +{{skill.progress}}</small>{{/if}}</span>
               <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="1">+</button>
               <button type="button" class="remove-custom-skill btn-sm btn-danger" data-skill-key="{{skill.key}}" title="Entfernen">🗑</button>
             </div>
@@ -391,7 +391,7 @@
                 </div>
                 {{#if ../system.skillsLocked}}
                 <div class="skill-controls inline-controls">
-                  <span class="skill-rank-display">{{skill.rank}}</span>
+                  <span class="skill-rank-display">{{skill.rank}}{{#if skill.progress}}<small class="skill-progress" title="Lernschritte zum nächsten Rang (ab Rang 5 braucht ein Rang zwei, ab Rang 10 vier)"> +{{skill.progress}}</small>{{/if}}</span>
                   <span class="skill-total-badge {{#if skill.totalBonus}}has-bonus{{/if}}" title="{{skill.breakdown}}">= {{skill.totalBonus}}</span>
                   <button type="button" class="roll-skill btn-sm" data-skill="{{skill.key}}">🎲</button>
                   {{#if skill.isCustom}}<button type="button" class="remove-custom-skill btn-sm btn-danger" data-skill-key="{{skill.key}}">🗑</button>{{/if}}
@@ -400,7 +400,7 @@
                 <div class="skill-controls inline-controls">
                   {{#if skill.isCustom}}<input type="text" class="skill-name-input custom-skill-field" data-field="name" value="{{skill.name}}" />{{/if}}
                   <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="-1">−</button>
-                  <span class="skill-rank-display">{{skill.rank}}</span>
+                  <span class="skill-rank-display">{{skill.rank}}{{#if skill.progress}}<small class="skill-progress" title="Lernschritte zum nächsten Rang (ab Rang 5 braucht ein Rang zwei, ab Rang 10 vier)"> +{{skill.progress}}</small>{{/if}}</span>
                   <button type="button" class="creation-skill-adjust btn-sm" data-skill="{{skill.key}}" data-delta="1">+</button>
                   <span class="skill-total-badge {{#if skill.totalBonus}}has-bonus{{/if}}" title="{{skill.breakdown}}">= {{skill.totalBonus}}</span>
                   <button type="button" class="roll-skill btn-sm" data-skill="{{skill.key}}">🎲</button>

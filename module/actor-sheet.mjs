@@ -25,7 +25,7 @@ import {
   findPackDocumentByTypeAndName, openCompendiumPickerDialog,
   parsePackSelection, resolveDroppedActorDocument,
   levelForXp, xpForNextLevel,
-  normalizeCustomSkills
+  normalizeCustomSkills, creationStatusAfterRecalc, learningBounds
 } from "./actor-helpers.mjs";
 
 let _namesCache = null;
@@ -250,7 +250,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const raceName = (system.details?.race || "").toLowerCase();
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
-    const trainingSpent = ABOREA.skillTrainingSpent(system.skills, classItem?.system, system.customSkills);
+    const trainingSpent = ABOREA.trainingSpentByLevel(system.skills, classItem?.system, system.customSkills,
+      ABOREA.trainingLedger(system.creation, system.skills, classItem?.system, system.customSkills, level));
     const trainingRemaining = trainingBudget - trainingSpent;
     system.activeClassFeatures = ABOREA.activeClassFeatures(classItem?.system || {}, level);
     const activationState = system.classFeatures?.activations || {};
@@ -331,7 +332,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     system.creation.skillRows = ABOREA.getCreationSkills().map(({ key, label, attribute }) => {
       const skill = system.skills[key] || { rank: 0, attribute };
       const costKey = ABOREA.skills[key]?.costGroup ?? key;
-      return { key, label, rank: Number(skill.rank || 0), attribute: skill.attribute || attribute, cost: classItem?.system?.skillCosts?.[costKey] ?? "—", maxRank: ABOREA.skillMaxCreationRank(key, classItem?.system || {}) };
+      return { key, label, rank: Number(skill.rank || 0), progress: ABOREA.learningProgress(skill), attribute: skill.attribute || attribute, cost: classItem?.system?.skillCosts?.[costKey] ?? "—", maxRank: ABOREA.skillMaxCreationRank(key, classItem?.system || {}) };
     });
     const validationErrors = Array.isArray(system.creation?.validationErrors) ? system.creation.validationErrors : [];
     const xp = Number(system.resources?.xp ?? 0);
@@ -1072,49 +1073,43 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
   async _adjustCreationSkill(skillKey, delta) {
     if (this.actor.type !== "character") return;
     const system = this.actor.system;
-    const creationDone   = !!system.creation?.completed;
-    const isLeveling     = system.creation?.status === "leveling";
-    const levelUpPending = ABOREA.levelForXp(Number(system.resources?.xp ?? 0)) > Number(system.resources?.level ?? 1);
-
-    if (creationDone && !levelUpPending) {
-      ui.notifications.warn("ABOREA: Fertigkeiten können erst nach einem Stufenaufstieg verbessert werden.");
-      return;
-    }
+    const level  = Number(system.resources?.level ?? 1);
     const cls = this.actor.items.find(i => i.type === "class");
     if (!cls) return ui.notifications.warn("ABOREA: Wähle zuerst einen Beruf.");
 
-    const creationCap  = ABOREA.skillMaxCreationRank(skillKey, cls.system);
-    const snapshot     = system.creation?.levelingRankSnapshot ?? {};
-    const rankAtLevelStart = Number(snapshot[skillKey] ?? 0);
-
-    // Cap-Berechnung:
-    // Erschaffung (draft): Erschaffungs-Cap
-    // Leveln:              Erschaffungs-Cap + Rang bei Stufenaufstiegs-Beginn
-    let maxRank;
-    if (isLeveling) {
-      maxRank = creationCap + rankAtLevelStart;
-    } else if (!creationDone) {
-      maxRank = creationCap;
-    } else {
-      maxRank = 99;
-    }
-
     const customList = foundry.utils.deepClone(normalizeCustomSkills(system.customSkills));
     const customIdx  = customList.findIndex(s => s.key === skillKey);
-    if (customIdx !== -1) {
-      const costParts    = String(customList[customIdx].cost ?? "1").split("/").filter(Boolean);
-      const maxRankCustom = isLeveling ? 99 : costParts.length;
-      customList[customIdx].rank = Math.max(0, Math.min(maxRankCustom, Number(customList[customIdx].rank ?? 0) + Number(delta)));
-      const newStatus = isLeveling ? "leveling" : "draft";
-      await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": newStatus });
-      await this._recalculateCharacter();
-      return;
-    }
+    const isCustom   = customIdx !== -1;
+    const entry      = isCustom ? customList[customIdx] : (system.skills?.[skillKey] ?? { rank: 0 });
 
-    const current = Number(system.skills?.[skillKey]?.rank ?? 0);
-    const next    = Math.max(0, Math.min(maxRank, current + Number(delta)));
-    const newStatus = isLeveling ? "leveling" : "draft";
-    await this.actor.update({ [`system.skills.${skillKey}.rank`]: next, "system.creation.completed": false, "system.creation.status": newStatus });
+    // Lernschritte pro Stufe: so viele, wie die Kosten Werte haben (1 oder 2);
+    // für Waffen, Spruchlisten und Magie entwickeln 2 (Spielerheft S. 30).
+    const perLevel = isCustom
+      ? (String(entry.cost ?? "1").split("/").filter(Boolean).length > 1 ? 2 : 1)
+      : ABOREA.skillMaxCreationRank(skillKey, cls.system);
+    const ledger = ABOREA.trainingLedger(system.creation, system.skills ?? {}, cls.system, customList, level);
+    const bounds = learningBounds({
+      creationDone:   !!system.creation?.completed,
+      isLeveling:     system.creation?.status === "leveling",
+      levelUpPending: ABOREA.levelForXp(Number(system.resources?.xp ?? 0)) > level,
+      startLearned:   ledger.learnedAtStart?.[skillKey] ?? 0,
+      perLevel,
+    });
+    if (bounds.blocked) return ui.notifications.warn(`ABOREA: ${bounds.blocked}`);
+
+    // Ein Klick ist ein Lernschritt; ab Rang 5 braucht ein Rang mehrere.
+    const learned = Math.max(bounds.min, Math.min(bounds.max, ABOREA.skillLearned(entry) + Number(delta)));
+    const rank    = ABOREA.rankForLearned(learned);
+    const status  = system.creation?.status === "leveling" ? "leveling" : "draft";
+    if (isCustom) {
+      customList[customIdx] = { ...entry, rank, learned };
+      await this.actor.update({ "system.customSkills": customList, "system.creation.completed": false, "system.creation.status": status });
+    } else {
+      await this.actor.update({
+        [`system.skills.${skillKey}.rank`]: rank, [`system.skills.${skillKey}.learned`]: learned,
+        "system.creation.completed": false, "system.creation.status": status,
+      });
+    }
     await this._recalculateCharacter();
   }
 
@@ -1210,14 +1205,23 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const currentLvl = Number(system.resources?.level ?? 1);
     const targetLvl = ABOREA.levelForXp(xp);
     if (targetLvl <= currentLvl) { ui.notifications.warn("ABOREA: Kein Stufenaufstieg verfügbar."); return; }
-    // Rang-Snapshot speichern bevor Spieler Fertigkeiten verteilt
+    // Rang-Snapshot speichern bevor Spieler Fertigkeiten verteilt — auch die
+    // eigenen Fertigkeiten, sonst liessen sie sich beliebig oft steigern.
+    const clsBefore = this.actor.items.find(i => i.type === "class");
+    const customBefore = normalizeCustomSkills(system.customSkills);
     const rankSnapshot = {};
     for (const [key, skill] of Object.entries(system.skills ?? {})) rankSnapshot[key] = Number(skill.rank ?? 0);
+    for (const cs of customBefore) rankSnapshot[cs.key] = Number(cs.rank ?? 0);
+    // Kassenbuch: was bis jetzt ausgegeben ist, gilt als abgeschlossen. Die
+    // neue Stufe rechnet ab den Rängen von jetzt (Spielerheft S. 30).
+    const spentBefore = ABOREA.trainingSpentByLevel(system.skills ?? {}, clsBefore?.system, customBefore,
+      ABOREA.trainingLedger(system.creation, system.skills ?? {}, clsBefore?.system, customBefore, currentLvl));
     await this.actor.update({
       "system.resources.level": targetLvl,
       "system.creation.completed": false,
       "system.creation.status": "leveling",
-      "system.creation.levelingRankSnapshot": rankSnapshot
+      "system.creation.levelingRankSnapshot": rankSnapshot,
+      "system.creation.trainingLedger": { spentBefore, learnedAtStart: ABOREA.learnedSnapshot(system.skills ?? {}, customBefore) },
     });
     const result = await this._recalculateCharacter();
     // Tagesnutzungen beim Stufenaufstieg zurücksetzen
@@ -1226,7 +1230,7 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     const newFeatures = ABOREA.activeClassFeatures(cls?.system || {}, targetLvl).filter(f => Number(f.level) > currentLvl && Number(f.level) <= targetLvl);
     const humanBonus = (system.details?.race || "").toLowerCase() === "mensch" ? 2 : 0;
     const totalAP = ABOREA.baseTrainingPoints * targetLvl + humanBonus;
-    const spentAP = ABOREA.skillTrainingSpent(this.actor.system.skills || {}, cls?.system, normalizeCustomSkills(this.actor.system.customSkills));
+    const spentAP = Number(this.actor.system.creation?.trainingSpent ?? 0);
     const freeAP = totalAP - spentAP;
     const featureList = newFeatures.length ? `<ul>${newFeatures.map(f => `<li><strong>${f.label}</strong>: ${f.description || ""}</li>`).join("")}</ul>` : "<p>Keine neuen Klassenfähigkeiten.</p>";
     await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: `<section class="aborea-chat-card"><h2>🎉 Stufenaufstieg: Stufe ${targetLvl}</h2><p><strong>${this.actor.name}</strong> ist auf Stufe ${targetLvl} aufgestiegen!</p><p><strong>Freie AP:</strong> ${freeAP}</p><h3>Neue Klassenfähigkeiten</h3>${featureList}</section>` });
@@ -1290,7 +1294,9 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
     }
     const humanBonus = raceName === "mensch" ? 2 : 0;
     const trainingBudget = ABOREA.baseTrainingPoints * level + humanBonus;
-    const trainingSpent = ABOREA.skillTrainingSpent(actorSystem.skills || {}, cls?.system, normalizeCustomSkills(actorSystem.customSkills));
+    const customForCost = normalizeCustomSkills(actorSystem.customSkills);
+    const trainingSpent = ABOREA.trainingSpentByLevel(actorSystem.skills || {}, cls?.system, customForCost,
+      ABOREA.trainingLedger(actorSystem.creation, actorSystem.skills || {}, cls?.system, customForCost, level));
     const trainingRemaining = trainingBudget - trainingSpent;
     if (trainingRemaining < 0) errors.push(game.i18n.localize("ABOREA.TrainingOverspent"));
     const knownLists = [...new Set(this.actor.items.filter(i => i.type === "spell").map(i => i.system.list).filter(Boolean))];
@@ -1344,7 +1350,8 @@ export class AboreaActorSheet extends foundry.applications.api.HandlebarsApplica
       "system.combat.defensiveBonus": newDef,
       "system.creation.pointsBudget": budget, "system.creation.pointsSpent": spent, "system.creation.pointsRemaining": remaining,
       "system.creation.trainingBudget": trainingBudget, "system.creation.trainingSpent": trainingSpent, "system.creation.trainingRemaining": trainingRemaining,
-      "system.creation.validationErrors": errors, "system.creation.status": errors.length ? "draft" : "ready", ...skillUpdates
+      "system.creation.validationErrors": errors,
+      "system.creation.status": creationStatusAfterRecalc(actorSystem.creation?.status, errors.length > 0), ...skillUpdates
     });
     return { valid: errors.length === 0 && !!race && !!cls && remaining === 0, validationErrors: errors };
   }

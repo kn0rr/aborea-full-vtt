@@ -47,6 +47,46 @@ export function xpForNextLevel(level) {
  * Stellt außerdem sicher, dass jeder Eintrag alle Pflichtfelder enthält
  * und dass doppelte keys entfernt werden.
  */
+/**
+ * Status der Erschaffung nach einer Neuberechnung.
+ *
+ * Ein laufender Stufenaufstieg bleibt einer. Vorher setzte die Neuberechnung
+ * den Status pauschal auf "draft" oder "ready" — schon direkt nach dem Klick
+ * auf "Stufenaufstieg". Damit galt für jede weitere Änderung die Obergrenze
+ * der Erschaffung statt der des Aufstiegs, und eine Fertigkeit, die schon auf
+ * dieser Grenze stand, liess sich nicht mehr um eins steigern.
+ */
+export function creationStatusAfterRecalc(previous, hasErrors) {
+  if (previous === "leveling") return "leveling";
+  return hasErrors ? "draft" : "ready";
+}
+
+/**
+ * In welchen Grenzen dürfen die Lernschritte einer Fertigkeit liegen?
+ *
+ *  - Erschaffung: 0 bis zu den Lernschritten einer Stufe.
+ *  - Stufenaufstieg: vom Stand zu Beginn der Stufe bis dazu plus die
+ *    Lernschritte einer Stufe. Unter den Anfangsstand geht es nicht — was
+ *    frühere Stufen gelernt haben, lässt sich hier nicht zurücknehmen.
+ *  - Abgeschlossen mit offenem Aufstieg: erst "Stufenaufstieg" drücken.
+ *    Vorher stellte ein Klick auf "+" den Charakter still auf "Entwurf" um,
+ *    und ab dann galt die Grenze der Erschaffung.
+ *  - Abgeschlossen ohne Aufstieg: gesperrt.
+ *
+ * @returns {{min, max}|{blocked: string}}
+ */
+export function learningBounds({ creationDone = false, isLeveling = false, levelUpPending = false,
+                                 startLearned = 0, perLevel = 1 } = {}) {
+  const step = Math.max(1, Math.floor(Number(perLevel) || 1));
+  if (isLeveling) {
+    const start = Math.max(0, Math.floor(Number(startLearned) || 0));
+    return { min: start, max: start + step };
+  }
+  if (!creationDone) return { min: 0, max: step };
+  if (levelUpPending) return { blocked: "Erst „Stufenaufstieg“ drücken, dann Fertigkeiten verteilen." };
+  return { blocked: "Fertigkeiten können erst nach einem Stufenaufstieg verbessert werden." };
+}
+
 export function normalizeCustomSkills(raw) {
   const arr = Array.isArray(raw) ? raw : Object.values(raw ?? {});
   const seen = new Set();
@@ -55,6 +95,9 @@ export function normalizeCustomSkills(raw) {
     name:      String(s.name ?? ""),
     attribute: String(s.attribute ?? "in"),
     rank:      Math.max(0, Number(s.rank ?? 0)),
+    // Lernschritte — ab Rang 5 braucht ein Rang mehrere (ABOREA.skillLearned)
+    ...(s.learned !== undefined && s.learned !== null && s.learned !== "" && Number.isFinite(Number(s.learned))
+      ? { learned: Math.max(0, Number(s.learned)) } : {}),
     cost:      String(s.cost ?? "1"),
     // 0 = normale Fertigkeit, -2 = Waffen-/Wissensfertigkeit (Ungelernt-Malus)
     untrained: Number(s.untrained ?? 0) || 0,
@@ -220,6 +263,7 @@ export function buildSkillDisplayRows(system) {
       name: game.i18n.localize(skill.label || key),
       attribute: skill.attribute,
       rank: Number(skill.rank || 0),
+      progress: ABOREA.learningProgress(skill),
       bonus: Number(classBonuses[key] || 0),
       source: "base", isCustom: false
     });
@@ -229,6 +273,7 @@ export function buildSkillDisplayRows(system) {
       key: skill.key, label: skill.name, name: skill.name,
       attribute: skill.attribute || "in",
       rank: Number(skill.rank || 0),
+      progress: ABOREA.learningProgress(skill),
       bonus: Number(skill.bonus || 0),
       cost: skill.cost ?? "1",
       source: "custom", isCustom: true, customIndex: index

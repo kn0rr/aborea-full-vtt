@@ -695,6 +695,8 @@
 }
 
 /* Rank-Anzeige (keine Input-Box) */
+/* Angefangener Rang: Lernschritte zum nächsten (ab Rang 5 mehrere) */
+.skill-progress { font-size: .7em; opacity: .75; white-space: nowrap; }
 .skill-rank-display {
   display: inline-flex;
   align-items: center;
