@@ -374,6 +374,19 @@ function _assignedTargetTokenId(attackerTokenId, attackerActor = null) {
   return id ? currentCombat()?.combatants.get(id)?.tokenId ?? "" : "";
 }
 
+/**
+ * Darf der Knopf im Angriffsdialog gedrückt werden — und wenn nicht, warum?
+ * Mit Waffe immer. Mit Zauber nur, wenn einer gewählt ist und die MP reichen.
+ */
+export function attackSubmitState({ mode = "weapon", hasSpell = false, totalMp = 0, currentMp = 0 } = {}) {
+  if (mode !== "spell") return { disabled: false, reason: "" };
+  if (!hasSpell) return { disabled: true, reason: "Kein Zauber gewählt." };
+  const cost = Number(totalMp) || 0;
+  if (cost <= 0) return { disabled: true, reason: "Keine MP-Kosten angegeben." };
+  if (cost > (Number(currentMp) || 0)) return { disabled: true, reason: `Nicht genug MP: ${cost} nötig, ${Number(currentMp) || 0} vorhanden.` };
+  return { disabled: false, reason: "" };
+}
+
 /** Hält das gewählte Ziel am Kombattanten fest, falls es ein Kombattant ist. */
 function _rememberTarget(attackerTokenId, attackerActor, targetTokenId) {
   const own    = _attackerCombatant(attackerTokenId, attackerActor);
@@ -536,6 +549,12 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     const html          = this.element;
+    // Keine Formularprüfung des Browsers. Sie prüft auch die ausgeblendeten
+    // Felder — im Zaubermodus etwa den Offensivbonus der Waffe, im Waffenmodus
+    // die MP-Kosten — und bricht bei einem ungültigen Wert das Absenden still
+    // ab, weil sie das Feld nicht anzeigen kann. Der Knopf tat dann nichts.
+    // Die Werte prüft _handleSubmit selbst, die MP _executeSpellAttack.
+    html.noValidate = true;
     const actor         = this.options.attackerActor;
     const targetSelect  = html.querySelector("[name=targetTokenId]");
     const weaponSelect  = html.querySelector("[name=weaponId]");
@@ -631,6 +650,8 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const mpMinHint      = html.querySelector(".mp-cost-min");
     const mpProZielInput = html.querySelector("[name=mpProZiel]");
 
+    const currentMode   = () => html.querySelector("[name=attackMode]:checked")?.value
+                               ?? html.querySelector("[name=attackMode]")?.value ?? "weapon";
     const _getMpProZiel = () => Number(mpProZielInput?.value ?? 1);
     const _getMpCost    = () => Number(mpCostSelect?.value ?? 0);
 
@@ -682,10 +703,11 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       }
       if (spellPreview) spellPreview.style.display = "none";
 
-      // Zu wenig MP?
-      const cantAfford = totalMp > context.currentMp;
-      if (submitBtn)   submitBtn.disabled = cantAfford || !totalMp;
-      if (noMpWarning) noMpWarning.style.display = cantAfford ? "" : "none";
+      // Zu wenig MP? Gilt nur im Zaubermodus — vorher sperrte ein zu teurer
+      // Zauber auch den Knopf "Angreifen".
+      const state = attackSubmitState({ mode: currentMode(), hasSpell: !!spell, totalMp, currentMp: context.currentMp });
+      if (submitBtn) { submitBtn.disabled = state.disabled; submitBtn.title = state.reason; }
+      if (noMpWarning) noMpWarning.style.display = state.disabled && currentMode() === "spell" && spell ? "" : "none";
     };
 
     const updateSpellCosts = () => {
@@ -705,13 +727,16 @@ class AboreaAttackDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // Modus-Umschalten Waffe ↔ Zauber
     const updateMode = () => {
-      const mode = html.querySelector("[name=attackMode]:checked")?.value ?? "weapon";
+      const mode = currentMode();
       if (weaponSection) weaponSection.style.display = mode === "weapon" ? "" : "none";
       if (spellSection)  spellSection.style.display  = mode === "spell"  ? "" : "none";
       if (submitBtn) submitBtn.textContent = mode === "spell" ? " Zauber wirken" : " Angreifen";
       if (mode === "weapon") {
         if (singleRow) singleRow.style.display = "";
         if (multiRow)  multiRow.style.display  = "none";
+        if (noMpWarning) noMpWarning.style.display = "none";
+        const state = attackSubmitState({ mode });
+        if (submitBtn) { submitBtn.disabled = state.disabled; submitBtn.title = state.reason; }
       } else {
         _showSpellTargetMode();
         _updateSpellPreview();

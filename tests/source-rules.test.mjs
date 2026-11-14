@@ -118,3 +118,14 @@ test("Weitergereichte Namen sind im Modul selbst nicht gebunden", async t => {
   }
   assert.deepEqual(verstoesse, [], "benutzt, aber nur weitergereicht statt importiert");
 });
+
+test("Der Angriffsdialog schaltet die Formularprüfung des Browsers ab", () => {
+  // Sie prüft auch ausgeblendete Felder und bricht dann das Absenden still
+  // ab — "Zauber wirken" tat nichts. Die Werte prüft der Dialog selbst.
+  const { quelle } = moduleFiles().find(f => f.name === "combat.mjs");
+  const rein = stripCommentsAndStrings(quelle);
+  const start = rein.indexOf("class AboreaAttackDialog");
+  const render = rein.indexOf("_onRender(", start);
+  assert.ok(render > 0, "_onRender gefunden");
+  assert.match(rein.slice(render, render + 600), /noValidate\s*=\s*true/);
+});

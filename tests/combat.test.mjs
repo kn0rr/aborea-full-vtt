@@ -7,7 +7,7 @@ import { character, creature, armor, weapon } from "./helpers/foundry-stub.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { actorDefenseValue, spellDamage, bonusWeaponDamage, hpColor, roundSplitOf,
-         pickCombatId, pickPreselectedTarget } from "../module/combat.mjs";
+         pickCombatId, pickPreselectedTarget, attackSubmitState } from "../module/combat.mjs";
 import { ABOREA } from "../module/config.mjs";
 import { defenseValue } from "../module/bonuses.mjs";
 import { inferDirectHp } from "../module/actor-helpers.mjs";
@@ -292,5 +292,38 @@ test("pickPreselectedTarget: das Ziel aus dem Kampfpult gilt im Angriffsdialog",
       const r = pickPreselectedTarget({ assignedTokenId: a, userTargetId: u, candidateIds: liste });
       assert.ok(r === "" || liste.includes(r), `${a}/${u}`);
     }
+  });
+});
+
+test("attackSubmitState: wann der Knopf im Angriffsdialog geht", async t => {
+  // Gemeldet: "Zauber wirken" ohne Funktion. Dazu gehörte, dass der Zustand
+  // des Knopfs nicht vom Modus abhing — ein zu teurer Zauber sperrte auch
+  // "Angreifen", und umgekehrt blieb eine Sperre beim Umschalten stehen.
+  await t.test("Waffe: immer frei, auch ohne MP", () => {
+    assert.equal(attackSubmitState({ mode: "weapon", totalMp: 50, currentMp: 0 }).disabled, false);
+    assert.equal(attackSubmitState().disabled, false);
+  });
+  await t.test("Zauber, MP reichen: frei", () =>
+    assert.equal(attackSubmitState({ mode: "spell", hasSpell: true, totalMp: 3, currentMp: 3 }).disabled, false));
+  await t.test("Zauber, MP reichen nicht: gesperrt, mit Grund", () => {
+    const s = attackSubmitState({ mode: "spell", hasSpell: true, totalMp: 4, currentMp: 3 });
+    assert.equal(s.disabled, true);
+    assert.match(s.reason, /4 nötig, 3 vorhanden/);
+  });
+  await t.test("kein Zauber gewählt: gesperrt", () =>
+    assert.equal(attackSubmitState({ mode: "spell", hasSpell: false, totalMp: 1, currentMp: 9 }).disabled, true));
+  await t.test("keine Kosten: gesperrt", () =>
+    assert.equal(attackSubmitState({ mode: "spell", hasSpell: true, totalMp: 0, currentMp: 9 }).disabled, true));
+  await t.test("Unsinn: gesperrt, nicht NaN", () => {
+    const s = attackSubmitState({ mode: "spell", hasSpell: true, totalMp: "x", currentMp: "y" });
+    assert.equal(s.disabled, true);
+  });
+  await t.test("Invariante: frei genau dann, wenn Waffe oder bezahlbarer Zauber", () => {
+    for (const mode of ["weapon", "spell"]) for (const hasSpell of [true, false])
+      for (const totalMp of [0, 1, 5]) for (const currentMp of [0, 1, 5]) {
+        const frei = mode === "weapon" || (hasSpell && totalMp > 0 && totalMp <= currentMp);
+        assert.equal(attackSubmitState({ mode, hasSpell, totalMp, currentMp }).disabled, !frei,
+          `${mode}/${hasSpell}/${totalMp}/${currentMp}`);
+      }
   });
 });
