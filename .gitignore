@@ -27,3 +27,5 @@ yarn-error.log*
 
 .claude/
 .claude/worktrees/
+# Ausgangsdateien fuer Audio-Mischungen (nur die fertige Mischung kommt nach assets/)
+/audio-rohmaterial/

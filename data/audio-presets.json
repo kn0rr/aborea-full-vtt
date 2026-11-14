@@ -131,6 +131,18 @@
           }
         },
         {
+          "id": "umgebung-steinhalle-feuer",
+          "label": "Steinhalle mit Feuer",
+          "music": [],
+          "ambience": ["assets/audio/ambiente/steinhalle_feuer.ogg"],
+          "oneshots": [],
+          "sources": {
+            "musik": "https://incompetech.com/music/royalty-free/index.html?keywords=medieval",
+            "ambiente": "https://freesound.org/s/729396/",
+            "oneshots": "https://freesound.org/s/677069/"
+          }
+        },
+        {
           "id": "umgebung-bibliothek",
           "label": "Bibliothek / Archiv",
           "music": [],
